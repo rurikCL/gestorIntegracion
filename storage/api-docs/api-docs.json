@@ -1,0 +1,247 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Pompeyo",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "https://apifrontend.pompeyo.cl/"
+        }
+    ],
+    "paths": {
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Realizar logueo"
+                ],
+                "summary": "Realizar Inicio de Sesión para obtener Token",
+                "description": "Registro de Lead",
+                "operationId": "222b2625838e3c57e017987f73598fda",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "segundoNombre": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object",
+                                "example": {
+                                    "email": "api.pruebas@pompeyo.cl",
+                                    "password": "password",
+                                    "token_name": "marca"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inicio de Sesión"
+                    },
+                    "404": {
+                        "description": "Recurso no encontrado."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                }
+            }
+        },
+        "/api/agenda": {
+            "get": {
+                "tags": [
+                    "Agenda"
+                ],
+                "summary": "Mostrar Incripciones para agendamiento",
+                "description": "Muestra los registros de Incripciones para agendamiento",
+                "operationId": "209b34a7d0f3fb1b8da4e849f85bdc16",
+                "responses": {
+                    "200": {
+                        "description": "Mostrar todos las inscripciones."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/leads": {
+            "get": {
+                "tags": [
+                    "Leads"
+                ],
+                "summary": "Mostrar Leads",
+                "description": "Muestra los registros de Leads",
+                "operationId": "35c6844d021336b11f6dfdeff94dd1dc",
+                "responses": {
+                    "200": {
+                        "description": "Mostrar todos los leads."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lead/{lead}": {
+            "get": {
+                "tags": [
+                    "Lead"
+                ],
+                "summary": "Mostrar informacion de un Lead",
+                "description": "Muestra el registro solicitado.",
+                "operationId": "4a1b865703c1612d5a4cb5e75d454d0f",
+                "parameters": [
+                    {
+                        "name": "lead",
+                        "in": "path",
+                        "description": "Parámetro necesario para la consulta de datos de un Lead",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "int": {
+                                "summary": "Introduce un número de id de Lead.",
+                                "value": "1"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mostrar info de un Lead."
+                    },
+                    "404": {
+                        "description": "No se ha encontrado el Lead."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/lead": {
+            "post": {
+                "tags": [
+                    "Registrar Lead"
+                ],
+                "summary": "Registrar info de un Lead",
+                "description": "Registro de Lead",
+                "operationId": "712a7cfea6202e860b761b56482ff098",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "id": {
+                                        "type": "string"
+                                    },
+                                    "nombre": {
+                                        "type": "string"
+                                    },
+                                    "segundoNombre": {
+                                        "type": "string"
+                                    },
+                                    "apellido": {
+                                        "type": "string"
+                                    },
+                                    "segundoApellido": {
+                                        "type": "string"
+                                    },
+                                    "rut": {
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "telefono": {
+                                        "type": "string"
+                                    },
+                                    "fechaNacimiento": {
+                                        "type": "string"
+                                    },
+                                    "direccion": {
+                                        "type": "string"
+                                    },
+                                    "lead": {}
+                                },
+                                "type": "object",
+                                "example": {
+                                    "data": {
+                                        "nombre": "Pedro",
+                                        "segundoNombre": "Juan",
+                                        "apellido": "Perez",
+                                        "segundoApellido": "Muñoz",
+                                        "rut": "11111111",
+                                        "email": "contacto@email.com",
+                                        "telefono": "123456789",
+                                        "fechaNacimiento": "1980-01-01",
+                                        "direccion": "Alameda 1000",
+                                        "lead": {
+                                            "origenID": 2,
+                                            "subOrigenID": 20,
+                                            "sucursalID": 72,
+                                            "vendedorID": 1204,
+                                            "marca": "PEUGEOT",
+                                            "modelo": "PARTNER"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lead insertado"
+                    },
+                    "404": {
+                        "description": "Recurso no encontrado."
+                    },
+                    "default": {
+                        "description": "Ha ocurrido un error."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}

@@ -15,7 +15,7 @@ class EmailController extends Controller
     {
 
         // METODO 1 : SENDGRID
-        /*$sendgrid = new SendGrid('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');
+        /*$sendgrid = new SendGrid('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');
         try {
 
             $email = new Mail();
@@ -37,28 +37,33 @@ class EmailController extends Controller
 
 
         // METODO 2 : MAIL
-        Mail::send(['text' => 'welcome'],
-            ['msg'=>"Mensaje de prueba"], function ($message) {
-            $message->from('roma.fei@mailpompeyo.cl', 'Roma');
+       /* try {
+            Mail::send(['text' => 'welcome'],
+                ['msg'=>"Mensaje de prueba"], function ($message) {
+                    $message->from('roma@mailpompeyo.cl', 'Roma');
+                    $message->to('cristian.fuentealba@pompeyo.cl');
+                });
+        }catch (Exception $e) {
+            dd($e->getMessage());
+            echo 'Caught exception: '. $e->getMessage() ."\n";
+        }*/
 
-            $message->to('cristian.fuentealba@pompeyo.cl');
-        });
 
         // METODO 3 : PHPMAILER
-        /*$mail = new PHPMailer();
+        $mail = new PHPMailer();
         $mail->IsSMTP();
         $mail->Host = "smtp.sendgrid.net";
-        $mail->From = "roma.fei@mailpompeyo.cl";
+        $mail->From = "roma@mailpompeyo.cl";
         $mail->FromName = "Roma";
         $mail->CharSet = 'UTF-8';
         $mail->AltBody = "";
 
         $mail->AddAddress('cristian.fuentealba@pompeyo.cl');
-        $mail->Subject = 'Se ha creado carta de Devolucion de reserva en la siguiente venta Cajon: 1111';
+        $mail->Subject = 'Pruaba asdf';
         $mail->SMTPAuth = true;
         $mail->MsgHTML('Prueba de correo');
         $mail->Username = "apikey";
-        $mail->Password = "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";
+        $mail->Password = "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";
         $mail->SMTPSecure = 'ssl';
         $mail->Port = "465";
         if ($mail->Send()) {
@@ -66,7 +71,7 @@ class EmailController extends Controller
         } else {
             print_r("Error al enviar el correo");
         }
-        print_r($mail->ErrorInfo);*/
+        print_r($mail->ErrorInfo);
 
 
     }

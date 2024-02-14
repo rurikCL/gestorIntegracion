@@ -118,7 +118,7 @@ class ApiSolicitudesResource extends Resource
                     ->label('ID Referencia')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('integracion.Integracion')
-                    ->description(fn($record) => $record->proveedores->Nombre)
+                    ->description(fn($record) => $record->proveedores->Nombre ?? '')
                     ->label('Integracion'),
                 /*Tables\Columns\TextColumn::make('proveedores.Nombre')
                     ->label('Api'),*/

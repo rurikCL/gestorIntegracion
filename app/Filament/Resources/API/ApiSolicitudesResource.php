@@ -112,15 +112,16 @@ class ApiSolicitudesResource extends Resource
             ->columns([
                 Tables\Columns\IconColumn::make('Exito')
                     ->boolean(),
-                Tables\Columns\IconColumn::make('notificacion.Notificado')
-                    ->boolean(),
+                /*Tables\Columns\IconColumn::make('notificacion.Notificado')
+                    ->boolean(),*/
                 Tables\Columns\TextColumn::make('ReferenciaID')
                     ->label('ID Referencia')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('integracion.Integracion')
+                    ->description(fn($record) => $record->proveedores->Nombre)
                     ->label('Integracion'),
-                Tables\Columns\TextColumn::make('proveedores.Nombre')
-                    ->label('Api'),
+                /*Tables\Columns\TextColumn::make('proveedores.Nombre')
+                    ->label('Api'),*/
                 Tables\Columns\TextColumn::make('flujo.Nombre')
                     ->label('Flujo'),
 //                Tables\Columns\TextColumn::make('Prioridad'),

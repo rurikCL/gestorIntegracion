@@ -41,6 +41,7 @@ class OCProductosRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('sku'),
+                Tables\Columns\ToggleColumn::make('active')
             ])
             ->filters([
                 //

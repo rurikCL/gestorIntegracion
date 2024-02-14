@@ -18,6 +18,8 @@ class ApiProveedoresResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Orquestador API';
+    protected static ?string $modelLabel = 'APIs';
+
 
     public static function form(Form $form): Form
     {

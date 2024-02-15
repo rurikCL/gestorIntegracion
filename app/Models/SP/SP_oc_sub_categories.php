@@ -2,12 +2,13 @@
 
 namespace App\Models\SP;
 
+use BinaryCats\Sku\HasSku;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class SP_oc_sub_categories extends Model
 {
-    use HasFactory;
+    use HasFactory, HasSku;
     protected $table = 'SP_oc_sub_categories';
     protected $fillable = [ 'name', 'sku', 'ocCategory_id', 'FechaCreacion', 'EventoCreacionID', 'UsuarioCreacionID', 'FechaActualizacion', 'EventoActualizacionID', 'UsuarioActualizacionID' ];
 

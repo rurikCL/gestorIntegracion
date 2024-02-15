@@ -436,6 +436,8 @@ class LeadController extends Controller
 
             // Homlogacion Sucursal
             if (!$sucursalID && $sucursalNombre && $idFlujo) {
+
+                // Busca en Tabla Homologacion
                 $sucursalHomologada = FLU_Homologacion::GetDato(
                     $sucursalNombre,
                     $idFlujo,
@@ -451,10 +453,10 @@ class LeadController extends Controller
                     if ($sucursal) {
                         $Log->info("Sucursal encontrada: " . $sucursal->Sucursal);
                         $sucursalHomologada = $sucursal->ID;
+
                     } else {
                         $Log->warning("Sucursal no encontrada, Buscando sucursal Facebook");
                         $sucursalFB = TDP_FacebookSucursales::where('Sucursal', $sucursalNombre)
-                            ->orWhere('Sucursal', str_replace(" ", "_", $sucursalNombre))
                             ->where('GerenciaID', $gerenciaHomologada)
                             ->first();
                         if ($sucursalFB) {

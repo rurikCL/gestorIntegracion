@@ -66,7 +66,9 @@ class VTVentasResource extends Resource
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Cliente')
                     ->schema([
-                        Forms\Components\TextInput::make('ClienteID'),
+                        Forms\Components\Select::make('ClienteID')
+                        ->relationship('cliente', 'Nombre')
+                        ->searchable(),
                     ]),
 
                     Forms\Components\Section::make('Vendedor')

@@ -156,7 +156,11 @@ class MK_Leads extends Model
 
     public function logs()
     {
-        return $this->hasManyThrough(API_LogSolicitud::class, ApiSolicitudes::class, 'ReferenciaID', 'SolicitudID', 'ID', 'ID');
+        return $this->hasManyThrough(API_LogSolicitud::class, ApiSolicitudes::class,
+            'ReferenciaID',
+            'SolicitudID',
+            'ID',
+            'ID');
     }
 
     public function scopeValidado($query)

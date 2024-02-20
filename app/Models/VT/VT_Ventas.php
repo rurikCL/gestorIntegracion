@@ -3,6 +3,7 @@
 namespace App\Models\VT;
 
 use App\Models\CC\CC_Optiman;
+use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Modelos;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_TipoMantencion;
@@ -200,6 +201,11 @@ class VT_Ventas extends Model
     public function solicitudes()
     {
         return $this->hasMany(SIS_Solicitudes::class, 'ReferenciaID', 'ID');
+    }
+
+    public function cliente()
+    {
+        return $this->belongsTo(MA_Clientes::class, 'ClienteID');
     }
 
 

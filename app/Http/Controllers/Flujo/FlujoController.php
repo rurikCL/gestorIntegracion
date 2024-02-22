@@ -25,6 +25,9 @@ use Carbon\Carbon;
 use Carbon\Traits\Date;
 use GuzzleHttp\Client;
 use HubSpot\Client\Crm\Contacts\Model\Filter;
+use HubSpot\Client\Crm\Deals\Model\Filter as FilterDeal;
+use HubSpot\Client\Crm\Deals\Model\FilterGroup;
+use HubSpot\Client\Crm\Deals\Model\PublicObjectSearchRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -1113,6 +1116,171 @@ class FlujoController extends Controller
             }
         }
     }
+
+
+    public function leadsHubspotDeals()
+    {
+        echo "Ejecutando Flujo Hubspot <br>";
+        Log::info("Inicio de flujo Hubspot");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+
+        if ($flujo->Activo) {
+
+            $token = json_decode($flujo->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+
+            $filter1 = new FilterDeal([
+                'property_name' => 'idpompeyo',
+                'operator' => 'NOT_HAS_PROPERTY'
+            ]);
+            $filterGroup1 = new FilterGroup([
+                'filters' => [$filter1]
+            ]);
+            $publicObjectSearchRequest = new PublicObjectSearchRequest([
+                'properties' => ['idpompeyo', 'record_id___contacto','firstname', 'lastname', 'email', 'phone', 'hs_analytics_source_data_1', 'origen', 'marca', 'modelo', 'vpp', 'reglasucursal', 'reglavendedor', 'rut', 'sucursal', 'canal', 'financiamiento'],
+                'filter_groups' => [$filterGroup1],
+                'limit' => $flujo->MaxLote,
+            ]);
+
+
+            try {
+
+                $apiResponse = $client->crm()->deals()->searchApi()
+                    ->doSearch($publicObjectSearchRequest)
+                    ->getResults();
+
+//                Log::info("Leads a procesar : " . count($apiResponse));
+                foreach ($apiResponse as $item) {
+                    $data = $item->jsonSerialize();
+
+                    print("Buscando Lead : " . $data->id . "<br>");
+                    $lead = MK_Leads::where('IDExterno', $data->id)->first();
+
+                    $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
+
+                    if ($lead) {
+                        print("Lead encontrado : " . $lead->ID . "<br>");
+                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDExterno;
+
+                        $newProperties->setProperties([
+                            'idpompeyo' => $lead->ID,
+                            'idvendedor' => $lead->VendedorID,
+                            'nombrevendedor' => $lead->vendedor->Nombre,
+                        ]);
+                        $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+
+                    } else {
+                        print("Lead no encontrado <br>");
+                        Log::info("Creando nuevo Lead");
+
+                        if($data->properties['record_id___contacto'] ?? '' != ''){
+
+
+                        }
+
+                        $marca = $data->properties['marca'] ?? '';
+                        $modelo = $data->properties['modelo'] ?? '';
+                        $fuente = $data->properties['hs_analytics_source_data_1'] ?? '';
+                        $nombre = $data->properties['firstname'] . ' ' . $data->properties['lastname'] ?? '';
+                        $email = $data->properties['email'] ?? '';
+                        $telefono = $data->properties['phone'] ?? '';
+                        $origenProp = $data->properties['origen'] ?? '';
+                        $idExterno = $data->id ?? '';
+
+                        $vpp = $data->properties['vpp'] ?? 0;
+                        if ($vpp === 'SI') {
+                            $vpp = 1;
+                        } else {
+                            $vpp = 0;
+                        }
+
+                        $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
+                        $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
+                        $rut = $data->properties['rut'] ?? '';
+                        $sucursal = $data->properties['sucursal'] ?? '';
+                        $canal = $data->properties['canal'] ?? '';
+
+                        $financiamiento = $data->properties['financiamiento'] ?? 0;
+                        if ($financiamiento === 'SI') {
+                            $financiamiento = 1;
+                        } else {
+                            $financiamiento = 0;
+                        }
+
+                        $comentario = ($vpp) ? ' *Tiene VPP ' : '';
+
+                        if ($fuente == 'Facebook' || $origenProp == 'Facebook') {
+                            $origen = 8;
+                            $subOrigen = 36;
+                        } else if ($origenProp == "Whatsapp") {
+                            $origen = 3;
+                            $subOrigen = 14;
+                        } else {
+                            $origen = 8;
+                            $subOrigen = 36;
+                        }
+//                            $reglaVendedor = false;
+//                            $reglaSucursal = false;
+
+
+                        $leadObj = new LeadController();
+                        $req = new Request();
+                        $req['data'] = [
+                            "usuarioID" => 2904, // INTEGRACION HUBSPOT
+                            "reglaVendedor" => $reglaVendedor,
+                            "reglaSucursal" => $reglaSucursal,
+                            "rut" => $rut,
+                            "nombre" => $nombre,
+                            "email" => $email,
+                            "telefono" => $telefono,
+                            "lead" => [
+                                "idFlujo" => $flujo->ID,
+                                "origenID" => $origen,
+                                "subOrigenID" => $subOrigen,
+                                "sucursal" => $sucursal,
+                                "marca" => $marca,
+                                "modelo" => $modelo,
+                                "comentario" => $comentario,
+                                "externalID" => $idExterno,
+                                "financiamiento" => $financiamiento,
+                            ]
+                        ];
+                        dd($req['data']);
+                        $resultado = $leadObj->nuevoLead($req);
+                        if ($resultado) {
+                            $res = $resultado->getData();
+
+                            print("Nuevo Lead ");
+                            if ($res->LeadID > 0) {
+                                $lead = MK_Leads::where('ID', $res->LeadID)->first();
+
+                                $newProperties->setProperties([
+                                    'idpompeyo' => $lead->ID,
+                                    'idvendedor' => $lead->VendedorID,
+                                    'nombrevendedor' => $lead->vendedor->Nombre,
+                                ]);
+                                $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+                            }
+
+                        } else {
+                            print("Error al crear Lead ");
+                        }
+
+                    }
+                }
+
+                Log::info("Flujo OK");
+                return true;
+
+            } catch (ApiException $e) {
+                echo "Exception when calling basic_api->get_page: ", $e->getMessage();
+                return false;
+            }
+
+        }
+    }
+
 
     public function leadsHubspot()
     {

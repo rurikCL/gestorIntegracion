@@ -19,6 +19,8 @@ class MAClientesResource extends Resource
     protected static ?string $model = MA_Clientes::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Administracion';
+    protected static ?string $navigationLabel = 'Clientes';
 
     public static function form(Form $form): Form
     {

@@ -11,6 +11,7 @@ class MA_Usuarios extends Model
     use HasFactory;
 
     protected $table = 'MA_Usuarios';
+    protected $primaryKey = 'ID';
     protected $fillable = [
         'Nombre',
         'Email',
@@ -60,5 +61,15 @@ class MA_Usuarios extends Model
     public function scopeJefeSucursal($query)
     {
         return $query->where('CargoID', 2)->where('PerfilID', 3);
+    }
+
+    public function perfil()
+    {
+        return $this->belongsTo(MA_Perfiles::class, 'PerfilID');
+    }
+
+    public function cargo()
+    {
+        return $this->belongsTo(MA_Cargos::class, 'CargoID');
     }
 }

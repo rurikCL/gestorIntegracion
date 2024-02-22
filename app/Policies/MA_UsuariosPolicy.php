@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use HubSpot\Http\Auth;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class MA_UsuariosPolicy
@@ -21,7 +22,7 @@ class MA_UsuariosPolicy
     public function viewAny(User $user)
     {
         //
-        return false;
+        return $user->isAdmin();
     }
 
     public function create(User $user)

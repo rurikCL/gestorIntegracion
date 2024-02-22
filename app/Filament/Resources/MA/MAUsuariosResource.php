@@ -20,13 +20,23 @@ class MAUsuariosResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Administracion';
-    protected static ?string $modelLabel = 'Usuarios';
-
+    protected static ?string $navigationLabel = 'Usuarios Roma';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('Nombre'),
+                Forms\Components\TextInput::make('Rut'),
+                Forms\Components\TextInput::make('Email'),
+                Forms\Components\TextInput::make('Celular'),
+                Forms\Components\Select::make('PerfilID')
+                    ->relationship('perfil', 'Perfil'),
+                Forms\Components\Select::make('CargoID')
+                    ->relationship('cargo', 'Cargo'),
+                Forms\Components\TextInput::make('Disponible'),
+                Forms\Components\Toggle::make('Activo'),
+                Forms\Components\TextInput::make('Clave')
+                    ->password(),
             ]);
     }
 
@@ -34,24 +44,41 @@ class MAUsuariosResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('ID')->searchable(),
+                Tables\Columns\TextColumn::make('Nombre')->searchable(),
+                Tables\Columns\TextColumn::make('Rut')->searchable(),
+                Tables\Columns\TextColumn::make('Email')->searchable(),
+                Tables\Columns\TextColumn::make('Celular'),
+                Tables\Columns\TextColumn::make('perfil.Nombre')->label('Perfil'),
+                Tables\Columns\TextColumn::make('cargo.Nombre')->label('Cargo'),
+                Tables\Columns\BooleanColumn::make('Disponible'),
+                Tables\Columns\BooleanColumn::make('Activo'),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('Activo'),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageMAUsuarios::route('/'),
+            'index' => Pages\ListMAUsuarios::route('/'),
+            'create' => Pages\CreateMAUsuarios::route('/create'),
+            'edit' => Pages\EditMAUsuarios::route('/{record}/edit'),
         ];
     }
 }

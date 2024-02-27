@@ -26,6 +26,17 @@ class MA_SubOrigenes extends Model
         'FechaActualizacion',
         'EventoActualizacionID',
         'UsuarioActualizacionID',
+        'Alias'
     ];
+
+    public function origen()
+    {
+        return $this->belongsTo(MA_Origenes::class, 'OrigenID', 'ID');
+    }
+
+    public function scopeAlias($query, $alias)
+    {
+        return $query->where('Alias', $alias);
+    }
 
 }

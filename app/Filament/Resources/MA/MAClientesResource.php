@@ -31,9 +31,16 @@ class MAClientesResource extends Resource
                 Forms\Components\TextInput::make('Email'),
                 Forms\Components\TextInput::make('Telefono'),
                 Forms\Components\TextInput::make('Direccion'),
-                Forms\Components\TextInput::make('Ciudad'),
-                Forms\Components\TextInput::make('FechaNacimiento'),
-                Forms\Components\TextInput::make('Sexo'),
+                Forms\Components\Select::make('ComunaID')
+                ->options(fn() => \App\Models\MA\MA_Comunas::pluck('Comuna', 'ID'))->searchable(),
+                Forms\Components\Select::make('RegionID')
+                ->options(fn() => \App\Models\MA\MA_Regiones::pluck('Region', 'ID'))->searchable(),
+                Forms\Components\DatePicker::make('FechaNacimiento'),
+                Forms\Components\Select::make('Sexo')
+                ->options([
+                    'Masculino' => 'Masculino',
+                    'Femenino' => 'Femenino',
+                ]),
                 Forms\Components\TextInput::make('id_usuario'),
             ]);
     }

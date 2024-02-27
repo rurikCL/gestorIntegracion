@@ -12,6 +12,8 @@ class MA_Usuarios extends Model
 
     protected $table = 'MA_Usuarios';
     protected $primaryKey = 'ID';
+    public $timestamps = false;
+
     protected $fillable = [
         'Nombre',
         'Email',
@@ -72,4 +74,5 @@ class MA_Usuarios extends Model
     {
         return $this->belongsTo(MA_Cargos::class, 'CargoID');
     }
+
 }

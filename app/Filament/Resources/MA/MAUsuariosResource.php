@@ -31,8 +31,8 @@ class MAUsuariosResource extends Resource
                 Forms\Components\TextInput::make('Celular'),
                 Forms\Components\Select::make('PerfilID')
                     ->relationship('perfil', 'Perfil'),
-                Forms\Components\Select::make('CargoID')
-                    ->relationship('cargo', 'Cargo'),
+                Forms\Components\Select::make('CargoID')->name('cargoUsuario')
+                    ->options(fn () => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
                 Forms\Components\TextInput::make('Disponible'),
                 Forms\Components\Toggle::make('Activo'),
                 Forms\Components\TextInput::make('Clave')
@@ -49,8 +49,8 @@ class MAUsuariosResource extends Resource
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
                 Tables\Columns\TextColumn::make('Celular'),
-                Tables\Columns\TextColumn::make('perfil.Nombre')->label('Perfil'),
-                Tables\Columns\TextColumn::make('cargo.Nombre')->label('Cargo'),
+                Tables\Columns\TextColumn::make('perfil.Perfil')->label('Perfil'),
+                Tables\Columns\TextColumn::make('cargo.Cargo')->label('Cargo'),
                 Tables\Columns\BooleanColumn::make('Disponible'),
                 Tables\Columns\BooleanColumn::make('Activo'),
             ])
@@ -69,7 +69,7 @@ class MAUsuariosResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            'sucursales' => RelationManagers\SucursalesRelationManager::class,
         ];
     }
 

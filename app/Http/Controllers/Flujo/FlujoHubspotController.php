@@ -136,7 +136,7 @@ class FlujoHubspotController extends Controller
                         $origen = 8;
                         $subOrigen = 36;
 
-                        $origenData = MA_SubOrigenes::Alias($fuente)->first();
+                        $origenData = MA_SubOrigenes::Alias($origenProp)->first();
                         if ($origenData) {
                             $subOrigen = $origenData->ID;
                             $origen = $origenData->OrigenID;

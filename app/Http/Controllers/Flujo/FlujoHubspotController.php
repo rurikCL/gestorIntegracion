@@ -381,7 +381,7 @@ class FlujoHubspotController extends Controller
             if ($apiResponse) {
                 $data = $apiResponse->jsonSerialize();
                 $returnData = [
-                    "nombre" => $data->properties['firstname'] . ' ' . $data->properties['lastname'] ?? '',
+                    "nombre" => ($data->properties['firstname'] ?? '') . ' ' . ($data->properties['lastname'] ?? ''),
                     "email" => $data->properties['email'] ?? '',
                     "telefono" => $data->properties['phone'] ?? '',
                     "rut" => $data->properties['rut'] ?? '',

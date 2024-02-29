@@ -37,7 +37,8 @@ class FlujoHubspotController extends Controller
 
             $filter2 = new FilterDeal([
                 'property_name' => 'origen',
-                'operator' => 'HAS_PROPERTY'
+                'operator' => 'EQ',
+                'value' => 'RELIF'
             ]);
             $filterGroup1 = new FilterGroup([
                 'filters' => [$filter1, $filter2]
@@ -58,7 +59,6 @@ class FlujoHubspotController extends Controller
 //                Log::info("Leads a procesar : " . count($apiResponse));
                 foreach ($apiResponse as $item) {
                     $data = $item->jsonSerialize();
-                    dd($data);
 
                     print("Buscando Lead : " . $data->id . "<br>");
                     $lead = MK_Leads::where('IDExterno', $data->id)->first();
@@ -80,17 +80,29 @@ class FlujoHubspotController extends Controller
                         print("Lead no encontrado <br>");
                         Log::info("Creando nuevo Lead");
 
-                        if ($data->properties['record_id___contacto'] ?? '' != '') {
+                        if ($data->properties['email'] == '' && $data->properties['phone'] == ''
+                            && $data->properties['nombre'] == '' && $data->properties['rut'] == '') {
+                            print("No hay datos de cliente, se busca contacto <br>");
 
+                            if ($data->properties['record_id___contacto'] ?? '' != '') {
+                                $dataContacto = $this->getContactInfo($data->properties['record_id___contacto'], $token->token);
+                                $nombre = $dataContacto['nombre'] ?? '';
+                                $email = $dataContacto['email'] ?? '';
+                                $telefono = $dataContacto['telefono'] ?? '';
+                                $rut = $dataContacto['rut'] ?? '';
+                            }
 
+                        } else {
+                            $nombre = $data->properties['firstname'] . ' ' . $data->properties['lastname'] ?? '';
+                            $email = $data->properties['email'] ?? '';
+                            $telefono = $data->properties['phone'] ?? '';
+                            $rut = $data->properties['rut'] ?? '';
                         }
 
                         $marca = $data->properties['marca'] ?? '';
                         $modelo = $data->properties['modelo'] ?? '';
                         $fuente = $data->properties['hs_analytics_source_data_1'] ?? '';
-                        $nombre = $data->properties['firstname'] . ' ' . $data->properties['lastname'] ?? '';
-                        $email = $data->properties['email'] ?? '';
-                        $telefono = $data->properties['phone'] ?? '';
+
                         $origenProp = $data->properties['origen'] ?? '';
                         $idExterno = $data->id ?? '';
 
@@ -103,7 +115,6 @@ class FlujoHubspotController extends Controller
 
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
                         $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
-                        $rut = $data->properties['rut'] ?? '';
                         $sucursal = $data->properties['sucursal'] ?? '';
                         $canal = $data->properties['canal'] ?? '';
 
@@ -349,5 +360,32 @@ class FlujoHubspotController extends Controller
             }
 
         }
+    }
+
+    // esta funcion es para obtener la informacion de un contacto en hubspot
+    public function getContactInfo($id, $token)
+    {
+
+        $client = Factory::createWithAccessToken($token);
+        $returnData = [];
+
+        try {
+            $apiResponse = $client->crm()->contacts()->basicApi()->getById($id,
+                ['firstname,lastname,phone,email,rut, marca,modelo,hs_analytics_source_data_1,compra_con_financiamiento,reglasucursal,reglavendedor,canal,vpp,financiamiento,sucursal,idpompeyo,origen']
+            );
+            if ($apiResponse) {
+                $data = $apiResponse->jsonSerialize();
+                $returnData = [
+                    "nombre" => $data->properties['firstname'] . ' ' . $data->properties['lastname'] ?? '',
+                    "email" => $data->properties['email'] ?? '',
+                    "telefono" => $data->properties['phone'] ?? '',
+                    "rut" => $data->properties['rut'] ?? '',
+                ];
+            }
+        } catch (ApiException $e) {
+            echo "Exception when calling basic_api->get_by_id: ", $e->getMessage();
+        }
+
+        return $returnData;
     }
 }

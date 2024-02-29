@@ -14,6 +14,7 @@ class SIS_UsuariosSucursales extends Model
 
     protected $table = 'SIS_UsuariosSucursales';
     protected $primaryKey = 'ID';
+    public $timestamps = false;
 
     protected $fillable = [
         'FechaCreacion',

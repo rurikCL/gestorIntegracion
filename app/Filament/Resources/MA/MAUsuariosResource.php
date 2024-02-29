@@ -33,7 +33,7 @@ class MAUsuariosResource extends Resource
                     ->relationship('perfil', 'Perfil'),
                 Forms\Components\Select::make('CargoID')->name('cargoUsuario')
                     ->options(fn () => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
-                Forms\Components\TextInput::make('Disponible'),
+                Forms\Components\Toggle::make('Disponible'),
                 Forms\Components\Toggle::make('Activo'),
                 Forms\Components\TextInput::make('Clave')
                     ->password(),

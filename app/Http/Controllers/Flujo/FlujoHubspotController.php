@@ -76,21 +76,6 @@ class FlujoHubspotController extends Controller
                         ]);
                         $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
 
-                        /*$properties1 = [
-                            'idpompeyo' => $lead->ID,
-                            'idvendedor' => $lead->VendedorID,
-                            'nombrevendedor' => $lead->vendedor->Nombre,
-                        ];
-                        $simplePublicObjectInput = new SimplePublicObjectInput([
-                            'properties' => $properties1,
-                        ]);
-                        try {
-                            $apiResponse = $client->crm()->deals()->basicApi()->update('dealId', $simplePublicObjectInput);
-                            var_dump($apiResponse);
-                        } catch (ApiException $e) {
-                            echo "Exception when calling basic_api->update: ", $e->getMessage();
-                        }*/
-
                     } else {
                         print("Lead no encontrado <br>");
                         Log::info("Creando nuevo Lead");
@@ -130,7 +115,8 @@ class FlujoHubspotController extends Controller
 
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
                         $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
-                        if($marca == 'usados'){
+
+                        if($marca == 'USADOS'){
                             $sucursal = 'USADOS BILBAO';
                         } else {
                             $sucursal = $data->properties['sucursal'] ?? '';

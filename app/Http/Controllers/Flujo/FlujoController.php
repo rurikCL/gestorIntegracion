@@ -460,6 +460,138 @@ class FlujoController extends Controller
         return true;
     }
 
+    public function sendOTsSICIndumotora()
+    {
+
+        echo "Ejecutando Flujo KIA <br>";
+        Log::info("Inicio flujo OTs Indumotora");
+
+        $flujo = FLU_Flujos::where('Nombre', 'KIA Ventas')->first();
+
+        if ($flujo->Activo) {
+            Log::info("Flujo activo");
+//            $h = new FLU_Homologacion();
+
+            $ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
+                ->Gerencia(2)
+                ->NoNotificado($flujo->ID)
+//                ->where('FechaVenta', '>=', '2023-11-01 00:00:00')
+                ->where('FechaVenta', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->where('EstadoVentaID', 4)
+                ->where('Cajon', '<>', '')
+                ->limit($flujo->MaxLote ?? 5)
+                ->get();
+//                ->toSql();
+
+//            dd($ventas);
+
+            if ($ventas) {
+                Log::info("Existen ventas");
+//                $cuenta = $ventas->count();
+                $solicitudCon = new ApiSolicitudController();
+                Log::info("Cantidad de ventas : " . count($ventas));
+
+                foreach ($ventas as $venta) {
+                    print PHP_EOL . "Procesando orden : " . $venta->ID . PHP_EOL;
+                    Log::info("Procesando orden : " . $venta->ID);
+                    $req = new Request();
+                    $req['referencia_id'] = $venta->ID;
+                    $req['proveedor_id'] = 9;
+                    $req['api_id'] = 12;
+                    $req['prioridad'] = 1;
+                    $req['flujoID'] = $flujo->ID;
+
+                    $rut = substr($venta->cliente->Rut, 0, length($venta->cliente->Rut) - 1) . "-" . substr($venta->cliente->Rut, -1);
+                    $rutVendedor = substr($venta->vendedor->Rut, 0, length($venta->vendedor->Rut) - 1) . "-" . substr($venta->vendedor->Rut, -1);
+
+                    if ($venta->stock) {
+                        if ($venta->stock->modeloID != 1) {
+                            $modelo = $venta->stock->modelo->Modelo;
+                        } else {
+                            $modelo = $venta->stock->Modelo;
+                        }
+
+                        if ($venta->stock->versionID != 1) {
+                            $version = $venta->stock->version->Version;
+                        } else {
+                            $version = $venta->stock->Version;
+                        }
+
+                        $vin = $venta->stock->VIN ?? $venta->Vin;
+                        $color = $venta->stock->ColorExterior ?? $venta->ColorReferencial;
+                    } else {
+                        $modelo = $venta->modelo->Modelo;
+                        $version = $venta->version->Version;
+                        $vin = $venta->Vin;
+                        $color = $venta->ColorReferencial;
+                    }
+
+                    $xml = XmlWriter::make()->write('exportacion', [
+                        'venta' => [
+                            'codigo_dealers' => 6, // Valor fijo (pompeyo)
+                            'marca' => 1, // Codigo para KIA (externo)
+                            'modelo' => $modelo,
+                            'vin' => $vin,
+                            'version' => $version,
+                            'color' => $color,
+                            'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
+                            'tipo_documento' => 'FA',
+                            'num_documento' => $venta->NumeroFactura,
+                            'doc_referencia' => $venta->NotaVenta,
+                            'precio' => $venta->ValorFactura,
+                            'nombre_local' => $venta->sucursal->Sucursal ?? '',
+                            'estado_envio' => 'N',
+                            'rut_cliente' => $rut,
+                            'nombre_cliente' => $venta->cliente->Nombre,
+                            'direccion_cliente' => $venta->cliente->Direccion,
+                            'ciudad_cliente' => 'SANTIAGO',
+                            'telefono_cliente' => $venta->cliente->Telefono,
+                            'rut_vendedor' => $rutVendedor,
+                            'nombre_vendedor' => $venta->vendedor->Nombre,
+                            'nv_referencia' => $venta->NotaVenta,
+                            'rut_facturacion' => $rut,
+                            'nombre_facturado' => $venta->cliente->Nombre,
+//                            'id_facturacion_dybox' => 0,
+                        ],
+                    ]);
+
+                    $xml = str_replace('<?xml version="1.0" encoding="utf-8"?>', '', $xml);
+
+                    $req['data'] = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ind="http://www.indumotora.cl/">
+                       <soapenv:Header/>
+                       <soapenv:Body>
+                          <ind:Publish>
+                             <!--Optional:-->
+                             <ind:id>001</ind:id>
+                             <!--Optional:-->
+                             <ind:canales>PompeyoCarrasco,venta</ind:canales>
+                             <!-- toma el valor venta, ot , repuestos o meson  segun corresponda-->
+                             <!--Optional:-->
+                             <ind:msg>
+                             <![CDATA[
+                             ' . $xml . '
+                                ]]>
+                             </ind:msg>
+                          </ind:Publish>
+                       </soapenv:Body>
+                    </soapenv:Envelope>';
+
+
+                    $resp = $solicitudCon->store($req);
+                    echo("<br>" . ($resp->message ?? ''));
+
+                }
+            } else {
+                Log::info("No se encontraron ventas");
+            }
+
+        } else {
+            Log::error("Flujo no activo");
+        }
+
+        return true;
+    }
+
     public function sendLeadMG()
     {
         echo "Ejecutando Flujo MG <br>";
@@ -1114,170 +1246,6 @@ class FlujoController extends Controller
                     $req['flujoID'] = $flujo->ID;
                 }
             }
-        }
-    }
-
-
-    public function leadsHubspotDeals()
-    {
-        echo "Ejecutando Flujo Hubspot <br>";
-        Log::info("Inicio de flujo Hubspot");
-
-        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-
-        if ($flujo->Activo) {
-
-            $token = json_decode($flujo->Opciones);
-            $client = Factory::createWithAccessToken($token->token);
-
-            $filter1 = new FilterDeal([
-                'property_name' => 'idpompeyo',
-                'operator' => 'NOT_HAS_PROPERTY'
-            ]);
-            $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1]
-            ]);
-            $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto','firstname', 'lastname', 'email', 'phone', 'hs_analytics_source_data_1', 'origen', 'marca', 'modelo', 'vpp', 'reglasucursal', 'reglavendedor', 'rut', 'sucursal', 'canal', 'financiamiento'],
-                'filter_groups' => [$filterGroup1],
-                'limit' => $flujo->MaxLote,
-            ]);
-
-
-            try {
-
-                $apiResponse = $client->crm()->deals()->searchApi()
-                    ->doSearch($publicObjectSearchRequest)
-                    ->getResults();
-
-//                Log::info("Leads a procesar : " . count($apiResponse));
-                foreach ($apiResponse as $item) {
-                    $data = $item->jsonSerialize();
-
-                    print("Buscando Lead : " . $data->id . "<br>");
-                    $lead = MK_Leads::where('IDExterno', $data->id)->first();
-
-                    $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
-
-                    if ($lead) {
-                        print("Lead encontrado : " . $lead->ID . "<br>");
-                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDExterno;
-
-                        $newProperties->setProperties([
-                            'idpompeyo' => $lead->ID,
-                            'idvendedor' => $lead->VendedorID,
-                            'nombrevendedor' => $lead->vendedor->Nombre,
-                        ]);
-                        $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
-
-                    } else {
-                        print("Lead no encontrado <br>");
-                        Log::info("Creando nuevo Lead");
-
-                        if($data->properties['record_id___contacto'] ?? '' != ''){
-
-
-                        }
-
-                        $marca = $data->properties['marca'] ?? '';
-                        $modelo = $data->properties['modelo'] ?? '';
-                        $fuente = $data->properties['hs_analytics_source_data_1'] ?? '';
-                        $nombre = $data->properties['firstname'] . ' ' . $data->properties['lastname'] ?? '';
-                        $email = $data->properties['email'] ?? '';
-                        $telefono = $data->properties['phone'] ?? '';
-                        $origenProp = $data->properties['origen'] ?? '';
-                        $idExterno = $data->id ?? '';
-
-                        $vpp = $data->properties['vpp'] ?? 0;
-                        if ($vpp === 'SI') {
-                            $vpp = 1;
-                        } else {
-                            $vpp = 0;
-                        }
-
-                        $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
-                        $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
-                        $rut = $data->properties['rut'] ?? '';
-                        $sucursal = $data->properties['sucursal'] ?? '';
-                        $canal = $data->properties['canal'] ?? '';
-
-                        $financiamiento = $data->properties['financiamiento'] ?? 0;
-                        if ($financiamiento === 'SI') {
-                            $financiamiento = 1;
-                        } else {
-                            $financiamiento = 0;
-                        }
-
-                        $comentario = ($vpp) ? ' *Tiene VPP ' : '';
-
-                        if ($fuente == 'Facebook' || $origenProp == 'Facebook') {
-                            $origen = 8;
-                            $subOrigen = 36;
-                        } else if ($origenProp == "Whatsapp") {
-                            $origen = 3;
-                            $subOrigen = 14;
-                        } else {
-                            $origen = 8;
-                            $subOrigen = 36;
-                        }
-//                            $reglaVendedor = false;
-//                            $reglaSucursal = false;
-
-
-                        $leadObj = new LeadController();
-                        $req = new Request();
-                        $req['data'] = [
-                            "usuarioID" => 2904, // INTEGRACION HUBSPOT
-                            "reglaVendedor" => $reglaVendedor,
-                            "reglaSucursal" => $reglaSucursal,
-                            "rut" => $rut,
-                            "nombre" => $nombre,
-                            "email" => $email,
-                            "telefono" => $telefono,
-                            "lead" => [
-                                "idFlujo" => $flujo->ID,
-                                "origenID" => $origen,
-                                "subOrigenID" => $subOrigen,
-                                "sucursal" => $sucursal,
-                                "marca" => $marca,
-                                "modelo" => $modelo,
-                                "comentario" => $comentario,
-                                "externalID" => $idExterno,
-                                "financiamiento" => $financiamiento,
-                            ]
-                        ];
-                        dd($req['data']);
-                        $resultado = $leadObj->nuevoLead($req);
-                        if ($resultado) {
-                            $res = $resultado->getData();
-
-                            print("Nuevo Lead ");
-                            if ($res->LeadID > 0) {
-                                $lead = MK_Leads::where('ID', $res->LeadID)->first();
-
-                                $newProperties->setProperties([
-                                    'idpompeyo' => $lead->ID,
-                                    'idvendedor' => $lead->VendedorID,
-                                    'nombrevendedor' => $lead->vendedor->Nombre,
-                                ]);
-                                $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
-                            }
-
-                        } else {
-                            print("Error al crear Lead ");
-                        }
-
-                    }
-                }
-
-                Log::info("Flujo OK");
-                return true;
-
-            } catch (ApiException $e) {
-                echo "Exception when calling basic_api->get_page: ", $e->getMessage();
-                return false;
-            }
-
         }
     }
 

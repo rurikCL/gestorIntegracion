@@ -59,6 +59,7 @@ class FlujoHubspotController extends Controller
 //                Log::info("Leads a procesar : " . count($apiResponse));
                 foreach ($apiResponse as $item) {
                     $data = $item->jsonSerialize();
+                    dd($data);
 
                     print("Buscando Lead : " . $data->id . "<br>");
                     $lead = MK_Leads::where('IDExterno', $data->id)->first();
@@ -118,6 +119,7 @@ class FlujoHubspotController extends Controller
 
                         if($marca == 'USADOS'){
                             $sucursal = 'USADOS BILBAO';
+                            $reglaSucursal = 0;
                         } else {
                             $sucursal = $data->properties['sucursal'] ?? '';
                         }
@@ -130,7 +132,8 @@ class FlujoHubspotController extends Controller
                             $financiamiento = 0;
                         }
 
-                        $comentario = ($vpp) ? ' *Tiene VPP ' : '';
+                        $comentario = $data->properties['comentario'] ?? '';
+                        $comentario .= ($vpp) ? ' *Tiene VPP ' : '';
 
                         // Revision de fuente ----------------------------------
                         $origen = 8;
@@ -140,6 +143,8 @@ class FlujoHubspotController extends Controller
                         if ($origenData) {
                             $subOrigen = $origenData->ID;
                             $origen = $origenData->OrigenID;
+                        } else {
+                            Log::info("SubOrigen no encontrado : " . $origenProp);
                         }
 
 //                            $reglaVendedor = false;

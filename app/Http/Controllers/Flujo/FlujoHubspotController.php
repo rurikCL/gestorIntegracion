@@ -59,7 +59,6 @@ class FlujoHubspotController extends Controller
 //                Log::info("Leads a procesar : " . count($apiResponse));
                 foreach ($apiResponse as $item) {
                     $data = $item->jsonSerialize();
-                    dd($data);
 
                     print("Buscando Lead : " . $data->id . "<br>");
                     $lead = MK_Leads::where('IDExterno', $data->id)->first();
@@ -147,8 +146,6 @@ class FlujoHubspotController extends Controller
                             Log::info("SubOrigen no encontrado : " . $origenProp);
                         }
 
-//                            $reglaVendedor = false;
-//                            $reglaSucursal = false;
 
                         // --------------------------------------------------------
 

@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Http\Controllers\Flujo\FlujoController;
+use App\Http\Controllers\Flujo\FlujoHubspotController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 

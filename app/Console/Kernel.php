@@ -42,6 +42,9 @@ class Kernel extends ConsoleKernel
             $flujoControl = new FlujoController();
             $flujoControl->leadsHubspot();
 
+            $flujoNegocio = new FlujoHubspotController();
+            $flujoNegocio->leadsHubspotDeals();
+
             $flujoControl->reprocesarSolicitudes();
 
         })->name("Control de Flujos : 5 minutos")->everyFiveMinutes();

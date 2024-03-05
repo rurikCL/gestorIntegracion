@@ -84,12 +84,14 @@ class FlujoHubspotController extends Controller
                             && $data->properties['nombre'] == '' && $data->properties['rut'] == '') {
                             print("No hay datos de cliente, se busca contacto <br>");
 
-                            if ($data->properties['record_id___contacto'] ?? '' != '') {
+                            if (isset($data->properties['record_id___contacto'])) {
                                 $dataContacto = $this->getContactInfo($data->properties['record_id___contacto'], $token->token);
                                 $nombre = $dataContacto['nombre'] ?? '';
                                 $email = $dataContacto['email'] ?? '';
                                 $telefono = $dataContacto['telefono'] ?? '';
                                 $rut = $dataContacto['rut'] ?? '';
+                            } else {
+                                continue;
                             }
 
                         } else {

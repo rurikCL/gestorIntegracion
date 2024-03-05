@@ -21,6 +21,7 @@ Route::get('/', function () {
 
 Route::get('/flujo/kia/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendOtIndumotora']);
 Route::get('/flujo/kiaventas/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendVentasIndumotora']);
+Route::get('/flujo/kiaOTs/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendOTsSICIndumotora']);
 Route::get('/flujo/mg/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendLeadMG']);
 Route::get('/flujo/mgc/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendCotizacionMG']);
 Route::get('/flujo/movicenter/', [\App\Http\Controllers\ApiProd\FLujoHomologacionController::class, 'insertaMasivo']);

@@ -334,7 +334,7 @@ class FlujoController extends Controller
         echo "Ejecutando Flujo KIA <br>";
         Log::info("Inicio flujo Ventas Indumotora");
 
-        $flujo = FLU_Flujos::where('Nombre', 'KIA Ventas')->first();
+        $flujo = FLU_Flujos::where('Nombre', 'KIA SIC')->first();
 
         if ($flujo->Activo) {
             Log::info("Flujo activo");
@@ -466,97 +466,129 @@ class FlujoController extends Controller
         echo "Ejecutando Flujo KIA <br>";
         Log::info("Inicio flujo OTs Indumotora");
 
-        $flujo = FLU_Flujos::where('Nombre', 'KIA Ventas')->first();
+        $flujo = FLU_Flujos::where('Nombre', 'KIA SIC')->first();
 
         if ($flujo->Activo) {
             Log::info("Flujo activo");
 //            $h = new FLU_Homologacion();
 
-            $ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
-                ->Gerencia(2)
+            $ordenes = PV_PostVenta::with('venta')
+                ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
-//                ->where('FechaVenta', '>=', '2023-11-01 00:00:00')
-                ->where('FechaVenta', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
-                ->where('EstadoVentaID', 4)
-                ->where('Cajon', '<>', '')
+                ->where('TipoOrigen', 'REAL')
+                ->where('FechaFacturacion', '>=', '2024-03-02 00:00:00')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
-//                ->toSql();
 
-//            dd($ventas);
-
-            if ($ventas) {
-                Log::info("Existen ventas");
-//                $cuenta = $ventas->count();
+            if ($ordenes) {
+                Log::info("Existen Ots");
                 $solicitudCon = new ApiSolicitudController();
-                Log::info("Cantidad de ventas : " . count($ventas));
+                Log::info("Cantidad de Ots : " . count($ordenes));
 
-                foreach ($ventas as $venta) {
-                    print PHP_EOL . "Procesando orden : " . $venta->ID . PHP_EOL;
-                    Log::info("Procesando orden : " . $venta->ID);
+                foreach ($ordenes as $orden) {
+                    print PHP_EOL . "Procesando orden : " . $orden->ID . PHP_EOL;
+                    Log::info("Procesando orden : " . $orden->ID);
                     $req = new Request();
-                    $req['referencia_id'] = $venta->ID;
+                    $req['referencia_id'] = $orden->ID;
                     $req['proveedor_id'] = 9;
                     $req['api_id'] = 12;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
 
-                    $rut = substr($venta->cliente->Rut, 0, length($venta->cliente->Rut) - 1) . "-" . substr($venta->cliente->Rut, -1);
-                    $rutVendedor = substr($venta->vendedor->Rut, 0, length($venta->vendedor->Rut) - 1) . "-" . substr($venta->vendedor->Rut, -1);
+                    $rut = substr($orden->cliente->Rut, 0, length($orden->cliente->Rut) - 1) . "-" . substr($orden->cliente->Rut, -1);
+                    $rutVendedor = substr($orden->vendedor->Rut, 0, length($orden->vendedor->Rut) - 1) . "-" . substr($orden->vendedor->Rut, -1);
 
-                    if ($venta->stock) {
-                        if ($venta->stock->modeloID != 1) {
-                            $modelo = $venta->stock->modelo->Modelo;
+                    if ($orden->stock) {
+                        if ($orden->stock->modeloID != 1) {
+                            $modelo = $orden->stock->modelo->Modelo;
                         } else {
-                            $modelo = $venta->stock->Modelo;
+                            $modelo = $orden->stock->Modelo;
                         }
 
-                        if ($venta->stock->versionID != 1) {
-                            $version = $venta->stock->version->Version;
+                        if ($orden->stock->versionID != 1) {
+                            $version = $orden->stock->version->Version;
                         } else {
-                            $version = $venta->stock->Version;
+                            $version = $orden->stock->Version;
                         }
 
-                        $vin = $venta->stock->VIN ?? $venta->Vin;
-                        $color = $venta->stock->ColorExterior ?? $venta->ColorReferencial;
+                        $vin = $orden->stock->VIN ?? $orden->Vin;
+                        $color = $orden->stock->ColorExterior ?? $orden->ColorReferencial;
                     } else {
-                        $modelo = $venta->modelo->Modelo;
-                        $version = $venta->version->Version;
-                        $vin = $venta->Vin;
-                        $color = $venta->ColorReferencial;
+                        $modelo = $orden->modelo->Modelo;
+                        $version = $orden->version->Version;
+                        $vin = $orden->Vin;
+                        $color = $orden->ColorReferencial;
                     }
 
                     $xml = XmlWriter::make()->write('exportacion', [
-                        'venta' => [
+                        'ot' => [
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
-                            'marca' => 1, // Codigo para KIA (externo)
-                            'modelo' => $modelo,
-                            'vin' => $vin,
-                            'version' => $version,
-                            'color' => $color,
-                            'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
-                            'tipo_documento' => 'FA',
-                            'num_documento' => $venta->NumeroFactura,
-                            'doc_referencia' => $venta->NotaVenta,
-                            'precio' => $venta->ValorFactura,
-                            'nombre_local' => $venta->sucursal->Sucursal ?? '',
-                            'estado_envio' => 'N',
-                            'rut_cliente' => $rut,
-                            'nombre_cliente' => $venta->cliente->Nombre,
-                            'direccion_cliente' => $venta->cliente->Direccion,
-                            'ciudad_cliente' => 'SANTIAGO',
-                            'telefono_cliente' => $venta->cliente->Telefono,
-                            'rut_vendedor' => $rutVendedor,
-                            'nombre_vendedor' => $venta->vendedor->Nombre,
-                            'nv_referencia' => $venta->NotaVenta,
-                            'rut_facturacion' => $rut,
-                            'nombre_facturado' => $venta->cliente->Nombre,
-//                            'id_facturacion_dybox' => 0,
+                            'numero_ot' => $orden->FolioOT, // Codigo para KIA (externo)
+                            'marca' => $orden->Marca,
+                            'fecha_atencion' => Carbon::parse($orden->FechaOT)->format("Ymd"),
+//                            'rut_recepcionista' => '',
+                            'nombre_recepcionista' => $orden->Recepcionista,
+//                            'rut_mecanico' => '',
+                            'nombre_mecanico' => $orden->NombreMecanico,
+//                            'seguro_automotriz' => $orden->TotalSeguro,
+                            'vin' => $orden->Vin,
+                            'numero_motor' => $orden->Chasis,
+                            'numero_chasis' => $orden->Chasis,
+                            'patente' => $orden->Patente,
+                            'kilometraje' => $orden->Kilometraje,
+                            'rut_cliente' => $orden->ClienteRut,
+//                            'tipo_persona' => 'J',
+                            'razon_social' => '',
+                            'nombres_cliente' => $orden->ClienteNombre,
+                            'apellidos_cliente' => '',
+//                            'sexo' => $orden->ClienteSexo,
+                            'fecha_nacimiento' => Carbon::parse($orden->cliente->FechaNacimiento)->format("Ymd"),
+                            'direccion' => $orden->ClienteDireccion,
+//                            'villa_poblacion' => '',
+                            'codigo_region' => 13,
+                            'nombre_region' => 'REGION METROPOLITANA',
+                            'codigo_comuna' => $orden->cliente->ComunaID,
+                            'nombre_comuna' => $orden->cliente->comuna->Comuna,
+                            'telefono_comercial' => 0,
+                            'telefono_particular' => $orden->cliente->Telefono,
+                            'telefono_movil' => 0,
+                            'telefono_contacto' => 0,
+//                            'tipo_contacto' => 1,
+//                            'nombres_contacto' => '',
+//                            'apellido_contactos' => '',
+                            'correo_electronico' => $orden->cliente->Email,
+                            'estado_ot' => 'F',
+                            'mano_obra' => $orden->VentaManoObra,
+                            'mano_obra_pint_desab' => $orden->VentaCarroceria,
+                            'repuestos_servicio' => $orden->VentaRepuestos,
+                            'repuestos_plaza' => 0,
+                            'repuestos_colision' => 0,
+                            'lubricantes_grasas' => $orden->VentaLubricantes,
+                            'trabajos_terceros' => $orden->VentaServicioTerceros,
+                            'materiales' => 0,
+                            'descuentos' => $orden->Dctos,
+                            'horas_vendidas' => 0,
+                            'estado_envio' => '',
+                            'sucursal' => $orden->Sucursal,
+                            'kilometraje_mantencion' => $orden->Kilometraje,
+                            'fecha_entrega' => Carbon::parse($orden->FechaFacturacion)->format("Ymd"),
+                            'fecha_facturacion' => Carbon::parse($orden->FechaFacturacion)->format("Ymd"),
+                            'mantencion' => 'X',
+                            'garantia' => '',
+                            'dyp' => 0,
+                            'rep_varias' => '',
+                            'accesorios' => '',
+                            'ot_interna' => '',
+//                            'id_Facturacion_dybox' => 0,
+                            'numero_factura' => $orden->Folio,
+                            'rut_facturado' => $orden->ClienteRutPagador,
+                            'nombre_facturado' => $orden->ClienteNombrePagador,
+                            'glosa_ot' => $orden->FolioOT,
                         ],
                     ]);
 
                     $xml = str_replace('<?xml version="1.0" encoding="utf-8"?>', '', $xml);
-
+                    dd($xml);
                     $req['data'] = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ind="http://www.indumotora.cl/">
                        <soapenv:Header/>
                        <soapenv:Body>

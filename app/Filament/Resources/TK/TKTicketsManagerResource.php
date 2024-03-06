@@ -63,8 +63,12 @@ class TKTicketsManagerResource extends Resource
                 Tables\Columns\TextColumn::make('department'),
                 Tables\Columns\TextColumn::make('applicant'),
                 Tables\Columns\TextColumn::make('assigned'),
-                Tables\Columns\TextColumn::make('detail'),
-                Tables\Columns\TextColumn::make('state'),
+                Tables\Columns\BadgeColumn::make('state')
+                ->enum([
+                    '1' => 'Abierto',
+                    '2' => 'En Proceso',
+                    '3' => 'Cerrado',
+                ]),
 
             ])
             ->filters([

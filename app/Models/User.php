@@ -18,6 +18,7 @@ class User extends Authenticatable implements FilamentUser
 
     protected $table = 'API_users';
     protected $connection = 'mysql-pompeyo';
+    protected $primaryKey = 'id';
 
     /**
      * The attributes that are mass assignable.

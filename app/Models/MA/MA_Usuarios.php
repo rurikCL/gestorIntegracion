@@ -3,6 +3,7 @@
 namespace App\Models\MA;
 
 use App\Models\SIS\SIS_UsuariosSucursales;
+use App\Models\TK\TK_agents;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -76,6 +77,11 @@ class MA_Usuarios extends Model
     public function sucursales()
     {
         return $this->hasMany(SIS_UsuariosSucursales::class, 'UsuarioID', 'ID');
+    }
+
+    public function agente()
+    {
+        return $this->hasOne(TK_agents::class, 'user_id', 'ID');
     }
 
     public function scopeSucursalAsignada($query, $sucursal_id)

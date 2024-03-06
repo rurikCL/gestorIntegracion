@@ -15,7 +15,7 @@ class TK_sub_categories extends Model
     protected $fillable = [
         'name',
         'description',
-        'category_id',
+        'c',
         'created_at',
         'updated_at',
         'FechaCreacion',
@@ -25,4 +25,9 @@ class TK_sub_categories extends Model
         'EventoActualizacionID',
         'UsuarioActualizacionID',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo('App\Models\TK\TK_categories',  'category_id', 'id');
+    }
 }

@@ -519,10 +519,10 @@ class FlujoController extends Controller
                     ];
 
                     // Revision de RUT, validacion y creacion en Clientes
-
                     $rut = $orden->ClienteRut;
                     Log::info("Buscando cliente " . $rut);
 
+                    // SI no trae - , significa que el rut no tiene digito y hay que calcular
                     if(str_contains($rut, '-') === false) {
                         $s=1;
                         for($m=0;$rut!=0;$rut/=10)
@@ -609,7 +609,6 @@ class FlujoController extends Controller
                     ]);
 
                     $xml = str_replace('<?xml version="1.0" encoding="utf-8"?>', '', $xml);
-                    dd($xml);
                     $req['data'] = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ind="http://www.indumotora.cl/">
                        <soapenv:Header/>
                        <soapenv:Body>
@@ -632,7 +631,7 @@ class FlujoController extends Controller
 
                     $resp = $solicitudCon->store($req);
                     echo("<br>" . ($resp->message ?? ''));
-
+dd($resp);
                 }
             } else {
                 Log::info("No se encontraron ventas");

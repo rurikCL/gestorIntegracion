@@ -106,6 +106,7 @@ class PV_PostVenta extends Model
         'MarcaId',
         'TipoMantencion',
         'Notificado',
+        'CategoriaOT',
     ];
 
     protected $dates = [
@@ -114,16 +115,16 @@ class PV_PostVenta extends Model
     ];
 
 
-    public function rutCliente() : Attribute
+    public function ClienteRut() : Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => str_replace(['.', '-'], '', $value),
+            get: fn (string $value) => str_replace('-', '', $value )    ,
         );
     }
 
     public function cliente()
     {
-        return $this->hasOne(MA_Clientes::class, 'Rut', 'rutCliente');
+        return $this->hasOne(MA_Clientes::class, 'Rut', 'ClienteRut');
     }
 
     public function venta()

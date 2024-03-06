@@ -472,11 +472,12 @@ class FlujoController extends Controller
             Log::info("Flujo activo");
 //            $h = new FLU_Homologacion();
 
-            $ordenes = PV_PostVenta::with('venta')
+            $ordenes = PV_PostVenta::with('cliente')
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', '>=', '2024-03-02 00:00:00')
+                ->where('FechaFacturacion', '>=', '2024-02-02 00:00:00')
+                ->where('CategoriaOT','<>', 'MESÓN')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
@@ -495,31 +496,31 @@ class FlujoController extends Controller
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
 
-                    $rut = substr($orden->cliente->Rut, 0, length($orden->cliente->Rut) - 1) . "-" . substr($orden->cliente->Rut, -1);
-                    $rutVendedor = substr($orden->vendedor->Rut, 0, length($orden->vendedor->Rut) - 1) . "-" . substr($orden->vendedor->Rut, -1);
+                    $categoriaOT = $orden->CategoriaOT;
 
-                    if ($orden->stock) {
-                        if ($orden->stock->modeloID != 1) {
-                            $modelo = $orden->stock->modelo->Modelo;
-                        } else {
-                            $modelo = $orden->stock->Modelo;
-                        }
+                    $checks = [
+                        'ACCESORIOS POST VENTAS' => 'accesorios',
+                        'ACCESORIOS PRE-VENTA' => 'accesorios',
+                        'ACCESORIOS VENTAS' => 'accesorios',
+                        'CAMPAÑA' => 'garantia',
+                        'CIA. SEGUROS' => 'dyp',
+                        'GARANTIA EXTENDIDA USADOS' => 'rep_varias',
+                        'GARANTIA FABRICA' => 'garantia',
+                        'MANTENCION' => 'mantencion',
+                        'MECANICA GENERAL' => 'rep_varias',
+                        'MESÓN' => 'meson',
+                        'PARTICULAR DYP' => 'dyp',
+                        'PROMOCIONES VENTAS VN' => 'rep_varias',
+                        'REVISION VU x VU' => 'rep_varias',
+                        'REVISIONES PRE-COMPRA' => 'rep_varias',
+                        'SIN REGISTRO' => 'rep_varias',
+                        'USADOS PRE-VENTA' => 'rep_varias',
+                    ];
+//                    print($checks[$categoriaOT]);
 
-                        if ($orden->stock->versionID != 1) {
-                            $version = $orden->stock->version->Version;
-                        } else {
-                            $version = $orden->stock->Version;
-                        }
+                    $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
 
-                        $vin = $orden->stock->VIN ?? $orden->Vin;
-                        $color = $orden->stock->ColorExterior ?? $orden->ColorReferencial;
-                    } else {
-                        $modelo = $orden->modelo->Modelo;
-                        $version = $orden->version->Version;
-                        $vin = $orden->Vin;
-                        $color = $orden->ColorReferencial;
-                    }
-
+//                    dd($orden);
                     $xml = XmlWriter::make()->write('exportacion', [
                         'ot' => [
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
@@ -573,12 +574,12 @@ class FlujoController extends Controller
                             'kilometraje_mantencion' => $orden->Kilometraje,
                             'fecha_entrega' => Carbon::parse($orden->FechaFacturacion)->format("Ymd"),
                             'fecha_facturacion' => Carbon::parse($orden->FechaFacturacion)->format("Ymd"),
-                            'mantencion' => 'X',
-                            'garantia' => '',
-                            'dyp' => 0,
-                            'rep_varias' => '',
-                            'accesorios' => '',
-                            'ot_interna' => '',
+                            'mantencion' => (($checks[$categoriaOT] ?? '') == 'mantencion') ? 'X' : '',
+                            'garantia' => (($checks[$categoriaOT] ?? '') == 'garantia') ? 'X' : '',
+                            'dyp' => (($checks[$categoriaOT] ?? '') == 'dyp') ? 'X' : '',
+                            'rep_varias' => (($checks[$categoriaOT] ?? '') == 'rep_varias') ? 'X' : '',
+                            'accesorios' => (($checks[$categoriaOT] ?? '') == 'accesorios') ? 'X' : '',
+                            'ot_interna' => $checkOtInterna,
 //                            'id_Facturacion_dybox' => 0,
                             'numero_factura' => $orden->Folio,
                             'rut_facturado' => $orden->ClienteRutPagador,

@@ -115,12 +115,12 @@ class PV_PostVenta extends Model
     ];
 
 
-    protected function ClienteRut() : Attribute
+/*    protected function ClienteRut() : Attribute
     {
         return Attribute::make(
             get: fn (string $value) => str_replace('-', '', $value ),
         );
-    }
+    }*/
 
     public function cliente()
     {

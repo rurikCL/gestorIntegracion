@@ -11,6 +11,7 @@ use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\FLU\FLU_Notificaciones;
 use App\Models\MA\MA_Bancos;
+use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Modelos;
 use App\Models\MA\MA_Usuarios;
@@ -517,10 +518,10 @@ class FlujoController extends Controller
                         'USADOS PRE-VENTA' => 'rep_varias',
                     ];
 //                    print($checks[$categoriaOT]);
+                    $cliente = MA_Clientes::where('Rut', str_replace('-','',$orden->ClienteRut))->first();
 
                     $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
 
-                    dd($orden);
                     $xml = XmlWriter::make()->write('exportacion', [
                         'ot' => [
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
@@ -543,21 +544,21 @@ class FlujoController extends Controller
                             'nombres_cliente' => $orden->ClienteNombre,
                             'apellidos_cliente' => '',
 //                            'sexo' => $orden->ClienteSexo,
-                            'fecha_nacimiento' => Carbon::parse($orden->cliente->FechaNacimiento)->format("Ymd"),
+                            'fecha_nacimiento' => Carbon::parse($cliente->FechaNacimiento)->format("Ymd"),
                             'direccion' => $orden->ClienteDireccion,
 //                            'villa_poblacion' => '',
                             'codigo_region' => 13,
                             'nombre_region' => 'REGION METROPOLITANA',
-                            'codigo_comuna' => $orden->cliente->ComunaID,
-                            'nombre_comuna' => $orden->cliente->comuna->Comuna,
+                            'codigo_comuna' => $cliente->ComunaID,
+                            'nombre_comuna' => $cliente->comuna->Comuna,
                             'telefono_comercial' => 0,
-                            'telefono_particular' => $orden->cliente->Telefono,
+                            'telefono_particular' => $cliente->Telefono,
                             'telefono_movil' => 0,
                             'telefono_contacto' => 0,
 //                            'tipo_contacto' => 1,
 //                            'nombres_contacto' => '',
 //                            'apellido_contactos' => '',
-                            'correo_electronico' => $orden->cliente->Email,
+                            'correo_electronico' => $cliente->Email,
                             'estado_ot' => 'F',
                             'mano_obra' => $orden->VentaManoObra,
                             'mano_obra_pint_desab' => $orden->VentaCarroceria,

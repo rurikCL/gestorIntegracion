@@ -4,8 +4,11 @@ namespace App\Filament\Resources\TK;
 
 use App\Filament\Resources\TK\TKTicketsManagerResource\Pages;
 use App\Filament\Resources\TK\TKTicketsManagerResource\RelationManagers;
+use App\Models\TK\TK_categories;
+use App\Models\TK\TK_sub_categories;
 use App\Models\TK\TK_Tickets;
 use App\Models\TK\TKTicketsManager;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -27,9 +30,9 @@ class TKTicketsManagerResource extends Resource
                 Forms\Components\TextInput::make('title'),
                 Forms\Components\Textarea::make('priority'),
                 Forms\Components\Select::make('category')
-                ->relationship('categoria', 'name'),
+                    ->relationship('categoria', 'name'),
                 Forms\Components\Select::make('subCategory')
-                ->relationship('subCategoria', 'name'),
+                    ->relationship('subCategoria', 'name'),
                 Forms\Components\TextInput::make('management'),
                 Forms\Components\TextInput::make('zone'),
                 Forms\Components\TextInput::make('department'),
@@ -64,22 +67,65 @@ class TKTicketsManagerResource extends Resource
                 Tables\Columns\TextColumn::make('applicant'),
                 Tables\Columns\TextColumn::make('assigned'),
                 Tables\Columns\BadgeColumn::make('state')
-                ->enum([
-                    '1' => 'Abierto',
-                    '2' => 'En Proceso',
-                    '3' => 'Cerrado',
-                ]),
+                    ->enum([
+                        '1' => 'Abierto',
+                        '2' => 'En Proceso',
+                        '3' => 'Cerrado',
+                    ]),
 
             ])
             ->filters([
-                //
+                /*Tables\Filters\SelectFilter::make('category')
+                    ->relationship('categoria', 'name'),
+                Tables\Filters\SelectFilter::make('subCategory')
+                    ->relationship('subCategoria', 'name')
+                    ->multiple(),*/
+                Tables\Filters\SelectFilter::make('priority')
+                    ->options([
+                        'Baja' => 'Baja',
+                        'Normal' => 'Normal',
+                        'Alta' => 'Alta',
+                    ])
+                    ->label('Prioridad'),
+                Tables\Filters\SelectFilter::make('state')
+                    ->options([
+                        '1' => 'Abierto',
+                        '2' => 'En Proceso',
+                        '3' => 'Cerrado',
+                    ])->multiple()
+                    ->label('Estado'),
+                Tables\Filters\Filter::make('subcategory')
+                    ->form([
+                        Forms\Components\Select::make('categoryID')
+                            ->options(fn() => \App\Models\TK\TK_categories::all()->pluck('name', 'id'))
+                            ->label('Categoria')
+                            ->reactive(),
+                        Forms\Components\Select::make('subCategory')
+                            ->options(function (callable $get) {
+                                return $get('categoryID') ? (TK_sub_categories::where('category_id', $get('categoryID'))->pluck('name', 'id') ?? ['1', 'Sin Datos']) : ['1', 'Sin Datos'];
+                            })
+                            ->label('Sub Categoria')
+                            ->reactive(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if ($data['subCategory'] != null) {
+                            $query->where('subCategory', $data['subCategory']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['subCategory'] != null)
+                            return 'Categoria : ' . TK_categories::find($data['categoryID'])->name . ' / ' . TK_sub_categories::find($data['subCategory'])->name;
+                        else return null;
+                    })
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])
+            ->defaultSort('id', 'desc');
     }
 
     public static function getRelations(): array

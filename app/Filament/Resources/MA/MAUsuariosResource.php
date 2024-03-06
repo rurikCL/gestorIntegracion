@@ -56,7 +56,6 @@ class MAUsuariosResource extends Resource
             ])
             ->filters([
                 Tables\Filters\Filter::make('Activo'),
-
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

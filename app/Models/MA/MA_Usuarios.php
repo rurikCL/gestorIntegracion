@@ -3,8 +3,11 @@
 namespace App\Models\MA;
 
 use App\Models\SIS\SIS_UsuariosSucursales;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class MA_Usuarios extends Model
 {
@@ -41,7 +44,29 @@ class MA_Usuarios extends Model
         'ResponsableIDTKTI',
         'ResponsableIDTKCC',
         'ResponsableIDRRHH',
+
+        'FechaCreacion',
+        'EventoCreacionID',
+        'UsuarioCreacionID',
+        'FechaActualizacion',
+        'EventoActualizacionID',
+        'UsuarioActualizacionID',
+
     ];
+
+    /*protected function FechaCreacion() : Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => Carbon::now()->format('Y-m-d H:i:s'),
+        );
+    }
+
+    protected function UsuarioCreacionID() : Attribute
+    {
+        return Attribute::make(
+            set: fn (int $value) => Auth::user()->id,
+        );
+    }*/
 
     public function getRutFormatAttribute()
     {

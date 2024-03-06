@@ -6,6 +6,7 @@ use App\Filament\Resources\FLU\FluFlujosResource;
 use Carbon\Carbon;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use HubSpot\Http\Auth;
 
 class ManageFluFlujos extends ManageRecords
 {
@@ -18,7 +19,7 @@ class ManageFluFlujos extends ManageRecords
 
                 $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
                 $data['EventoCreacionID'] = 1;
-                $data['UsuarioCreacionID'] = 1;
+                $data['UsuarioCreacionID'] = Auth::user()->id;
 
                 return $data;
             }),

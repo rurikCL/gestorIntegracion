@@ -23,9 +23,11 @@ class SucursalesRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Select::make('SucursalID')
                     ->options(fn() => \App\Models\MA\MA_Sucursales::all()->pluck('Sucursal', 'ID'))
+                    ->searchable()
                     ->required(),
                 Forms\Components\Select::make('CargoID')
                     ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID'))
+                    ->searchable()
                     ->required(),
                 Forms\Components\Toggle::make('DisponibleLead'),
                 Forms\Components\Toggle::make('Activo')->default(1),
@@ -36,7 +38,8 @@ class SucursalesRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('sucursal.Sucursal'),
+                Tables\Columns\TextColumn::make('sucursal.Sucursal')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('cargo.Cargo'),
                 Tables\Columns\ToggleColumn::make('DisponibleLead')->disabled(),
                 Tables\Columns\ToggleColumn::make('Activo')->disabled(),

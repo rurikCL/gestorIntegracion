@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use HubSpot\Http\Auth;
 
 class CreateMASucursales extends CreateRecord
 {
@@ -16,10 +17,9 @@ class CreateMASucursales extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
 
-        dd($data);
         $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
         $data['EventoCreacionID'] = 1;
-        $data['UsuarioCreacionID'] = 1;
+        $data['UsuarioCreacionID'] = Auth::user()->id;
 
         foreach ($data["Niveles"] as $key => $value) {
             if ($value["level"] <> $data["level"]) {

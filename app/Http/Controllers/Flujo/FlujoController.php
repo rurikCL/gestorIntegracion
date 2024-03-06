@@ -518,7 +518,10 @@ class FlujoController extends Controller
                         'USADOS PRE-VENTA' => 'rep_varias',
                     ];
 //                    print($checks[$categoriaOT]);
+                    Log::info("Buscando cliente " . $orden->ClienteRut);
                     $cliente = MA_Clientes::where('Rut', str_replace('-','',$orden->ClienteRut))->first();
+                    if($cliente) Log::info("Cliente encontrado " . $cliente->Nombre);
+                    else Log::info("Cliente no encontrado");
 
                     $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
 

@@ -519,7 +519,10 @@ class FlujoController extends Controller
                     ];
 
                     // Revision de RUT, validacion y creacion en Clientes
+
                     $rut = $orden->ClienteRut;
+                    Log::info("Buscando cliente " . $rut);
+
                     if(str_contains($rut, '-') === false) {
                         $s=1;
                         for($m=0;$rut!=0;$rut/=10)
@@ -530,7 +533,6 @@ class FlujoController extends Controller
                         $rutCliente = str_replace('-','',$rut);
                     }
 
-                    Log::info("Buscando cliente " . $rutCliente);
                     $cliente = MA_Clientes::where('Rut', str_replace('-','', $rutCliente))->first();
                     if($cliente) Log::info("Cliente encontrado " . $cliente->Nombre);
                     else Log::info("Cliente no encontrado");

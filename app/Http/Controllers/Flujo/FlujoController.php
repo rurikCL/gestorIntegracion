@@ -517,11 +517,25 @@ class FlujoController extends Controller
                         'SIN REGISTRO' => 'rep_varias',
                         'USADOS PRE-VENTA' => 'rep_varias',
                     ];
-//                    print($checks[$categoriaOT]);
-                    Log::info("Buscando cliente " . $orden->ClienteRut);
-                    $cliente = MA_Clientes::where('Rut', str_replace('-','',$orden->ClienteRut))->first();
+
+                    // Revision de RUT, validacion y creacion en Clientes
+                    $rut = $orden->ClienteRut;
+                    if(str_contains($rut, '-') === false) {
+                        $s=1;
+                        for($m=0;$rut!=0;$rut/=10)
+                            $s=($s+$rut%10*(9-$m++%6))%11;
+                        $dv = chr($s?$s+47:75);
+                        $rutCliente = $orden->ClienteRut . $dv;
+                    } else {
+                        $rutCliente = str_replace('-','',$rut);
+                    }
+
+                    Log::info("Buscando cliente " . $rutCliente);
+                    $cliente = MA_Clientes::where('Rut', str_replace('-','', $rutCliente))->first();
                     if($cliente) Log::info("Cliente encontrado " . $cliente->Nombre);
                     else Log::info("Cliente no encontrado");
+
+                    // ----------------------------
 
                     $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
 
@@ -547,21 +561,21 @@ class FlujoController extends Controller
                             'nombres_cliente' => $orden->ClienteNombre,
                             'apellidos_cliente' => '',
 //                            'sexo' => $orden->ClienteSexo,
-                            'fecha_nacimiento' => Carbon::parse($cliente->FechaNacimiento)->format("Ymd"),
+                            'fecha_nacimiento' => $cliente ? Carbon::parse($cliente->FechaNacimiento)->format("Ymd") : '',
                             'direccion' => $orden->ClienteDireccion,
 //                            'villa_poblacion' => '',
                             'codigo_region' => 13,
                             'nombre_region' => 'REGION METROPOLITANA',
-                            'codigo_comuna' => $cliente->ComunaID,
-                            'nombre_comuna' => $cliente->comuna->Comuna,
+                            'codigo_comuna' => $cliente->ComunaID ?? '',
+                            'nombre_comuna' => $cliente->comuna->Comuna ?? '',
                             'telefono_comercial' => 0,
-                            'telefono_particular' => $cliente->Telefono,
+                            'telefono_particular' => $cliente->Telefono ?? '',
                             'telefono_movil' => 0,
                             'telefono_contacto' => 0,
 //                            'tipo_contacto' => 1,
 //                            'nombres_contacto' => '',
 //                            'apellido_contactos' => '',
-                            'correo_electronico' => $cliente->Email,
+                            'correo_electronico' => $cliente->Email ?? '',
                             'estado_ot' => 'F',
                             'mano_obra' => $orden->VentaManoObra,
                             'mano_obra_pint_desab' => $orden->VentaCarroceria,

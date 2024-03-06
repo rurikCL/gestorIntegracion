@@ -520,7 +520,7 @@ class FlujoController extends Controller
 
                     $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
 
-//                    dd($orden);
+                    dd($orden);
                     $xml = XmlWriter::make()->write('exportacion', [
                         'ot' => [
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)

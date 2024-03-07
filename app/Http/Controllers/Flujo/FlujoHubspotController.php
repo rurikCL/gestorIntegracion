@@ -80,10 +80,13 @@ class FlujoHubspotController extends Controller
                         print("Lead no encontrado <br>");
                         Log::info("Creando nuevo Lead");
 
+                        // Si no trae data de contacto
                         if ($data->properties['email'] == '' && $data->properties['phone'] == ''
                             && $data->properties['nombre'] == '' && $data->properties['rut'] == '') {
-                            print("No hay datos de cliente, se busca contacto <br>");
 
+                            Log::info("No hay datos de cliente, se busca contacto <br>");
+
+                            // Si trae id de contacto, trae la data desde el contacto
                             if (isset($data->properties['record_id___contacto'])) {
                                 $dataContacto = $this->getContactInfo($data->properties['record_id___contacto'], $token->token);
                                 $nombre = $dataContacto['nombre'] ?? '';
@@ -91,11 +94,12 @@ class FlujoHubspotController extends Controller
                                 $telefono = $dataContacto['telefono'] ?? '';
                                 $rut = $dataContacto['rut'] ?? '';
                             } else {
+                                // Si no se obtuvo data de contacto, se ignora el registro
                                 continue;
                             }
 
                         } else {
-                            $nombre = ($data->properties['firstname'] ?? '') . ' ' . ($data->properties['lastname'] ?? '');
+                            $nombre = ($data->properties['nombre'] ?? '');
                             $email = $data->properties['email'] ?? '';
                             $telefono = $data->properties['phone'] ?? '';
                             $rut = $data->properties['rut'] ?? '';

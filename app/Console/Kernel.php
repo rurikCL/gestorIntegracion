@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
             $flujoControl->leadsHubspot();
 
             $flujoNegocio = new FlujoHubspotController();
-//            $flujoNegocio->leadsHubspotDeals();
+            $flujoNegocio->leadsHubspotDeals();
 
             $flujoControl->reprocesarSolicitudes();
 

@@ -493,7 +493,7 @@ class FlujoController extends Controller
                     $req = new Request();
                     $req['referencia_id'] = $orden->ID;
                     $req['proveedor_id'] = 9;
-                    $req['api_id'] = 12;
+                    $req['api_id'] = 27;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
 

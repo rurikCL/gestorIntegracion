@@ -616,7 +616,7 @@ class FlujoController extends Controller
                              <!--Optional:-->
                              <ind:id>001</ind:id>
                              <!--Optional:-->
-                             <ind:canales>PompeyoCarrasco,venta</ind:canales>
+                             <ind:canales>PompeyoCarrasco,ot</ind:canales>
                              <!-- toma el valor venta, ot , repuestos o meson  segun corresponda-->
                              <!--Optional:-->
                              <ind:msg>

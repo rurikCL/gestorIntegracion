@@ -5,7 +5,6 @@ namespace App\Filament\Resources\TK;
 use App\Filament\Resources\TK\TKCategoriasTicketResource\Pages;
 use App\Filament\Resources\TK\TKCategoriasTicketResource\RelationManagers;
 use App\Models\TK\TK_categories;
-use App\Models\TK\TKCategoriasTicket;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Resources\Form;

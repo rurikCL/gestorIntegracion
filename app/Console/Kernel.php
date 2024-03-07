@@ -56,6 +56,15 @@ class Kernel extends ConsoleKernel
             $res = $flujoControl->actualizaStockAPC();
         })->name("Control de Flujos : 2 veces al dia")->twiceDaily(7, 14);
 
+
+        $schedule->call(function () {
+            $flujoControl = new FlujoController();
+            $res = $flujoControl->sendOTsSICIndumotora();
+
+        })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');
+
+
+
 //        foreach (['08:45', '09:15', '09:45', '10:15'] as $time) {
 //            $schedule->command('command:name')->dailyAt($time);
 //        }

@@ -26,8 +26,8 @@ class RespuestasTipoRelationManager extends RelationManager
                     'ERROR' => 'ERROR',
                     'EXITO' => 'EXITO',
                 ])->default('ERROR')->disablePlaceholderSelection(),
-                Forms\Components\TextInput::make('llave'),
-                Forms\Components\TextInput::make('Mensaje'),
+                Forms\Components\TextInput::make('llave')->required()->default('-'),
+                Forms\Components\TextInput::make('Mensaje')->required(),
                 Forms\Components\TextInput::make('Trigger'),
                 Forms\Components\Toggle::make('Activo')->default(true),
                 Forms\Components\Toggle::make('Reprocesa')

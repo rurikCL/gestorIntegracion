@@ -49,7 +49,7 @@ class ApiSolicitudController extends Controller
         );
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $worker = null)
     {
 
         $solicitud = new ApiSolicitudes();
@@ -81,7 +81,10 @@ class ApiSolicitudController extends Controller
 
         } else {
             // crea el job para esta solicitud
-            OrquestadorApi::dispatch($solicitud);
+            if ($worker)
+                OrquestadorApi::dispatch($solicitud)->onQueue($worker);
+            else
+                OrquestadorApi::dispatch($solicitud);
             Log::info('Solicitud ID : ' . $solicitud->id . ' creada con exito');
 
             return response()->json([
@@ -424,13 +427,12 @@ class ApiSolicitudController extends Controller
                             $params = [];
                             if ($API->TipoEntrada == "param") {
                                 if ($solicitud->Peticion != null) {
-                                    if(json_validate($solicitud->Peticion)){
+                                    if (json_validate($solicitud->Peticion)) {
                                         $peticionParams = json_decode($solicitud->Peticion, true);
                                         foreach ($peticionParams as $llave => $valor) {
                                             $params[$llave] = $valor;
                                         }
-                                    }
-                                    else {
+                                    } else {
                                         $peticionParams = explode(",", $solicitud->Peticion);
                                         foreach ($peticionParams as $param) {
                                             $explodedParam = explode(":", $param);
@@ -577,7 +579,7 @@ class ApiSolicitudController extends Controller
                                     // Revisa listado de errores de respuesta
                                     if (isset($respuesta["response"][$indices[0]])) {
 
-                                        if(!is_array($respuesta["response"][$indices[0]])){
+                                        if (!is_array($respuesta["response"][$indices[0]])) {
                                             $respuesta["response"][$indices[0]] = [$respuesta["response"][$indices[0]]];
                                         }
 
@@ -610,7 +612,6 @@ class ApiSolicitudController extends Controller
                                     }
                                 }
                             }
-
 
 
                             $solicitud->Respuesta = $respuestaData;

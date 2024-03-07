@@ -446,7 +446,7 @@ class FlujoController extends Controller
                     </soapenv:Envelope>';
 
 
-                    $resp = $solicitudCon->store($req);
+                    $resp = $solicitudCon->store($req, 'aislado1');
                     echo("<br>" . ($resp->message ?? ''));
 
                 }
@@ -629,7 +629,7 @@ class FlujoController extends Controller
                     </soapenv:Envelope>';
 
 
-                    $resp = $solicitudCon->store($req);
+                    $resp = $solicitudCon->store($req, 'aislado2');
                     echo("<br>" . ($resp->message ?? ''));
                 }
             } else {

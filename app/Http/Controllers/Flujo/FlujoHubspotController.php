@@ -20,7 +20,7 @@ class FlujoHubspotController extends Controller
 {
     public function leadsHubspotDeals()
     {
-        echo "Ejecutando Flujo Hubspot <br>";
+        echo "Ejecutando Flujo Hubspot Negocios <br>";
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();

@@ -545,7 +545,7 @@ class FlujoController extends Controller
                         'ot' => [
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
                             'numero_ot' => $orden->FolioOT, // Codigo para KIA (externo)
-                            'marca' => $orden->Marca,
+                            'marca' => 1,
                             'fecha_atencion' => Carbon::parse($orden->FechaOT)->format("Ymd"),
                             'rut_recepcionista' => '',
                             'nombre_recepcionista' => $orden->Recepcionista,

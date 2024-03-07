@@ -479,7 +479,7 @@ class FlujoController extends Controller
                 ->where('TipoOrigen', 'REAL')
                 ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
                 ->where('CategoriaOT','<>', 'MESÓN')
-                ->limit($flujo->MaxLote ?? 5)
+//                ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
             if ($ordenes) {

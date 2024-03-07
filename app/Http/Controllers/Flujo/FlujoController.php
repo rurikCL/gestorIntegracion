@@ -464,7 +464,7 @@ class FlujoController extends Controller
     public function sendOTsSICIndumotora()
     {
 
-        echo "Ejecutando Flujo KIA <br>";
+        echo "Ejecutando Flujo KIA OT SIC<br>";
         Log::info("Inicio flujo OTs Indumotora");
 
         $flujo = FLU_Flujos::where('Nombre', 'KIA SIC')->first();
@@ -477,7 +477,7 @@ class FlujoController extends Controller
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', '>=', '2024-02-02 00:00:00')
+                ->where('FechaFacturacion', '>=', Carbon::now()->subDay()->format("Y-m-d 00:00:00"))
                 ->where('CategoriaOT','<>', 'MESÓN')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();

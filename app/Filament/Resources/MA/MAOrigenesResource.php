@@ -17,6 +17,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MAOrigenesResource extends Resource
 {
     protected static ?string $model = MA_Origenes::class;
+    protected static ?string $modelLabel = 'Origen';
+    protected static ?string $navigationLabel = 'Origenes';
+    protected static ?string $pluralLabel = 'Origenes';
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 

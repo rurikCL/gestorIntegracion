@@ -8,7 +8,7 @@ use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
 use Filament\Tables;
-use HubSpot\Http\Auth;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
 
 class SucursalesRelationManager extends RelationManager
@@ -40,9 +40,10 @@ class SucursalesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('sucursal.Sucursal')
                 ->searchable(),
-                Tables\Columns\TextColumn::make('cargo.Cargo'),
+                Tables\Columns\SelectColumn::make('CargoID')->disabled(!Auth::user()->isAdmin())
+                ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
                 Tables\Columns\ToggleColumn::make('DisponibleLead')->disabled(),
-                Tables\Columns\ToggleColumn::make('Activo')->disabled(),
+                Tables\Columns\ToggleColumn::make('Activo')->disabled(!Auth::user()->isAdmin()),
                 Tables\Columns\TextColumn::make('FechaCreacion'),
                 Tables\Columns\TextColumn::make('FechaActualizacion'),
 

@@ -23,11 +23,14 @@ class SucursalesRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Select::make('SucursalID')
                     ->options(fn() => \App\Models\MA\MA_Sucursales::all()->pluck('Sucursal', 'ID'))
+                    ->unique()
                     ->searchable()
+                    ->label('Sucursal')
                     ->required(),
                 Forms\Components\Select::make('CargoID')
                     ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID'))
                     ->searchable()
+                    ->label('Cargo')
                     ->required(),
                 Forms\Components\Toggle::make('DisponibleLead'),
                 Forms\Components\Toggle::make('Activo')->default(1),
@@ -44,8 +47,8 @@ class SucursalesRelationManager extends RelationManager
                 ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
                 Tables\Columns\ToggleColumn::make('DisponibleLead')->disabled(),
                 Tables\Columns\ToggleColumn::make('Activo')->disabled(!Auth::user()->isAdmin()),
-                Tables\Columns\TextColumn::make('FechaCreacion'),
-                Tables\Columns\TextColumn::make('FechaActualizacion'),
+//                Tables\Columns\TextColumn::make('FechaCreacion'),
+//                Tables\Columns\TextColumn::make('FechaActualizacion'),
 
             ])
             ->filters([
@@ -70,7 +73,7 @@ class SucursalesRelationManager extends RelationManager
 
                         return $data;
                     }),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->disabled(!Auth::user()->isAdmin()),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

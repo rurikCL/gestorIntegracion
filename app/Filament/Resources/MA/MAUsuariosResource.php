@@ -21,12 +21,16 @@ class MAUsuariosResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
     protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $navigationLabel = 'Usuarios Roma';
+    protected static ?string $label = 'Usuario Roma';
+    protected static ?string $pluralLabel = 'Usuarios Roma';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('Nombre'),
-                Forms\Components\TextInput::make('Rut'),
+                Forms\Components\TextInput::make('Rut')
+                ->hint('*Formato de rut sin puntos ni guion'),
                 Forms\Components\TextInput::make('Email'),
                 Forms\Components\TextInput::make('Celular'),
                 Forms\Components\Select::make('PerfilID')
@@ -48,14 +52,28 @@ class MAUsuariosResource extends Resource
                 Tables\Columns\TextColumn::make('Nombre')->searchable(),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
-                Tables\Columns\TextColumn::make('Celular'),
+                Tables\Columns\TextColumn::make('Celular')->icon('heroicon-o-phone'),
                 Tables\Columns\TextColumn::make('perfil.Perfil')->label('Perfil'),
                 Tables\Columns\TextColumn::make('cargo.Cargo')->label('Cargo'),
                 Tables\Columns\BooleanColumn::make('Disponible'),
                 Tables\Columns\BooleanColumn::make('Activo'),
             ])
             ->filters([
-                Tables\Filters\Filter::make('Activo'),
+                Tables\Filters\SelectFilter::make('Activo')
+                    ->form([
+                        Forms\Components\Toggle::make('Activo')
+                            ->default(true)
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if ($data['Activo'] != null) {
+                            $query->where('Activo', $data['Activo']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['Activo'] != null)
+                            return 'Activos ';
+                        else return null;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

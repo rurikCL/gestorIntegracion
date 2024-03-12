@@ -11,4 +11,5 @@ class MA_Cargos extends Model
     public $timestamps = false;
 
     protected $table = 'MA_Cargos';
+    protected $primaryKey = 'ID';
 }

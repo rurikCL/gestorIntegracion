@@ -84,6 +84,16 @@ class MA_Usuarios extends Model
         return $this->hasOne(TK_agents::class, 'user_id', 'ID');
     }
 
+    public function perfil()
+    {
+        return $this->belongsTo(MA_Perfiles::class, 'PerfilID');
+    }
+
+    public function cargo()
+    {
+        return $this->belongsTo(MA_Cargos::class, 'CargoID');
+    }
+
     public function scopeSucursalAsignada($query, $sucursal_id)
     {
         return $query->whereHas('sucursales', function ($query) use ($sucursal_id) {
@@ -96,14 +106,6 @@ class MA_Usuarios extends Model
         return $query->where('CargoID', 2)->where('PerfilID', 3);
     }
 
-    public function perfil()
-    {
-        return $this->belongsTo(MA_Perfiles::class, 'PerfilID');
-    }
 
-    public function cargo()
-    {
-        return $this->belongsTo(MA_Cargos::class, 'CargoID');
-    }
 
 }

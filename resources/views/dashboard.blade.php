@@ -24,7 +24,7 @@
     $(document).ready(function() {
             $.ajax({
                 url: 'https://roma.pompeyo.cl/respaldo/htmlv1/php/controller/controller.session.php',
-                type: 'GET',
+                type: 'POST',
                 data: {
                     session_email: 'cristian.fuentealba@pompeyo.cl',
                     session_pass: 'ne0l0gik',

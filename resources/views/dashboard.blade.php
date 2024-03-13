@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-
+    <iframe src="https://roma.pompeyo.cl/respaldo/htmlv1/Home.html" frameborder="0" width="100%" height="600"></iframe>
     <div id="iframeroma"></div>
 
 </x-app-layout>
@@ -31,9 +31,6 @@
                     action : 'sessionOpen'
                 },
                 success: function (data) {
-                    $("#iframeroma").html(
-                        '<iframe src="https://roma.pompeyo.cl/respaldo/htmlv1/Home.html" frameborder="0" width="100%" height="600"></iframe>'
-                    );
                     console.log(data);
                 }
             });

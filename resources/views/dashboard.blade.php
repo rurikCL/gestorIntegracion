@@ -32,7 +32,7 @@
                 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
                 'Access-Control-Allow-Credentials': 'true',
                 'Content-Type': 'application/x-www-form-urlencoded',
-                'Access-Control-Allow-Origin': 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.html',
+                'Access-Control-Allow-Origin': 'https://apps3.pompeyo.cl',
             },
             success: function(data) {
                 console.log(data);

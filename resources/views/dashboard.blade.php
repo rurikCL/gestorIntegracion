@@ -15,25 +15,26 @@
         </div>
     </div>
 
-    <iframe src="https://roma.pompeyo.cl/respaldo/htmlv1/Home.html" frameborder="0">
-
-    </iframe>
+    <div id="iframeroma"></div>
 
 </x-app-layout>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
 <script>
 
     $(document).ready(function() {
-        $.ajax({
-            url: 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.php',
-            type: 'POST',
+            $.ajax({
+                url: 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.php',
+                type: 'POST',
                 data: {
                     email: 'cristian.fuentealba@pompeyo.cl',
                     pass: 'ne0l0gik'
                 },
-            success: function(data) {
-                console.log(data);
-            }
-        });
+                success: function (data) {
+                    $("#iframeroma").html(
+                        '<iframe src="https://roma.pompeyo.cl/respaldo/htmlv1/Home.html" frameborder="0" width="100%"></iframe>'
+                    );
+                    console.log(data);
+                }
+            });
     });
 </script>

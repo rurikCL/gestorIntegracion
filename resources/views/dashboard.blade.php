@@ -20,20 +20,12 @@
 
     $(document).ready(function() {
         $.ajax({
-            url: 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.html',
+            url: 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.php',
             type: 'POST',
                 data: {
                     email: 'cristian.fuentealba@pompeyo.cl',
                     pass: 'ne0l0gik'
                 },
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                'Access-Control-Allow-Credentials': 'true',
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Access-Control-Allow-Origin': 'https://apps3.pompeyo.cl',
-            },
             success: function(data) {
                 console.log(data);
             }

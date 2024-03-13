@@ -26,6 +26,14 @@
                     email: 'cristian.fuentealba@pompeyo.cl',
                     pass: 'ne0l0gik'
                 },
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Access-Control-Allow-Credentials': 'true',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Access-Control-Allow-Origin': 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.html',
+            },
             success: function(data) {
                 console.log(data);
             }

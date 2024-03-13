@@ -21,7 +21,7 @@
     $(document).ready(function() {
         $.ajax({
             url: 'http://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.html',
-            type: 'GET',
+            type: 'POST',
                 data: {
                     email: 'cristian.fuentealba@pompeyo.cl',
                     pass: 'ne0l0gik'

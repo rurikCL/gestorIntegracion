@@ -23,15 +23,16 @@
 
     $(document).ready(function() {
             $.ajax({
-                url: 'https://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.php',
+                url: 'https://roma.pompeyo.cl/respaldo/htmlv1/php/controller/controller.session.php',
                 type: 'POST',
                 data: {
-                    email: 'cristian.fuentealba@pompeyo.cl',
-                    pass: 'ne0l0gik'
+                    session_email: 'cristian.fuentealba@pompeyo.cl',
+                    session_pass: 'ne0l0gik',
+                    action : 'sessionOpen'
                 },
                 success: function (data) {
                     $("#iframeroma").html(
-                        '<iframe src="https://roma.pompeyo.cl/respaldo/htmlv1/Home.html" frameborder="0" width="100%"></iframe>'
+                        '<iframe src="https://roma.pompeyo.cl/respaldo/htmlv1/Home.html" frameborder="0" width="100%" height="600"></iframe>'
                     );
                     console.log(data);
                 }

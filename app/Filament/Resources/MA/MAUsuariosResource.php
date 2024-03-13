@@ -13,6 +13,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class MAUsuariosResource extends Resource
 {
@@ -77,6 +78,12 @@ class MAUsuariosResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\CreateAction::make('Link Roma')
+                ->url(fn (MA_Usuarios $record) => "https://apps1.pompeyo.cl/?id=" .$record->ID ."&token=6461433ef90325a215111f2af1464b2d09f2ba23", true)
+                ->label('Link Roma')
+                    ->icon('heroicon-o-link')
+                ->color('success')
+                ->visible(Auth::user()->isAdmin()),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

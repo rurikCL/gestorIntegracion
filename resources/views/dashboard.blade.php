@@ -15,3 +15,20 @@
         </div>
     </div>
 </x-app-layout>
+
+<script>
+
+    $(document).ready(function() {
+        $.ajax({
+            url: 'http://roma.pompeyo.cl/respaldo/htmlv1/loginLaravel.html',
+            type: 'GET',
+                data: {
+                    email: 'cristian.fuentealba@pompeyo.cl',
+                    pass: 'ne0l0gik'
+                },
+            success: function(data) {
+                console.log(data);
+            }
+        });
+    });
+</script>

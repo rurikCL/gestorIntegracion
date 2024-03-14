@@ -53,7 +53,7 @@ class MAUsuariosResource extends Resource
                 Tables\Columns\TextColumn::make('Nombre')->searchable(),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
-                Tables\Columns\TextColumn::make('Celular')->icon('heroicon-o-phone'),
+//                Tables\Columns\TextColumn::make('Celular')->icon('heroicon-o-phone'),
                 Tables\Columns\TextColumn::make('perfil.Perfil')->label('Perfil'),
                 Tables\Columns\TextColumn::make('cargo.Cargo')->label('Cargo'),
                 Tables\Columns\BooleanColumn::make('Disponible'),

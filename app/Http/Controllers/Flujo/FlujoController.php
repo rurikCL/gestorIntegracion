@@ -471,7 +471,7 @@ class FlujoController extends Controller
 
         if ($flujo->Activo) {
             Log::info("Flujo activo");
-//            $h = new FLU_Homologacion();
+            $h = new FLU_Homologacion();
 
             $ordenes = PV_PostVenta::with('cliente')
                 ->OrdenesKia()
@@ -547,7 +547,7 @@ class FlujoController extends Controller
                             'numero_ot' => $orden->FolioOT, // Codigo para KIA (externo)
                             'marca' => 1,
                             'fecha_atencion' => Carbon::parse($orden->FechaOT)->format("Ymd"),
-                            'rut_recepcionista' => '',
+                            'rut_recepcionista' => $h->getDato($orden->Recepcionista, $flujo->ID, 'asesor', 0),
                             'nombre_recepcionista' => $orden->Recepcionista,
                             'rut_mecanico' => '',
                             'nombre_mecanico' => $orden->NombreMecanico,

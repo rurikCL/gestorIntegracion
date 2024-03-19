@@ -5,7 +5,6 @@ namespace App\Filament\Resources\MA;
 use App\Filament\Resources\MA\MAUsuariosResource\Pages;
 use App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 use App\Models\MA\MA_Usuarios;
-use App\Models\MA\MAUsuarios;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;

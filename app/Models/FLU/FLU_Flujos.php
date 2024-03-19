@@ -40,4 +40,9 @@ class FLU_Flujos extends Model
         return $this->hasMany(ApiSolicitudes::class, 'FlujoID', 'ID');
     }
 
+    public function homologaciones()
+    {
+        return $this->hasMany(FLU_Homologacion::class, 'FlujoID', 'ID');
+    }
+
 }

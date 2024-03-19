@@ -2,9 +2,8 @@
 
 namespace App\Filament\Resources\FLU;
 
-use App\Filament\Resources\FLU;
-use App\Filament\Resources\FluFlujosResource\Pages;
-use App\Filament\Resources\FluFlujosResource\RelationManagers;
+use App\Filament\Resources\FLU\FluFlujosResource\Pages;
+use App\Filament\Resources\FLU\FluFlujosResource\RelationManagers;
 use App\Models\FLU\FLU_Flujos;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -107,10 +106,18 @@ class FluFlujosResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\HomologacionesRelationManager::class,
+        ];
+    }
     public static function getPages(): array
     {
         return [
-            'index' => FLU\FluFlujosResource\Pages\ManageFluFlujos::route('/'),
+            'index' => Pages\ListFluFlujos::route('/'),
+            'create' => Pages\CreateFluFLujos::route('/create'),
+            'edit' => Pages\EditFluFlujos::route('/{record}/edit'),
         ];
     }
 }

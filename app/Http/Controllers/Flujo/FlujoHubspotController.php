@@ -30,6 +30,8 @@ class FlujoHubspotController extends Controller
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
 
+
+            // FILTROS   -----------------------------------------------------
             $filter1 = new FilterDeal([
                 'property_name' => 'idpompeyo',
                 'operator' => 'NOT_HAS_PROPERTY'
@@ -40,9 +42,17 @@ class FlujoHubspotController extends Controller
                 'operator' => 'EQ',
                 'value' => 'RELIF'
             ]);
-            $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1, $filter2]
+
+            $filter3 = new FilterDeal([
+                'property_name' => 'comentario',
+                'operator' => 'HAS_PROPERTY'
             ]);
+
+            $filterGroup1 = new FilterGroup([
+                'filters' => [$filter1, $filter2, $filter3]
+            ]);
+            // --------------------------------------------------------------
+
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
                 'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglavendedor', 'usados', 'vpp'],
                 'filter_groups' => [$filterGroup1],

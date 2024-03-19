@@ -302,7 +302,7 @@ class FlujoHubspotController extends Controller
                             $financiamiento = 0;
                         }
 
-                        $comentario = ($vpp) ? ' *Tiene VPP ' : '';
+                        $comentario .= ($vpp) ? ' *Tiene VPP ' : '';
 
                         if ($fuente == 'Facebook' || $origenProp == 'Facebook') {
                             $origen = 8;

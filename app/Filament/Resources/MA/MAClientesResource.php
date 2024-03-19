@@ -50,10 +50,10 @@ class MAClientesResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
-                Tables\Columns\TextColumn::make('Nombre'),
-                Tables\Columns\TextColumn::make('Rut'),
-                Tables\Columns\TextColumn::make('Email'),
-                Tables\Columns\TextColumn::make('Telefono'),
+                Tables\Columns\TextColumn::make('Nombre')->searchable(),
+                Tables\Columns\TextColumn::make('Rut')->searchable(),
+                Tables\Columns\TextColumn::make('Email')->searchable(),
+                Tables\Columns\TextColumn::make('Telefono')->searchable(),
                 Tables\Columns\TextColumn::make('Direccion'),
             ])
             ->filters([

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FLU\FluFlujosResource\RelationManagers;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -9,6 +10,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class HomologacionesRelationManager extends RelationManager
 {
@@ -42,7 +44,15 @@ class HomologacionesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                ->mutateFormDataUsing(function (array $data) {
+
+                    $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
+                    $data['EventoCreacionID'] = 1;
+                    $data['UsuarioCreacionID'] = Auth::user()->id;
+
+                    return $data;
+                }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

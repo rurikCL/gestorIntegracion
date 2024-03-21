@@ -17,6 +17,7 @@ class CreateMAUsuarios extends CreateRecord
         $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
         $data['EventoCreacionID'] = 1;
         $data['UsuarioCreacionID'] = Auth::user()->id;
+        $data['DetalleID'] = 1;
 
         return $data;
     }

@@ -202,8 +202,8 @@ class ApiSolicitudesResource extends Resource
 //                    ->tooltip('Reprocesar'),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('reprocesar')->label("Reprocesar")
+//                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\BulkAction::make('reprocesar')->label("Reprocesar Seleccionados")
                     ->action(function (Collection $records) {
                         foreach ($records as $record) {
                             ApiSolicitudController::reprocesarJob($record);
@@ -212,7 +212,7 @@ class ApiSolicitudesResource extends Resource
                     ->icon('heroicon-s-refresh')
                     ->deselectRecordsAfterCompletion()
                     ->requiresConfirmation(),
-                Tables\Actions\BulkAction::make('reprocesarNuevo')->label("Reprocesar Nueva")
+                Tables\Actions\BulkAction::make('eliminarNotificacion')->label("Borrar Seleccionados")
                     ->action(function (Collection $records) {
                         foreach ($records as $record) {
                             FLU_Notificaciones::where('ID_Ref', $record->ReferenciaID)
@@ -223,6 +223,7 @@ class ApiSolicitudesResource extends Resource
                         }
                     })
                     ->icon('heroicon-s-trash')
+                    ->color('danger')
                     ->deselectRecordsAfterCompletion()
                     ->requiresConfirmation(),
             ])

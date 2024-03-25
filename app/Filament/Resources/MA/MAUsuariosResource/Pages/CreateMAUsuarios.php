@@ -22,5 +22,3 @@ class CreateMAUsuarios extends CreateRecord
         return $data;
     }
 }
-
-

@@ -477,8 +477,8 @@ class FlujoController extends Controller
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
-//                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
+//                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
+                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
                 ->where('CategoriaOT','<>', 'MESÓN')
 //                ->limit($flujo->MaxLote ?? 5)
                 ->get();

@@ -1602,9 +1602,18 @@ class FlujoController extends Controller
 
                 foreach ($arrayData as $data) {
 
+                    dd($data);
+
                     $fechaCreacion = Carbon::createFromFormat("d/m/Y H:i", $data->created_at)->format('Y-m-d H:i:s');
 
+                    $fechaRecepcion = Carbon::createFromFormat("d-m-Y H:i", $data->inspection_request)->format('Y-m-d H:i:s');
+
+                    $fechaInspeccion = Carbon::createFromFormat("d-m-Y H:i", $data->inspection_request)->format('Y-m-d H:i:s');
+
                     $sucursalID = FLU_Homologacion::getDato($data->branch_name, $flujo->ID, 'sucursal', 1);
+
+
+
 
                     $vendedorID = MA_Usuarios::where('Email', $data->seller_email)->first();
                     $vendedorID = $vendedorID ? $vendedorID->ID : null;

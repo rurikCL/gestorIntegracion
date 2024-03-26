@@ -41,10 +41,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-            $flujoControl->leadsHubspot();
+//            $flujoControl->leadsHubspot(); // flujo hubspot contactos
 
             $flujoNegocio = new FlujoHubspotController();
-            $flujoNegocio->leadsHubspotDeals();
+            $flujoNegocio->leadsHubspotDeals(); // flujo hubspot negocios
 
             $flujoControl->reprocesarSolicitudes();
 

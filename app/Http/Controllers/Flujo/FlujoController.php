@@ -1602,18 +1602,13 @@ class FlujoController extends Controller
 
                 foreach ($arrayData as $data) {
 
-                    dd($data);
-
                     $fechaCreacion = Carbon::createFromFormat("d/m/Y H:i", $data->created_at)->format('Y-m-d H:i:s');
 
-                    $fechaRecepcion = Carbon::createFromFormat("d-m-Y H:i", $data->inspection_request)->format('Y-m-d H:i:s');
+                    $fechaRecepcion = $fechaCreacion;
 
-                    $fechaInspeccion = Carbon::createFromFormat("d-m-Y H:i", $data->inspection_request)->format('Y-m-d H:i:s');
+                    $fechaInspeccion = Carbon::parse($data->inspection_request)->format('Y-m-d H:i:s');
 
                     $sucursalID = FLU_Homologacion::getDato($data->branch_name, $flujo->ID, 'sucursal', 1);
-
-
-
 
                     $vendedorID = MA_Usuarios::where('Email', $data->seller_email)->first();
                     $vendedorID = $vendedorID ? $vendedorID->ID : null;
@@ -1660,7 +1655,7 @@ class FlujoController extends Controller
                         'FechaRecepcion' => $data->received_date,
                         'Inspeccion' => $data->inspection_request ? 'Si' : 'No',
                         'FechaInspeccion' => $data->inspection_completion,
-                        'IDAutoRed' => 0,
+                        'IDAutoRed' => $data->id,
 
                         'SucursalID' => $sucursalID,
                         'VendedorID' => $vendedorID
@@ -1669,6 +1664,7 @@ class FlujoController extends Controller
                     $transaccion = SIS_AutoRedTransaccion::updateOrCreate(
                         ['IDtransaccion' => $data->id],
                         $registro);
+                    dd($transaccion);
                 }
             }
 

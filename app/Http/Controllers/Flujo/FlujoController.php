@@ -1601,7 +1601,6 @@ class FlujoController extends Controller
                 Log::info("Datos a procesar : " . count($arrayData));
 
                 foreach ($arrayData as $data) {
-
                     $fechaCreacion = Carbon::createFromFormat("d/m/Y H:i", $data->created_at)->format('Y-m-d H:i:s');
 
                     $fechaRecepcion = $fechaCreacion;
@@ -1627,7 +1626,7 @@ class FlujoController extends Controller
                         'Vendedor' => $data->seller_name . ' ' . $data->seller_surname,
                         'EmailVendedor' => $data->seller_email,
                         'CodigoVendedor' => $data->seller_id,
-                        'Creador' => $data->evaluator_id,
+                        'Creador' => $data->seller_name . ' ' . $data->seller_surname,
                         'Estado' => $data->status,
                         'MotivoRechazo' => $data->reject_reason,
                         'DetalleRechazo' => $data->reject_comment,
@@ -1645,16 +1644,16 @@ class FlujoController extends Controller
                         'TelefonoOficinaCliente' => $data->vehicle->client->office_phone,
                         'MarcaCliente' => $data->vehicle->client->brand,
                         'ModeloCliente' => $data->vehicle->client->model,
-                        'FinanciamientoCliente' => $data->vehicle->client->funding,
+                        'FinanciamientoCliente' => $data->vehicle->client->funding ? 'Con financiamiento' : 'Sin financiamiento',
                         'ComentarioCliente' => '', //$data->vehicle->request_letter_comments,
                         'IDtransaccion' => $data->id,
                         'Origen' => 'sucursales',
                         'TipoCompra' => $data->vehicle->client->purchase_type_name,
                         'Procedencia' => $data->vehicle->client->origin_name,
                         'VehiculoRecibido' => $data->received_date ? 'Si' : 'No',
-                        'FechaRecepcion' => $data->received_date,
+                        'FechaRecepcion' => $fechaRecepcion,
                         'Inspeccion' => $data->inspection_request ? 'Si' : 'No',
-                        'FechaInspeccion' => $data->inspection_completion,
+                        'FechaInspeccion' => $fechaInspeccion,
                         'IDAutoRed' => $data->id,
 
                         'SucursalID' => $sucursalID,
@@ -1664,7 +1663,6 @@ class FlujoController extends Controller
                     $transaccion = SIS_AutoRedTransaccion::updateOrCreate(
                         ['IDtransaccion' => $data->id],
                         $registro);
-                    dd($transaccion);
                 }
             }
 

@@ -63,12 +63,21 @@ class SISSolicitudesArbolAprobacionesResource extends Resource
                 Tables\Columns\TextColumn::make('perfilResponsable.Perfil')
                 ->description(fn(SIS_SolicitudesArbolAprobaciones $record) => $record->cargoResponsable->Cargo ?? ''),
                 Tables\Columns\TextColumn::make('NivelResponsable'),
-                Tables\Columns\TextColumn::make('usuarioResponsable.Nombre'),
+                Tables\Columns\TextColumn::make('usuarioResponsable.Nombre')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('PasoFinal'),
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('unidadNegocios')
+                ->relationship('unidadNegocios', 'UnidadNegocio')
+                ->searchable(),
+                Tables\Filters\SelectFilter::make('gerencia')
+                ->relationship('gerencia', 'Gerencia')
+                ->searchable(),
+                Tables\Filters\SelectFilter::make('usuarioResponsable')
+                ->relationship('usuarioResponsable', 'Nombre')
+                ->searchable()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

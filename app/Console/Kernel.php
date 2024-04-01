@@ -53,7 +53,10 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-            $res = $flujoControl->actualizaStockAPC();
+
+            $flujoControl->actualizaStockAPC();
+            $flujoControl->autoredTransactions();
+
         })->name("Control de Flujos : 2 veces al dia")->twiceDaily(7, 14);
 
 

@@ -65,25 +65,26 @@ class MKLeadsResource extends Resource
                     Forms\Components\MarkdownEditor::make('Comentario')->columnSpan(2),
 
                 ])->columns(2),
-                Section::make('Vehiculo')->schema([
+                Section::make('Otra informacion')->schema([
+                    Forms\Components\Toggle::make('Financiamiento'),
+                    Forms\Components\Toggle::make('Asignado'),
+                    Forms\Components\Toggle::make('Llamado'),
+                    Forms\Components\Toggle::make('Agendado'),
+                    Forms\Components\Toggle::make('Cotizado'),
+                    Forms\Components\Toggle::make('Vendido'),
+                    Forms\Components\Toggle::make('Contesta'),
+                    Forms\Components\Toggle::make('Contactado'),
+                    Forms\Components\TextInput::make('IDExterno'),
+                    Forms\Components\TextInput::make('SubEstadoID'),
+                    Forms\Components\TextInput::make('CampanaID'),
+                    Forms\Components\TextInput::make('IntegracionID'),
+                    Forms\Components\TextInput::make('ConcatID'),
+                    Forms\Components\TextInput::make('Venta'),
+                    Forms\Components\TextInput::make('CotizacionID'),
+                    Forms\Components\TextInput::make('FechaReAsignado'),
+                    Forms\Components\TextInput::make('LandBotID'),
+                ])->columns(3)
 
-                    Forms\Components\Select::make('MarcaID')
-                        ->options(MA_Gerencias::all()->pluck('Gerencia', 'MarcaAsociada')->toArray())
-                        ->reactive()
-                        ->label('Marca'),
-                    Forms\Components\Select::make('ModeloID')
-                        ->options(function (callable $get){
-                            return MA_Marcas::find($get('MarcaID'))->modelos->pluck('Modelo', 'ID') ?? ['1', 'Sin Modelo'];
-                        })
-                        ->reactive()
-                        ->label('Modelo'),
-                    Forms\Components\Select::make('VersionID')
-                        ->options(function (callable $get){
-                            return MA_Modelos::find($get('ModeloID'))->versiones->pluck('Version', 'ID') ?? ['1', 'Sin Version'];
-                        })
-                        ->columnSpan(2)
-                        ->label('Version'),
-                ])->columns(2),
             ])->columnSpan(2),
             Forms\Components\Group::make()->schema([
                 Section::make('Cliente')->schema([
@@ -109,27 +110,28 @@ class MKLeadsResource extends Resource
                         ->label('Telefono')
                         ->content(fn(MK_Leads $record): ?string => $record->vendedor->Telefono ?? 'Sin Telefono'),
                 ]),
+                Section::make('Vehiculo')->schema([
+
+                    Forms\Components\Select::make('MarcaID')
+                        ->options(MA_Gerencias::all()->pluck('Gerencia', 'MarcaAsociada')->toArray())
+                        ->reactive()
+                        ->label('Marca'),
+                    Forms\Components\Select::make('ModeloID')
+                        ->options(function (callable $get){
+                            return MA_Marcas::find($get('MarcaID'))->modelos->pluck('Modelo', 'ID') ?? ['1', 'Sin Modelo'];
+                        })
+                        ->reactive()
+                        ->label('Modelo'),
+                    Forms\Components\Select::make('VersionID')
+                        ->options(function (callable $get){
+                            return MA_Modelos::find($get('ModeloID'))->versiones->pluck('Version', 'ID') ?? ['1', 'Sin Version'];
+                        })
+                        ->columnSpan(2)
+                        ->label('Version'),
+                ])->columns(2),
 
             ]),
-            Section::make('Otra informacion')->schema([
-                Forms\Components\TextInput::make('SubEstadoID'),
-                Forms\Components\TextInput::make('Financiamiento'),
-                Forms\Components\TextInput::make('CampanaID'),
-                Forms\Components\TextInput::make('IntegracionID'),
-                Forms\Components\TextInput::make('IDExterno'),
-                Forms\Components\TextInput::make('ConcatID'),
-                Forms\Components\TextInput::make('Asignado'),
-                Forms\Components\TextInput::make('Llamado'),
-                Forms\Components\TextInput::make('Agendado'),
-                Forms\Components\TextInput::make('Venta'),
-                Forms\Components\TextInput::make('CotizacionID'),
-                Forms\Components\TextInput::make('Cotizado'),
-                Forms\Components\TextInput::make('Vendido'),
-                Forms\Components\TextInput::make('FechaReAsignado'),
-                Forms\Components\TextInput::make('Contesta'),
-                Forms\Components\TextInput::make('LandBotID'),
-                Forms\Components\TextInput::make('Contactado'),
-            ])->columns(3)
+
 
         ])->columns(3);
     }

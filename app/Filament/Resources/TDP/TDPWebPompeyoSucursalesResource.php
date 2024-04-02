@@ -20,7 +20,8 @@ class TDPWebPompeyoSucursalesResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-collection';
 
     protected static ?string $modelLabel = 'Sucursales Web';
-    protected static ?string $navigationGroup = 'Administracion';
+    protected static ?string $navigationGroup = 'Marketing';
+
 
     protected static ?string $navigationLabel = "Sucursales Web";
 

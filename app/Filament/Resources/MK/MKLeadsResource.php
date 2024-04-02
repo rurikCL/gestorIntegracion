@@ -32,7 +32,7 @@ class MKLeadsResource extends Resource
     protected static ?string $model = MK_Leads::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
-    protected static ?string $navigationGroup = 'Administracion';
+    protected static ?string $navigationGroup = 'Marketing';
     protected static ?string $modelLabel = 'Leads';
 
     public static function form(Form $form): Form

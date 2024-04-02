@@ -22,6 +22,8 @@ class MAOrigenesResource extends Resource
     protected static ?string $pluralLabel = 'Origenes';
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Marketing';
+
 
     public static function form(Form $form): Form
     {

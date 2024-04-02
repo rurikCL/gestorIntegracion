@@ -19,6 +19,8 @@ class TKCategoriasTicketResource extends Resource
     protected static ?string $model = TK_categories::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Ticketera';
+    protected static ?string $pluralLabel = 'Categorias';
     protected static ?string $navigationLabel = 'Categorias Ticket';
     protected static ?string $modelLabel = 'Categoria';
 

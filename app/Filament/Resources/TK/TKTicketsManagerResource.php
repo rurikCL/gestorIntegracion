@@ -22,6 +22,10 @@ class TKTicketsManagerResource extends Resource
     protected static ?string $model = TK_Tickets::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Ticketera';
+    protected static ?string $pluralLabel = 'Tickets';
+    protected static ?string $navigationLabel = 'Tickets TI';
+    protected static ?string $modelLabel = 'Ticket';
 
     public static function form(Form $form): Form
     {

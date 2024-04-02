@@ -19,6 +19,10 @@ class TKAgentesResource extends Resource
     protected static ?string $model = TK_agents::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Ticketera';
+    protected static ?string $navigationLabel = 'Agentes';
+    protected static ?string $pluralLabel = 'Agentes';
+    protected static ?string $modelLabel = 'Agentes';
 
     public static function form(Form $form): Form
     {

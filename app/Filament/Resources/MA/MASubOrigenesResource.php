@@ -19,6 +19,10 @@ class MASubOrigenesResource extends Resource
     protected static ?string $model = MA_SubOrigenes::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationGroup = 'Marketing';
+    protected static ?string $modelLabel = 'SubOrigen';
+    protected static ?string $navigationLabel = 'Sub Origenes';
+    protected static ?string $pluralLabel = 'Sub Origenes';
 
     public static function form(Form $form): Form
     {

@@ -1733,7 +1733,7 @@ class FlujoController extends Controller
         if ($arrayData) {
             foreach ($arrayData->UTMs as $data) {
                 $fecha = $data->Fecha;
-                $valor = $data->Valor;
+                $valor = str_replace(".","", $data->Valor);
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
                     ['FechaIndicador' => $fecha,
                         'Tipo' => 'UTM'],

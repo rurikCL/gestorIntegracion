@@ -28,6 +28,9 @@ class MAUsuariosResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\FileUpload::make('Foto')
+                    ->image()
+                    ->directory('fotos'),
                 Forms\Components\TextInput::make('Nombre'),
                 Forms\Components\TextInput::make('Rut')
                 ->hint('*Formato de rut sin puntos ni guion'),
@@ -49,6 +52,9 @@ class MAUsuariosResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ID')->searchable(),
+                Tables\Columns\ImageColumn::make('Foto')
+                    ->label('Foto'),
+
                 Tables\Columns\TextColumn::make('Nombre')->searchable(),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),

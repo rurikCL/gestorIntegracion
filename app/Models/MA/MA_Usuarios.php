@@ -19,6 +19,7 @@ class MA_Usuarios extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'Foto',
         'Nombre',
         'Email',
         'Clave',

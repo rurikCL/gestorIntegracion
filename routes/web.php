@@ -43,8 +43,8 @@ Route::get('/flujo/hubspot/contactos', [\App\Http\Controllers\Flujo\FlujoControl
 Route::get('/flujo/hubspot/negocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'leadsHubspotDeals']);
 
 
-Route::get('/flujo/indicador/uf', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'cargaIndicadoresUF']);
-Route::get('/flujo/indicador/utm', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'cargaIndicadoresUTM']);
+Route::get('/flujo/indicador/uf', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUF']);
+Route::get('/flujo/indicador/utm', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUTM']);
 
 //Route::get('posts', [PostController::class, 'index']);
 Route::get('/email', [\App\Http\Controllers\EmailController::class, 'sendEmail']);

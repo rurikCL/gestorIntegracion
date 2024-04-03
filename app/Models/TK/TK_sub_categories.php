@@ -15,7 +15,11 @@ class TK_sub_categories extends Model
     protected $fillable = [
         'name',
         'description',
-        'c',
+        'category_id',
+        'Area',
+        'Agente',
+        'Prioridad',
+        'SLA',
         'created_at',
         'updated_at',
         'FechaCreacion',

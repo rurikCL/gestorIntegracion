@@ -25,6 +25,9 @@ class SubCategoriesRelationManager extends RelationManager
                     ->required()
                     ->label('Nombre')
                     ->maxLength(255),
+                Forms\Components\TextInput::make('Area'),
+                Forms\Components\TextInput::make('Prioridad'),
+                Forms\Components\TextInput::make('SLA'),
             ]);
     }
 
@@ -35,6 +38,9 @@ class SubCategoriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                 ->label('Nombre'),
+                Tables\Columns\TextColumn::make('Area'),
+                Tables\Columns\TextColumn::make('Prioridad'),
+                Tables\Columns\TextColumn::make('SLA'),
             ])
             ->filters([
                 //

@@ -1735,10 +1735,10 @@ class FlujoController extends Controller
                 $fecha = $data->Fecha;
                 $valor = $data->Valor;
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
-                    ['Fecha' => $fecha,
+                    ['FechaIndicador' => $fecha,
                         'Tipo' => 'UTM'],
                     ['Monto' => $valor,
-                        'Fecha' => $fecha,
+                        'FechaIndicador' => $fecha,
                         'Tipo' => 'UTM',
                         'Fuente' => 'CMF'
                     ]

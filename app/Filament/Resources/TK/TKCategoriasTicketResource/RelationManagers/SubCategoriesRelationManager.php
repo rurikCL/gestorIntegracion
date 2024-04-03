@@ -40,7 +40,8 @@ class SubCategoriesRelationManager extends RelationManager
                 ->label('Nombre'),
                 Tables\Columns\TextColumn::make('Area'),
                 Tables\Columns\TextColumn::make('Prioridad'),
-                Tables\Columns\TextColumn::make('SLA'),
+                Tables\Columns\TextColumn::make('SLA')
+                ->label('SLA (Horas)'),
             ])
             ->filters([
                 //

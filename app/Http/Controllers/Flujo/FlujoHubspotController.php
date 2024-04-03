@@ -39,8 +39,7 @@ class FlujoHubspotController extends Controller
 
             $filter2 = new FilterDeal([
                 'property_name' => 'origen',
-                'operator' => 'EQ',
-                'value' => 'RELIF'
+                'operator' => 'HAS_PROPERTY',
             ]);
 
             $filter3 = new FilterDeal([

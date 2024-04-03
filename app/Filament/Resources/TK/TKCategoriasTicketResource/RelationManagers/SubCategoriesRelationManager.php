@@ -25,9 +25,29 @@ class SubCategoriesRelationManager extends RelationManager
                     ->required()
                     ->label('Nombre')
                     ->maxLength(255),
-                Forms\Components\TextInput::make('Area'),
-                Forms\Components\TextInput::make('Prioridad'),
-                Forms\Components\TextInput::make('SLA'),
+                Forms\Components\Select::make('Area')
+                    ->options([
+                        'Desarrollo' => 'Desarrollo',
+                        'Ingreso de Colaboradores' => 'Ingreso de Colaboradores',
+                        'TI' => 'TI',
+                    ]),
+                Forms\Components\Select::make('Prioridad')
+                    ->options([
+                    'Bajo' => 'Bajo',
+                    'Medio' => 'Medio',
+                    'Urgente' => 'Urgente',
+                ])->reactive(),
+                Forms\Components\Select::make('SLA')
+                    ->options(function (callable $get) {
+                        if($get('Prioridad') == 'Bajo')
+                            return ['24'];
+                        if($get('Prioridad') == 'Medio')
+                            return ['16'];
+                        if($get('Prioridad') == 'Urgente')
+                            return ['4'];
+
+                        return [4];
+                    }),
             ]);
     }
 

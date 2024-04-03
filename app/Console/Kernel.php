@@ -62,10 +62,16 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             $flujoControl = new FlujoController();
+
             $res = $flujoControl->sendOTsSICIndumotora();
+            $flujoControl->cargaIndicadoresUF();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');
 
+        $schedule->call(function () {
+            $flujoControl = new FlujoController();
+            $flujoControl->cargaIndicadoresUTM();
+        })->name("Control de Flujos : 1 vez al mes (primer dia)")->monthlyOn(1);
 
 
 //        foreach (['08:45', '09:15', '09:45', '10:15'] as $time) {

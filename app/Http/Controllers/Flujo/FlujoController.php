@@ -1672,6 +1672,124 @@ class FlujoController extends Controller
         }
     }
 
+    public function autoredInspections()
+    {
+        echo "Ejecutando Flujo Autored Inspections between dates <br>";
+        Log::info("Inicio de flujo Hubspot");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Autored transactions')->first();
+
+
+        if ($flujo->Activo) {
+
+            $solicitudCon = new ApiSolicitudController();
+
+            $referencia = $flujo->ID . date("ymdh");
+
+            $req = new Request();
+            $req['referencia_id'] = $referencia;
+            $req['api_id'] = 26;
+            $req['proveedor_id'] = 4;
+            $req['prioridad'] = 1;
+            $req['flujoID'] = $flujo->ID;
+            $req['OnDemand'] = true;
+
+            $req['data'] = [
+//                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
+                "from" => "2024-01-01",
+//                "to" => Carbon::now()->format('Y-m-d'),
+                "to" => "2024-01-31",
+            ];
+
+
+            $resp = $solicitudCon->store($req);
+            $resp = $resp->getData();
+
+            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+
+            if (substr($solicitud->Respuesta, 0, 4) == 'file') {
+                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
+                Log::info("Archivo json stock generado " . $nombre);
+
+                $arrayData = json_decode(Storage::get($nombre));
+            } else {
+                $arrayData = json_decode($solicitud->Respuesta);
+            }
+
+
+            $registros = 0;
+            if ($arrayData) {
+                Log::info("Datos a procesar : " . count($arrayData));
+
+                foreach ($arrayData as $data) {
+                    $fechaCreacion = Carbon::createFromFormat("d/m/Y H:i", $data->created_at)->format('Y-m-d H:i:s');
+
+                    $fechaRecepcion = $fechaCreacion;
+
+                    $fechaInspeccion = Carbon::parse($data->inspection_request)->format('Y-m-d H:i:s');
+
+                    $sucursalID = FLU_Homologacion::getDato($data->branch_name, $flujo->ID, 'sucursal', 1);
+
+                    $vendedorID = MA_Usuarios::where('Email', $data->seller_email)->first();
+                    $vendedorID = $vendedorID ? $vendedorID->ID : null;
+
+                    $registro = [
+                        'ID' => 0,
+                        'FechaCreacion' => $fechaCreacion,
+                        'Patente' => $data->vehicle->license_plate,
+                        'Marca' => $data->vehicle->brand,
+                        'Modelo' => $data->vehicle->model,
+                        'Ano' => $data->vehicle->year,
+                        'Km' => $data->vehicle->km,
+                        'Version' => $data->vehicle->version,
+                        'Color' => $data->vehicle->color,
+                        'Sucursal' => $data->branch_name,
+                        'Vendedor' => $data->seller_name . ' ' . $data->seller_surname,
+                        'EmailVendedor' => $data->seller_email,
+                        'CodigoVendedor' => $data->seller_id,
+                        'Creador' => $data->seller_name . ' ' . $data->seller_surname,
+                        'Estado' => $data->status,
+                        'MotivoRechazo' => $data->reject_reason,
+                        'DetalleRechazo' => $data->reject_comment,
+                        'PrecioOferta' => $data->offers[0]->price ?? 0,
+                        'AutorPrecio' => $data->offers[0]->price ?? 0,
+                        'AtendidaPor' => ($data->offers[0]->name ?? '') . ' ' . ($data->offers[0]->surname ?? ''),
+                        'PrecioSugerido' => $data->suggestions[0]->price ?? 0,
+                        'PrecioPublicacion' => $data->publication_price,
+                        'PrecioVenta' => $data->sale_price,
+                        'NombreCliente' => $data->vehicle->client->name . ' ' . $data->vehicle->client->surname,
+                        'RutCliente' => $data->vehicle->client->rut,
+                        'EmailCliente' => $data->vehicle->client->mail,
+                        'TelefonoCliente' => $data->vehicle->client->phone,
+                        'CelularCliente' => $data->vehicle->client->mobile,
+                        'TelefonoOficinaCliente' => $data->vehicle->client->office_phone,
+                        'MarcaCliente' => $data->vehicle->client->brand,
+                        'ModeloCliente' => $data->vehicle->client->model,
+                        'FinanciamientoCliente' => $data->vehicle->client->funding ? 'Con financiamiento' : 'Sin financiamiento',
+                        'ComentarioCliente' => '', //$data->vehicle->request_letter_comments,
+                        'IDtransaccion' => $data->id,
+                        'Origen' => 'sucursales',
+                        'TipoCompra' => $data->vehicle->client->purchase_type_name,
+                        'Procedencia' => $data->vehicle->client->origin_name,
+                        'VehiculoRecibido' => $data->received_date ? 'Si' : 'No',
+                        'FechaRecepcion' => $fechaRecepcion,
+                        'Inspeccion' => $data->inspection_request ? 'Si' : 'No',
+                        'FechaInspeccion' => $fechaInspeccion,
+                        'IDAutoRed' => $data->id,
+
+                        'SucursalID' => $sucursalID,
+                        'VendedorID' => $vendedorID
+                    ];
+
+                    $transaccion = SIS_AutoRedTransaccion::updateOrCreate(
+                        ['IDtransaccion' => $data->id],
+                        $registro);
+                }
+            }
+
+        }
+    }
+
     public function cargaIndicadoresUF(){
 
         $flujo = FLU_Flujos::where('Nombre', 'Datos CMF Indicadores')->first();

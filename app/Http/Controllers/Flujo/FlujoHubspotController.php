@@ -44,7 +44,7 @@ class FlujoHubspotController extends Controller
 
             $filter3 = new FilterDeal([
                 'property_name' => 'hs_analytics_source_data_2',
-                'operator' => 'NOT_EQ',
+                'operator' => 'NEQ',
                 'value' => 'tailored leads flotas campaña'
             ]);
 

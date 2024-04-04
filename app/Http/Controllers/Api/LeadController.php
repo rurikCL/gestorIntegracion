@@ -638,12 +638,14 @@ class LeadController extends Controller
 
         $origen = $lead->OrigenID;
         $sucursalID = $lead->SucursalID;
-        if($sucursalID){
+        /*if($sucursalID){
             $Log->info("Buscando gerencia sucursal (SELECT GerenciaID FROM MA_Sucursales WHERE ID = $sucursalID)", $solicitudID);
             $gerenciaID = MA_Sucursales::where('ID', $sucursalID)->first()->GerenciaID;
         } else {
             $gerenciaID = $gerencia;
-        }
+        }*/
+
+        $gerenciaID = $gerencia;
 
         if ($reglaSucursal) {
 

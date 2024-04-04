@@ -630,16 +630,19 @@ class LeadController extends Controller
     }
 
 
-    public static function reglaLead($lead, $reglaVendedor = false, $reglaSucursal = false, $solicitudID = null)
+    public static function reglaLead($lead, $reglaVendedor = false, $reglaSucursal = false, $solicitudID = null, $gerencia = 1)
     {
         // Logica de asignacion de Lead, con regla de Lead
         $Log = new Logger();
 
         $origen = $lead->OrigenID;
         $sucursalID = $lead->SucursalID;
-        $Log->info("Buscando gerencia sucursal (SELECT GerenciaID FROM MA_Sucursales WHERE ID = $sucursalID)", $solicitudID);
-        $gerenciaID = MA_Sucursales::where('ID', $sucursalID)->first()->GerenciaID;
-
+        if($sucursalID){
+            $Log->info("Buscando gerencia sucursal (SELECT GerenciaID FROM MA_Sucursales WHERE ID = $sucursalID)", $solicitudID);
+            $gerenciaID = MA_Sucursales::where('ID', $sucursalID)->first()->GerenciaID;
+        } else {
+            $gerenciaID = $gerencia;
+        }
 
         if ($reglaSucursal) {
 

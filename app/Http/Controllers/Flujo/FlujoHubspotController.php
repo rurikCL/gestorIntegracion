@@ -43,12 +43,13 @@ class FlujoHubspotController extends Controller
             ]);
 
             $filter3 = new FilterDeal([
-                'property_name' => 'comentario',
-                'operator' => 'HAS_PROPERTY'
+                'property_name' => 'hs_analytics_source_data_2',
+                'operator' => 'NOT_EQ',
+                'value' => 'tailored leads flotas campaña'
             ]);
 
             $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1, $filter2]
+                'filters' => [$filter1, $filter2, $filter3]
             ]);
             // --------------------------------------------------------------
 

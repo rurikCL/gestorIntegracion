@@ -606,7 +606,8 @@ class LeadController extends Controller
                 $asignado = $this->reglaLead($lead,
                     $reglaVendedor,
                     $reglaSucursal,
-                    $solicitudID
+                    $solicitudID,
+                    $gerenciaHomologada
                 );
                 if ($asignado) {
                     $Log->info("Reglas de Lead ejecutadas con exito ");

@@ -347,7 +347,7 @@ class FlujoHubspotController extends Controller
                             $lead->LogEstado = 0;
                             $lead->save();
 
-                        }catch (ApiException $e){
+                        }catch (\Exception $e){
                             Log::error("Error al actualizar deal hubspot ".$lead->IDExterno);
                             $lead->LogEstado = 2;
                             $lead->save();

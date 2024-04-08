@@ -16,6 +16,7 @@ use HubSpot\Client\Crm\Deals\Model\PublicObjectSearchRequest;
 use HubSpot\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use mysql_xdevapi\Exception;
 
 class FlujoHubspotController extends Controller
 {
@@ -355,12 +356,18 @@ class FlujoHubspotController extends Controller
                         $newProperties->setProperties([
                             'dealstage' => $estadoHomologado
                         ]);
-                        $res = $client->crm()->deals()->basicApi()->update($lead->IDExterno, $newProperties);
-
-                        if ($res) {
+                        try {
+                            $res = $client->crm()->deals()->basicApi()->update($lead->IDExterno, $newProperties);
+                            if ($res) {
+                                $lead->LogEstado = 0;
+                                $lead->save();
+                            }
+                        }catch (Exception $e){
                             $lead->LogEstado = 0;
                             $lead->save();
                         }
+
+
                     }
 
                 }

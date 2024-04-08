@@ -316,22 +316,6 @@ class FlujoHubspotController extends Controller
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
 
-        /*if ($flujo->Activo) {
-
-            $token = json_decode($flujo->Opciones);
-            $client = Factory::createWithAccessToken($token->token);
-
-
-            $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
-
-            $newProperties->setProperties([
-                'dealstage' => 'qualifiedtobuy'
-            ]);
-            $client->crm()->deals()->basicApi()->update('18509559821', $newProperties);
-
-        }*/
-
-
         if ($flujo->Activo) {
 
             $token = json_decode($flujo->Opciones);
@@ -356,8 +340,10 @@ class FlujoHubspotController extends Controller
                         $newProperties->setProperties([
                             'dealstage' => $estadoHomologado
                         ]);
+
                         try {
                             $res = $client->crm()->deals()->basicApi()->update($lead->IDExterno, $newProperties);
+                            Log::info("Resultado : " . print_r($res, true));
                             if ($res) {
                                 $lead->LogEstado = 0;
                                 $lead->save();
@@ -367,8 +353,6 @@ class FlujoHubspotController extends Controller
                             $lead->LogEstado = 2;
                             $lead->save();
                         }
-
-
                     }
 
                 }

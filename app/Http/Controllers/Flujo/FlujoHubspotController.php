@@ -339,7 +339,6 @@ class FlujoHubspotController extends Controller
 
             $leads = MK_Leads::where('LogEstado', 1)
                 ->where('FechaCreacion', '>=', '2024-04-01 00:00:00')
-                ->where('ID','18509559821')
                 ->get();
 
             if($leads->count()) {

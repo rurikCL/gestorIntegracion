@@ -62,7 +62,8 @@ class MK_Leads extends Model
         'Comentario',
         'Contesta',
         'LandBotID',
-        'Contactado'
+        'Contactado',
+        'LogEstado'
     ];
 
     public function cliente()

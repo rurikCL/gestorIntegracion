@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Flujo;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
 use App\Models\FLU\FLU_Flujos;
+use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MK\MK_Leads;
 use HubSpot\Client\Crm\Contacts\ApiException;
@@ -222,6 +223,152 @@ class FlujoHubspotController extends Controller
 
         }
     }
+
+    public function limpiarLeads()
+    {
+        echo "Ejecutando Flujo Hubspot Limpieza <br>";
+        Log::info("Inicio de flujo Limpieza");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+
+        if ($flujo->Activo) {
+
+            $token = json_decode($flujo->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+
+
+            // FILTROS   -----------------------------------------------------
+            $filter1 = new FilterDeal([
+                'property_name' => 'idpompeyo',
+                'operator' => 'HAS_PROPERTY'
+            ]);
+
+            $filter2 = new FilterDeal([
+                'property_name' => 'origen',
+                'operator' => 'NEQ',
+                'value' => 'RELIF'
+            ]);
+
+            $filter3 = new FilterDeal([
+                'property_name' => 'hs_analytics_source_data_2',
+                'operator' => 'NEQ',
+                'value' => 'tailored leads flotas campaña'
+            ]);
+
+            $filterGroup1 = new FilterGroup([
+                'filters' => [$filter1, $filter2, $filter3]
+            ]);
+            // --------------------------------------------------------------
+
+            $publicObjectSearchRequest = new PublicObjectSearchRequest([
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglavendedor', 'usados', 'vpp'],
+                'filter_groups' => [$filterGroup1],
+                'limit' => $flujo->MaxLote,
+            ]);
+
+
+            try {
+
+                $apiResponse = $client->crm()->deals()->searchApi()
+                    ->doSearch($publicObjectSearchRequest)
+                    ->getResults();
+
+//                Log::info("Leads a procesar : " . count($apiResponse));
+                foreach ($apiResponse as $item) {
+                    $data = $item->jsonSerialize();
+
+                    print("Buscando Lead : " . $data->id . "<br>");
+                    $lead = MK_Leads::where('IDExterno', $data->id)->first();
+
+                    $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
+
+                    if ($lead) {
+                        print("Lead encontrado : " . $lead->ID . "<br>");
+                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDExterno;
+                        $lead->FechaCreacion = $item->getProperties()['createdate'];
+
+                        $newProperties->setProperties([
+                            'idpompeyo' => $lead->ID,
+                            'idvendedor' => $lead->VendedorID,
+                            'nombrevendedor' => $lead->vendedor->Nombre,
+                        ]);
+                        $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+
+                    }
+                }
+
+                Log::info("Flujo OK");
+                return true;
+
+            } catch (ApiException $e) {
+                echo "Exception when calling basic_api->get_page: ", $e->getMessage();
+                return false;
+            }
+
+        }
+    }
+
+    public function actualizaLeadHubspot()
+    {
+        echo "Ejecutando Flujo Hubspot Actualizacion <br>";
+        Log::info("Inicio de flujo Actualizacion");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+
+        /*if ($flujo->Activo) {
+
+            $token = json_decode($flujo->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+
+
+            $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
+
+            $newProperties->setProperties([
+                'dealstage' => 'qualifiedtobuy'
+            ]);
+            $client->crm()->deals()->basicApi()->update('18509559821', $newProperties);
+
+        }*/
+
+
+        if ($flujo->Activo) {
+
+            $token = json_decode($flujo->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+            $h = new FLU_Homologacion();
+
+            $leads = MK_Leads::where('LogEstado', 1)
+                ->where('FechaCreacion', '>=', '2024-04-01 00:00:00')
+                ->where('ID','18509559821')
+                ->get();
+
+            if($leads->count()) {
+                Log::info("leads encontrados ".$leads->count());
+                foreach ($leads as $lead) {
+
+                    $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
+                    $estadoHomologado = $h->getDato($lead->estadoLead->Estado, $flujo->ID, 'estado', false);
+
+                    if ($estadoHomologado) {
+                        $newProperties->setProperties([
+                            'dealstage' => $estadoHomologado
+                        ]);
+                        $res = $client->crm()->deals()->basicApi()->update($lead->IDExterno, $newProperties);
+
+                        if ($res) {
+                            $lead->LogEstado = 0;
+                            $lead->save();
+                        }
+                    }
+
+                }
+            } else {
+                Log::info("No hay leads para actualizar");
+            }
+
+        }
+    }
+
 
 
     public function leadsHubspot()

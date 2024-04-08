@@ -343,11 +343,10 @@ class FlujoHubspotController extends Controller
 
                         try {
                             $res = $client->crm()->deals()->basicApi()->update($lead->IDExterno, $newProperties);
-                            Log::info("Resultado : " . print_r($res, true));
-                            if ($res) {
-                                $lead->LogEstado = 0;
-                                $lead->save();
-                            }
+
+                            $lead->LogEstado = 0;
+                            $lead->save();
+
                         }catch (ApiException $e){
                             Log::error("Error al actualizar deal hubspot ".$lead->IDExterno);
                             $lead->LogEstado = 2;

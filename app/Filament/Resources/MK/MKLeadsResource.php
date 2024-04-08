@@ -74,6 +74,7 @@ class MKLeadsResource extends Resource
                     Forms\Components\Toggle::make('Vendido'),
                     Forms\Components\Toggle::make('Contesta'),
                     Forms\Components\Toggle::make('Contactado'),
+                    Forms\Components\Toggle::make('LogEstado'),
                     Forms\Components\TextInput::make('IDExterno'),
                     Forms\Components\TextInput::make('SubEstadoID'),
                     Forms\Components\TextInput::make('CampanaID'),

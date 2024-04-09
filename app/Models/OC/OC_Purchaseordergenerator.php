@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class OC_Purchaseordergenerator extends Model
 {
     protected $table = "OC_purchaseordergenerator";
-    protected $connection = 'mysql';
+    protected $connection = 'mysql-pompeyo';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $fillable = [

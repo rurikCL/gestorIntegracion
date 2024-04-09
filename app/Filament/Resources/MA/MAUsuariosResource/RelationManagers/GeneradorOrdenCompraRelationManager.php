@@ -20,10 +20,10 @@ class GeneradorOrdenCompraRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('BranchOfficeID')
-                    ->required()
+                Forms\Components\Select::make('branchOffice_id')
                     ->relationship('branch', 'Sucursal')
-                ->searchable(),
+                    ->searchable()
+                    ->required(),
 
             ]);
     }

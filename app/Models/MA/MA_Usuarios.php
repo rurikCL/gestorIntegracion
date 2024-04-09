@@ -2,6 +2,7 @@
 
 namespace App\Models\MA;
 
+use App\Models\OC\OC_Purchaseordergenerator;
 use App\Models\SIS\SIS_UsuariosSucursales;
 use App\Models\TK\TK_agents;
 use Carbon\Carbon;
@@ -95,6 +96,15 @@ class MA_Usuarios extends Model
         return $this->belongsTo(MA_Cargos::class, 'CargoID');
     }
 
+    public function generadorOrdenCompra()
+    {
+        return $this->hasOne(OC_Purchaseordergenerator::class, 'user_id', 'ID');
+    }
+
+
+
+
+
     public function scopeSucursalAsignada($query, $sucursal_id)
     {
         return $query->whereHas('sucursales', function ($query) use ($sucursal_id) {
@@ -106,6 +116,8 @@ class MA_Usuarios extends Model
     {
         return $query->where('CargoID', 2)->where('PerfilID', 3);
     }
+
+
 
 
 

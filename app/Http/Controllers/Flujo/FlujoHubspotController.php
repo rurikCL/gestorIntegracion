@@ -312,7 +312,7 @@ class FlujoHubspotController extends Controller
     public function actualizaLeadHubspot()
     {
         echo "Ejecutando Flujo Hubspot Actualizacion <br>";
-        Log::info("Inicio de flujo Actualizacion");
+        Log::info("Inicio de flujo Actualizacion Deals Hubspot (etapa / estado)");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
 

@@ -15,6 +15,7 @@ use App\Models\MA\MA_SubOrigenes;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MA\MA_Versiones;
+use App\Models\VT\VT_Cotizaciones;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -162,6 +163,11 @@ class MK_Leads extends Model
             'SolicitudID',
             'ID',
             'ID');
+    }
+
+    public function cotizacion()
+    {
+        return $this->hasOne(VT_Cotizaciones::class, 'ID', 'CotizacionID');
     }
 
     public function scopeValidado($query)

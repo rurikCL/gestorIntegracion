@@ -100,6 +100,7 @@ class MAUsuariosResource extends Resource
         return [
             'sucursales' => RelationManagers\SucursalesRelationManager::class,
             'agente' => RelationManagers\AgenteRelationManager::class,
+            'generadorOC' => RelationManagers\GeneradorOrdenCompraRelationManager::class,
         ];
     }
 

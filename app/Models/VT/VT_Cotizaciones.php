@@ -145,6 +145,11 @@ class VT_Cotizaciones extends Model
         return $this->hasOne(VT_CotizacionesEstados::class, 'ID', 'EstadoID');
     }
 
+    public function venta()
+    {
+        return $this->hasOne(VT_Ventas::class, 'ID', 'VentaID');
+    }
+
     public function scopeValidado($query)
     {
         return $query->whereHas('cliente', function ($q) {

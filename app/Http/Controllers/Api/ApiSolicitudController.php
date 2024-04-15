@@ -64,6 +64,7 @@ class ApiSolicitudController extends Controller
             $solicitud->PeticionHeader = (is_array($request->input('dataHeader'))) ? json_encode($request->input('data')) : $request->input('dataHeader');
             $solicitud->FechaPeticion = Carbon::now();
             $solicitud->FlujoID = $request->input('flujoID');
+            $solicitud->Reintentos = 3; //Numero de reintentos por default
             $solicitud->save();
         });
 

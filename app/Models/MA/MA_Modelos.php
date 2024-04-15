@@ -36,7 +36,7 @@ class MA_Modelos extends Model
 
     public function marca()
     {
-        return $this->hasOne(MA_Marcas::class, 'ID', 'MarcaID');
+        return $this->belongsTo(MA_Marcas::class, 'MarcaID', 'ID');
     }
 
     public function versiones()

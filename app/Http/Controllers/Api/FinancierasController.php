@@ -133,7 +133,7 @@ class FinancierasController extends Controller
             "c_dv" => substr($rut, -1, 1),
             "c_tipo_id" => "D", // D: Dependiente, E: Empresa, I: Independiente
             "c_pais_id" => "CHL",
-            "c_ingreso" => $data["Cliente"]->SueldoLiquido,
+//            "c_ingreso" => $data["Cliente"]->SueldoLiquido,
             "v_org_id" => "2251",
             "v_estado_id" => "N", // N: Nuevo, U: Usado, SN: Seminuevo, NA: No aplica
             "v_uso_id" => "P", // C: Comercial, P: Particular, NA: NO aplica

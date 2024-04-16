@@ -6,6 +6,7 @@ use App\Filament\Resources\MA\MAUsuariosResource\Pages;
 use App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 use App\Models\MA\MA_Usuarios;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;

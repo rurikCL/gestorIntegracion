@@ -4,6 +4,7 @@ namespace App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Table;
@@ -42,9 +43,9 @@ class SucursalesRelationManager extends RelationManager
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('sucursal.Sucursal')
-                ->searchable(),
+                    ->searchable(),
                 Tables\Columns\SelectColumn::make('CargoID')->disabled(!Auth::user()->isAdmin())
-                ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
+                    ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
                 Tables\Columns\ToggleColumn::make('DisponibleLead')->disabled(),
                 Tables\Columns\ToggleColumn::make('Activo')->disabled(!Auth::user()->isAdmin()),
 //                Tables\Columns\TextColumn::make('FechaCreacion'),
@@ -79,4 +80,5 @@ class SucursalesRelationManager extends RelationManager
                 Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
+
 }

@@ -10,7 +10,7 @@ class ListOCSubCategorias extends ListRecords
 {
     protected static string $resource = OCSubCategoriasResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

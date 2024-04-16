@@ -7,9 +7,9 @@ use App\Filament\Resources\MA\MAOrigenesResource\RelationManagers;
 use App\Models\MA\MA_Origenes;
 use App\Models\MA\MAOrigenes;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -21,7 +21,7 @@ class MAOrigenesResource extends Resource
     protected static ?string $navigationLabel = 'Origenes';
     protected static ?string $pluralLabel = 'Origenes';
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Marketing';
 
 

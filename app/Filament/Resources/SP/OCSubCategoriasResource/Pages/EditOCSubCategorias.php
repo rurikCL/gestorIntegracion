@@ -10,7 +10,7 @@ class EditOCSubCategorias extends EditRecord
 {
     protected static string $resource = OCSubCategoriasResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

@@ -5,9 +5,9 @@ namespace App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Livewire;
@@ -18,7 +18,7 @@ class SucursalesRelationManager extends RelationManager
 
     protected static ?string $recordTitleAttribute = 'Sucursales';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -38,7 +38,7 @@ class SucursalesRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

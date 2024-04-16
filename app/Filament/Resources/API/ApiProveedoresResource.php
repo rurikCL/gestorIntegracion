@@ -6,9 +6,9 @@ use App\Filament\Resources\API;
 use App\Filament\Resources\API\ApiProveedoresResource\RelationManagers\RespuestasTipoRelationManager;
 use App\Models\Api\ApiProveedores;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use SendGrid\Mail\Section;
 
@@ -16,7 +16,7 @@ class ApiProveedoresResource extends Resource
 {
     protected static ?string $model = ApiProveedores::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Orquestador API';
     protected static ?string $navigationLabel = 'APIs / Endpoints';
     protected static ?string $pluralLabel = 'APIs';

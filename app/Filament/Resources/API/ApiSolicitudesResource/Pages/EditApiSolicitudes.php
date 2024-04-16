@@ -10,7 +10,7 @@ class EditApiSolicitudes extends EditRecord
 {
     protected static string $resource = ApiSolicitudesResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\ViewAction::make(),

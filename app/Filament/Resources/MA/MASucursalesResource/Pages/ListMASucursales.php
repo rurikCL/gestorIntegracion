@@ -10,7 +10,7 @@ class ListMASucursales extends ListRecords
 {
     protected static string $resource = MASucursalesResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

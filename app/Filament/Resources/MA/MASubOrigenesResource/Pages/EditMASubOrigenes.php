@@ -10,7 +10,7 @@ class EditMASubOrigenes extends EditRecord
 {
     protected static string $resource = MASubOrigenesResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

@@ -13,7 +13,7 @@ class ManageFLUCargas extends ManageRecords
 {
     protected static string $resource = FLUCargasResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()->mutateFormDataUsing(function (array $data): array {

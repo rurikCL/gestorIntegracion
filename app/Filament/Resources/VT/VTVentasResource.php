@@ -6,9 +6,9 @@ use App\Filament\Resources\VT\VTVentasResource\Pages;
 use App\Models\User;
 use App\Models\VT\VT_Ventas;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use function Psl\Dict\group_by;
 
@@ -16,7 +16,7 @@ class VTVentasResource extends Resource
 {
     protected static ?string $model = VT_Ventas::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $modelLabel = 'Ventas';
     protected static ?string $navigationGroup = 'Administracion';
 

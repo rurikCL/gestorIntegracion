@@ -7,9 +7,9 @@ use App\Filament\Resources\MA\MASubOrigenesResource\RelationManagers;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MA\MASubOrigenes;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -18,7 +18,7 @@ class MASubOrigenesResource extends Resource
 {
     protected static ?string $model = MA_SubOrigenes::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Marketing';
     protected static ?string $modelLabel = 'SubOrigen';
     protected static ?string $navigationLabel = 'Sub Origenes';

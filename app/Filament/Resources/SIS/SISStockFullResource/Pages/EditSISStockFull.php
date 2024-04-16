@@ -10,7 +10,7 @@ class EditSISStockFull extends EditRecord
 {
     protected static string $resource = SISStockFullResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

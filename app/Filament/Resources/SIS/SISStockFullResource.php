@@ -6,9 +6,9 @@ use App\Filament\Resources\SIS\SISStockFullResource\Pages;
 use App\Filament\Resources\SIS\SISStockFullResource\RelationManagers;
 use App\Models\SIS\SIS_StockFull;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class SISStockFullResource extends Resource
 {
     protected static ?string $model = SIS_StockFull::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $modelLabel = 'Stock';
     protected static ?string $navigationGroup = 'Administracion';
 

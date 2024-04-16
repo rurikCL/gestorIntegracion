@@ -11,14 +11,14 @@ class ViewApiSolicitudes extends ViewRecord
 {
     protected static string $resource = ApiSolicitudesResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\EditAction::make(),
             Actions\Action::make('reprocesar')
                 ->label("Reprocesar")
                 ->action(fn()  =>  ApiSolicitudController::reprocesarJob($this->record))
-                ->icon('heroicon-s-refresh')
+                ->icon('heroicon-m-arrow-path')
                 ->color('success')
                 ->requiresConfirmation(),
         ];

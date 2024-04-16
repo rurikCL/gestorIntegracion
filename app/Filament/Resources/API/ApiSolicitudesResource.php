@@ -17,9 +17,9 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\Position;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,7 +29,7 @@ class ApiSolicitudesResource extends Resource
 {
     protected static ?string $model = ApiSolicitudes::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Orquestador API';
 
     protected static ?string $navigationLabel = 'Monitor trabajos';
@@ -209,7 +209,7 @@ class ApiSolicitudesResource extends Resource
                             ApiSolicitudController::reprocesarJob($record);
                         }
                     })
-                    ->icon('heroicon-s-refresh')
+                    ->icon('heroicon-m-arrow-path')
                     ->deselectRecordsAfterCompletion()
                     ->requiresConfirmation(),
                 Tables\Actions\BulkAction::make('eliminarNotificacion')->label("Borrar Seleccionados")
@@ -227,7 +227,7 @@ class ApiSolicitudesResource extends Resource
                     ->deselectRecordsAfterCompletion()
                     ->requiresConfirmation(),
             ])
-            ->actionsPosition(Position::BeforeColumns)
+            ->actionsPosition(\Filament\Tables\Enums\ActionsPosition::BeforeColumns)
             ->poll('10s')
             ->defaultSort('FechaPeticion', 'desc');
     }
@@ -254,7 +254,7 @@ class ApiSolicitudesResource extends Resource
         ];
     }
 
-    protected static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return ApiSolicitudes::SolicitudesPendientes();
     }
@@ -266,7 +266,7 @@ class ApiSolicitudesResource extends Resource
             ->action(function ($record) {
                 ApiSolicitudController::reprocesarJob($record);
             })
-            ->icon('heroicon-s-refresh')
+            ->icon('heroicon-m-arrow-path')
             ->requiresConfirmation()
             ->tooltip('Reprocesar');
     }

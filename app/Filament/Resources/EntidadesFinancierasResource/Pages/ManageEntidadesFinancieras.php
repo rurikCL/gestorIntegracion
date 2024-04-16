@@ -10,7 +10,7 @@ class ManageEntidadesFinancieras extends ManageRecords
 {
     protected static string $resource = EntidadesFinancierasResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

@@ -10,7 +10,7 @@ class EditFluFlujos extends EditRecord
 {
     protected static string $resource = FluFlujosResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),

@@ -10,7 +10,7 @@ class ListApiProveedores extends ListRecords
 {
     protected static string $resource = ApiProveedoresResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

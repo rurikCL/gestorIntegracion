@@ -10,7 +10,7 @@ class ListVTSalvins extends ListRecords
 {
     protected static string $resource = VTSalvinResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

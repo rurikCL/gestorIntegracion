@@ -10,9 +10,9 @@ use App\Models\TK\TK_Tickets;
 use App\Models\TK\TKTicketsManager;
 use Carbon\Carbon;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -21,7 +21,7 @@ class TKTicketsManagerResource extends Resource
 {
     protected static ?string $model = TK_Tickets::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Ticketera';
     protected static ?string $pluralLabel = 'Tickets';
     protected static ?string $navigationLabel = 'Tickets TI';

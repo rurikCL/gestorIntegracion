@@ -10,7 +10,7 @@ class ManageOCCategorias extends ManageRecords
 {
     protected static string $resource = OCCategoriasResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

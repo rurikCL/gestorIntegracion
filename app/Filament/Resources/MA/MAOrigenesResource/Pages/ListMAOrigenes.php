@@ -10,7 +10,7 @@ class ListMAOrigenes extends ListRecords
 {
     protected static string $resource = MAOrigenesResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

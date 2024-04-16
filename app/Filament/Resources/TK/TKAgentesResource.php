@@ -7,9 +7,9 @@ use App\Filament\Resources\TK\TKAgentesResource\RelationManagers;
 use App\Models\TK\TK_agents;
 use App\Models\TK\TK_sub_categories;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -18,7 +18,7 @@ class TKAgentesResource extends Resource
 {
     protected static ?string $model = TK_agents::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Ticketera';
     protected static ?string $navigationLabel = 'Agentes';
     protected static ?string $pluralLabel = 'Agentes';

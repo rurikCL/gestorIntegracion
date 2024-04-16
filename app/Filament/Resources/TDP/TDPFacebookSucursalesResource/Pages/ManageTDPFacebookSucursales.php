@@ -11,7 +11,7 @@ class ManageTDPFacebookSucursales extends ManageRecords
 {
     protected static string $resource = TDPFacebookSucursalesResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make()

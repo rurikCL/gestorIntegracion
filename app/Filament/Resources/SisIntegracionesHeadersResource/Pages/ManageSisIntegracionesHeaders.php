@@ -10,7 +10,7 @@ class ManageSisIntegracionesHeaders extends ManageRecords
 {
     protected static string $resource = SisIntegracionesHeadersResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

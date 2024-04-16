@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\MA\MASucursalesResource;
 
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 
 class ApproversRelationManager extends RelationManager
@@ -15,7 +15,7 @@ class ApproversRelationManager extends RelationManager
     protected static ?string $recordTitleAttribute = 'Aprobadores';
     protected static ?string $inverseRelationship = 'aprobadores';
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -42,7 +42,7 @@ class ApproversRelationManager extends RelationManager
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
             ->columns([

@@ -6,9 +6,9 @@ use App\Filament\Resources\EntidadesFinancierasResource\Pages;
 use App\Filament\Resources\EntidadesFinancierasResource\RelationManagers;
 use App\Models\EntidadesFinancieras;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class EntidadesFinancierasResource extends Resource
 {
     protected static ?string $model = EntidadesFinancieras::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
 
 

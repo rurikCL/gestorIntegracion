@@ -10,7 +10,7 @@ class EditApiProveedores extends EditRecord
 {
     protected static string $resource = ApiProveedoresResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\ViewAction::make(),

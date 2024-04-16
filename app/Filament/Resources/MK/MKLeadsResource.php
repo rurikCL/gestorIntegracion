@@ -18,9 +18,9 @@ use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Filament\Tables\Columns\Layout\Stack;
 use Illuminate\Database\Eloquent\Builder;
@@ -31,7 +31,7 @@ class MKLeadsResource extends Resource
 {
     protected static ?string $model = MK_Leads::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Marketing';
     protected static ?string $modelLabel = 'Leads';
 
@@ -141,7 +141,7 @@ class MKLeadsResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('ID')->color('secondary')
+                Tables\Columns\TextColumn::make('ID')->color('gray')
 //                        ->icon('heroicon-o-document-duplicate')
                     ->searchable()
                     ->sortable(),
@@ -201,14 +201,14 @@ class MKLeadsResource extends Resource
             ->bulkActions([
 //                Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\BulkAction::make("Regla Lead Vendedor")
-                    ->icon('heroicon-s-refresh')
+                    ->icon('heroicon-m-arrow-path')
                     ->action(function (Collection $records) {
                         foreach ($records as $record) {
                             LeadController::reglaLead($record, true, false);
                         }
                     })->requiresConfirmation(),
                 Tables\Actions\BulkAction::make("Regla Lead Sucursal")
-                    ->icon('heroicon-s-refresh')
+                    ->icon('heroicon-m-arrow-path')
                     ->action(function (Collection $records) {
                         foreach ($records as $record) {
                             LeadController::reglaLead($record, false, true);

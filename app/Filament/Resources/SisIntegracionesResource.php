@@ -6,9 +6,9 @@ use App\Filament\Resources\SisIntegracionesResource\Pages;
 use App\Filament\Resources\SisIntegracionesResource\RelationManagers;
 use App\Models\SisIntegraciones;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -17,7 +17,7 @@ class SisIntegracionesResource extends Resource
 {
     protected static ?string $model = SisIntegraciones::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Orquestador API';
     protected static ?string $modelLabel = 'Integraciones';
 

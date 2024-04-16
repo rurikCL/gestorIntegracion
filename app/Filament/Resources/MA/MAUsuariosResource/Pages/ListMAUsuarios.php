@@ -12,7 +12,7 @@ class ListMAUsuarios extends ListRecords
 {
     protected static string $resource = MAUsuariosResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

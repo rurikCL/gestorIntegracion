@@ -10,7 +10,7 @@ class ListTKCategoriasTickets extends ListRecords
 {
     protected static string $resource = TKCategoriasTicketResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

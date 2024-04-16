@@ -10,7 +10,7 @@ class ListFluFlujos extends ListRecords
 {
     protected static string $resource = FluFlujosResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),

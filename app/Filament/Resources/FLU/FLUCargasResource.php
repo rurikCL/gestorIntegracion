@@ -9,10 +9,10 @@ use App\Filament\Resources\FLU\FLUCargasResource\Widgets\FluCargas;
 use App\Models\FLU\FLU_Cargas;
 use App\Models\FLU\FLU_Flujos;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -23,7 +23,7 @@ class FLUCargasResource extends Resource
 {
     protected static ?string $model = FLU_Cargas::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Flujos';
     protected static ?string $modelLabel = 'Carga de Archivos';
@@ -78,7 +78,7 @@ class FLUCargasResource extends Resource
                 Tables\Columns\TextColumn::make('FechaCarga')->date('d/m/Y'),
                 Tables\Columns\IconColumn::make('Estado')->options([
                     'heroicon-o-clock' => 0,
-                    'heroicon-o-table' => 1,
+                    'heroicon-o-table-cells' => 1,
                     'heroicon-o-check-circle' => 2,
                     'heroicon-o-x-circle' => 3,
                 ])->colors([

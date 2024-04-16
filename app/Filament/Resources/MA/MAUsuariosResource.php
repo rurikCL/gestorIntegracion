@@ -7,9 +7,9 @@ use App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 use App\Models\MA\MA_Usuarios;
 use Filament\Forms;
 use Filament\Forms\Components\Tabs\Tab;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -19,7 +19,7 @@ class MAUsuariosResource extends Resource
 {
     protected static ?string $model = MA_Usuarios::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $navigationLabel = 'Usuarios Roma';
     protected static ?string $label = 'Usuario Roma';

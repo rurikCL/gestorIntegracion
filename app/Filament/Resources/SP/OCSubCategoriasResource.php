@@ -9,9 +9,9 @@ use App\Models\SP\SP_oc_categories;
 use App\Models\SP\SP_oc_sub_categories;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -20,7 +20,7 @@ class OCSubCategoriasResource extends Resource
 {
     protected static ?string $model = SP_oc_sub_categories::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Ordenes de Compra';
     protected static ?string $modelLabel = 'Sub Categorias';
 

@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Models\PersonalAccessToken;
+use App\Models\VT\VT_Salvin;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Field;
 use Filament\Navigation\NavigationGroup;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
@@ -66,5 +68,8 @@ class AppServiceProvider extends ServiceProvider
                     ->tooltip($tooltip)
             );
         });
+
+//        Gate::policy(VT_Salvin::class, VT_SalvinPolicy::class);
     }
+
 }

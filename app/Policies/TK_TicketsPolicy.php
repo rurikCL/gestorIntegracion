@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class VT_SalvinPolicy
+class TK_TicketsPolicy
 {
     /**
      * Create a new policy instance.

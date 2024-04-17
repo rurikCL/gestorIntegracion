@@ -79,6 +79,92 @@ class FinancierasController extends Controller
         ];
     }
 
+    public function calculadoraSantander(Request $request){
+
+        $data = $request->input("data");
+        $gastos = [
+            [
+                "id" => 24,
+                "nombre" => "Gastos de Constitución"
+            ]
+        ];
+
+        $seguros = [];
+        // Seguro aplica a clientes dependientes e independientes
+        if ($data["TipoTrabajador"] == 2 || $data["TipoTrabajador"] == 3) {
+            $seguros = [
+                [
+                    "id" => 160,
+                    "nombre" => "Seguro de Desgravamen"
+                ]
+            ];
+        }
+
+
+        $rut = $data["Rut"];
+        $dataPayload = [
+            "c_rut" => substr($rut, 0, strlen($rut) - 1),
+            "c_dv" => substr($rut, -1, 1),
+            "c_tipo_id" => "D", // D: Dependiente, E: Empresa, I: Independiente
+            "c_pais_id" => "CHL",
+            "c_ingreso" => $data["SueldoLiquido"],
+            "v_org_id" => "2251",
+            "v_estado_id" => "N", // N: Nuevo, U: Usado, SN: Seminuevo, NA: No aplica
+            "v_uso_id" => $data["tipoUso"], // C: Comercial, P: Particular, NA: NO aplica
+            "v_marca_id" => $data["MarcaID"],
+            "v_modelo_id" => $data["ModeloID"],
+            "v_logica_modelo" => 3, // 1: Drive Nombre, 3: Drive ID
+            "v_ano" => $data["Anno"],
+            "v_precio" => $data["Precio"],
+            "v_linea_id" => "N",
+            "p_id" => 1,
+            "p_pie" => $data["Pie"],
+            "p_plazo" => $data["Plazo"],
+            "p_vfmg" => 0,
+            "p_fecha_primer_venc" => Carbon::create($data["Vencimiento"])->format("d-m-Y"),
+            "p_g" => $gastos,
+            "p_s" => $seguros,
+            "p_m" => null,
+        ];
+
+
+        $solicitudCon = new ApiSolicitudController();
+        $flujo = FLU_Flujos::where('Nombre', 'SANTANDER')->first();
+
+        $referencia = $data["CotizacionID"];
+
+        $req = new Request();
+        $req['referencia_id'] = $referencia;
+        $req['proveedor_id'] = 8;
+        $req['api_id'] = 7;
+        $req['prioridad'] = 1;
+        $req['flujoID'] = $flujo->ID;
+        $req['OnDemand'] = true;
+        $req['data'] = $dataPayload;
+
+        $resp = $solicitudCon->store($req);
+
+        $data = $solicitudCon->getData($resp);
+
+        if ($data->errors) {
+            Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);
+            return [
+                "status" => "ERROR",
+                "message" => $data->errors[0]->message,
+                "data" => []
+            ];
+        } else {
+            FLU_Notificaciones::Notificar($referencia, $flujo->ID);
+            Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
+
+            return [
+                "status" => "OK",
+                "message" => "Simulacion creada con exito, espere resultado de Solicitud de Credito",
+                "data" => $data,
+            ];
+        }
+
+    }
     public function homologacionModelos()
     {
         $solicitudCon = new ApiSolicitudController();
@@ -133,7 +219,7 @@ class FinancierasController extends Controller
             "c_dv" => substr($rut, -1, 1),
             "c_tipo_id" => "D", // D: Dependiente, E: Empresa, I: Independiente
             "c_pais_id" => "CHL",
-//            "c_ingreso" => $data["Cliente"]->SueldoLiquido,
+            "c_ingreso" => $data["Cliente"]->SueldoLiquido,
             "v_org_id" => "2251",
             "v_estado_id" => "N", // N: Nuevo, U: Usado, SN: Seminuevo, NA: No aplica
             "v_uso_id" => "P", // C: Comercial, P: Particular, NA: NO aplica

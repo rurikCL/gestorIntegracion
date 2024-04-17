@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class VT_SalvinPolicy
+class SIS_SolicitudesArbolAprobacionesPolicy
 {
     /**
      * Create a new policy instance.

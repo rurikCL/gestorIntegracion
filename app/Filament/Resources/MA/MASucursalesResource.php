@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class MASucursalesResource extends Resource
 {
@@ -116,10 +117,12 @@ class MASucursalesResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                ->disabled(!Auth::user()->isAdmin()),
             ]);
     }
 

@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class MAClientesResource extends Resource
 {
@@ -50,20 +51,23 @@ class MAClientesResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
-                Tables\Columns\TextColumn::make('Nombre')->searchable(),
+                Tables\Columns\TextColumn::make('Nombre')->searchable()
+                ->description(fn(MA_Clientes $record) => $record->Direccion),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
                 Tables\Columns\TextColumn::make('Telefono')->searchable(),
-                Tables\Columns\TextColumn::make('Direccion'),
+                Tables\Columns\BadgeColumn::make('numVentas'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->disabled(!Auth::user()->isRole(['admin'])),
             ]);
     }
 

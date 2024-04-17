@@ -2,6 +2,8 @@
 
 namespace App\Models\MA;
 
+use App\Models\VT\VT_Ventas;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -72,6 +74,13 @@ class MA_Clientes extends Model
         'Calificacion'
     ];
 
+    public function numVentas() : Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->ventas->where('EstadoVentaID', 4)->count()
+        );
+    }
+
     public function getRutFormatAttribute()
     {
         return substr($this->Rut, 0, strlen($this->Rut) - 1) . '-' . substr($this->Rut, -1);
@@ -85,5 +94,10 @@ class MA_Clientes extends Model
     public function comuna()
     {
         return $this->hasOne(MA_Comunas::class, 'ID', 'ComunaID');
+    }
+
+    public function ventas()
+    {
+        return $this->hasMany(VT_Ventas::class, 'ClienteID', 'ID');
     }
 }

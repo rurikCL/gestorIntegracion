@@ -12,6 +12,7 @@ use Filament\Tables\Table;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use SendGrid\Mail\Section;
 
 class MAModelosResource extends Resource
@@ -95,10 +96,12 @@ class MAModelosResource extends Resource
                     ->label('Marca')
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make()
+                    ->disabled(!Auth::user()->isRole(['admin'])),
             ]);
     }
 

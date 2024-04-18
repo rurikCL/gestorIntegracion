@@ -21,7 +21,7 @@ class TK_agentsPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isRole(['admin', 'marketing']);
+        return $user->isAdmin();
     }
 
     public function create(User $user)

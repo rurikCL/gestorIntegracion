@@ -17,7 +17,8 @@ class MA_ClientesPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'marketing']);
+
     }
 
     public function create(User $user)

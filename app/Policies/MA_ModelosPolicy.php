@@ -17,7 +17,8 @@ class MA_ModelosPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'marketing']);
+
     }
 
     public function create(User $user)

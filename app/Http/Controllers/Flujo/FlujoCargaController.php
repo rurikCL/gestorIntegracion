@@ -78,7 +78,7 @@ class FlujoCargaController extends Controller
             ->where('ID_Flujo', $data["ID_Flujo"])->first();
 
         if ($fileName) {
-            Excel::import(new SalvinsImport($carga), "/public/" . $fileName, null, \Maatwebsite\Excel\Excel::CSV);
+            Excel::import(new SalvinsImport($carga), "/public/" . $fileName, null);
         }
 
         $carga->fresh();

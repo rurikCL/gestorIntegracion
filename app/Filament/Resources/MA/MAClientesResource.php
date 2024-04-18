@@ -61,7 +61,7 @@ class MAClientesResource extends Resource
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
                 Tables\Columns\TextColumn::make('Telefono')->searchable(),
-                Tables\Columns\BadgeColumn::make('numVentas'),
+                Tables\Columns\BadgeColumn::make('ventas_count')->sortable(),
             ])
             ->filters([
                 //
@@ -74,7 +74,12 @@ class MAClientesResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->disabled(!Auth::user()->isRole(['admin'])),
-            ]);
+            ])
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->withCount(['ventas' =>function (Builder $query) {
+                    $query->where('EstadoVentaID', 4);
+                }]);
+            });
     }
 
     public static function getRelations(): array

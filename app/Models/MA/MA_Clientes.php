@@ -74,13 +74,6 @@ class MA_Clientes extends Model
         'Calificacion'
     ];
 
-    public function numVentas() : Attribute
-    {
-        return Attribute::make(
-            get: fn () => $this->ventas->where('EstadoVentaID', 4)->count()
-        );
-    }
-
     public function getRutFormatAttribute()
     {
         return substr($this->Rut, 0, strlen($this->Rut) - 1) . '-' . substr($this->Rut, -1);

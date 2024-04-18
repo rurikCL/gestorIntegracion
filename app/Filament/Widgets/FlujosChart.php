@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 class FlujosChart extends PieChartWidget
 {
     protected static ?string $heading = 'Solicitudes por flujo';
-
+    protected static ?int $sort = 1;
     protected function getData(): array
     {
         $flujos = FLU_Flujos::select('ID', 'Nombre')->get();

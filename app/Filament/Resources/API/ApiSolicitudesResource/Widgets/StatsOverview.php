@@ -8,6 +8,8 @@ use Filament\Widgets\StatsOverviewWidget\Card;
 
 class StatsOverview extends BaseWidget
 {
+
+    protected static ?int $sort = 0;
     protected function getCards(): array
     {
         return [

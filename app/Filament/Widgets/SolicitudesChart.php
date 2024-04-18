@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class SolicitudesChart extends LineChartWidget
 {
     protected static ?string $heading = 'Soliciutdes por mes';
-
+    protected static ?int $sort = 2;
     protected function getData(): array
     {
         $dataOld = \App\Models\Api\ApiSolicitudes::select(DB::raw('count(*) as count'), DB::raw('MONTH(created_at) as month'))

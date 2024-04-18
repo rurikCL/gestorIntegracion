@@ -27,13 +27,13 @@ class MA_SubOrigenesPolicy
     public function create(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'marketing']);
 
     }
     public function update(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'marketing']);
 
     }
 }

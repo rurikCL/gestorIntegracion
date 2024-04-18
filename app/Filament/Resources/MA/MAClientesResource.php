@@ -54,6 +54,11 @@ class MAClientesResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            /*->modifyQueryUsing(function (Builder $query) {
+                $query->withCount(['ventas' =>function (Builder $query) {
+                    $query->where('EstadoVentaID', 4);
+                }]);
+            })*/
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
                 Tables\Columns\TextColumn::make('Nombre')->searchable()
@@ -74,13 +79,7 @@ class MAClientesResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
                     ->disabled(!Auth::user()->isRole(['admin'])),
-            ])
-            /*->modifyQueryUsing(function (Builder $query) {
-                $query->withCount(['ventas' =>function (Builder $query) {
-                    $query->where('EstadoVentaID', 4);
-                }]);
-            })*/
-            ;
+            ]);
     }
 
     public static function getRelations(): array

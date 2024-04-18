@@ -79,8 +79,7 @@ class MAClientesResource extends Resource
                 $query->withCount(['ventas' =>function (Builder $query) {
                     $query->where('EstadoVentaID', 4);
                 }]);
-            })
-            ->deferLoading();
+            });
     }
 
     public static function getRelations(): array

@@ -74,7 +74,7 @@ class FLUCargasResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('flujo.Nombre')->searchable(),
 
-                Tables\Columns\TextColumn::make('File')->limit(20),
+                Tables\Columns\TextColumn::make('File')->limit(20)->tooltip(fn($record) => $record->File),
                 Tables\Columns\TextColumn::make('FechaCarga')->date('d/m/Y'),
                 Tables\Columns\IconColumn::make('Estado')->options([
                     'heroicon-o-clock' => 0,

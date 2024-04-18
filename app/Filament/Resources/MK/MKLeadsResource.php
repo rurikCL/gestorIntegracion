@@ -215,7 +215,8 @@ class MKLeadsResource extends Resource
                         }
                     })->requiresConfirmation()
 
-            ]);
+            ])
+            ->deferLoading();
     }
 
     public static function getRelations(): array

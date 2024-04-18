@@ -22,6 +22,11 @@ class MAClientesResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $navigationLabel = 'Clientes';
+    protected static ?string $modelLabel = 'Cliente';
+    protected static ?string $pluralLabel = 'Clientes';
+
+
+
 
     public static function form(Form $form): Form
     {

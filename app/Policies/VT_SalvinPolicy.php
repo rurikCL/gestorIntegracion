@@ -17,7 +17,7 @@ class VT_SalvinPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'salvin']);
     }
 
     public function create(User $user)

@@ -229,8 +229,7 @@ class ApiSolicitudesResource extends Resource
             ])
             ->actionsPosition(\Filament\Tables\Enums\ActionsPosition::BeforeColumns)
             ->poll('10s')
-            ->defaultSort('FechaPeticion', 'desc')
-            ->deferLoading();
+            ->defaultSort('FechaPeticion', 'desc');
     }
 
     public static function getRelations(): array

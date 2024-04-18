@@ -67,6 +67,7 @@ class MAClientesResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()->slideOver(),
                 Tables\Actions\EditAction::make()
                     ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
             ])

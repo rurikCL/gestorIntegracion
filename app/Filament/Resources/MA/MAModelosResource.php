@@ -96,6 +96,7 @@ class MAModelosResource extends Resource
                     ->label('Marca')
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
             ])

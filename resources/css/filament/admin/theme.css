@@ -1,0 +1,26 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+
+html main {
+    background-image: url("/public/img/doodle2.png") ;
+    /*opacity: 0.4;*/
+}
+html.dark main {
+    font-family: 'Open Sans', sans-serif;
+    background-image: url("/public/img/doodle2-dark.png");
+
+    /*opacity: 0.4;*/
+}
+
+.fi-ta {
+    @apply shadow-lg;
+}
+
+.fi-wi-stats-overview-stat {
+    @apply shadow-lg;
+}
+.fi-btn {
+    @apply shadow-md;
+}
+

@@ -4,6 +4,7 @@ namespace App\Models\OC;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OC_purchase_orders extends Model
 {
@@ -30,6 +31,7 @@ class OC_purchase_orders extends Model
         'pre_oc',
     ];
 
+
     public function sucursal()
     {
         return $this->belongsTo('App\Models\MA\MA_Sucursales', 'branch_id', 'ID');
@@ -45,18 +47,23 @@ class OC_purchase_orders extends Model
         return $this->belongsTo('App\Models\MA\MA_Gerencias', 'brand_id', 'ID');
     }
 
-    public function comprador()
+    public function comprador() :hasOne
     {
-        return $this->belongsTo('App\Models\MA\MA_Usuarios', 'buyers_id', 'ID');
+        return $this->hasOne('App\Models\MA\MA_Usuarios', 'ID', 'buyers_id');
     }
 
-    public function contacto()
+    public function contacto() :hasOne
     {
-        return $this->belongsTo('App\Models\MA\MA_Contactos', 'contact_id', 'ID');
+        return $this->hasOne('App\Models\MA\MA_Usuarios', 'ID', 'contact_id');
     }
 
-    public function empresa()
+    public function empresa() :hasOne
     {
-        return $this->belongsTo('App\Models\MA\MA_PompeyoEmpresas', 'business_id', 'ID');
+        return $this->hasOne('App\Models\MA\MA_PompeyoEmpresas', 'ID', 'business_id');
+    }
+
+    public function tipoSucursal() : hasOne
+    {
+        return $this->hasOne('App\Models\MA\MA_TipoSucursal', 'ID', 'typeOfBranch_id');
     }
 }

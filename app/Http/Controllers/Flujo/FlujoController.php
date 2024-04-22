@@ -22,6 +22,7 @@ use App\Models\SIS\SIS_AutoRedTransaccion;
 use App\Models\SIS\SIS_Solicitudes;
 use App\Models\Stock;
 use App\Models\VT\VT_Cotizaciones;
+use App\Models\VT\VT_EstadoResultado;
 use App\Models\VT_Ventas;
 use Carbon\Carbon;
 use Carbon\Traits\Date;
@@ -342,7 +343,7 @@ class FlujoController extends Controller
             Log::info("Flujo activo");
 //            $h = new FLU_Homologacion();
 
-            $ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
+            /*$ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
                 ->Gerencia(2)
                 ->NoNotificado($flujo->ID)
 //                ->where('FechaVenta', '>=', '2023-11-01 00:00:00')
@@ -350,8 +351,17 @@ class FlujoController extends Controller
                 ->where('EstadoVentaID', 4)
                 ->where('Cajon', '<>', '')
                 ->limit($flujo->MaxLote ?? 5)
-                ->get();
+                ->get();*/
 //                ->toSql();
+
+            $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
+                ->Gerencia(2)
+                ->NoNotificado($flujo->ID)
+                ->where('FechaVenta', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->where('EstadoVentaID', 4)
+                ->where('Cajon', '<>', '')
+                ->limit($flujo->MaxLote ?? 5)
+                ->get();
 
 //            dd($ventas);
 

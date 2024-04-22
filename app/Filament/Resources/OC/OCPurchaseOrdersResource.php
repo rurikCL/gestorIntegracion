@@ -39,6 +39,11 @@ class OCPurchaseOrdersResource extends Resource
                 Tables\Columns\TextColumn::make('id'),
                 Tables\Columns\TextColumn::make('empresa.Empresa'),
                 Tables\Columns\TextColumn::make('gerencia.Gerencia'),
+                Tables\Columns\TextColumn::make('sucursal.Sucursal')
+                ->description(fn($record) => $record->tipoSucursal->TipoSucursal ?? ''),
+                Tables\Columns\TextColumn::make('comprador.Nombre'),
+                Tables\Columns\TextColumn::make('contacto.Nombre'),
+                Tables\Columns\ViewColumn::make('state')->view('components.state'),
 
             ])
             ->filters([

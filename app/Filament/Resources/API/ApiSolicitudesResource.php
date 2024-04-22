@@ -74,6 +74,12 @@ class ApiSolicitudesResource extends Resource
                         ->disabled(!Auth::user()->isAdmin()),
                     Forms\Components\TextInput::make('Reintentos')
                         ->disabled(!Auth::user()->isAdmin()),
+
+
+                    Forms\Components\Placeholder::make('Notificacion')
+                        ->content(fn($record) => ($record->notificacion)  ? "Notificado" : "Sin Notificacion")
+                    ->label('Notificacion'),
+
                 ])->columns(4),
             ])->columnSpan(2),
             Forms\Components\Group::make()->schema([
@@ -181,14 +187,14 @@ class ApiSolicitudesResource extends Resource
                             ->label("Excluidos")
                             ->multiple()
                     ])->query(function (Builder $query, array $data): Builder {
-                        if(isset($data['Excluidos'])){
+                        if (isset($data['Excluidos'])) {
                             return $query->whereNotIn('FlujoID', $data['Excluidos']);
-                        }
-                        else return $query;
+                        } else return $query;
                     })->indicateUsing(function (array $data): ?string {
                         return ($data['Excluidos']) ? 'Registros Excluidos' : null;
                     }),
             ])
+
             ->actions([
 //                Tables\Actions\ViewAction::make(),
 //                Tables\Actions\EditAction::make(),

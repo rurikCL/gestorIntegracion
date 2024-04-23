@@ -38,7 +38,7 @@ class FLUCargasResource extends Resource
                             ->preserveFilenames()
                             ->enableDownload()
                             ->required()
-                        ->hintHelp('El formato del archivo debe ser CSV'),
+                            ->hintHelp('El formato del archivo debe ser CSV'),
                         Forms\Components\Select::make('ID_Flujo')
 //                            ->relationship('flujo', 'Nombre')
                             ->options(
@@ -52,10 +52,10 @@ class FLUCargasResource extends Resource
                     ->schema([
                         Forms\Components\Placeholder::make('Registros')
                             ->label('Total Registros')
-                        ->content(fn($record) => $record->Registros ?? 0),
+                            ->content(fn($record) => $record->Registros ?? 0),
                         Forms\Components\Placeholder::make('RegistrosCargados')
-                        ->label('Registros Cargados')
-                        ->content(fn($record) => $record->RegistrosCargados ?? 0),
+                            ->label('Registros Cargados')
+                            ->content(fn($record) => $record->RegistrosCargados ?? 0),
                         Forms\Components\Placeholder::make('RegistrosFallidos')
                             ->label('Registros Fallidos')
                             ->content(fn($record) => $record->RegistrosFallidos ?? 0),
@@ -67,7 +67,8 @@ class FLUCargasResource extends Resource
                             ->label('Estado')
                             ->content(fn($record) => $record->Estado ?? 'Pendiente'),
                         Forms\Components\Toggle::make('OnDemand')->default(false)->hidden(),
-                    ])->columns(3),
+                    ])->columns(3)
+                    ->hidden(fn($record) => !$record ?? true),
 
             ]);
     }
@@ -86,10 +87,10 @@ class FLUCargasResource extends Resource
                     'heroicon-o-check-circle' => 'Procesado',
                     'heroicon-o-x-circle' => 'Fallido',
                 ])->colors([
-                    'warning'=>'Pendiente',
-                    'info'=>'Procesando',
-                    'success' =>'Procesado',
-                    'danger'=>'Fallido'
+                    'warning' => 'Pendiente',
+                    'info' => 'Procesando',
+                    'success' => 'Procesado',
+                    'danger' => 'Fallido'
                 ]),
                 Tables\Columns\TextColumn::make('Registros'),
                 Tables\Columns\TextColumn::make('RegistrosCargados')->label('Cargados'),

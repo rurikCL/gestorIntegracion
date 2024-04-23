@@ -50,18 +50,22 @@ class FLUCargasResource extends Resource
 
                 Forms\Components\Section::make('Informacion de la carga')
                     ->schema([
-                        Forms\Components\TextInput::make('Registros')->label('Total Registros')->disabled(),
-                        Forms\Components\TextInput::make('RegistrosCargados')->disabled(),
-                        Forms\Components\TextInput::make('RegistrosFallidos')->disabled(),
-                        Forms\Components\DateTimePicker::make('FechaCarga')->disabled(),
+                        Forms\Components\Placeholder::make('Registros')
+                            ->label('Total Registros')
+                        ->content(fn($record) => $record->Registros ?? 0),
+                        Forms\Components\Placeholder::make('RegistrosCargados')
+                        ->label('Registros Cargados')
+                        ->content(fn($record) => $record->RegistrosCargados ?? 0),
+                        Forms\Components\Placeholder::make('RegistrosFallidos')
+                            ->label('Registros Fallidos')
+                            ->content(fn($record) => $record->RegistrosFallidos ?? 0),
+                        Forms\Components\Placeholder::make('FechaCarga')
+                            ->label('Fecha de Carga')
+                            ->content(fn($record) => $record->FechaCarga ?? now()),
 
-                        Forms\Components\Select::make('Estado')
-                            ->options([
-                                0 => 'Pendiente',
-                                1 => 'Procesando',
-                                2 => 'Procesado',
-                                3 => 'Fallido',
-                            ])->default(0),
+                        Forms\Components\Placeholder::make('Estado')
+                            ->label('Estado')
+                            ->content(fn($record) => $record->Estado ?? 'Pendiente'),
                         Forms\Components\Toggle::make('OnDemand')->default(false)->hidden(),
                     ])->columns(3),
 
@@ -77,15 +81,15 @@ class FLUCargasResource extends Resource
                 Tables\Columns\TextColumn::make('File')->limit(20)->tooltip(fn($record) => $record->File),
                 Tables\Columns\TextColumn::make('FechaCarga')->date('d/m/Y'),
                 Tables\Columns\IconColumn::make('Estado')->options([
-                    'heroicon-o-clock' => 0,
-                    'heroicon-o-table-cells' => 1,
-                    'heroicon-o-check-circle' => 2,
-                    'heroicon-o-x-circle' => 3,
+                    'heroicon-o-clock' => 'Pendiente',
+                    'heroicon-o-table-cells' => 'Procesando',
+                    'heroicon-o-check-circle' => 'Procesado',
+                    'heroicon-o-x-circle' => 'Fallido',
                 ])->colors([
-                    'warning'=>0,
-                    'info'=>1,
-                    'success' =>2,
-                    'danger'=>3
+                    'warning'=>'Pendiente',
+                    'info'=>'Procesando',
+                    'success' =>'Procesado',
+                    'danger'=>'Fallido'
                 ]),
                 Tables\Columns\TextColumn::make('Registros'),
                 Tables\Columns\TextColumn::make('RegistrosCargados')->label('Cargados'),

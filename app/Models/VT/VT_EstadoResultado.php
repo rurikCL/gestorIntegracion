@@ -23,11 +23,6 @@ class VT_EstadoResultado extends Model
     protected $primaryKey = 'ID';
 
 
-
-    public function venta() :belongsTo
-    {
-        return $this->belongsTo(VT_Ventas::class, 'VentaID', 'ID');
-    }
     public function notificacion()
     {
         return $this->hasOne(FLU_Notificaciones::class, 'ID_Ref', 'ID');
@@ -47,7 +42,6 @@ class VT_EstadoResultado extends Model
     {
         return $this->hasOne(MA_Modelos::class, 'ID', 'ModeloID');
     }
-
 
     public function vendedor()
     {
@@ -69,7 +63,13 @@ class VT_EstadoResultado extends Model
         return $this->hasOne(MA_Sucursales::class, 'ID', 'SucursalID');
     }
 
+    public function venta()
+    {
+        return $this->hasOne(VT_Ventas::class, 'ID', 'VentaID');
+    }
 
+
+    // -------------------------------------------------------------------------------
     public function scopeNoNotificado($query, $flujo)
     {
         return $query->select($this->table.'.*')
@@ -84,6 +84,13 @@ class VT_EstadoResultado extends Model
     {
         return $query->whereHas('sucursal', function ($query) use ($gerenciaID) {
             $query->where('GerenciaID', $gerenciaID);
+        });
+    }
+
+    public function scopeFechaVenta($query, $fecha, $operador = '=')
+    {
+        return $query->whereHas('venta', function ($query) use ($fecha, $operador){
+            return $query->where('FechaVenta',$operador, $fecha);
         });
     }
 }

@@ -8,12 +8,9 @@ use App\Models\MA\MA_Modelos;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
-use SendGrid\Mail\Section;
 
 class MAModelosResource extends Resource
 {

@@ -353,13 +353,15 @@ class FlujoController extends Controller
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
-            /*$ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
+            /*$ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
                 ->Gerencia(2)
                 ->NoNotificado($flujo->ID)
-                ->where('FechaVenta', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+//                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
+                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();*/
 
+//            dd($ventas);
 
             if ($ventas) {
                 Log::info("Existen ventas");
@@ -411,7 +413,8 @@ class FlujoController extends Controller
                             'version' => $version,
                             'color' => $color,
                             'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
-                            'tipo_documento' => 'FA',
+//                            'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
+                            'tipo_documento' => "FA",
                             'num_documento' => $venta->NumeroFactura,
                             'doc_referencia' => $venta->NotaVenta,
                             'precio' => $venta->ValorFactura,
@@ -486,7 +489,7 @@ class FlujoController extends Controller
                 ->where('TipoOrigen', 'REAL')
 //                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
                 ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
-                ->where('CategoriaOT','<>', 'MESÓN')
+                ->where('CategoriaOT', '<>', 'MESÓN')
 //                ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
@@ -531,18 +534,18 @@ class FlujoController extends Controller
                     Log::info("Buscando cliente " . $rut);
 
                     // SI no trae - , significa que el rut no tiene digito y hay que calcular
-                    if(str_contains($rut, '-') === false) {
-                        $s=1;
-                        for($m=0;$rut!=0;$rut/=10)
-                            $s=($s+$rut%10*(9-$m++%6))%11;
-                        $dv = chr($s?$s+47:75);
+                    if (str_contains($rut, '-') === false) {
+                        $s = 1;
+                        for ($m = 0; $rut != 0; $rut /= 10)
+                            $s = ($s + $rut % 10 * (9 - $m++ % 6)) % 11;
+                        $dv = chr($s ? $s + 47 : 75);
                         $rutCliente = $orden->ClienteRut . $dv;
                     } else {
-                        $rutCliente = str_replace('-','',$rut);
+                        $rutCliente = str_replace('-', '', $rut);
                     }
 
-                    $cliente = MA_Clientes::where('Rut', str_replace('-','', $rutCliente))->first();
-                    if($cliente) Log::info("Cliente encontrado " . $cliente->Nombre);
+                    $cliente = MA_Clientes::where('Rut', str_replace('-', '', $rutCliente))->first();
+                    if ($cliente) Log::info("Cliente encontrado " . $cliente->Nombre);
                     else Log::info("Cliente no encontrado");
 
                     // ----------------------------
@@ -1796,7 +1799,8 @@ class FlujoController extends Controller
         }
     }
 
-    public function cargaIndicadoresUF(){
+    public function cargaIndicadoresUF()
+    {
 
         $flujo = FLU_Flujos::where('Nombre', 'Datos CMF Indicadores')->first();
 
@@ -1834,7 +1838,9 @@ class FlujoController extends Controller
             }
         }
     }
-    public function cargaIndicadoresUTM(){
+
+    public function cargaIndicadoresUTM()
+    {
 
         $flujo = FLU_Flujos::where('Nombre', 'Datos CMF Indicadores')->first();
 
@@ -1857,7 +1863,7 @@ class FlujoController extends Controller
         if ($arrayData) {
             foreach ($arrayData->UTMs as $data) {
                 $fecha = $data->Fecha;
-                $valor = str_replace(".","", $data->Valor);
+                $valor = str_replace(".", "", $data->Valor);
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
                     ['FechaIndicador' => $fecha,
                         'Tipo' => 'UTM'],

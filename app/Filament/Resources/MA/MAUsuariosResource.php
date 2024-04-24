@@ -6,13 +6,11 @@ use App\Filament\Resources\MA\MAUsuariosResource\Pages;
 use App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 use App\Models\MA\MA_Usuarios;
 use Filament\Forms;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
 class MAUsuariosResource extends Resource

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MA\MAUsuariosResource\Pages;
 
 use App\Filament\Resources\MA\MAUsuariosResource;
-use App\Models\MA\MA_Usuarios;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;

@@ -5,14 +5,11 @@ namespace App\Filament\Resources\MA;
 use App\Filament\Resources\MA\MASubOrigenesResource\Pages;
 use App\Filament\Resources\MA\MASubOrigenesResource\RelationManagers;
 use App\Models\MA\MA_SubOrigenes;
-use App\Models\MA\MASubOrigenes;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables\Table;
 use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Table;
 
 class MASubOrigenesResource extends Resource
 {

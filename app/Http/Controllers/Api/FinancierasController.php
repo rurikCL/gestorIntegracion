@@ -91,7 +91,7 @@ class FinancierasController extends Controller
 
         $seguros = [];
         // Seguro aplica a clientes dependientes e independientes
-        if ($data["TipoTrabajador"] == 2 || $data["TipoTrabajador"] == 3) {
+        if ($data["tipoTrabajador"] == "dependiente") {
             $seguros = [
                 [
                     "id" => 160,
@@ -101,27 +101,27 @@ class FinancierasController extends Controller
         }
 
 
-        $rut = $data["Rut"];
+        $rut = $data["rut"];
         $dataPayload = [
             "c_rut" => substr($rut, 0, strlen($rut) - 1),
             "c_dv" => substr($rut, -1, 1),
             "c_tipo_id" => "D", // D: Dependiente, E: Empresa, I: Independiente
             "c_pais_id" => "CHL",
-            "c_ingreso" => $data["SueldoLiquido"],
+            "c_ingreso" => $data["sueldoLiquido"],
             "v_org_id" => "2251",
             "v_estado_id" => "N", // N: Nuevo, U: Usado, SN: Seminuevo, NA: No aplica
             "v_uso_id" => $data["tipoUso"], // C: Comercial, P: Particular, NA: NO aplica
-            "v_marca_id" => $data["MarcaID"],
-            "v_modelo_id" => $data["ModeloID"],
+            "v_marca_id" => $data["marcaID"],
+            "v_modelo_id" => $data["modeloID"],
             "v_logica_modelo" => 3, // 1: Drive Nombre, 3: Drive ID
-            "v_ano" => $data["Anno"],
-            "v_precio" => $data["Precio"],
+            "v_ano" => $data["annoVehiculo"],
+            "v_precio" => $data["precioVehiculo"],
             "v_linea_id" => "N",
             "p_id" => 1,
-            "p_pie" => $data["Pie"],
-            "p_plazo" => $data["Plazo"],
+            "p_pie" => $data["pie"],
+            "p_plazo" => $data["plazo"],
             "p_vfmg" => 0,
-            "p_fecha_primer_venc" => Carbon::create($data["Vencimiento"])->format("d-m-Y"),
+            "p_fecha_primer_venc" => Carbon::create($data["primerVencimiento"])->format("d-m-Y"),
             "p_g" => $gastos,
             "p_s" => $seguros,
             "p_m" => null,
@@ -131,7 +131,7 @@ class FinancierasController extends Controller
         $solicitudCon = new ApiSolicitudController();
         $flujo = FLU_Flujos::where('Nombre', 'SANTANDER')->first();
 
-        $referencia = $data["CotizacionID"];
+        $referencia = $data["referencia"];
 
         $req = new Request();
         $req['referencia_id'] = $referencia;
@@ -146,7 +146,7 @@ class FinancierasController extends Controller
 
         $data = $solicitudCon->getData($resp);
 
-        if ($data->errors) {
+        if (isset($data->errors)) {
             Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);
             return [
                 "status" => "ERROR",
@@ -159,7 +159,7 @@ class FinancierasController extends Controller
 
             return [
                 "status" => "OK",
-                "message" => "Simulacion creada con exito, espere resultado de Solicitud de Credito",
+                "message" => "Cuota calculada, Simulacion creada con exito",
                 "data" => $data,
             ];
         }

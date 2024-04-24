@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 
 class MASucursalesResource extends Resource
@@ -110,7 +111,29 @@ class MASucursalesResource extends Resource
                 Tables\Columns\TextColumn::make('CountAprobadores')->placeholder(fn(MA_Sucursales $record) => count($record->aprobadores))->label("Aprobadores"),
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('Activa')
+                    ->form([
+                        Forms\Components\Toggle::make('Activa')
+                            ->default(true)
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if ($data['Activa'] != null) {
+                            $query->where('Activa', $data['Activa']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['Activa'] != null)
+                            return 'Sucursales Activas ';
+                        else return null;
+                    }),
+
+                Tables\Filters\SelectFilter::make('GerenciaID')
+                    ->label('Gerencia')
+                ->relationship('gerencia', 'Gerencia'),
+
+                Tables\Filters\SelectFilter::make('TipoSucursalID')
+                    ->label('Tipo Sucursal')
+                ->relationship('tipoSucursal', 'TipoSucursal')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver(),

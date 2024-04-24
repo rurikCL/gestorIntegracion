@@ -64,7 +64,7 @@ class MAUsuariosResource extends Resource
                 Tables\Columns\BooleanColumn::make('Activo'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('Activo')
+                Tables\Filters\Filter::make('Activo')
                     ->form([
                         Forms\Components\Toggle::make('Activo')
                             ->default(true)

@@ -441,7 +441,7 @@ class LeadController extends Controller
                 $sucursalHomologada = FLU_Homologacion::GetDato(
                     $sucursalNombre,
                     $idFlujo,
-                    'marca',
+                    'sucursal',
                     1 // Valor no encontrado
                 );
 
@@ -453,6 +453,11 @@ class LeadController extends Controller
                     if ($sucursal) {
                         $Log->info("Sucursal encontrada: " . $sucursal->Sucursal);
                         $sucursalHomologada = $sucursal->ID;
+
+                        if($sucursal->gerencia->MarcaAsociada != $marcaID){
+                            $marcaID = $sucursal->gerencia->MarcaAsociada;
+                            $Log->warning("Marca de sucursal no coincide con marca de lead. Se asigna marca de sucursal: " . $marcaID);
+                        }
 
                     } else {
                         $Log->warning("Sucursal no encontrada, Buscando sucursal Facebook");

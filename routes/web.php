@@ -31,7 +31,8 @@ Route::get('/flujo/apcHomo/', [\App\Http\Controllers\ApcDmsController::class, 'h
 Route::get('/flujo/apcHomoBancos/', [\App\Http\Controllers\ApcDmsController::class, 'getBancos']);
 Route::get('/flujo/cpd/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendCpdVentas']);
 
-Route::get('/flujo/autored/', [\App\Http\Controllers\Flujo\FlujoController::class, 'autoredTransactions']);
+Route::get('/flujo/autored/transacciones', [\App\Http\Controllers\Flujo\FlujoController::class, 'autoredTransactions']);
+Route::get('/flujo/autored/inspecciones', [\App\Http\Controllers\Flujo\FlujoController::class, 'autoredInspections']);
 
 Route::get('/flujo/gema/', [\App\Http\Controllers\Flujo\FlujoController::class, 'leadsGema']);
 

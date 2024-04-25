@@ -18,6 +18,7 @@ use App\Models\MA\MA_Modelos;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
 use App\Models\PV\PV_PostVenta;
+use App\Models\SIS\SIS_AutoRedInspections;
 use App\Models\SIS\SIS_AutoRedTransaccion;
 use App\Models\SIS\SIS_Solicitudes;
 use App\Models\Stock;
@@ -1697,7 +1698,7 @@ class FlujoController extends Controller
 
             $req = new Request();
             $req['referencia_id'] = $referencia;
-            $req['api_id'] = 26;
+            $req['api_id'] = 27;
             $req['proveedor_id'] = 4;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
@@ -1707,7 +1708,7 @@ class FlujoController extends Controller
 //                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
                 "from" => "2024-01-01",
 //                "to" => Carbon::now()->format('Y-m-d'),
-                "to" => "2024-01-31",
+                "to" => "2024-01-02",
             ];
 
 
@@ -1731,67 +1732,65 @@ class FlujoController extends Controller
                 Log::info("Datos a procesar : " . count($arrayData));
 
                 foreach ($arrayData as $data) {
-                    $fechaCreacion = Carbon::createFromFormat("d/m/Y H:i", $data->created_at)->format('Y-m-d H:i:s');
+                    $fechaCreacion = Carbon::parse($data->created_at)->format('Y-m-d H:i:s');
 
-                    $fechaRecepcion = $fechaCreacion;
+                    $fechaInspeccion = Carbon::parse($data->start_inspection)->format('Y-m-d H:i:s');
+                    $fechaFinInspeccion = Carbon::parse($data->end_inspection)->format('Y-m-d H:i:s');
+                    $porcentaje = $data->inspection_percentage_completeness;
 
-                    $fechaInspeccion = Carbon::parse($data->inspection_request)->format('Y-m-d H:i:s');
+                    $patente = '';
+                    $marca = $data->brand_name;
+                    $modelo = $data->vmodel_name;
+                    $ano = 0;
+                    $km = $data->km;
+                    $version = $data->clean_version_name;
+                    $color = $data->color;
+                    $sucursal = $data->branch_name;
 
-                    $sucursalID = FLU_Homologacion::getDato($data->branch_name, $flujo->ID, 'sucursal', 1);
+                    $sucursalInspeccion = $data->inspection_branch;
+                    $inspector = $data->inspection_inspector;
+                    $vendedor = $data->seller_name;
+                    $vendedorEmail = $data->seller_email;
 
-                    $vendedorID = MA_Usuarios::where('Email', $data->seller_email)->first();
-                    $vendedorID = $vendedorID ? $vendedorID->ID : null;
+                    $costoTotal = $data->inspection_total_cost;
+                    $CostoTecnico = $data->inspection_total_cost_technical_details;
+                    $CostoAccesorios = $data->inspection_total_cost_accesory;
+                    $kmInspeccion = $data->inspection_km;
+
+                    $archivoInspeccion = $data->inspection_file;
+
+                    $IDTransaccion = $data->negotiation_id;
+                    $IDInspeccion = $data->inspection_id;
+
 
                     $registro = [
-                        'ID' => 0,
                         'FechaCreacion' => $fechaCreacion,
-                        'Patente' => $data->vehicle->license_plate,
-                        'Marca' => $data->vehicle->brand,
-                        'Modelo' => $data->vehicle->model,
-                        'Ano' => $data->vehicle->year,
-                        'Km' => $data->vehicle->km,
-                        'Version' => $data->vehicle->version,
-                        'Color' => $data->vehicle->color,
-                        'Sucursal' => $data->branch_name,
-                        'Vendedor' => $data->seller_name . ' ' . $data->seller_surname,
-                        'EmailVendedor' => $data->seller_email,
-                        'CodigoVendedor' => $data->seller_id,
-                        'Creador' => $data->seller_name . ' ' . $data->seller_surname,
-                        'Estado' => $data->status,
-                        'MotivoRechazo' => $data->reject_reason,
-                        'DetalleRechazo' => $data->reject_comment,
-                        'PrecioOferta' => $data->offers[0]->price ?? 0,
-                        'AutorPrecio' => $data->offers[0]->price ?? 0,
-                        'AtendidaPor' => ($data->offers[0]->name ?? '') . ' ' . ($data->offers[0]->surname ?? ''),
-                        'PrecioSugerido' => $data->suggestions[0]->price ?? 0,
-                        'PrecioPublicacion' => $data->publication_price,
-                        'PrecioVenta' => $data->sale_price,
-                        'NombreCliente' => $data->vehicle->client->name . ' ' . $data->vehicle->client->surname,
-                        'RutCliente' => $data->vehicle->client->rut,
-                        'EmailCliente' => $data->vehicle->client->mail,
-                        'TelefonoCliente' => $data->vehicle->client->phone,
-                        'CelularCliente' => $data->vehicle->client->mobile,
-                        'TelefonoOficinaCliente' => $data->vehicle->client->office_phone,
-                        'MarcaCliente' => $data->vehicle->client->brand,
-                        'ModeloCliente' => $data->vehicle->client->model,
-                        'FinanciamientoCliente' => $data->vehicle->client->funding ? 'Con financiamiento' : 'Sin financiamiento',
-                        'ComentarioCliente' => '', //$data->vehicle->request_letter_comments,
-                        'IDtransaccion' => $data->id,
-                        'Origen' => 'sucursales',
-                        'TipoCompra' => $data->vehicle->client->purchase_type_name,
-                        'Procedencia' => $data->vehicle->client->origin_name,
-                        'VehiculoRecibido' => $data->received_date ? 'Si' : 'No',
-                        'FechaRecepcion' => $fechaRecepcion,
-                        'Inspeccion' => $data->inspection_request ? 'Si' : 'No',
-                        'FechaInspeccion' => $fechaInspeccion,
-                        'IDAutoRed' => $data->id,
-
-                        'SucursalID' => $sucursalID,
-                        'VendedorID' => $vendedorID
+                        'FechaSolicitud' => $fechaInspeccion,
+                        'FechaFirma' => $fechaFinInspeccion,
+                        'Patente' => $patente,
+                        'Marca' => $marca,
+                        'Modelo' => $modelo,
+                        'Anno' => $ano,
+                        'Kilometraje' => $km,
+                        'Version' => $version,
+                        'Color' => $color,
+                        'SucursalInspeccion' => $sucursalInspeccion,
+                        'Inspector' => $inspector,
+                        'CostoTotal' => $costoTotal,
+                        'CostoTecnico' => $CostoTecnico,
+                        'CostoAccesorios' => $CostoAccesorios,
+                        'KmInspeccion' => $kmInspeccion,
+                        'PorcentajeCompletado' => $porcentaje,
+                        'Sucursal' => $sucursal,
+                        'Vendedor' => $vendedor,
+                        'EmailVendedor' => $vendedorEmail,
+                        'ArchivoInspeccion' => $archivoInspeccion,
+                        'IDTransaccion' => $IDTransaccion,
+                        'IDInspeccion' => $IDInspeccion,
                     ];
 
-                    $transaccion = SIS_AutoRedTransaccion::updateOrCreate(
-                        ['IDtransaccion' => $data->id],
+                    $transaccion = SIS_AutoRedInspections::updateOrCreate(
+                        ['IDInspeccion' => $IDInspeccion],
                         $registro);
                 }
             }

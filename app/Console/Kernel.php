@@ -57,6 +57,7 @@ class Kernel extends ConsoleKernel
 
             $flujoControl->actualizaStockAPC();
             $flujoControl->autoredTransactions();
+            $flujoControl->autoredInspections();
 
         })->name("Control de Flujos : 2 veces al dia")->twiceDaily(7, 14);
 

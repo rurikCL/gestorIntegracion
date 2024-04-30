@@ -1705,10 +1705,10 @@ class FlujoController extends Controller
             $req['OnDemand'] = true;
 
             $req['data'] = [
-//                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
-                "from" => "2024-01-01",
-//                "to" => Carbon::now()->format('Y-m-d'),
-                "to" => "2024-01-02",
+                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
+//                "from" => "2024-01-01",
+                "to" => Carbon::now()->format('Y-m-d'),
+//                "to" => "2024-01-02",
             ];
 
 
@@ -1743,7 +1743,7 @@ class FlujoController extends Controller
                     $modelo = $data->vmodel_name;
                     $ano = 0;
                     $km = $data->km;
-                    $version = $data->clean_version_name;
+                    $version = $data->clean_version_name ?? 'Sin Version';
                     $color = $data->color;
                     $sucursal = $data->branch_name;
 
@@ -1752,12 +1752,12 @@ class FlujoController extends Controller
                     $vendedor = $data->seller_name;
                     $vendedorEmail = $data->seller_email;
 
-                    $costoTotal = $data->inspection_total_cost;
-                    $CostoTecnico = $data->inspection_total_cost_technical_details;
-                    $CostoAccesorios = $data->inspection_total_cost_accesory;
-                    $kmInspeccion = $data->inspection_km;
+                    $costoTotal = $data->inspection_total_cost ?? 0;
+                    $CostoTecnico = $data->inspection_total_cost_technical_details ?? 0;
+                    $CostoAccesorios = $data->inspection_total_cost_accesory ?? 0;
+                    $kmInspeccion = $data->inspection_km ?? 0;
 
-                    $archivoInspeccion = $data->inspection_file;
+                    $archivoInspeccion = $data->inspection_file ?? 'Sin archivo';
 
                     $IDTransaccion = $data->negotiation_id;
                     $IDInspeccion = $data->inspection_id;

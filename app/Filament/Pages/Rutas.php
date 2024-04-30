@@ -11,4 +11,9 @@ class Rutas extends Page
     protected static string $view = 'filament.pages.rutas';
 
     protected static ?string $title = 'Rutas de ejecución';
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->isAdmin();
+    }
 }

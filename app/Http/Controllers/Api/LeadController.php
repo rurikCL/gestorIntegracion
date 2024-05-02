@@ -454,10 +454,10 @@ class LeadController extends Controller
                         $Log->info("Sucursal encontrada: " . $sucursal->Sucursal);
                         $sucursalHomologada = $sucursal->ID;
 
-                        if($sucursal->gerencia->MarcaAsociada != $marcaID){
+                        /*if($sucursal->gerencia->MarcaAsociada != $marcaID){
                             $marcaID = $sucursal->gerencia->MarcaAsociada;
                             $Log->warning("Marca de sucursal no coincide con marca de lead. Se asigna marca de sucursal: " . $marcaID);
-                        }
+                        }*/
 
                     } else {
                         $Log->warning("Sucursal no encontrada, Buscando sucursal Facebook");

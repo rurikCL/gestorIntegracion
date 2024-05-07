@@ -37,6 +37,8 @@ class MAUsuariosResource extends Resource
                 Forms\Components\TextInput::make('Celular'),
                 Forms\Components\Select::make('PerfilID')
                     ->relationship('perfil', 'Perfil'),
+                Forms\Components\Select::make('SupervisorID')
+                    ->relationship('supervisor', 'Nombre'),
                 Forms\Components\Select::make('CargoID')->name('cargoUsuario')
                     ->options(fn () => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
                 Forms\Components\Toggle::make('Disponible'),

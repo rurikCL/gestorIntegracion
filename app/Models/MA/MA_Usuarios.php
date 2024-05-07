@@ -88,7 +88,7 @@ class MA_Usuarios extends Model
     }
     public function supervisor()
     {
-        return $this->hasOne(User::class, 'SupervisorID', 'ID');
+        return $this->hasOne(MA_Usuarios::class, 'SupervisorID', 'ID');
     }
 
     public function perfil()

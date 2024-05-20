@@ -337,7 +337,7 @@ class FinancierasController extends Controller
 
         $flujo = FLU_Flujos::where('Nombre', 'SANTANDER')->first();
 
-        $referencia = $data["CotizacionID"];
+        $referencia = $data["cotizacionID"];
 
         $req = new Request();
         $req['referencia_id'] = $referencia;
@@ -365,7 +365,7 @@ class FinancierasController extends Controller
 
             return [
                 "status" => "OK",
-                "message" => "Simulacion creada con exito, espere resultado de Solicitud de Credito",
+                "message" => "Solicitud en tramite, espere resultado de Solicitud de Credito",
                 "data" => $data,
             ];
         }

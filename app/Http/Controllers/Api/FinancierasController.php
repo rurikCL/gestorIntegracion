@@ -281,16 +281,16 @@ class FinancierasController extends Controller
     }
 
 
-    public function creditoSantander($data)
+    public function creditoSantander(Request $request)
     {
-        $respSimulacion = $data;
-        $idSimulacion = $respSimulacion["id"];
+        $data = $request->input("data");
+        $idSimulacion = $data["idSimulacion"];
         $h = new FLU_Homologacion();
 
         $flujo = FLU_Flujos::where('Nombre', 'SANTANDER')->first();
 
         $fechaIngresoLaboral = Carbon::now('America/Santiago')
-            ->subYears($data["Cliente"]["AntiguedadLaboral"])
+            ->subYears($data["AntiguedadLaboral"])
             ->format('d-m-Y');
 
         $dataPayload = [

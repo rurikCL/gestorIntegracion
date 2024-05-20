@@ -350,14 +350,12 @@ class FinancierasController extends Controller
 
         $resp = $solicitudCon->store($req);
 
-        $data = $solicitudCon->getData($resp);
 
         Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
 
         return [
             "status" => "OK",
             "message" => "Solicitud en tramite, espere resultado de Solicitud de Credito",
-            "data" => $data,
         ];
 
     }

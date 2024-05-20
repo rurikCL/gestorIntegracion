@@ -5,6 +5,7 @@ namespace App\Models\MA;
 use App\Models\OC\OC_Purchaseordergenerator;
 use App\Models\SIS\SIS_UsuariosSucursales;
 use App\Models\TK\TK_agents;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,6 +55,7 @@ class MA_Usuarios extends Model
         'FechaActualizacion',
         'EventoActualizacionID',
         'UsuarioActualizacionID',
+        'SupervisorID',
 
     ];
 
@@ -84,6 +86,10 @@ class MA_Usuarios extends Model
     public function agente()
     {
         return $this->hasOne(TK_agents::class, 'user_id', 'ID');
+    }
+    public function supervisor()
+    {
+        return $this->hasOne(MA_Usuarios::class, 'SupervisorID', 'ID');
     }
 
     public function perfil()

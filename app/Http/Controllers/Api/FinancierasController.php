@@ -260,13 +260,23 @@ class FinancierasController extends Controller
 
         $data = $solicitudCon->getData($resp);
 
-        dd($data);
+        if ($data->errors) {
+            Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);
+            return [
+                "status" => "ERROR",
+                "message" => $data->errors[0]->message,
+                "data" => []
+            ];
+        } else {
+            FLU_Notificaciones::Notificar($referencia, $flujo->ID);
+            Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
 
-        return [
-            "status" => "OK",
-            "message" => "Simulacion creada con exito, espere resultado de Solicitud de Credito",
-            "data" => $data,
-        ];
+            return [
+                "status" => "OK",
+                "message" => "Simulacion creada con exito, espere resultado de Solicitud de Credito",
+                "data" => $data,
+            ];
+        }
 
     }
 
@@ -342,24 +352,13 @@ class FinancierasController extends Controller
 
         $data = $solicitudCon->getData($resp);
 
-        if ($data->errors) {
-            Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);
-            return [
-                "status" => "ERROR",
-                "message" => $data->errors[0]->message,
-                "data" => []
-            ];
-        } else {
-            FLU_Notificaciones::Notificar($referencia, $flujo->ID);
-            Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
+        Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
 
-            return [
-                "status" => "OK",
-                "message" => "Solicitud en tramite, espere resultado de Solicitud de Credito",
-                "data" => $data,
-            ];
-        }
-
+        return [
+            "status" => "OK",
+            "message" => "Solicitud en tramite, espere resultado de Solicitud de Credito",
+            "data" => $data,
+        ];
 
     }
 

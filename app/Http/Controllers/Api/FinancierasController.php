@@ -290,32 +290,32 @@ class FinancierasController extends Controller
         $flujo = FLU_Flujos::where('Nombre', 'SANTANDER')->first();
 
         $fechaIngresoLaboral = Carbon::now('America/Santiago')
-            ->subYears($data["AntiguedadLaboral"])
+            ->subYears($data["antiguedadLaboral"])
             ->format('d-m-Y');
 
         $dataPayload = [
-            "c_nombres" => $data["Nombre"],
-            "c_apellido_paterno" => $data["Apellido"],
-            "c_apellido_materno" => $data["SegundoApellido"],
+            "c_nombres" => $data["nombre"],
+            "c_apellido_paterno" => $data["apellido"],
+            "c_apellido_materno" => $data["segundoApellido"],
             "c_razon_social" => "",
             "c_nombre_fantasia" => "",
             "c_giro" => "",
-            "c_genero_id" => $data["Genero"],
-            "c_fecha_nacimiento" => $data["FechaNacimiento"],
+            "c_genero_id" => $data["genero"],
+            "c_fecha_nacimiento" => $data["fechaNacimiento"],
             "c_fecha_inicio_actividades" => null,
             "c_tipo_empresa_id" => null,
             "c_fecha_ingreso_laboral" => $fechaIngresoLaboral,
-            "c_comuna_id" => $h->GetDato($data["ComunaID"], $flujo->ID, 'comuna', '13101'),
+            "c_comuna_id" => $h->GetDato($data["comuna"], $flujo->ID, 'comuna', '13101'),
             "c_nacionalidad_id" => "CHL",
-            "c_calle" => $data["Direccion"],
+            "c_calle" => $data["direccion"],
             "c_calle_num" => "",
             "c_calle_resto" => "",
             "c_tipo_independiente_id" => null,
-            "c_estado_civil_id" => $h->GetDato($data["EstadoCivilID"], $flujo->ID, 'estado_civil', 'S'),
-            "c_nivel_educacional_id" => $h->GetDato($data["ProfesionID"], $flujo->ID, 'nivel_educacion', 'U'),
-            "c_email" => $data["Email"],
-            "c_telefonos" => $data["Telefono"],
-            "c_profesion" => $h->GetDato($data["ProfesionID"], $flujo->ID, 'profesion', null),
+            "c_estado_civil_id" => $data["estadoCivil"],
+            "c_nivel_educacional_id" => $data["nivelEducacion"],
+            "c_email" => $data["email"],
+            "c_telefonos" => $data["telefono"],
+            "c_profesion" => $h->GetDato($data["profesion"], $flujo->ID, 'profesion', null),
             "c_actividadeconomica" => 61,
             "s_id" => $idSimulacion,
             "iva" => [],

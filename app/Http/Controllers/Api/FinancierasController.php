@@ -79,7 +79,8 @@ class FinancierasController extends Controller
         ];
     }
 
-    public function calculadoraSantander(Request $request){
+    public function calculadoraSantander(Request $request)
+    {
 
         $data = $request->input("data");
         $gastos = [
@@ -146,25 +147,35 @@ class FinancierasController extends Controller
 
         $data = $solicitudCon->getData($resp);
 
-        if (isset($data->errors)) {
-            Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);
+        if ($data != null) {
+
+            if (isset($data->errors)) {
+                Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);
+                return [
+                    "status" => "ERROR",
+                    "message" => $data->errors[0]->message,
+                    "data" => []
+                ];
+            } else {
+                FLU_Notificaciones::Notificar($referencia, $flujo->ID);
+                Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
+
+                return [
+                    "status" => "OK",
+                    "message" => "Cuota calculada, Simulacion creada con exito",
+                    "data" => $data,
+                ];
+            }
+        } else {
             return [
                 "status" => "ERROR",
-                "message" => $data->errors[0]->message,
+                "message" => "Error al recibir respuesta solicitud Santander",
                 "data" => []
-            ];
-        } else {
-            FLU_Notificaciones::Notificar($referencia, $flujo->ID);
-            Log::info("Solicitud Santander creada con exito : " . $flujo->ID);
-
-            return [
-                "status" => "OK",
-                "message" => "Cuota calculada, Simulacion creada con exito",
-                "data" => $data,
             ];
         }
 
     }
+
     public function homologacionModelos()
     {
         $solicitudCon = new ApiSolicitudController();

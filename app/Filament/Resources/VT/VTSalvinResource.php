@@ -9,6 +9,7 @@ use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\VT\VT_Salvin;
 use App\Models\VT\VTSalvin;
+use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -86,6 +87,7 @@ class VTSalvinResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('marcav.Marca')
                     ->label('Marca'),
+                Tables\Columns\TextColumn::make('FechaFactura'),
                 Tables\Columns\TextColumn::make('Modelo')
                     ->description(fn(VT_Salvin $record) => mb_strimwidth($record->Comentario, 0, 60, "..."))
                     ->tooltip(fn(VT_Salvin $record) => $record->Comentario),

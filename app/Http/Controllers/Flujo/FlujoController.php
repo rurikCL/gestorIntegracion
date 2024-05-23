@@ -738,7 +738,7 @@ class FlujoController extends Controller
                 ->porMarca($flujo->Nombre)
                 ->Validado()
                 ->NoNotificado($flujo->ID)
-                ->Desde('2023-08-01')
+                ->Desde('2022-08-01')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
@@ -804,7 +804,8 @@ class FlujoController extends Controller
                         ]
                     ];
 
-                    $resp = $solicitudCon->store($req);
+//                    $resp = $solicitudCon->store($req);
+                    $resp = $solicitudCon->execute($req);
                     echo("<br>" . ($resp->message ?? ''));
                 }
 

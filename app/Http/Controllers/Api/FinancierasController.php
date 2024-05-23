@@ -82,6 +82,7 @@ class FinancierasController extends Controller
     public function calculadoraSantander(Request $request)
     {
 
+        Log::info("Inicio Calculadora Santander");
         $data = $request->input("data");
         $gastos = [
             [
@@ -167,6 +168,7 @@ class FinancierasController extends Controller
                 ];
             }
         } else {
+            Log::error("Error al recibir respuesta solicitud Santander");
             return [
                 "status" => "ERROR",
                 "message" => "Error al recibir respuesta solicitud Santander",

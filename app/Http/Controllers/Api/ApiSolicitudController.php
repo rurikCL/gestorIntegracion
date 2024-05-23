@@ -71,7 +71,7 @@ class ApiSolicitudController extends Controller
         // SI es OnDemand, ejecuta inmediatamente, sino, crea el JOB para ejecucion de cola
         if ($request->input('OnDemand')) {
             // resuelve inmediatamente la solicitud
-            $resp = $this->resolverSolicitud($solicitud->id);
+            $resp = $this->resolverSolicitud($solicitud);
 
             return response()->json([
                 'message' => $resp["message"],
@@ -86,6 +86,7 @@ class ApiSolicitudController extends Controller
                 OrquestadorApi::dispatch($solicitud)->onQueue($worker);
             else
                 OrquestadorApi::dispatch($solicitud);
+
             Log::info('Solicitud ID : ' . $solicitud->id . ' creada con exito');
 
             return response()->json([
@@ -387,12 +388,13 @@ class ApiSolicitudController extends Controller
         }
     }
 
-    public function resolverSolicitud($SolicitudID)
+    public function resolverSolicitud($solicitud, $guardar = true)
     {
 
         // Obtiene solicitud a procesar
-        $solicitud = ApiSolicitudes::where("id", $SolicitudID)
-            ->first();
+        /*$solicitud = ApiSolicitudes::where("id", $SolicitudID)
+            ->first();*/
+        $SolicitudID = $solicitud->id ?? 0;
 
         if ($solicitud) {
             if ($solicitud->FechaResolucion) {
@@ -618,31 +620,42 @@ class ApiSolicitudController extends Controller
                             $solicitud->Respuesta = $respuestaData;
                             $solicitud->FechaResolucion = Carbon::now()->toDateTimeString();
                             $solicitud->CodigoRespuesta = $respuesta['status'];
-                            $solicitud->save();
 
-                            if ($solicitud->Exito == 0) {
-                                Log::info("Solicitud " . $solicitud->id . " resuelta con errores");
 
-                                return [
-                                    "status" => "ERROR",
-                                    "success" => false,
-                                    "message" => "Solicitud " . $solicitud->id . " resuelta con errores"
-                                ];
+                            // Si la solicitud se debe guardar (por defecto)
+                            if ($guardar) {
+                                $solicitud->save();
 
-                            } else {
-                                Log::info("Solicitud " . $solicitud->id . " resuelta con exito");
-
-                                return [
-                                    "status" => "OK",
-                                    "success" => true,
-                                    "message" => "Solicitud " . $solicitud->id . " resuelta con exito"
-                                ];
                             }
 
                             //Notificacion
                             $ordenID = $solicitud->ReferenciaID;
                             $flujoID = $solicitud->FlujoID;
                             FLU_Notificaciones::Notificar($ordenID, $flujoID);
+
+                            if ($solicitud->Exito == 0) {
+                                Log::info("Solicitud " . $solicitud->id . " resuelta con errores");
+
+                                return [
+                                    "status" => "ERROR",
+                                    "statusCode" => $respuesta['status'],
+                                    "success" => false,
+                                    "message" => "Solicitud " . $solicitud->id . " resuelta con errores",
+                                    "response" => ""
+                                ];
+
+                            } else {
+                                Log::info("Solicitud " . $solicitud->id . " resuelta con exito");
+
+
+                                return [
+                                    "status" => "OK",
+                                    "statusCode" => $respuesta['status'],
+                                    "success" => true,
+                                    "message" => "Solicitud " . $solicitud->id . " resuelta con exito",
+                                    "response" => $respuestaData
+                                ];
+                            }
 
                         }
 
@@ -726,6 +739,44 @@ class ApiSolicitudController extends Controller
         }
 
         return $data;
+    }
+
+
+    public function execute(Request $request, $worker = null)
+    {
+
+        $solicitud = new ApiSolicitudes();
+
+        Log::info("Ejecutando solicitud sin guardado");
+
+        DB::transaction(function () use ($request, $solicitud) {
+
+            $solicitud->ReferenciaID = $request->input('referencia_id') ?? 0;
+            $solicitud->ProveedorID = $request->input('proveedor_id');
+            $solicitud->ApiID = $request->input('api_id');
+            $solicitud->Prioridad = $request->input('prioridad');
+            $solicitud->Peticion = (is_array($request->input('data'))) ? json_encode($request->input('data'), JSON_UNESCAPED_SLASHES) : $request->input('data');
+            $solicitud->PeticionHeader = (is_array($request->input('dataHeader'))) ? json_encode($request->input('data')) : $request->input('dataHeader');
+            $solicitud->FechaPeticion = Carbon::now();
+            $solicitud->FlujoID = $request->input('flujoID');
+            $solicitud->Reintentos = 3; //Numero de reintentos por default
+        });
+
+        // SI es OnDemand, ejecuta inmediatamente, sino, crea el JOB para ejecucion de cola
+        // resuelve inmediatamente la solicitud
+        $resp = $this->resolverSolicitud($solicitud, false);
+
+        $response = [
+            'message' => $resp["message"],
+            'success' => true,
+            'status' => 'OK',
+            'statusCode' => $resp["status"],
+            'response' => $resp["response"]
+        ];
+        Log::info("Respuesta : " . json_encode($resp["response"]));
+
+        return response()->json($response, 200);
+
     }
 
 }

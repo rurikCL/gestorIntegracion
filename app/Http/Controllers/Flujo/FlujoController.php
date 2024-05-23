@@ -738,7 +738,7 @@ class FlujoController extends Controller
                 ->porMarca($flujo->Nombre)
                 ->Validado()
                 ->NoNotificado($flujo->ID)
-                ->Desde('2022-08-01')
+                ->Desde('2023-08-01')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 

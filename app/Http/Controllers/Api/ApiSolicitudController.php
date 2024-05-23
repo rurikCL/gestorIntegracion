@@ -397,7 +397,7 @@ class ApiSolicitudController extends Controller
         $SolicitudID = $solicitud->id ?? 0;
 
         if ($solicitud) {
-            if ($solicitud->FechaResolucion) {
+            if (isset($solicitud->FechaResolucion)) {
                 Log::info("Solicitud " . $solicitud->id . " ya ha sido resuelta");
 
                 return [

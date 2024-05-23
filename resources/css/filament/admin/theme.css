@@ -15,6 +15,12 @@ html.dark .fi-body {
     /*opacity: 0.4;*/
 }
 
+html .fi-sidebar{
+    @apply bg-stone-100;
+    @apply opacity-80;
+
+}
+
 .fi-ta {
     @apply shadow-lg;
 }

@@ -50,7 +50,12 @@ class FLUNotificacionesResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('flujo.Nombre')
                     ->label('Flujo'),
-                Tables\Columns\BooleanColumn::make('Notificado')
+                Tables\Columns\BooleanColumn::make('Notificado'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha Creación')
+                    ->format(function ($value) {
+                        return Carbon::parse($value)->format('d/m/Y H:i:s');
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('ID_Flujo')

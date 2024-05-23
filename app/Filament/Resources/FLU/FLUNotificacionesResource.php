@@ -6,6 +6,8 @@ use App\Filament\Resources\FLU;
 use App\Filament\Resources\FLUNotificacionesResource\Pages;
 use App\Filament\Resources\FLUNotificacionesResource\RelationManagers;
 use App\Models\FLU\FLU_Notificaciones;
+use Carbon\Carbon;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -13,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FLUNotificacionesResource extends Resource
 {
@@ -51,7 +54,26 @@ class FLUNotificacionesResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('ID_Flujo')
                 ->relationship('flujo', 'Nombre')
-                ->label('Flujo')
+                ->label('Flujo'),
+                Tables\Filters\Filter::make('Fecha')
+                    ->form([
+                        DatePicker::make('FechaDesde')
+                            ->default(Carbon::now()->startOfMonth()),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (isset($data['FechaDesde'])) {
+                            $query->where('created_at', '>=', $data['FechaDesde']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if (!$data['FechaDesde']) {
+                            return null;
+                        }
+
+                        return 'Desde : ' . Carbon::parse($data['FechaDesde'])->format('d/m/Y');
+                    })
+                    ->label("Fecha"),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -2,13 +2,15 @@
 
 @config 'tailwind.config.js';
 
-html main {
+html .fi-body {
     background-image: url("/public/img/doodle2.png") ;
+    background-attachment: fixed;
+
     /*opacity: 0.4;*/
 }
-html.dark main {
-    font-family: 'Open Sans', sans-serif;
+html.dark .fi-body {
     background-image: url("/public/img/doodle2-dark.png");
+    background-attachment: fixed;
 
     /*opacity: 0.4;*/
 }

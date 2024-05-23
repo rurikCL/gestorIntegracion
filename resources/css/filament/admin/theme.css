@@ -21,6 +21,13 @@ html .fi-sidebar{
 
 }
 
+html.dark .fi-sidebar, html.dark .fi-topbar{
+    @apply opacity-90;
+    @apply bg-gray-900;
+    /*background-image: url("/public/images/stone4.png");*/
+
+}
+
 .fi-ta {
     @apply shadow-lg;
 }

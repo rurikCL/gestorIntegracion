@@ -46,7 +46,8 @@ class FLUNotificacionesResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('ID_Ref')
-                    ->label('ID Referencia'),
+                    ->label('ID Referencia')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('flujo.Nombre')
                     ->label('Flujo'),
                 Tables\Columns\BooleanColumn::make('Notificado')

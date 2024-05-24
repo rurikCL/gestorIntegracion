@@ -44,7 +44,7 @@ class OrquestadorApi implements ShouldQueue
         $logger->info("Datos solicitud = referencia ID : " . $ordenID . " - Flujo ID : ".$flujoID);
 
         $controller = new ApiSolicitudController();
-        $resp = $controller->resolverSolicitud($this->solicitud->id);
+        $resp = $controller->resolverSolicitud($this->solicitud);
 
         $logger->info(print_r($resp, true));
 

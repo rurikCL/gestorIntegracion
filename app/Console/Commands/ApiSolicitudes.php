@@ -38,7 +38,7 @@ class ApiSolicitudes extends Command
         foreach ($solicitudes as $solicitud) {
 
             echo "Resolviendo solicitud : " . $solicitud->id;
-            $retorno = $apiController->resolverSolicitud($solicitud->id);
+            $retorno = $apiController->resolverSolicitud($solicitud);
 
             print_r($retorno);
         }

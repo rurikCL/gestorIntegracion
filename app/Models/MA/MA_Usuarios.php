@@ -56,6 +56,7 @@ class MA_Usuarios extends Model
         'EventoActualizacionID',
         'UsuarioActualizacionID',
         'SupervisorID',
+        'SucursalID',
 
     ];
 

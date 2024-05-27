@@ -48,7 +48,8 @@ class MAUsuariosResource extends Resource
                             ->password(),
                         Forms\Components\Toggle::make('Disponible'),
                         Forms\Components\Toggle::make('Activo'),
-                    ]),
+                    ])
+                ->columns(2),
                 /*Forms\Components\FileUpload::make('Foto')
                     ->image()
                     ->directory('fotos'),*/

@@ -27,28 +27,32 @@ class MAUsuariosResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Informacion de usuario')
+                    ->schema([
+                        Forms\Components\TextInput::make('Nombre'),
+                        Forms\Components\TextInput::make('Rut')
+                            ->hint('*Formato de rut sin puntos ni guion'),
+                        Forms\Components\TextInput::make('Email'),
+                        Forms\Components\TextInput::make('Celular'),
+                        Forms\Components\Select::make('PerfilID')
+                            ->relationship('perfil', 'Perfil'),
+                        Forms\Components\Select::make('SupervisorID')
+                            ->relationship('supervisor', 'Nombre'),
+
+                        Forms\Components\Select::make('SucursalID')
+                            ->relationship('sucursal', 'Sucursal'),
+
+                        Forms\Components\Select::make('CargoID')->name('cargoUsuario')
+                            ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
+                        Forms\Components\TextInput::make('Clave')
+                            ->password(),
+                        Forms\Components\Toggle::make('Disponible'),
+                        Forms\Components\Toggle::make('Activo'),
+                    ]),
                 /*Forms\Components\FileUpload::make('Foto')
                     ->image()
                     ->directory('fotos'),*/
-                Forms\Components\TextInput::make('Nombre'),
-                Forms\Components\TextInput::make('Rut')
-                ->hint('*Formato de rut sin puntos ni guion'),
-                Forms\Components\TextInput::make('Email'),
-                Forms\Components\TextInput::make('Celular'),
-                Forms\Components\Select::make('PerfilID')
-                    ->relationship('perfil', 'Perfil'),
-                Forms\Components\Select::make('SupervisorID')
-                    ->relationship('supervisor', 'Nombre'),
 
-                Forms\Components\Select::make('SucursalID')
-                    ->relationship('sucursal', 'Sucursal'),
-
-                Forms\Components\Select::make('CargoID')->name('cargoUsuario')
-                    ->options(fn () => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
-                Forms\Components\TextInput::make('Clave')
-                    ->password(),
-                Forms\Components\Toggle::make('Disponible'),
-                Forms\Components\Toggle::make('Activo'),
 
             ]);
     }
@@ -86,15 +90,18 @@ class MAUsuariosResource extends Resource
                             return 'Activos ';
                         else return null;
                     }),
+
+                Tables\Filters\SelectFilter::make('SucursalID')
+                    ->relationship('sucursal', 'Sucursal')
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),
                 Tables\Actions\CreateAction::make('Roma')
-                ->url(fn (MA_Usuarios $record) => "https://apps1.pompeyo.cl/?id=" .$record->ID ."&token=6461433ef90325a215111f2af1464b2d09f2ba23", true)
-                ->label('Link Roma')
+                    ->url(fn(MA_Usuarios $record) => "https://apps1.pompeyo.cl/?id=" . $record->ID . "&token=6461433ef90325a215111f2af1464b2d09f2ba23", true)
+                    ->label('Link Roma')
                     ->icon('heroicon-o-link')
-                ->color('success')
-                ->visible(Auth::user()->isAdmin()),
+                    ->color('success')
+                    ->visible(Auth::user()->isAdmin()),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

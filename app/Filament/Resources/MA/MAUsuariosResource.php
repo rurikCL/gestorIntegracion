@@ -9,6 +9,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -30,25 +31,33 @@ class MAUsuariosResource extends Resource
                 Forms\Components\Section::make('Informacion de usuario')
                     ->schema([
                         Forms\Components\TextInput::make('Nombre'),
+
                         Forms\Components\TextInput::make('Rut')
-                            ->hint('*Formato de rut sin puntos ni guion'),
+                            ->hintHelp('*Formato de rut sin puntos ni guion'),
+
                         Forms\Components\TextInput::make('Email'),
                         Forms\Components\TextInput::make('Celular'),
+
                         Forms\Components\Select::make('PerfilID')
                             ->relationship('perfil', 'Perfil'),
+
                         Forms\Components\Select::make('CargoID')->name('cargoUsuario')
                             ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
+
                         Forms\Components\Select::make('SucursalID')
                             ->relationship('sucursal', 'Sucursal')
-                        ->label('Sucursal asignada'),
+                            ->label('Sucursal asignada'),
+
                         Forms\Components\Select::make('SupervisorID')
                             ->relationship('supervisor', 'Nombre')
                             ->label('Supervisor asignado'),
 
                         Forms\Components\TextInput::make('Clave')
                             ->password(),
+
                         Forms\Components\Toggle::make('Disponible')
                             ->inline(false),
+
                         Forms\Components\Toggle::make('Activo'),
                     ])
                     ->columns(2),
@@ -82,6 +91,7 @@ class MAUsuariosResource extends Resource
                     ->form([
                         Forms\Components\Toggle::make('Activo')
                             ->default(true)
+                            ->inline(false)
                     ])->query(function (Builder $query, array $data): Builder {
                         if ($data['Activo'] != null) {
                             $query->where('Activo', $data['Activo']);

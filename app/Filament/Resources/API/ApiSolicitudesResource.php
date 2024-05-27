@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Form;
@@ -193,7 +194,8 @@ class ApiSolicitudesResource extends Resource
                     })->indicateUsing(function (array $data): ?string {
                         return ($data['Excluidos']) ? 'Registros Excluidos' : null;
                     }),
-            ])
+            ], FiltersLayout::Modal)
+            ->persistFiltersInSession()
             ->filtersFormColumns(3)
 
             ->actions([

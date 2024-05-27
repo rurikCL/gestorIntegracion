@@ -93,6 +93,8 @@ class MAUsuariosResource extends Resource
 
                 Tables\Filters\SelectFilter::make('SucursalID')
                     ->relationship('sucursal', 'Sucursal')
+                    ->label('Sucursal asignada')
+                    ->searchable()
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),

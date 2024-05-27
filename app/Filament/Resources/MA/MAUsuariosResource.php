@@ -39,6 +39,10 @@ class MAUsuariosResource extends Resource
                     ->relationship('perfil', 'Perfil'),
                 Forms\Components\Select::make('SupervisorID')
                     ->relationship('supervisor', 'Nombre'),
+
+                Forms\Components\Select::make('SucursalID')
+                    ->relationship('sucursal', 'Sucursal'),
+
                 Forms\Components\Select::make('CargoID')->name('cargoUsuario')
                     ->options(fn () => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
                 Forms\Components\TextInput::make('Clave')

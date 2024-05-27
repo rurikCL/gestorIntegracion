@@ -7,7 +7,10 @@ use App\Models\Lead;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Modelos;
+use App\Models\MA\MA_Origenes;
+use App\Models\MA\MA_SubOrigenes;
 use App\Models\MA\MA_Sucursales;
+use App\Models\MA\MA_Usuarios;
 use App\Models\MA\MA_Versiones;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -120,6 +123,11 @@ class VT_Cotizaciones extends Model
         return $this->hasOne(MA_Clientes::class, 'ID', 'ClienteID');
     }
 
+    public function vendedor()
+    {
+        return $this->hasOne(MA_Usuarios::class, 'ID', 'VendedorID');
+    }
+
     public function marca()
     {
         return $this->hasOne(MA_Marcas::class, 'ID', 'MarcaID');
@@ -148,6 +156,21 @@ class VT_Cotizaciones extends Model
     public function venta()
     {
         return $this->hasOne(VT_Ventas::class, 'ID', 'VentaID');
+    }
+
+    public function origen()
+    {
+        return $this->hasOne(MA_Origenes::class, 'ID', 'OrigenID');
+    }
+
+    public function subOrigen()
+    {
+        return $this->hasOne(MA_SubOrigenes::class, 'ID', 'SubOrigenID');
+    }
+
+    public function ejecutivo()
+    {
+        return $this->hasOne(MA_Usuarios::class, 'ID', 'EjecutivoFI');
     }
 
     public function scopeValidado($query)

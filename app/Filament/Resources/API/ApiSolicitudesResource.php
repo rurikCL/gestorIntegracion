@@ -194,6 +194,7 @@ class ApiSolicitudesResource extends Resource
                         return ($data['Excluidos']) ? 'Registros Excluidos' : null;
                     }),
             ])
+            ->filtersFormColumns(3)
 
             ->actions([
 //                Tables\Actions\ViewAction::make(),

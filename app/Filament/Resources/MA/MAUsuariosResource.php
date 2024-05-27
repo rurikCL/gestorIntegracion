@@ -36,20 +36,22 @@ class MAUsuariosResource extends Resource
                         Forms\Components\TextInput::make('Celular'),
                         Forms\Components\Select::make('PerfilID')
                             ->relationship('perfil', 'Perfil'),
-                        Forms\Components\Select::make('SupervisorID')
-                            ->relationship('supervisor', 'Nombre'),
-
-                        Forms\Components\Select::make('SucursalID')
-                            ->relationship('sucursal', 'Sucursal'),
-
                         Forms\Components\Select::make('CargoID')->name('cargoUsuario')
                             ->options(fn() => \App\Models\MA\MA_Cargos::all()->pluck('Cargo', 'ID')),
+                        Forms\Components\Select::make('SucursalID')
+                            ->relationship('sucursal', 'Sucursal')
+                        ->label('Sucursal asignada'),
+                        Forms\Components\Select::make('SupervisorID')
+                            ->relationship('supervisor', 'Nombre')
+                            ->label('Supervisor asignado'),
+
                         Forms\Components\TextInput::make('Clave')
                             ->password(),
-                        Forms\Components\Toggle::make('Disponible'),
+                        Forms\Components\Toggle::make('Disponible')
+                            ->inline(false),
                         Forms\Components\Toggle::make('Activo'),
                     ])
-                ->columns(2),
+                    ->columns(2),
                 /*Forms\Components\FileUpload::make('Foto')
                     ->image()
                     ->directory('fotos'),*/
@@ -93,7 +95,7 @@ class MAUsuariosResource extends Resource
                     }),
 
                 Tables\Filters\SelectFilter::make('SucursalID')
-                    ->options(fn() => \App\Models\MA\MA_Sucursales::where('Activa',1 )->pluck('Sucursal', 'ID'))
+                    ->options(fn() => \App\Models\MA\MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'ID'))
                     ->label('Sucursal asignada')
                     ->searchable(),
             ])

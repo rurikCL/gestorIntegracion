@@ -78,6 +78,10 @@ class MA_Usuarios extends Model
         return substr($this->Rut, 0, strlen($this->Rut) - 1) . '-' . substr($this->Rut, -1);
     }
 
+    public function sucursal()
+    {
+        return $this->belongsTo(MA_Sucursales::class, 'SucursalID');
+    }
     public function sucursales()
     {
         return $this->hasMany(SIS_UsuariosSucursales::class, 'UsuarioID', 'ID');

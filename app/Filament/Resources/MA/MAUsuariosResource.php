@@ -92,9 +92,9 @@ class MAUsuariosResource extends Resource
                     }),
 
                 Tables\Filters\SelectFilter::make('SucursalID')
-                    ->relationship('sucursal', 'Sucursal')
+                    ->options(fn() => \App\Models\MA\MA_Sucursales::where('Activa',1 )->pluck('Sucursal', 'ID'))
                     ->label('Sucursal asignada')
-                    ->searchable()
+                    ->searchable(),
             ])
             ->actions([
 //                Tables\Actions\EditAction::make(),

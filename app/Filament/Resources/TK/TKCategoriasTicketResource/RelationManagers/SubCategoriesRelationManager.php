@@ -65,7 +65,7 @@ class SubCategoriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('Prioridad'),
                 Tables\Columns\TextColumn::make('SLA')
                     ->label('SLA (Horas)'),
-                Tables\Columns\ToggleColumn::make('Activa'),
+                Tables\Columns\ToggleColumn::make('Activo'),
                 Tables\Columns\TextColumn::make('sumTickets')
                 ->default(fn($record) => TK_Tickets::where('subCategory', $record->id)->count())
 

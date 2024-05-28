@@ -20,6 +20,8 @@ class TK_sub_categories extends Model
         'Agente',
         'Prioridad',
         'SLA',
+        'Activo',
+
         'created_at',
         'updated_at',
         'FechaCreacion',

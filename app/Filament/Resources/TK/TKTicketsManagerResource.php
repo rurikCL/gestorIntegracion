@@ -56,6 +56,17 @@ class TKTicketsManagerResource extends Resource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->label('Titulo'),
+                Tables\Columns\BadgeColumn::make('state_')
+                    ->default(fn($record) => match ($record->state) {
+                        1 => 'Abierto',
+                        2 => 'En Proceso',
+                        3 => 'Cerrado',
+                    })
+                    ->color(fn($record) => match ($record->state) {
+                        1 => 'info',
+                        2 => 'warning',
+                        3 => 'success',
+                    })->label('Estado'),
                 Tables\Columns\TextColumn::make('priority')
                     ->searchable()
                     ->label('Prioridad'),
@@ -70,12 +81,7 @@ class TKTicketsManagerResource extends Resource
                 Tables\Columns\TextColumn::make('department'),
                 Tables\Columns\TextColumn::make('applicant'),
                 Tables\Columns\TextColumn::make('assigned'),
-                Tables\Columns\BadgeColumn::make('state')
-                    ->enum([
-                        '1' => 'Abierto',
-                        '2' => 'En Proceso',
-                        '3' => 'Cerrado',
-                    ]),
+
 
             ])
             ->filters([

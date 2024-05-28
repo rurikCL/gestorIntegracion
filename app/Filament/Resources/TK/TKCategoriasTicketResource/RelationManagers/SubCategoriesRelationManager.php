@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TK\TKCategoriasTicketResource\RelationManagers;
 
+use App\Models\TK\TK_Tickets;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -35,17 +36,17 @@ class SubCategoriesRelationManager extends RelationManager
                     ]),
                 Forms\Components\Select::make('Prioridad')
                     ->options([
-                    'Bajo' => 'Bajo',
-                    'Medio' => 'Medio',
-                    'Urgente' => 'Urgente',
-                ])->reactive(),
+                        'Bajo' => 'Bajo',
+                        'Medio' => 'Medio',
+                        'Urgente' => 'Urgente',
+                    ])->reactive(),
                 Forms\Components\Select::make('SLA')
                     ->options(function (callable $get) {
-                        if($get('Prioridad') == 'Bajo')
+                        if ($get('Prioridad') == 'Bajo')
                             return ['24'];
-                        if($get('Prioridad') == 'Medio')
+                        if ($get('Prioridad') == 'Medio')
                             return ['16'];
-                        if($get('Prioridad') == 'Urgente')
+                        if ($get('Prioridad') == 'Urgente')
                             return ['4'];
 
                         return [4];
@@ -59,24 +60,28 @@ class SubCategoriesRelationManager extends RelationManager
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
-                ->label('Nombre'),
+                    ->label('Nombre'),
                 Tables\Columns\TextColumn::make('Area'),
                 Tables\Columns\TextColumn::make('Prioridad'),
                 Tables\Columns\TextColumn::make('SLA')
-                ->label('SLA (Horas)'),
+                    ->label('SLA (Horas)'),
+                Tables\Columns\ToggleColumn::make('Activa'),
+                Tables\Columns\TextColumn::make('sumTickets')
+                ->default(fn($record) => TK_Tickets::where('subCategory', $record->id)->count())
+
             ])
             ->filters([
                 //
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
-                ->mutateFormDataUsing(function (array $data): array {
-                    $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
-                    $data['EventoCreacionID'] = 1;
-                    $data['UsuarioCreacionID'] = Auth::user()->id;
+                    ->mutateFormDataUsing(function (array $data): array {
+                        $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
+                        $data['EventoCreacionID'] = 1;
+                        $data['UsuarioCreacionID'] = Auth::user()->id;
 
-                    return $data;
-                }),
+                        return $data;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -40,17 +40,7 @@ class SubCategoriesRelationManager extends RelationManager
                         'Medio' => 'Medio',
                         'Urgente' => 'Urgente',
                     ])->reactive(),
-                Forms\Components\Select::make('SLA')
-                    ->options(function (callable $get) {
-                        if ($get('Prioridad') == 'Bajo')
-                            return ['24'];
-                        if ($get('Prioridad') == 'Medio')
-                            return ['16'];
-                        if ($get('Prioridad') == 'Urgente')
-                            return ['4'];
-
-                        return [4];
-                    }),
+                Forms\Components\Toggle::make('Activo')
             ]);
     }
 
@@ -79,6 +69,12 @@ class SubCategoriesRelationManager extends RelationManager
                         $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
                         $data['EventoCreacionID'] = 1;
                         $data['UsuarioCreacionID'] = Auth::user()->id;
+
+                        $data['SLA'] = match ($data['Prioridad']) {
+                            'Bajo' => 24,
+                            'Medio' => 16,
+                            'Urgente' => 4,
+                        };
 
                         return $data;
                     }),

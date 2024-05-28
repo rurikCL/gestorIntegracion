@@ -91,21 +91,28 @@ class VTCotizacionesResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('ID'),
+                Tables\Columns\TextColumn::make('ID')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('FechaCotizacion'),
                 Tables\Columns\TextColumn::make('sucursal.Sucursal'),
                 Tables\Columns\TextColumn::make('vendedor.Nombre'),
                 Tables\Columns\TextColumn::make('cliente.Nombre'),
                 Tables\Columns\TextColumn::make('estado.Estado'),
                 Tables\Columns\TextColumn::make('modelo.Nombre'),
-                Tables\Columns\TextColumn::make('ConcatID'),
+                Tables\Columns\TextColumn::make('ConcatID')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('SolicitudCredito'),
 
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('estado')
-                ->relationship('estado', 'Estado')
-                ->multiple(),
+                    ->relationship('estado', 'Estado'),
+                Tables\Filters\SelectFilter::make('sucursal')
+                    ->relationship('sucursal', 'Sucursal'),
+                Tables\Filters\SelectFilter::make('vendedor')
+                    ->relationship('vendedor', 'Nombre')
+                ->searchable(),
+
             ])
             ->filtersFormColumns(3)
             ->actions([

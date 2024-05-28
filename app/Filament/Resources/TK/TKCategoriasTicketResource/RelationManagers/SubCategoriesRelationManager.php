@@ -80,7 +80,17 @@ class SubCategoriesRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->mutateFormDataUsing(function (array $data): array {
+
+                    $data['SLA'] = match ($data['Prioridad']) {
+                        'Bajo' => 24,
+                        'Medio' => 16,
+                        'Urgente' => 4,
+                    };
+
+                    return $data;
+                }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

@@ -59,9 +59,13 @@ class TKSubCategoriesResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->sortable()
                     ->searchable()
                     ->label('Nombre'),
-                Tables\Columns\TextColumn::make('category.name'),
+                Tables\Columns\TextColumn::make('category.name')
+                ->sortable(),
+                Tables\Columns\TextColumn::make('agente.Area')
+                    ->label('Area'),
                 Tables\Columns\TextColumn::make('agente.Nombre')
                     ->label('Agente'),
                 Tables\Columns\TextColumn::make('subAgente.Nombre')
@@ -70,12 +74,28 @@ class TKSubCategoriesResource extends Resource
                 Tables\Columns\TextColumn::make('SLA')
                     ->label('SLA (Horas)'),
                 Tables\Columns\ToggleColumn::make('Activo')
+                    ->sortable()
                     ->default(true),
                 Tables\Columns\BadgeColumn::make('sumTickets')
                     ->default(fn($record) => TK_Tickets::where('subCategory', $record->id)->count())
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('Activo')
+                    ->form([
+                        Forms\Components\Toggle::make('Activo')
+                            ->default(true)
+                            ->inline(false)
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if ($data['Activo'] != null) {
+                            $query->where('Activo', $data['Activo']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['Activo'] != null)
+                            return 'Activos ';
+                        else return null;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -84,7 +104,8 @@ class TKSubCategoriesResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('name', 'asc');
     }
 
     public static function getRelations(): array

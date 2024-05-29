@@ -36,7 +36,6 @@ class UsuariosRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Usuarios')
             ->columns([
-                Tables\Columns\TextColumn::make('ID'),
                 Tables\Columns\TextColumn::make('usuario.Nombre')
                     ->searchable()
                     ->label('Nombre'),

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TK\TKCategoriasTicketResource\RelationManagers;
 
+use App\Filament\Resources\TK\TKSubCategoriesResource;
 use App\Models\TK\TK_Tickets;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -51,50 +52,53 @@ class SubCategoriesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->label('Nombre'),
-                Tables\Columns\TextColumn::make('Area'),
+                Tables\Columns\TextColumn::make('agente.Area')
+                    ->label('Area'),
+                Tables\Columns\TextColumn::make('agente.Nombre')
+                    ->label('Agente'),
+                Tables\Columns\TextColumn::make('subAgente.Nombre')
+                    ->label('Sub Agente'),
                 Tables\Columns\TextColumn::make('Prioridad'),
                 Tables\Columns\TextColumn::make('SLA')
                     ->label('SLA (Horas)'),
-                Tables\Columns\ToggleColumn::make('Activo'),
+                Tables\Columns\ToggleColumn::make('Activo')
+                ->sortable(),
                 Tables\Columns\BadgeColumn::make('sumTickets')
-                ->default(fn($record) => TK_Tickets::where('subCategory', $record->id)->count())
+                    ->default(fn($record) => TK_Tickets::where('subCategory', $record->id)->count())
 
             ])
             ->filters([
-                //
-            ])
+                Tables\Filters\Filter::make('Activo')
+                    ->form([
+                        Forms\Components\Toggle::make('Activo')
+                            ->default(true)
+                            ->inline(false)
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if ($data['Activo'] != null) {
+                            $query->where('Activo', $data['Activo']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['Activo'] != null)
+                            return 'Activos ';
+                        else return null;
+                    }),            ])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
-                        $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
-                        $data['EventoCreacionID'] = 1;
-                        $data['UsuarioCreacionID'] = Auth::user()->id;
-
-                        $data['SLA'] = match ($data['Prioridad']) {
-                            'Bajo' => 24,
-                            'Medio' => 16,
-                            'Urgente' => 4,
-                        };
-
-                        return $data;
-                    }),
+                Tables\Actions\Action::make('Crear Sub categoria')
+                    ->url(fn($record) => TKSubCategoriesResource::getNavigationUrl() . '/create')
+                    ->visible(fn() => Auth::user()->isAdmin())
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->mutateFormDataUsing(function (array $data): array {
+                Tables\Actions\Action::make('Editar')
+                    ->url(fn($record) => TKSubCategoriesResource::getNavigationUrl() . '/' . $record->id . '/edit')
+                    ->icon('heroicon-s-pencil-square')
+                    ->visible(fn() => Auth::user()->isAdmin())
 
-                    $data['SLA'] = match ($data['Prioridad']) {
-                        'Bajo' => 24,
-                        'Medio' => 16,
-                        'Urgente' => 4,
-                    };
-
-                    return $data;
-                }),
-                Tables\Actions\DeleteAction::make(),
+//                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+//                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 }

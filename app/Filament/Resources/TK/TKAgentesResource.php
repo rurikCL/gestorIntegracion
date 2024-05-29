@@ -22,7 +22,7 @@ class TKAgentesResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Ticketera';
-    protected static ?string $modelLabel = 'Agentes';
+    protected static ?string $modelLabel = 'Agente';
     protected static ?string $navigationLabel = 'Agentes / Usuarios';
 
     public static function form(Form $form): Form
@@ -32,6 +32,11 @@ class TKAgentesResource extends Resource
                 Forms\Components\Section::make('')->schema([
                     Forms\Components\TextInput::make('Nombre'),
                     Forms\Components\TextInput::make('Descripcion'),
+                    Forms\Components\Select::make('Area')
+                        ->options([
+                            'Desarrollo' => 'Desarrollo',
+                            'TI' => 'TI',
+                        ]),
                     Forms\Components\Toggle::make('Activo')
                         ->inline(false)
                         ->default(true)
@@ -50,6 +55,7 @@ class TKAgentesResource extends Resource
                 Tables\Columns\TextColumn::make('Descripcion')
                     ->searchable()
                     ->label('Descripcion'),
+                Tables\Columns\TextColumn::make('Area'),
                 Tables\Columns\BadgeColumn::make('countUsuarios')
                     ->default(fn($record) => $record->usuarioAgente->count())
                     ->label('Usuarios'),

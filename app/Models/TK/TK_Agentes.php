@@ -16,6 +16,7 @@ class TK_Agentes extends Model
         'Nombre',
         'Descripcion',
         'Activo',
+        'Area',
         'EventoCreacionID',
     ];
 

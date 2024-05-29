@@ -21,7 +21,8 @@ class TK_sub_categories extends Model
         'Prioridad',
         'SLA',
         'Activo',
-
+        'AgenteID',
+        'SubAgenteID',
         'created_at',
         'updated_at',
         'FechaCreacion',
@@ -35,5 +36,15 @@ class TK_sub_categories extends Model
     public function category()
     {
         return $this->belongsTo('App\Models\TK\TK_categories',  'category_id', 'id');
+    }
+
+    public function agente()
+    {
+        return $this->belongsTo(TK_Agentes::class,  'AgenteID', 'ID');
+    }
+
+    public function subAgente()
+    {
+        return $this->belongsTo(TK_Agentes::class,  'SubAgenteID', 'ID');
     }
 }

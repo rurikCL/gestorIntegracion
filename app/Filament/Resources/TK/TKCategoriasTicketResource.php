@@ -21,20 +21,20 @@ class TKCategoriasTicketResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Ticketera';
     protected static ?string $pluralLabel = 'Categorias';
-    protected static ?string $navigationLabel = 'Categorias Ticket';
+    protected static ?string $navigationLabel = 'Categorias ';
     protected static ?string $modelLabel = 'Categoria';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                    Forms\Components\Section::make('')
-                        ->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->label('Nombre')
-                                ->required()
-                                ->maxLength(255),
-                        ]),
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
             ]);
     }
 
@@ -47,6 +47,9 @@ class TKCategoriasTicketResource extends Resource
                     ->label('Nombre')
                     ->searchable()
                     ->sortable(),
+                Tables\Columns\BadgeColumn::make('countSubCategorias')
+                    ->default(fn($record) => $record->sub_categories()->count())
+                    ->label('Sub Categorias')
             ])
             ->filters([
                 //

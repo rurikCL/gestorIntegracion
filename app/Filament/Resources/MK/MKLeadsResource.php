@@ -57,14 +57,16 @@ class MKLeadsResource extends Resource
 //                        ->relationship('origen2', 'Origen')
                         ->label('Origen'),
                     Forms\Components\Select::make('SubOrigenID')
-                        ->options(function (callable $get){
+                        ->options(function (callable $get) {
                             return $get('OrigenID') ? (MA_Origenes::find($get('OrigenID'))->suborigen->pluck('SubOrigen', 'ID') ?? ['1', 'Sin Datos']) : ['1', 'Sin Datos'];
                         })
 //                        ->relationship('suborigen2', 'SubOrigen')
                         ->label('Sub Origen'),
-                    Forms\Components\MarkdownEditor::make('Comentario')->columnSpan(2),
+                    Forms\Components\MarkdownEditor::make('Comentario')
+                        ->columnSpanFull(),
                     Forms\Components\TextInput::make('LinkInteres')
-                        ->label('Link de Interes'),
+                        ->label('Link de Interes')
+                        ->columnSpanFull(),
 
                 ])->columns(2),
                 Section::make('Otra informacion')->schema([
@@ -102,7 +104,7 @@ class MKLeadsResource extends Resource
                 ]),
                 Section::make('Vendedor')->schema([
                     Forms\Components\Select::make('VendedorID')
-                        ->options(function (callable $get){
+                        ->options(function (callable $get) {
                             return MA_Usuarios::sucursalAsignada($get('SucursalID'))->pluck('Nombre', 'ID') ?? ['1', 'Sin Vendedor'];
                         }),
 //                        ->relationship('vendedor', 'Nombre')->searchable(),
@@ -120,13 +122,13 @@ class MKLeadsResource extends Resource
                         ->reactive()
                         ->label('Marca'),
                     Forms\Components\Select::make('ModeloID')
-                        ->options(function (callable $get){
+                        ->options(function (callable $get) {
                             return MA_Marcas::find($get('MarcaID'))->modelos->pluck('Modelo', 'ID') ?? ['1', 'Sin Modelo'];
                         })
                         ->reactive()
                         ->label('Modelo'),
                     Forms\Components\Select::make('VersionID')
-                        ->options(function (callable $get){
+                        ->options(function (callable $get) {
                             return MA_Modelos::find($get('ModeloID'))->versiones->pluck('Version', 'ID') ?? ['1', 'Sin Version'];
                         })
                         ->columnSpan(2)
@@ -185,7 +187,7 @@ class MKLeadsResource extends Resource
                         return $query;
                     })
                     ->indicateUsing(function (array $data): ?string {
-                        if (! $data['FechaDesde']) {
+                        if (!$data['FechaDesde']) {
                             return null;
                         }
 

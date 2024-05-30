@@ -56,7 +56,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglavendedor', 'usados', 'vpp'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglavendedor', 'usados', 'vpp','link_conversacion', 'agenda_visita'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -131,6 +131,18 @@ class FlujoHubspotController extends Controller
                             $vpp = 0;
                         }
 
+                        if($data->properties['link_conversacion']){
+                            $linkConversacion = $data->properties['link_conversacion'];
+                        } else {
+                            $linkConversacion = '';
+                        }
+
+                        if($data->properties['agenda_visita']){
+                            $agendaVisita = $data->properties['agenda_visita'];
+                        } else {
+                            $agendaVisita = '';
+                        }
+
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
                         $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
 
@@ -188,6 +200,8 @@ class FlujoHubspotController extends Controller
                                 "comentario" => $comentario,
                                 "externalID" => $idExterno,
                                 "financiamiento" => $financiamiento,
+                                "link" => $linkConversacion,
+                                "agenda" => $agendaVisita,
                             ]
                         ];
 

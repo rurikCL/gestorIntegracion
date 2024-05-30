@@ -526,6 +526,9 @@ class LeadController extends Controller
                 $usuarioID = 2893; // INTEGRACION FACEBOOK
             }
 
+            // Link de conversacion RELIF
+            $linkInteres = $request->input('data.lead.link') ?? null;
+
             // Verificacion de existencia de Lead
             $IDExterno = $request->input('data.lead.externalID');
             $lead = MK_Leads::where('IDExterno', $IDExterno)
@@ -555,6 +558,7 @@ class LeadController extends Controller
             $lead->IDExterno = $request->input('data.lead.externalID') ?? null;
             $lead->Comentario = $comentario ?? null;
             $lead->Financiamiento = $financiamiento;
+            $lead->LinkInteres = $linkInteres;
 
             $lead->save();
             $returnMessage = "Lead creado correctamente";
@@ -685,6 +689,12 @@ class LeadController extends Controller
 
         return true;
     }
+
+    public function crearAgenda($fechaAgenda, $tipoAgenda)
+    {
+        // Crear agenda
+    }
+
 }
 
 

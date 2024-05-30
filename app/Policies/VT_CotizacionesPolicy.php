@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class VT_Cotizaciones
+class VT_CotizacionesPolicy
 {
     /**
      * Create a new policy instance.

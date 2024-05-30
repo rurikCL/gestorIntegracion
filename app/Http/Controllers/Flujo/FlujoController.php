@@ -344,7 +344,7 @@ class FlujoController extends Controller
             Log::info("Flujo activo");
 //            $h = new FLU_Homologacion();
 
-            $ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
+            /*$ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
                 ->Gerencia(2)
                 ->NoNotificado($flujo->ID)
 //                ->where('FechaVenta', '>=', '2023-11-01 00:00:00')
@@ -352,15 +352,15 @@ class FlujoController extends Controller
                 ->where('EstadoVentaID', 4)
                 ->where('Cajon', '<>', '')
                 ->limit($flujo->MaxLote ?? 5)
-                ->get();
+                ->get();*/
 
-            /*$ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
+            $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
                 ->Gerencia(2)
                 ->NoNotificado($flujo->ID)
 //                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
                 ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
-                ->get();*/
+                ->get();
 
 //            dd($ventas);
 

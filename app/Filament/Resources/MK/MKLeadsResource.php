@@ -63,6 +63,8 @@ class MKLeadsResource extends Resource
 //                        ->relationship('suborigen2', 'SubOrigen')
                         ->label('Sub Origen'),
                     Forms\Components\MarkdownEditor::make('Comentario')->columnSpan(2),
+                    Forms\Components\TextInput::make('LinkInteres')
+                        ->label('Link de Interes'),
 
                 ])->columns(2),
                 Section::make('Otra informacion')->schema([

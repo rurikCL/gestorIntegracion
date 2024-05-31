@@ -501,8 +501,8 @@ class FlujoController extends Controller
                     $query->where('TipoOT', 'MECANICA GENERAL')
                         ->where('TipoDocumento', '<>', 'Factura Interna');
                 })
-                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
-//                ->where('FechaFacturacion', '>=', "2021-03-01 00:00:00")
+//                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
+                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 

@@ -484,13 +484,42 @@ class FlujoController extends Controller
             Log::info("Flujo activo");
             $h = new FLU_Homologacion();
 
+            $tiposOrden = [
+                'ACCESORIOS POST VENTA',
+                'ACCESORIOS POST VENTAS',
+                'MANT 10.000 KMS',
+                'MANT 10.000 KMS MI',
+                'Mantención',
+                'MANTENCION 100.000',
+                'MANTENCION 105.000',
+                'MANTENCION 30.000',
+                'MANTENCION 40.000',
+                'MANTENCION 45.000',
+                'MANTENCION 60.000',
+                'MANTENCION 70.000',
+                'MANTENCION 75.000',
+                'MANTENCION 80.000',
+                'MANTENCION 90.000',
+                'MANTENCION EXPRESS',
+                'Mantención Prepagada',
+                'MANTENCION PROMOCION',
+                'MANTENCION REGULAR',
+                'MECANICA GENERAL',
+                'MI 10.000',
+                'MI 15.000',
+                'MI 20.000',
+                'MPP 10.000',
+                'MPP 15.000',
+                'MPP 20.000',
+                'MPP 30.000',
+            ];
             $ordenes = PV_PostVenta::with('cliente')
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-//                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
-                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
-                ->where('CategoriaOT', '<>', 'MESÓN')
+                ->whereIn('TipoOT', $tiposOrden)
+                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
+//                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
 //                ->limit($flujo->MaxLote ?? 5)
                 ->get();
 

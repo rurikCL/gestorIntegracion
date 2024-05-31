@@ -496,7 +496,7 @@ class FlujoController extends Controller
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
+                ->where('FechaFacturacion', '>=', "2024-01-01 00:00:00")
                 ->where(function ($query) use ($tiposOrden) {
                     $query->whereIn('TipoOT', $tiposOrden)
                         ->orWhere(function ($query) {

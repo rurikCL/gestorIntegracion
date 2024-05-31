@@ -496,13 +496,15 @@ class FlujoController extends Controller
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->whereIn('TipoOT', $tiposOrden)
-                ->orWhere(function ($query) {
-                    $query->where('TipoOT', 'MECANICA GENERAL')
-                        ->where('TipoDocumento', '<>', 'Factura Interna');
-                })
-//                ->where('FechaFacturacion', Carbon::now()->subDay()->format("Y-m-d"))
                 ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
+                ->where(function ($query) use ($tiposOrden) {
+                    $query->whereIn('TipoOT', $tiposOrden)
+                        ->orWhere(function ($query) {
+                            $query->where('TipoOT', 'MECANICA GENERAL')
+                                ->where('TipoDocumento', '<>', 'Factura Interna');
+                        });
+                })
+//                ->where('FechaFacturacion', '>=', Carbon::now()->subDay()->format("Y-m-d"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 

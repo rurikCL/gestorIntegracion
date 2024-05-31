@@ -492,11 +492,12 @@ class FlujoController extends Controller
                 'PARTICULAR DYP',
                 'COMPAÑIA SEGURO',
             ];
+
             $ordenes = PV_PostVenta::with('cliente')
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', '>=', "2024-01-01 00:00:00")
+                ->where('FechaFacturacion', '>=', "2024-03-01 00:00:00")
                 ->where(function ($query) use ($tiposOrden) {
                     $query->whereIn('TipoOT', $tiposOrden)
                         ->orWhere(function ($query) {
@@ -507,8 +508,8 @@ class FlujoController extends Controller
 //                ->where('FechaFacturacion', '>=', Carbon::now()->subDay()->format("Y-m-d"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
+//            ->toSql();
 
-            dd($ordenes);
 
             if ($ordenes) {
                 Log::info("Existen Ots");

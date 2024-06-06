@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class MAOrigenesResource extends Resource
 {
@@ -49,9 +50,27 @@ class MAOrigenesResource extends Resource
                 Tables\Columns\ToggleColumn::make('Visible')
                     ->label('Visible')
                     ->sortable(),
+                Tables\Columns\BadgeColumn::make('countSubOrigenes')
+                    ->default(fn($record) => $record->subOrigen()->count())
+                    ->label('Sub Origenes')
             ])
             ->filters([
-                //
+                Tables\Filters\Filter::make('Activo')
+                    ->form([
+                        Forms\Components\Toggle::make('Activo')
+                            ->default(true)
+                            ->inline(false)
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if ($data['Activo'] != null) {
+                            $query->where('ActivoInput', $data['Activo']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['Activo'] != null)
+                            return 'Activos ';
+                        else return null;
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

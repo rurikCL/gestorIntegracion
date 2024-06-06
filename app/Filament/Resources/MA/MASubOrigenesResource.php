@@ -51,7 +51,6 @@ class MASubOrigenesResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-
                 Tables\Columns\TextColumn::make('Alias')
                     ->label('Alias')
                     ->sortable()
@@ -61,7 +60,9 @@ class MASubOrigenesResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('OrigenID')
+                    ->label('Origen')
+                    ->relationship('origen', 'Origen'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

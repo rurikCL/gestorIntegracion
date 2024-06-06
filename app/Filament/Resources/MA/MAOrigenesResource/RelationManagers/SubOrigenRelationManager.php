@@ -13,19 +13,21 @@ class SubOrigenRelationManager extends RelationManager
     protected static string $relationship = 'subOrigen';
 
     protected static ?string $recordTitleAttribute = 'SubOrigenes';
+    protected static ?string $modelLabel = 'Sub Origen';
+
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('SubOrigen')
-                    ->label('SubOrigen')
+                    ->label('Nombre Sub Origen')
                     ->required(),
-                Forms\Components\Toggle::make('ActivoInput'),
                 Forms\Components\TextInput::make('Alias')
-                    ->label('Alias')
-                    ->inlineLabel()
-                    ->required(),
+                    ->label('Alias (Hubspot)'),
+                Forms\Components\Toggle::make('ActivoInput')
+                ->inline(false),
+
             ]);
     }
 

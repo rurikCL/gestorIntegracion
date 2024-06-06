@@ -35,6 +35,10 @@ class SubOrigenRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('ID')
+                    ->label('ID')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('SubOrigen')
                     ->label('SubOrigen')
                     ->sortable()

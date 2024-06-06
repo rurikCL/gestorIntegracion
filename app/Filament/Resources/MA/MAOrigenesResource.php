@@ -41,6 +41,9 @@ class MAOrigenesResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('ID')
+                    ->label('ID')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('Origen')
                     ->searchable()
                     ->sortable(),

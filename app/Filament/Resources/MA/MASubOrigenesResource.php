@@ -61,6 +61,9 @@ class MASubOrigenesResource extends Resource
                 Tables\Columns\ToggleColumn::make('ActivoInput')
                     ->label('Activo')
                     ->sortable(),
+                Tables\Columns\BadgeColumn::make('countLeads')
+                    ->default(fn($record) => $record->lead()->count()),
+
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('OrigenID')

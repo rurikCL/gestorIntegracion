@@ -29,21 +29,23 @@ class MACargosPerfilResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('CargoID')
-                    ->relationship('cargo', 'Cargo')
-                    ->required(),
-                Forms\Components\TextInput::make('CargoRex'),
-                Forms\Components\TextInput::make('CargoHomologado'),
-                Forms\Components\TextInput::make('AreaNegocio'),
-                Forms\Components\Select::make('PerfilID')
-                    ->relationship('perfil', 'Perfil')
-                    ->required(),
-                Forms\Components\TextInput::make('HerramientaInformatica'),
-                Forms\Components\TextInput::make('NivelAprobacion')
-                    ->numeric(),
-                Forms\Components\TextInput::make('Orden')
-                    ->numeric(),
-
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\Select::make('CargoID')
+                            ->relationship('cargo', 'Cargo')
+                            ->required(),
+                        Forms\Components\TextInput::make('CargoRex'),
+                        Forms\Components\TextInput::make('CargoHomologado'),
+                        Forms\Components\TextInput::make('AreaNegocio'),
+                        Forms\Components\Select::make('PerfilID')
+                            ->relationship('perfil', 'Perfil')
+                            ->required(),
+                        Forms\Components\TextInput::make('HerramientaInformatica'),
+                        Forms\Components\TextInput::make('NivelAprobacion')
+                            ->numeric(),
+                        Forms\Components\TextInput::make('Orden')
+                            ->numeric(),
+                    ])
 
             ]);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models\MA;
 
+use App\Models\MK\MK_Leads;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,6 +38,11 @@ class MA_SubOrigenes extends Model
     public function scopeAlias($query, $alias)
     {
         return $query->where('Alias', $alias);
+    }
+
+    public function lead()
+    {
+        return $this->belongsTo(MK_Leads::class, 'ID', 'SubOrigenID');
     }
 
 }

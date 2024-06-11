@@ -186,7 +186,7 @@ class LeadController extends Controller
         try {
             DB::transaction(function () use ($request) {
 
-                $client = new Client();
+                /*$client = new Client();
                 $client->FechaCreacion = date('Y-m-d H:i:s');
                 $client->EventoCreacionID = 1;
                 $client->UsuarioCreacionID = 1683; // Usuario por defecto de Integracion - Web Pompeyo
@@ -199,7 +199,7 @@ class LeadController extends Controller
                 $client->Telefono = $request->input('data.telefono');
                 $client->FechaNacimiento = $request->input('data.fechaNacimiento');
                 $client->Direccion = $request->input('data.direccion');
-                $client->save();
+                $client->save();*/
 
                 $brand = Brand::select('ID')->where('Marca', $request->input('data.lead.marca'))->get()->collect();
                 $carModel = CarModel::select('ID')->where('MODELO', $request->input('data.lead.modelo'))->get()->collect();
@@ -210,12 +210,24 @@ class LeadController extends Controller
                 $lead->UsuarioCreacionID = 1204;
                 $lead->OrigenID = $request->input('data.lead.origenID'); // id por consumidor API
                 $lead->SubOrigenID = $request->input('data.lead.subOrigenID'); // id por consumidor API
-                $lead->ClienteID = $client->ID;
+                $lead->ClienteID = 1;
                 $lead->CampanaId = $request->input('data.lead.campana');
                 $lead->SucursalID = $request->input('data.lead.sucursalID'); // htext
                 $lead->VendedorID = $request->input('data.lead.vendedorID');
                 $lead->MarcaID = $brand->count() > 0 ? $brand[0]['ID'] : null;
                 $lead->ModeloID = $carModel->count() > 0 ? $carModel[0]['ID'] : null;
+
+                $lead->Nombre = $request->input('data.nombre');
+                $lead->SegundoNombre = $request->input('data.segundoNombre');
+                $lead->Apellido = $request->input('data.apellido');
+                $lead->SegundoApellido = $request->input('data.segundoApellido');
+                $lead->Rut = $request->input('data.rut');
+                $lead->Email = $request->input('data.email');
+                $lead->Telefono = $request->input('data.telefono');
+                $lead->FechaNacimiento = $request->input('data.fechaNacimiento');
+                $lead->Direccion = $request->input('data.direccion');
+                $lead->ComunaID = 1;
+
                 $lead->save();
             });
             return response()->json(['messages' => 'Leads creado correctamente'], 200);
@@ -259,6 +271,7 @@ class LeadController extends Controller
             }
 
             // SECCION DESHABILITADA, Lead poseera sus propios campos de cliente (para no ensuciar la tabla MA_Clientes)
+
             // CLIENTE ---------------------
             /*$objCliente = new MA_Clientes();
             if ($request->input('data.modoQA') == true) {
@@ -550,6 +563,7 @@ class LeadController extends Controller
             $lead->UsuarioCreacionID = $usuarioID;
             $lead->OrigenID = $origenID;
             $lead->SubOrigenID = $subOrigenID;
+            $lead->ClienteID = 1;
 
 //            $lead->ClienteID = $cliente->ID;
             $lead->Rut = $rut ?? '';

@@ -258,8 +258,9 @@ class LeadController extends Controller
 //                    'LeadID' => null], 501);
             }
 
+            // SECCION DESHABILITADA, Lead poseera sus propios campos de cliente (para no ensuciar la tabla MA_Clientes)
             // CLIENTE ---------------------
-            $objCliente = new MA_Clientes();
+            /*$objCliente = new MA_Clientes();
             if ($request->input('data.modoQA') == true) {
                 $objCliente->setConnection('mysql');
             }
@@ -294,7 +295,7 @@ class LeadController extends Controller
                 $cliente = $objCliente;
             } else {
                 $Log->info("Cliente encontrado: " . $cliente->ID);
-            }
+            }*/
 
 
             // CREACION DE LEAD ---------------------
@@ -533,7 +534,7 @@ class LeadController extends Controller
             $IDExterno = $request->input('data.lead.externalID');
             $lead = MK_Leads::where('IDExterno', $IDExterno)
                 ->where('OrigenID', $origenID)
-                ->where('ClienteID', $cliente->ID)
+                ->where('Rut', $rut)
                 ->where('ModeloID', $modeloID)
                 ->where('FechaCreacion', '>', date('Y-m-d H:i:s', strtotime('-1 day')))
                 ->first();
@@ -549,7 +550,19 @@ class LeadController extends Controller
             $lead->UsuarioCreacionID = $usuarioID;
             $lead->OrigenID = $origenID;
             $lead->SubOrigenID = $subOrigenID;
-            $lead->ClienteID = $cliente->ID;
+
+//            $lead->ClienteID = $cliente->ID;
+            $lead->Rut = $rut ?? '';
+            $lead->Nombre = $request->input('data.nombre') ?? '';
+            $lead->SegundoNombre = $request->input('data.segundoNombre') ?? '';
+            $lead->Apellido = $request->input('data.apellido') ?? '';
+            $lead->SegundoApellido = $request->input('data.segundoApellido') ?? '';
+            $lead->Email = $request->input('data.email') ?? '';
+            $lead->Telefono = $request->input('data.telefono') ?? '';
+            $lead->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
+            $lead->Direccion = $request->input('data.direccion') ?? '';
+            $lead->ComunaID = 1;
+
             $lead->CampanaId = $request->input('data.lead.campana') ?? null;
             $lead->SucursalID = $sucursalID; // htext
             $lead->VendedorID = $vendedorID > 0 ? $vendedorID : $usuarioID;

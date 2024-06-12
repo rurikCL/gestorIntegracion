@@ -21,8 +21,7 @@ class SucursalesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('SucursalID')
-                    ->options(fn() => \App\Models\MA\MA_Sucursales::all()->pluck('Sucursal', 'ID'))
-                    ->unique()
+                    ->options(fn() => \App\Models\MA\MA_Sucursales::where('Activa',1)->pluck('Sucursal', 'ID'))
                     ->searchable()
                     ->label('Sucursal')
                     ->required(),

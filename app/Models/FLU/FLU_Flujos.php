@@ -27,7 +27,8 @@ class FLU_Flujos extends Model
         'Opciones',
         'Reintentos',
         'TiempoEspera',
-        'Role'
+        'Role',
+        'Metodo',
     ];
 
     public function notificaciones()

@@ -11,10 +11,11 @@ use mysql_xdevapi\Table;
 class SP_oc_categories extends Model
 {
     use HasFactory, hasSku;
+
     protected $table = 'SP_oc_categories';
     protected $fillable = ['name', 'sku', 'FechaCreacion', 'EventoCreacionID', 'UsuarioCreacionID', 'FechaActualizacion', 'EventoActualizacionID', 'UsuarioActualizacionID'];
 
-    public function skuOptions() : SkuOptions
+    public function skuOptions(): SkuOptions
     {
         return SkuOptions::make()
             ->forceUnique(false)

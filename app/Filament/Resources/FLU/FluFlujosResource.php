@@ -49,6 +49,8 @@ class FluFlujosResource extends Resource
                     ->default('PROCESS')
                     ->disablePlaceholderSelection()
                     ->required(),
+                Forms\Components\TextInput::make('Metodo')
+                    ->hint('Metodo a ejecutar si trigger es Process'),
                 Forms\Components\Textarea::make('Opciones'),
                 Forms\Components\Select::make('Role')
                     ->options([
@@ -68,12 +70,13 @@ class FluFlujosResource extends Resource
                     ->disablePlaceholderSelection()
                     ->required(),
                 Forms\Components\TextInput::make('RecurrenciaValor')
-                ->default(0),
+                    ->default(0),
                 Forms\Components\TextInput::make('MaxLote')->default(1),
                 Forms\Components\TextInput::make('Reintentos')->default(1),
                 Forms\Components\TextInput::make('TiempoEspera')->default(0),
 
                 Forms\Components\Toggle::make('Activo')
+                    ->inline(false)
 
 
             ]);
@@ -85,7 +88,7 @@ class FluFlujosResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
                 Tables\Columns\TextColumn::make('Nombre')
-                ->description(fn (FLU_Flujos $record): string => $record->Descripcion),
+                    ->description(fn(FLU_Flujos $record): string => $record->Descripcion),
 //                Tables\Columns\TextColumn::make('Descripcion'),
                 Tables\Columns\TextColumn::make('Tipo'),
                 Tables\Columns\TextColumn::make('Trigger'),
@@ -95,7 +98,14 @@ class FluFlujosResource extends Resource
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('Tipo')
+                    ->options([
+                        'REFERENCIA' => 'Referencia',
+                        'API' => 'API',
+                        'FLUJO' => 'Flujo',
+                        'CARGA' => 'Carga',
+                        'ACTUALIZACION' => 'Actualizacion',
+                    ])
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -112,6 +122,7 @@ class FluFlujosResource extends Resource
             RelationManagers\HomologacionesRelationManager::class,
         ];
     }
+
     public static function getPages(): array
     {
         return [

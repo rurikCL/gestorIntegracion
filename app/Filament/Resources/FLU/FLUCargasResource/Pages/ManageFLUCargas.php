@@ -4,6 +4,7 @@ namespace App\Filament\Resources\FLU\FLUCargasResource\Pages;
 
 use App\Filament\Resources\FLU\FLUCargasResource;
 use App\Http\Controllers\Flujo\FlujoCargaController;
+use App\Models\FLU\FLU_Flujos;
 use Carbon\Carbon;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ManageRecords;
@@ -16,7 +17,8 @@ class ManageFLUCargas extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->mutateFormDataUsing(function (array $data): array {
+            Actions\CreateAction::make()
+                ->mutateFormDataUsing(function (array $data): array {
 
                 $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
                 $data['EventoCreacionID'] = 1;
@@ -26,14 +28,12 @@ class ManageFLUCargas extends ManageRecords
                 return $data;
             })
                 ->after(function (array $data) {
-                    if($data['ID_Flujo'] == 10)
-                        $importacion = FlujoCargaController::importLeads($data);
-                    else if($data['ID_Flujo'] == 18)
-                        $importacion = FlujoCargaController::importSalvins($data);
-                    else if($data['ID_Flujo'] == 20)
-                        $importacion = FlujoCargaController::importTransactionAutored($data);
-                    else
-                        $importacion = FlujoCargaController::importCotizaciones($data);
+                    $flujo = FLU_Flujos::where('ID', $data['ID_Flujo'])->first();
+                    if($flujo) {
+                        $metodo = $flujo->Metodo;
+                        // Ejecuta Metodo de FlujoCargaController
+                        FlujoCargaController::$metodo($data);
+                    }
 
                     return $data;
                 }),

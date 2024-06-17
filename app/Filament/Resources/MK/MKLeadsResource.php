@@ -68,7 +68,7 @@ class MKLeadsResource extends Resource
                         ->label('Link de Interes')
                         ->columnSpanFull(),
 
-                ])->columns(2),
+                ])->columns(2)->compact(),
                 Section::make('Otra informacion')->schema([
                     Forms\Components\Toggle::make('Financiamiento'),
                     Forms\Components\Toggle::make('Asignado'),
@@ -88,13 +88,15 @@ class MKLeadsResource extends Resource
                     Forms\Components\TextInput::make('CotizacionID'),
                     Forms\Components\TextInput::make('FechaReAsignado'),
                     Forms\Components\TextInput::make('LandBotID'),
-                ])->columns(3)
+                ])->columns(3)->collapsible()
 
             ])->columnSpan(2),
             Forms\Components\Group::make()->schema([
                 Section::make('Cliente')->schema([
                     Forms\Components\Select::make('ClienteID')
-                        ->relationship('cliente2', 'Nombre')->searchable(),
+                        ->relationship('cliente2', 'Nombre')
+                        ->label('Nombre Cliente')
+                        ->searchable(),
                     Forms\Components\Placeholder::make('cliente2.Email')
                         ->label('Email')
                         ->content(fn(MK_Leads $record): ?string => $record->cliente->Email),
@@ -102,6 +104,16 @@ class MKLeadsResource extends Resource
                         ->label('Telefono')
                         ->content(fn(MK_Leads $record): ?string => $record->cliente->Telefono ?? 'Sin Telefono'),
                 ]),
+
+                Section::make('Cliente Lead')->schema([
+                    Forms\Components\TextInput::make('Rut'),
+                    Forms\Components\TextInput::make('Nombre'),
+                    Forms\Components\TextInput::make('Email'),
+                    Forms\Components\TextInput::make('Telefono'),
+                    Forms\Components\TextInput::make('Direccion'),
+                ])->collapsed()
+                    ->compact(),
+
                 Section::make('Vendedor')->schema([
                     Forms\Components\Select::make('VendedorID')
                         ->options(function (callable $get) {

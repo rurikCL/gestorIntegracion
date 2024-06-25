@@ -8,6 +8,7 @@ use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MK\MK_Leads;
+use Carbon\Carbon;
 use HubSpot\Client\Crm\Contacts\ApiException;
 use HubSpot\Client\Crm\Contacts\Model\Filter;
 use HubSpot\Client\Crm\Deals\Model\Filter as FilterDeal;
@@ -138,9 +139,9 @@ class FlujoHubspotController extends Controller
                         }
 
                         if($data->properties['agenda_visita']){
-                            $agendaVisita = $data->properties['agenda_visita'];
+                            $agendaVisita = Carbon::parse($data->properties['agenda_visita']);
                         } else {
-                            $agendaVisita = '';
+                            $agendaVisita = null;
                         }
 
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;

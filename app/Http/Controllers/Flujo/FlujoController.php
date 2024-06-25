@@ -1629,7 +1629,7 @@ class FlujoController extends Controller
 
             $registros = 0;
             if ($arrayData) {
-                Log::info("Datos a procesar : " . count($arrayData));
+//                Log::info("Datos a procesar : " . count($arrayData));
 
                 foreach ($arrayData as $data) {
                     $fechaCreacion = Carbon::createFromFormat("d/m/Y H:i", $data->created_at)->format('Y-m-d H:i:s');

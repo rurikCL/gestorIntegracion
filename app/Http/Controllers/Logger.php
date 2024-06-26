@@ -126,7 +126,7 @@ class Logger extends Controller
 
         $evento = SIS_Eventos::create(
             [
-                'FechaCreacion' => $fecha,
+                'FechaCreacion' => $fecha ?? Carbon::now(),
                 'Comentario' => $comentario . " | IP : " . $ip,
                 'UsuarioCreacionID' => $idUsuario,
                 'ReferenciaID' => 0,

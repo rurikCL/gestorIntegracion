@@ -17,6 +17,7 @@ use App\Http\Controllers\ApiProd\ModelosController;
 use App\Http\Controllers\ApiProd\SisAgendamientosController;
 use App\Http\Controllers\ApiProd\SucursalesController;
 use App\Http\Controllers\ApiProd\TicketController;
+use App\Http\Controllers\Logger;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [ AuthController::class, 'login'])->name( 'api.login' );
@@ -63,6 +64,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/santander/solicitud', [FinancierasController::class, 'creditoSantander']);
 
 
-    Route::post('/log/evento', [\App\Http\Controllers\Logger::class, 'logEvento']);
+    Route::post('/log/evento', [Logger::class, 'logEvento']);
 
 });

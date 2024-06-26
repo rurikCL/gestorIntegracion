@@ -122,6 +122,7 @@ class Logger extends Controller
         $ip = $request->input('data.ip');
         $comentario = $request->input('data.comentario');
         $fecha = $request->input('data.fecha');
+        $this->info($fecha . ' ' . $comentario . ' ' . $ip . ' ' . $idUsuario);
 
         $evento = SIS_Eventos::create(
             [

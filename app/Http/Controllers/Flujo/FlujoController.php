@@ -1605,8 +1605,8 @@ class FlujoController extends Controller
             $req['OnDemand'] = true;
 
             $req['data'] = [
-//                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
-                "from" => "2024-06-01",
+                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
+//                "from" => "2024-06-01",
                 "to" => Carbon::now()->format('Y-m-d'),
 //                "to" => "2024-05-31",
             ];
@@ -1619,7 +1619,7 @@ class FlujoController extends Controller
 
             if (substr($solicitud->Respuesta, 0, 4) == 'file') {
                 $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
-                Log::info("Archivo json stock generado " . $nombre);
+                Log::info("Archivo json transactions generado " . $nombre);
 
                 $arrayData = json_decode(Storage::get($nombre));
             } else {

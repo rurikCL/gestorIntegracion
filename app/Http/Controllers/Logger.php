@@ -118,14 +118,14 @@ class Logger extends Controller
 
     public function logEvento(Request $request)
     {
-        $idUsuario = $request->input('idUsuario');
-        $ip = $request->input('ip');
-        $comentario = $request->input('comentario');
+        $idUsuario = $request->input('data.idUsuario');
+        $ip = $request->input('data.ip');
+        $comentario = $request->input('data.comentario');
 
         $evento = SIS_Eventos::create(
             [
                 'FechaCreacion' => Carbon::now("Y-m-d H:i:s"),
-                'Comentario' => $ip,
+                'Comentario' => $comentario . " | IP : " . $ip,
                 'UsuarioCreacionID' => $idUsuario,
                 'ReferenciaID' => 0,
                 'MenuSecundarioID' => 0,
@@ -133,6 +133,10 @@ class Logger extends Controller
             ]
         );
 
-        return 'OK';
+        if($evento)
+          return response()->json(['messages' => 'Log creado'], 200);
+        else
+          return response()->json(['messages' => 'Error al crear log'], 500);
+
     }
 }

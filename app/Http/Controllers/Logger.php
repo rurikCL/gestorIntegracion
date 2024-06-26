@@ -118,6 +118,8 @@ class Logger extends Controller
 
     public function logEvento(Request $request)
     {
+        $this->info($request);
+
         $idUsuario = $request->input('data.idUsuario');
         $ip = $request->input('data.ip');
         $comentario = $request->input('data.comentario');

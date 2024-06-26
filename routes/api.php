@@ -62,4 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/santander/calculadora', [FinancierasController::class, 'calculadoraSantander']);
     Route::post('/santander/solicitud', [FinancierasController::class, 'creditoSantander']);
 
+
+    Route::post('/log/evento', [\App\Http\Controllers\Logger::class, 'logEvento']);
+
 });

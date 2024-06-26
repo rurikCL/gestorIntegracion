@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Api\API_LogSolicitud;
+use App\Models\SIS_Eventos;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -112,5 +114,25 @@ class Logger extends Controller
     public function setMustLog($mustLog)
     {
         $this->mustLog = $mustLog;
+    }
+
+    public function logEvento(Request $request)
+    {
+        $idUsuario = $request->input('idUsuario');
+        $ip = $request->input('ip');
+        $comentario = $request->input('comentario');
+
+        $evento = SIS_Eventos::create(
+            [
+                'FechaCreacion' => Carbon::now("Y-m-d H:i:s"),
+                'Comentario' => $ip,
+                'UsuarioCreacionID' => $idUsuario,
+                'ReferenciaID' => 0,
+                'MenuSecundarioID' => 0,
+                'EventoCreacionID' => 0
+            ]
+        );
+
+        return 'OK';
     }
 }

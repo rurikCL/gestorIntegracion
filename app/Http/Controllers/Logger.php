@@ -133,7 +133,7 @@ class Logger extends Controller
                 'UsuarioCreacionID' => $idUsuario,
                 'ReferenciaID' => 0,
                 'MenuSecundarioID' => 0,
-                'EventoCreacionID' => 0
+                'EventoCreacionID' => 125
             ]
         );
 

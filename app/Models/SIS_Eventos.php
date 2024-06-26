@@ -11,4 +11,5 @@ class SIS_Eventos extends Model
     protected $table = 'SIS_Eventos';
     protected $primaryKey = 'ID';
     protected $fillable = ['FechaCreacion', 'EventoCreacionID', 'UsuarioCreacionID', 'ReferenciaID', 'MenuSecundarioID', 'Comentario' ];
+    public $timestamps = false;
 }

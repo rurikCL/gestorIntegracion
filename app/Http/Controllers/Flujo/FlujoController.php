@@ -1716,7 +1716,7 @@ class FlujoController extends Controller
 
             $req = new Request();
             $req['referencia_id'] = $referencia;
-            $req['api_id'] = 27;
+            $req['api_id'] = 30;
             $req['proveedor_id'] = 4;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;

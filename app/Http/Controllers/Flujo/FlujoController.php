@@ -1606,9 +1606,9 @@ class FlujoController extends Controller
 
             $req['data'] = [
 //                "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
-                "from" => "2024-03-01",
+                "from" => "2024-04-01",
 //                "to" => Carbon::now()->format('Y-m-d'),
-                "to" => "2024-03-31",
+                "to" => "2024-04-30",
             ];
 
 

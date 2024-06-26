@@ -118,7 +118,6 @@ class Logger extends Controller
 
     public function logEvento(Request $request)
     {
-        $this->info($request);
 
         $idUsuario = $request->input('data.idUsuario');
         $ip = $request->input('data.ip');
@@ -127,12 +126,12 @@ class Logger extends Controller
         $referencia = $request->input('data.referencia') ?? 0;
         $menuSecundario = $request->input('data.menuSecundario') ?? 11;
         $evento = $request->input('data.evento') ?? 125;
-        $this->info($fecha . ' ' . $comentario . ' ' . $ip . ' ' . $idUsuario);
 
         $evento = SIS_Eventos::create(
             [
                 'FechaCreacion' => $fecha ?? Carbon::now(),
-                'Comentario' => $comentario . " | IP : " . $ip,
+                'Ip' => $ip,
+                'Comentario' => $comentario,
                 'UsuarioCreacionID' => $idUsuario,
                 'ReferenciaID' => $referencia,
                 'MenuSecundarioID' => $menuSecundario,

@@ -10,6 +10,6 @@ class SIS_Eventos extends Model
     use HasFactory;
     protected $table = 'SIS_Eventos';
     protected $primaryKey = 'ID';
-    protected $fillable = ['FechaCreacion', 'EventoCreacionID', 'UsuarioCreacionID', 'ReferenciaID', 'MenuSecundarioID', 'Comentario' ];
+    protected $fillable = ['FechaCreacion', 'EventoCreacionID', 'UsuarioCreacionID', 'ReferenciaID', 'MenuSecundarioID', 'Comentario', 'Ip' ];
     public $timestamps = false;
 }

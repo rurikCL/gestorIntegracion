@@ -23,8 +23,10 @@ use App\Models\MA\MA_Modelos;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
+use App\Models\SIS\SIS_Agendamientos;
 use App\Models\TDP\TDP_FacebookSucursales;
 use App\Models\TDP\TDP_WebPompeyoSucursales;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -319,6 +321,7 @@ class LeadController extends Controller
                 $request->input('data.lead.marcaID'))
                 ->where('Activo', 1)
                 ->first();
+
             $vendedorID = $request->input('data.lead.vendedorID') ?? 1;
 
             if ($asignacion && $vendedorID == 0) {
@@ -557,7 +560,8 @@ class LeadController extends Controller
                 $Log->info("Lead ya existe: " . $lead->ID);
             }
 
-            // Creacion de Lead
+            // Creacion de Lead --------------------------------
+
             $lead = new MK_Leads();
             $lead->FechaCreacion = date('Y-m-d H:i:s');
             $lead->EventoCreacionID = 1;
@@ -587,11 +591,38 @@ class LeadController extends Controller
             $lead->Comentario = $comentario ?? null;
             $lead->Financiamiento = $financiamiento;
             $lead->LinkInteres = $linkInteres;
+            $lead->OrigenIngreso = 1; // canal API
 
             $lead->save();
             $returnMessage = "Lead creado correctamente";
 
             $Log->info("LEAD " . $lead->ID . " creado con exito");
+
+            // Creacion de Agenda --------------------------
+
+            if($request->input('data.lead.agenda')){
+                $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
+                $fechaFin = $fechaInicio->addHour();
+
+                $dataAgenda = [
+                    "FechaCreacion" => Carbon::now("Y-m-d H:i:s"),
+                    "EventoCreacionID" => 12,
+                    "UsuarioCreacionID" => 1,
+                    "ClienteID" => $cliente->ID,
+                    "ReferenciaID" => $lead->ID,
+                    "TipoID" => 57,
+                    "UsuarioID" => $vendedorID,
+                    "EstadoID" => 1,
+                    "Inicio" => $fechaInicio,
+                    "Termino" => $fechaFin,
+                    "Comentario" => "Agendamiento de Lead",
+                ];
+
+                SIS_Agendamientos::create($dataAgenda);
+            }
+
+
+            // Creacion de Solicitud API, para registro (No se puede reprocesar) ----
 
             $solicitud = ApiSolicitudes::create([
                 'FechaCreacion' => date('Y-m-d H:i:s'),

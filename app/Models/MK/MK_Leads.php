@@ -76,6 +76,8 @@ class MK_Leads extends Model
         'ComunaID',
         'FechaNacimiento',
         'Direccion',
+        'TIpoJuridicoID',
+        'OrigenIngreso'
     ];
 
     public function cliente()

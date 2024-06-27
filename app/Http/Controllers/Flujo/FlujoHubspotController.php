@@ -139,7 +139,10 @@ class FlujoHubspotController extends Controller
                         }
 
                         if($data->properties['agenda_visita']){
-                            $agendaVisita = Carbon::parse($data->properties['agenda_visita']);
+                            $agendaVisita = Carbon::parse($data->properties['agenda_visita'])
+                                ->startOfHour()
+                                ->format('Y-m-d H:i:s')
+                                ?? null;
                         } else {
                             $agendaVisita = null;
                         }

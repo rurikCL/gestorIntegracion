@@ -618,7 +618,12 @@ class LeadController extends Controller
                     "Comentario" => "Agendamiento de Lead",
                 ];
 
-                SIS_Agendamientos::create($dataAgenda);
+                $agenda = SIS_Agendamientos::create($dataAgenda);
+                if($agenda){
+                    $Log->info("Agenda creada con exito");
+                } else {
+                    $Log->error("Error al crear agenda");
+                }
             }
 
 

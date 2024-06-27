@@ -598,34 +598,6 @@ class LeadController extends Controller
 
             $Log->info("LEAD " . $lead->ID . " creado con exito");
 
-            // Creacion de Agenda --------------------------
-
-            if($request->input('data.lead.agenda')){
-                $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
-                $fechaFin = $fechaInicio->addHour();
-
-                $dataAgenda = [
-                    "FechaCreacion" => Carbon::now("Y-m-d H:i:s"),
-                    "EventoCreacionID" => 12,
-                    "UsuarioCreacionID" => 1,
-                    "ClienteID" => $cliente->ID,
-                    "ReferenciaID" => $lead->ID,
-                    "TipoID" => 57,
-                    "UsuarioID" => $vendedorID,
-                    "EstadoID" => 1,
-                    "Inicio" => $fechaInicio,
-                    "Termino" => $fechaFin,
-                    "Comentario" => "Agendamiento de Lead",
-                ];
-
-                $agenda = SIS_Agendamientos::create($dataAgenda);
-                if($agenda){
-                    $Log->info("Agenda creada con exito");
-                } else {
-                    $Log->error("Error al crear agenda");
-                }
-            }
-
 
             // Creacion de Solicitud API, para registro (No se puede reprocesar) ----
 
@@ -686,6 +658,34 @@ class LeadController extends Controller
                     $Log->info("Reglas de Lead ejecutadas con exito ");
                 }
 
+            }
+
+            // Creacion de Agenda --------------------------
+
+            if($request->input('data.lead.agenda')){
+                $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
+                $fechaFin = $fechaInicio->addHour();
+
+                $dataAgenda = [
+                    "FechaCreacion" => Carbon::now("Y-m-d H:i:s"),
+                    "EventoCreacionID" => 12,
+                    "UsuarioCreacionID" => 1,
+                    "ClienteID" => $cliente->ID,
+                    "ReferenciaID" => $lead->ID,
+                    "TipoID" => 57,
+                    "UsuarioID" => $vendedorID,
+                    "EstadoID" => 1,
+                    "Inicio" => $fechaInicio,
+                    "Termino" => $fechaFin,
+                    "Comentario" => "Agendamiento de Lead",
+                ];
+
+                $agenda = SIS_Agendamientos::create($dataAgenda);
+                if($agenda){
+                    $Log->info("Agenda creada con exito");
+                } else {
+                    $Log->error("Error al crear agenda");
+                }
             }
 
             // ---------------------------------------

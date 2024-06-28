@@ -685,7 +685,9 @@ class LeadController extends Controller
 
                 $agenda = SIS_Agendamientos::create($dataAgenda);
                 if($agenda){
-                    $Log->info("Agenda creada con exito", $solicitudID);
+                    $Log->info("Agenda creada : ".$fechaInicio, $solicitudID);
+                    $lead->Agendado = 1;
+                    $lead->save();
                 } else {
                     $Log->error("Error al crear agenda", $solicitudID);
                 }

@@ -623,12 +623,15 @@ class LeadController extends Controller
             $solicitudID = null;
             if ($solicitud) {
                 $Log->info("Solicitud creada con exito");
+
+                // Resuelve el arreglo de Log
                 $Log->solveArray($solicitud->id);
+
                 $solicitudID = $solicitud->id;
 
                 $notificacion = FLU_Notificaciones::Notificar($solicitudID, $idFlujo);
                 if ($notificacion) {
-                    $Log->info("Notificacion creada con exito");
+                    $Log->info("Notificacion creada con exito", $solicitudID);
                 }
             }
 
@@ -655,7 +658,7 @@ class LeadController extends Controller
                     $gerenciaHomologada
                 );
                 if ($asignado) {
-                    $Log->info("Reglas de Lead ejecutadas con exito ");
+                    $Log->info("Reglas de Lead ejecutadas con exito ", $solicitudID);
                 }
 
             }
@@ -682,9 +685,9 @@ class LeadController extends Controller
 
                 $agenda = SIS_Agendamientos::create($dataAgenda);
                 if($agenda){
-                    $Log->info("Agenda creada con exito");
+                    $Log->info("Agenda creada con exito", $solicitudID);
                 } else {
-                    $Log->error("Error al crear agenda");
+                    $Log->error("Error al crear agenda", $solicitudID);
                 }
             }
 

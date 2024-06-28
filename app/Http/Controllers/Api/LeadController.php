@@ -670,7 +670,7 @@ class LeadController extends Controller
                 $fechaFin = $fechaInicio->addHour();
 
                 $dataAgenda = [
-                    "FechaCreacion" => Carbon::now("Y-m-d H:i:s"),
+                    "FechaCreacion" => Carbon::now()->format("Y-m-d H:i:s"),
                     "EventoCreacionID" => 12,
                     "UsuarioCreacionID" => 1,
                     "ClienteID" => $cliente->ID,

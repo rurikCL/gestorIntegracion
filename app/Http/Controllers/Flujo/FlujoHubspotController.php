@@ -139,6 +139,7 @@ class FlujoHubspotController extends Controller
                         }
 
                         if($data->properties['agenda_visita']){
+                            Log::info("Agenda Visita : ".$data->properties['agenda_visita']);
                             $agendaVisita = Carbon::parse($data->properties['agenda_visita'])
                                 ->startOfHour()
                                 ->format('Y-m-d H:i:s')

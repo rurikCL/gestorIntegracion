@@ -21,8 +21,9 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
-class SalvinsImport implements ToCollection, WithBatchInserts
+class SalvinsImport implements ToCollection, WithBatchInserts, WithCustomCsvSettings
 {
     private $carga = null;
     private $contadorRegistro = 0;
@@ -306,6 +307,13 @@ class SalvinsImport implements ToCollection, WithBatchInserts
         Log::info("Fin de importacion de Salvin");
 
         return true;
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'input_encoding' => 'ISO-8859-1'
+        ];
     }
 
     public function chunkSize(): int

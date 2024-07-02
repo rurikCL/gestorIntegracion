@@ -43,6 +43,7 @@ class FLUCargasResource extends Resource
 //                            ->relationship('flujo', 'Nombre')
                             ->options(
                                 fn() => FLU_Flujos::where('Tipo', 'CARGA')
+                                    ->where('Metodo', '<>', '')
 //                            ->where('Role', Auth::user()->role)
                                     ->pluck('Nombre', 'ID')->toArray()
                             )->label('Flujo de carga')->required(),

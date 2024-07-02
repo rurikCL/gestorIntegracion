@@ -295,7 +295,7 @@ class SalvinsImport implements ToCollection, WithBatchInserts, WithCustomCsvSett
 
         // paso final --------------------------------------------------
 
-        $contErrores += count($errores);
+        $contErrores += count($this->errores);
         $this->carga->Registros = $contErrores + $this->contadorRegistro;
         $this->carga->RegistrosCargados = $this->contadorRegistro;
         $this->carga->RegistrosFallidos = $contErrores;

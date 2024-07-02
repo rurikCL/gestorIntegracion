@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ManageFLUCargas extends ManageRecords
 {
@@ -32,6 +33,7 @@ class ManageFLUCargas extends ManageRecords
                     if($flujo) {
                         $metodo = $flujo->Metodo;
                         // Ejecuta Metodo de FlujoCargaController
+                        Log::info("Ejecutando Metodo de importacion: $metodo");
                         FlujoCargaController::$metodo($data);
                     }
 

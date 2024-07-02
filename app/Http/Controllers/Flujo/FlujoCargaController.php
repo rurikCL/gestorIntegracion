@@ -73,6 +73,7 @@ class FlujoCargaController extends Controller
 
     public static function importSalvins($data)
     {
+        Log::info("Inicio de importacion Salvin");
         $fileName = str_replace('"', '', $data["File"]);
         $resultado = [];
         $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])

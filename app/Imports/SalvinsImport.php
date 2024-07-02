@@ -28,6 +28,7 @@ class SalvinsImport implements ToCollection, WithBatchInserts, WithCustomCsvSett
     private $carga = null;
     private $contadorRegistro = 0;
     private $contErrores = 0;
+    private $errores = [];
 
     use Importable;
 
@@ -38,9 +39,7 @@ class SalvinsImport implements ToCollection, WithBatchInserts, WithCustomCsvSett
 
     public function collection(Collection $collection)
     {
-        Log::info("Inicio de importacion de Salvin");
-
-        $errores = [];
+        Log::info("Iniciando batch de importacion de Salvin");
 
         $this->contadorRegistro = $this->carga->RegistrosCargados ?? 0;
         $contErrores = $this->carga->RegistrosFallidos ?? 0;
@@ -278,7 +277,7 @@ class SalvinsImport implements ToCollection, WithBatchInserts, WithCustomCsvSett
                 $this->contadorRegistro++;
             } catch (\Exception $e) {
                 Log::error("Error en la importacion de Salvin: " . $e->getMessage());
-                $errores[$this->contadorRegistro] = $e->getMessage();
+                $this->errores[$this->contadorRegistro] = $e->getMessage();
             }
 
         } // Fin foreach

@@ -21,10 +21,10 @@ class ManageFLUCargas extends ManageRecords
             Actions\CreateAction::make()
                 ->mutateFormDataUsing(function (array $data): array {
 
-                $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
+/*                $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
                 $data['EventoCreacionID'] = 1;
                 $data['UsuarioCreacionID'] = Auth::user()->id;
-                $data['FechaCarga'] = Carbon::now()->format('Y-m-d H:i:s');
+                $data['FechaCarga'] = Carbon::now()->format('Y-m-d H:i:s');*/
 
                 return $data;
             })

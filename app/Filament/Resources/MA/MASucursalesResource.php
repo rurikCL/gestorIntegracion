@@ -76,8 +76,8 @@ class MASucursalesResource extends Resource
                                 Forms\Components\Select::make('user_id')
                                     ->relationship('usuarios', 'Nombre')
                                     ->searchable(),
-                                Forms\Components\TextInput::make('min'),
-                                Forms\Components\TextInput::make('max'),
+//                                Forms\Components\TextInput::make('min'),
+//                                Forms\Components\TextInput::make('max'),
                             ])
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                 $data['branch_office_id'] = $get('ID');
@@ -86,10 +86,10 @@ class MASucursalesResource extends Resource
                             })
                             ->maxItems(10)
 //                            ->cloneable()
-                            ->columns(4),
+                            ->columns(2),
                     ]),
                     Forms\Components\Section::make("Aprobadores Ordenes de Compra")->schema([
-                        Forms\Components\Repeater::make('Niveles')
+                        Forms\Components\Repeater::make('NivelesOC')
                             ->relationship('aprobadoresOC')
                             ->label(false)
                             ->schema([
@@ -104,17 +104,17 @@ class MASucursalesResource extends Resource
                                 Forms\Components\Select::make('user_id')
                                     ->relationship('usuarios', 'Nombre')
                                     ->searchable(),
-                                Forms\Components\TextInput::make('min'),
-                                Forms\Components\TextInput::make('max'),
+//                                Forms\Components\TextInput::make('min'),
+//                                Forms\Components\TextInput::make('max'),
                             ])
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
-                                $data['branch_office_id'] = $get('ID');
+                                $data['branchOffice_id'] = $get('ID');
 
                                 return $data;
                             })
-                            ->maxItems(10)
+                            ->maxItems(5)
 //                            ->cloneable()
-                            ->columns(4),
+                            ->columns(2),
                     ]),
                 ])->columnSpan(3),
             ])->columns(3);

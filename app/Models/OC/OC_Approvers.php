@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class OC_Approvers extends Model
 {
+    protected $connection = 'mysql-pompeyo';
+
     protected $table = 'OC_approvers';
     protected $primaryKey = 'ID';
     protected $fillable = [

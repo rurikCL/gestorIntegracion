@@ -26,15 +26,21 @@ class ManageFLUCargas extends ManageRecords
                 $data['UsuarioCreacionID'] = Auth::user()->id;
                 $data['FechaCarga'] = Carbon::now()->format('Y-m-d H:i:s');
 
+
                 return $data;
             })
                 ->after(function (array $data) {
-                    $flujo = FLU_Flujos::where('ID', $data['ID_Flujo'])->first();
-                    if($flujo) {
-                        $metodo = $flujo->Metodo;
-                        // Ejecuta Metodo de FlujoCargaController
-                        Log::info("Ejecutando Metodo de importacion: $metodo");
-                        FlujoCargaController::$metodo($data);
+
+                    try {
+                        $flujo = FLU_Flujos::where('ID', $data['ID_Flujo'])->first();
+                        if($flujo) {
+                            $metodo = $flujo->Metodo;
+                            // Ejecuta Metodo de FlujoCargaController
+                            Log::info("Ejecutando Metodo de importacion: $metodo");
+                            FlujoCargaController::$metodo($data);
+                        }
+                    } catch (\Exception $e) {
+                        Log::error($e->getMessage());
                     }
 
                     return $data;

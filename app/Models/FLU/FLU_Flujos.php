@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class FLU_Flujos extends Model
 {
-    use HasFactory;
     protected $table = 'FLU_Flujos';
     protected $connection = 'mysql-pompeyo';
 

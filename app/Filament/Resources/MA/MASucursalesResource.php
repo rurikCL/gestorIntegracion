@@ -81,6 +81,8 @@ class MASucursalesResource extends Resource
                             ])
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                 $data['branch_office_id'] = $get('ID');
+                                $data['min'] = 0;
+                                $data['max'] = 1;
 
                                 return $data;
                             })
@@ -109,6 +111,8 @@ class MASucursalesResource extends Resource
                             ])
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                 $data['branchOffice_id'] = $get('ID');
+                                $data['min'] = 0;
+                                $data['max'] = 1;
 
                                 return $data;
                             })

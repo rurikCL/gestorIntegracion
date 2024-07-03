@@ -2,6 +2,7 @@
 
 namespace App\Models\OC;
 
+use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +22,11 @@ class OC_Approvers extends Model
         'min',
         'max',
     ];
+
+    public function sucursales()
+    {
+        return $this->belongsTo(MA_Sucursales::class, 'branchOffice_id', 'ID');
+    }
 
     public function usuarios()
     {

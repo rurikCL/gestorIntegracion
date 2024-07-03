@@ -2,6 +2,8 @@
 
 namespace App\Models\MA;
 
+use App\Models\OC\OC_Approvers;
+use App\Models\OC_Aprobadores;
 use App\Models\RC\RC_cashier_approvers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -52,6 +54,11 @@ class MA_Sucursales extends Model
     public function aprobadores()
     {
         return $this->hasMany(RC_cashier_approvers::class, 'branch_office_id','ID');
+    }
+
+    public function aprobadoresOC()
+    {
+        return $this->hasMany(OC_Approvers::class, 'branchOffice_id', 'ID');
     }
 
     public function tipoSucursal()

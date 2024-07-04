@@ -12,8 +12,9 @@ class OC_Approvers extends Model
 
     protected $table = 'OC_approvers';
     protected $primaryKey = 'id';
+    public $timestamps = true;
+
     protected $fillable = [
-        'ID',
         'branchOffice_id',
         'level',
         'user_id',

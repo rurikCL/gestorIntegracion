@@ -66,4 +66,9 @@ class OC_purchase_orders extends Model
     {
         return $this->hasOne('App\Models\MA\MA_TipoSucursal', 'ID', 'typeOfBranch_id');
     }
+
+    public function approvals()
+    {
+        return $this->hasMany(OC_Approvals::class, 'ocOrderRequest_id', 'id');
+    }
 }

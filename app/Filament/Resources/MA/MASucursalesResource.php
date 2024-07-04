@@ -92,34 +92,34 @@ class MASucursalesResource extends Resource
                     ]),
                     Forms\Components\Section::make("Aprobadores Ordenes de Compra")
                         ->schema([
-                        Forms\Components\Repeater::make('NivelesOrdenesCompra')
-                            ->relationship('aprobadoresordenes')
-                            ->label(false)
-                            ->schema([
-                                Forms\Components\Select::make('level')
-                                    ->options([
-                                        1 => 'Nivel 1',
-                                        2 => 'Nivel 2',
-                                        3 => 'Nivel 3',
-                                        4 => 'Nivel 4',
-                                        5 => 'Nivel 5',
-                                    ]),
-                                Forms\Components\Select::make('user_id')
-                                    ->relationship('usuarios', 'Nombre')
-//                                    ->searchable(),
-//                                Forms\Components\TextInput::make('min'),
-//                                Forms\Components\TextInput::make('max'),
-                            ])
-                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
-                                $data['branchOffice_id'] = $get('ID');
-                                $data['min'] = 2 * ($data['level'] - 1);
-                                $data['max'] = 2 * ($data['level'] - 1) + 1;
+                            Forms\Components\Repeater::make('NivelesOrdenesCompra')
+                                ->relationship('aprobadoresordenes')
+                                ->label(false)
+                                ->schema([
+                                    Forms\Components\Select::make('level')
+                                        ->options([
+                                            1 => 'Nivel 1',
+                                            2 => 'Nivel 2',
+                                            3 => 'Nivel 3',
+                                            4 => 'Nivel 4',
+                                            5 => 'Nivel 5',
+                                        ])
+                                        ->label('Nivel'),
+                                    Forms\Components\Select::make('user_id')
+                                        ->relationship('usuarios', 'Nombre')
+                                        ->searchable()
+                                        ->label('Aprobador')
+                                ])
+                                ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                    $data['branchOffice_id'] = $get('ID');
+                                    $data['min'] = 2 * ($data['level'] - 1);
+                                    $data['max'] = 2 * ($data['level'] - 1) + 1;
 
-                                return $data;
-                            })
+                                    return $data;
+                                })
 //                            ->maxItems(10)
-                            ->columns(2),
-                    ]),
+                                ->columns(2),
+                        ]),
                 ])->columnSpan(3),
             ])->columns(3);
 
@@ -161,20 +161,20 @@ class MASucursalesResource extends Resource
 
                 Tables\Filters\SelectFilter::make('GerenciaID')
                     ->label('Gerencia')
-                ->relationship('gerencia', 'Gerencia'),
+                    ->relationship('gerencia', 'Gerencia'),
 
                 Tables\Filters\SelectFilter::make('TipoSucursalID')
                     ->label('Tipo Sucursal')
-                ->relationship('tipoSucursal', 'TipoSucursal')
+                    ->relationship('tipoSucursal', 'TipoSucursal')
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver(),
                 Tables\Actions\EditAction::make()
-                ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
+                    ->disabled(!Auth::user()->isRole(['admin', 'marketing'])),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                ->disabled(!Auth::user()->isAdmin()),
+                    ->disabled(!Auth::user()->isAdmin()),
             ]);
     }
 

@@ -102,14 +102,6 @@ class OCPurchaseOrdersResource extends Resource
                                 ])
                                 ->deletable(auth()->user()->isAdmin())
                                 ->addable(auth()->user()->isAdmin())
-                                ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
-                                    $data['branchOffice_id'] = $get('ID');
-                                    $data['min'] = 2 * ($data['level'] - 1);
-                                    $data['max'] = 2 * ($data['level'] - 1) + 1;
-
-                                    return $data;
-                                })
-//                            ->maxItems(10)
                                 ->columns(3),
                         ]),
                 ])->columnSpan(2),

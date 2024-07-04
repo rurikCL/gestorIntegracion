@@ -7,6 +7,7 @@ use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_PompeyoEmpresas;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
+use App\Models\OC\OC_Approvals;
 use App\Models\OC\OC_purchase_orders;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,5 +55,9 @@ class SP_oc_order_requests extends Model
     public function detalleOrdenCompra()
     {
         return $this->hasMany(SP_oc_detail_order_requests::class, 'ocOrderRequest_id', 'id');
+    }
+    public function approvals()
+    {
+        return $this->hasMany(OC_Approvals::class, 'ocOrderRequest_id', 'id');
     }
 }

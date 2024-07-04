@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use SendGrid\Mail\Section;
 
 class OCPurchaseOrdersResource extends Resource
 {
@@ -28,33 +29,43 @@ class OCPurchaseOrdersResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('business_id')
-                    ->label('Negocio')
-                    ->relationship('empresa', 'Empresa')
-                    ->required(),
-                Forms\Components\Select::make('brand_id')
-                    ->label('Marca')
-                    ->relationship('marca', 'Marca')
-                    ->required(),
-                Forms\Components\Select::make('branch_id')
-                    ->label('Sucursal')
-                    ->relationship('sucursal', 'Sucursal')
-                    ->required(),
-                Forms\Components\Select::make('buyers_id')
-                    ->label('Buyers')
-                    ->relationship('comprador', 'Nombre')
-                    ->required(),
-                Forms\Components\Select::make('contact_id')
-                    ->label('Contacto')
-                    ->relationship('contacto', 'Nombre')
-                    ->required(),
-                Forms\Components\Select::make('state')
-                    ->label('Estado')
-                    ->options([
-                        'Pendiente' => 'Pendiente',
-                        'En Proceso' => 'En Proceso',
-                        'Finalizado' => 'Finalizado'
-                    ])->required(),
+                Forms\Components\Section::make('')->schema([
+                    Forms\Components\TextInput::make('id')
+                        ->label('ID')
+                        ->disabled(),
+                    Forms\Components\DateTimePicker::make('created_at')
+                        ->label('Fecha Creacion')
+                        ->disabled(),
+                    Forms\Components\Select::make('business_id')
+                        ->label('Negocio')
+                        ->relationship('empresa', 'Empresa')
+                        ->required(),
+                    Forms\Components\Select::make('brand_id')
+                        ->label('Marca')
+                        ->relationship('marca', 'Marca')
+                        ->required(),
+                    Forms\Components\Select::make('branch_id')
+                        ->label('Sucursal')
+                        ->relationship('sucursal', 'Sucursal')
+                        ->required(),
+                    Forms\Components\Select::make('buyers_id')
+                        ->label('Buyers')
+                        ->relationship('comprador', 'Nombre')
+                        ->required(),
+                    Forms\Components\Select::make('contact_id')
+                        ->label('Contacto')
+                        ->relationship('contacto', 'Nombre'),
+                    Forms\Components\Select::make('state')
+                        ->label('Estado')
+                        ->options([
+                            '1' => 'Pendiente',
+                            '2' => 'Aprobado',
+                            '3' => 'Rechazado',
+                            '4' => 'En Asignacion Precio',
+                            '5' => 'En Orden Compra',
+                            '6' => 'Anulado',
+                        ])->required(),
+                ])->columns(2),
 
                 Forms\Components\Group::make()->schema([
                     Forms\Components\Section::make("Aprobadores Ordenes de Compra")
@@ -70,13 +81,18 @@ class OCPurchaseOrdersResource extends Resource
                                             3 => 'Nivel 3',
                                             4 => 'Nivel 4',
                                             5 => 'Nivel 5',
-                                        ]),
-                                    Forms\Components\Select::make('user_id')
+                                        ])
+                                        ->label('Nivel'),
+                                    Forms\Components\Select::make('approver_id')
                                         ->relationship('usuarios', 'Nombre')
-//                                    ->searchable(),
-//                                Forms\Components\TextInput::make('min'),
-//                                Forms\Components\TextInput::make('max'),
+                                        ->label('Aprobador')
+                                        ->searchable(),
+                                    Forms\Components\Toggle::make('state')
+                                        ->label('Aprobado')
+                                        ->inline(false)
                                 ])
+                                ->deletable(false)
+                                ->addable(false)
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                     $data['branchOffice_id'] = $get('ID');
                                     $data['min'] = 2 * ($data['level'] - 1);
@@ -85,9 +101,9 @@ class OCPurchaseOrdersResource extends Resource
                                     return $data;
                                 })
 //                            ->maxItems(10)
-                                ->columns(2),
+                                ->columns(3),
                         ]),
-                ])->columnSpan(3),
+                ])->columnSpan(2),
             ]);
     }
 
@@ -99,7 +115,7 @@ class OCPurchaseOrdersResource extends Resource
                 Tables\Columns\TextColumn::make('empresa.Empresa'),
                 Tables\Columns\TextColumn::make('gerencia.Gerencia'),
                 Tables\Columns\TextColumn::make('sucursal.Sucursal')
-                ->description(fn($record) => $record->tipoSucursal->TipoSucursal ?? ''),
+                    ->description(fn($record) => $record->tipoSucursal->TipoSucursal ?? ''),
                 Tables\Columns\TextColumn::make('comprador.Nombre'),
                 Tables\Columns\TextColumn::make('contacto.Nombre'),
                 Tables\Columns\ViewColumn::make('state')->view('components.state'),

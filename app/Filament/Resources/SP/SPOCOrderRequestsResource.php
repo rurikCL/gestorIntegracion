@@ -27,25 +27,71 @@ class SPOCOrderRequestsResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('business_id')
-                    ->label('Negocio')
-                    ->relationship('empresa', 'Empresa')
-                    ->required(),
-                Forms\Components\Select::make('brand_id')
-                    ->label('Marca')
-                    ->relationship('marca', 'Marca')
-                    ->required(),
-                Forms\Components\Select::make('branch_id')
-                    ->label('Sucursal')
-                    ->relationship('sucursal', 'Sucursal')
-                    ->required(),
-                Forms\Components\TextInput::make('typeOfBranch_id')
-                    ->required(),
-                Forms\Components\Select::make('buyers_id')
-                    ->label('Buyers')
-                    ->relationship('comprador', 'Nombre')
-                    ->required(),
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\TextInput::make('id')
+                            ->label('ID')
+                            ->disabled(),
+                        Forms\Components\DateTimePicker::make('created_at')
+                            ->label('Fecha Creacion')
+                            ->disabled(),
+                        Forms\Components\Select::make('business_id')
+                            ->label('Negocio')
+                            ->relationship('empresa', 'Empresa')
+                            ->required(),
+                        Forms\Components\Select::make('brand_id')
+                            ->label('Marca')
+                            ->relationship('marca', 'Marca')
+                            ->required(),
+                        Forms\Components\Select::make('branch_id')
+                            ->label('Sucursal')
+                            ->relationship('sucursal', 'Sucursal')
+                            ->required(),
+                        Forms\Components\TextInput::make('typeOfBranch_id')
+                            ->required(),
+                        Forms\Components\Select::make('buyers_id')
+                            ->label('Buyers')
+                            ->relationship('comprador', 'Nombre')
+                            ->required(),
+                        Forms\Components\TextInput::make('section_id'),
+                    ])->columns(2),
+                Forms\Components\Group::make()->schema([
+                    Forms\Components\Section::make("Aprobadores Solicitud de Compra")
+                        ->schema([
+                            Forms\Components\Repeater::make('NivelesSolicitud')
+                                ->relationship('approvals')
+                                ->label(false)
+                                ->schema([
+                                    Forms\Components\Select::make('level')
+                                        ->options([
+                                            1 => 'Nivel 1',
+                                            2 => 'Nivel 2',
+                                            3 => 'Nivel 3',
+                                            4 => 'Nivel 4',
+                                            5 => 'Nivel 5',
+                                        ])
+                                        ->label('Nivel'),
+                                    Forms\Components\Select::make('approver_id')
+                                        ->relationship('usuarios', 'Nombre')
+                                        ->label('Aprobador')
+                                        ->searchable(),
+                                    Forms\Components\Toggle::make('state')
+                                        ->label('Aprobado')
+                                        ->inline(false)
+                                ])
+                                ->deletable(false)
+                                ->addable(false)
+                                ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                    $data['branchOffice_id'] = $get('ID');
+                                    $data['min'] = 2 * ($data['level'] - 1);
+                                    $data['max'] = 2 * ($data['level'] - 1) + 1;
 
+                                    return $data;
+                                })
+//                            ->maxItems(10)
+                                ->columns(3),
+                        ]),
+                ])->columnSpan(2),
             ]);
     }
 
@@ -75,7 +121,7 @@ class SPOCOrderRequestsResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('ordenCompra.order_id')
                     ->searchable()
-                    ->url(fn ($record) => ($record->ordenCompra) ? (OCPurchaseOrdersResource::getNavigationUrl(). '/' . $record->ordenCompra->order_id) : null , true),
+                    ->url(fn($record) => ($record->ordenCompra) ? (OCPurchaseOrdersResource::getNavigationUrl() . '/' . $record->ordenCompra->order_id) : null, true),
             ])
             ->filters([
                 //

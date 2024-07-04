@@ -79,8 +79,8 @@ class SPOCOrderRequestsResource extends Resource
                                         ->label('Aprobado')
                                         ->inline(false)
                                 ])
-                                ->deletable(false)
-                                ->addable(false)
+                                ->deletable(auth()->user()->isAdmin())
+                                ->addable(auth()->user()->isAdmin())
                                 ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                     $data['branchOffice_id'] = $get('ID');
                                     $data['min'] = 2 * ($data['level'] - 1);

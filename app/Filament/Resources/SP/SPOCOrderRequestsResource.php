@@ -95,6 +95,10 @@ class SPOCOrderRequestsResource extends Resource
                                             '1' => 'warning',
                                             '0' => 'success',
                                         ])
+                                        ->icons([
+                                            '1' => 'heroicon-o-clock',
+                                            '0' => 'heroicon-o-check-circle',
+                                        ])
                                         ->inline()
                                         ->grouped()
                                 ])

@@ -90,9 +90,10 @@ class MASucursalesResource extends Resource
 //                            ->cloneable()
                             ->columns(2),
                     ]),
-                    Forms\Components\Section::make("Aprobadores Ordenes de Compra")->schema([
-                        Forms\Components\Repeater::make('NivelesOC')
-                            ->relationship('aprobadoresOC')
+                    Forms\Components\Section::make("Aprobadores Ordenes de Compra")
+                        ->schema([
+                        Forms\Components\Repeater::make('NivelesOrdenesCompra')
+                            ->relationship('aprobadoresordenes')
                             ->label(false)
                             ->schema([
                                 Forms\Components\Select::make('level')
@@ -105,7 +106,7 @@ class MASucursalesResource extends Resource
                                     ]),
                                 Forms\Components\Select::make('user_id')
                                     ->relationship('usuarios', 'Nombre')
-                                    ->searchable(),
+//                                    ->searchable(),
 //                                Forms\Components\TextInput::make('min'),
 //                                Forms\Components\TextInput::make('max'),
                             ])
@@ -116,8 +117,7 @@ class MASucursalesResource extends Resource
 
                                 return $data;
                             })
-                            ->maxItems(5)
-//                            ->cloneable()
+//                            ->maxItems(10)
                             ->columns(2),
                     ]),
                 ])->columnSpan(3),

@@ -7,6 +7,7 @@ use App\Models\OC_Aprobadores;
 use App\Models\RC\RC_cashier_approvers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MA_Sucursales extends Model
 {
@@ -56,7 +57,7 @@ class MA_Sucursales extends Model
         return $this->hasMany(RC_cashier_approvers::class, 'branch_office_id','ID');
     }
 
-    public function aprobadoresOC()
+    public function aprobadoresordenes() : hasMany
     {
         return $this->hasMany(OC_Approvers::class, 'branchOffice_id', 'ID');
     }

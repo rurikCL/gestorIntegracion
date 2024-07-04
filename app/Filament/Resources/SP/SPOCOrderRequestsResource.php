@@ -54,6 +54,16 @@ class SPOCOrderRequestsResource extends Resource
                             ->relationship('comprador', 'Nombre')
                             ->required(),
                         Forms\Components\TextInput::make('section_id'),
+                        Forms\Components\Select::make('state')
+                            ->label('Estado')
+                            ->options([
+                                '1' => 'Pendiente',
+                                '2' => 'Aprobado',
+                                '3' => 'Rechazado',
+                                '4' => 'En Asignacion Precio',
+                                '5' => 'En Orden Compra',
+                                '6' => 'Anulado',
+                            ])->required(),
                     ])->columns(2),
                 Forms\Components\Group::make()->schema([
                     Forms\Components\Section::make("Aprobadores Solicitud de Compra")

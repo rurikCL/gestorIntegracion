@@ -75,9 +75,18 @@ class SPOCOrderRequestsResource extends Resource
                                         ->relationship('usuarios', 'Nombre')
                                         ->label('Aprobador')
                                         ->searchable(),
-                                    Forms\Components\Toggle::make('state')
-                                        ->label('Aprobado')
-                                        ->inline(false)
+                                    Forms\Components\ToggleButtons::make('state')
+                                        ->label('Estado')
+                                        ->options([
+                                            '1' => 'Pendiente',
+                                            '0' => 'Aprobado',
+                                        ])
+                                        ->colors([
+                                            '1' => 'warning',
+                                            '0' => 'success',
+                                        ])
+                                        ->inline()
+                                        ->grouped()
                                 ])
                                 ->deletable(auth()->user()->isAdmin())
                                 ->addable(auth()->user()->isAdmin())

@@ -247,16 +247,9 @@ class LeadController extends Controller
         $Log = new Logger();
         $Log->info("Inicio creacion LEAD");
         $logArray = [];
+        $rut = null;
 
         try {
-
-            // RUT ---------------------
-            $rut = substr($request->input('data.rut'), 0, 15);
-            if ($rut) {
-                $rut = str_replace('.', '', $rut);
-                $rut = str_replace('-', '', $rut);
-                $rut = str_replace(' ', '', $rut);
-            }
 
             // UsuarioID ---------------------
             $usuarioID = $request->input('data.usuarioID');
@@ -272,25 +265,26 @@ class LeadController extends Controller
 //                    'LeadID' => null], 501);
             }
 
-            // SECCION DESHABILITADA, Lead poseera sus propios campos de cliente (para no ensuciar la tabla MA_Clientes)
+            // RUT ---------------------
+            if($request->input('data.rut')){
+                $rut = substr($request->input('data.rut'), 0, 15);
+                    $rut = str_replace('.', '', $rut);
+                    $rut = str_replace('-', '', $rut);
+                    $rut = str_replace(' ', '', $rut);
+            }
 
             // CLIENTE ---------------------
             $objCliente = new MA_Clientes();
-            Log::info("Buscando cliente (rut : $rut, nombre:". ($request->input('data.nombre') ?? ''));
-            if ($request->input('data.modoQA') == true) {
-                $objCliente->setConnection('mysql');
-            }
+            Log::info("Buscando cliente (rut : ".$request->input('data.rut').", nombre:". ($request->input('data.nombre') ?? '').")");
 
-            // Si no viene rut, busca cliente por telefono o email
-            if ($request->input('data.rut') != "") {
+            if ($rut) {
+                $cliente = $objCliente->where('Rut', $rut)->first();
+            }  else {
                 $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
-            } else {
-                $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))
-                    ->orWhere('Email', $request->input('data.telefono'))->first();
             }
 
-            // Si no encuentra cliente, se crea uno nuevo
-            if (!$cliente) {
+            // Si no encuentra cliente, se crea uno nuevo si es que trae rut
+            if (!$cliente && $rut) {
 
                 $objCliente->Rut = $rut ?? '';
                 $objCliente->FechaCreacion = date('Y-m-d H:i:s');
@@ -310,7 +304,7 @@ class LeadController extends Controller
                 $Log->notice("Cliente creado: " . $objCliente->ID);
                 $cliente = $objCliente;
             } else {
-                $Log->info("Cliente encontrado: " . $cliente->ID);
+                $Log->info("Cliente encontrado: " . $cliente->Nombre. " rut: ".$cliente->ID);
             }
 
 

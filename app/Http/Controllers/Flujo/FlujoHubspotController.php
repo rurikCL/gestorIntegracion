@@ -210,6 +210,7 @@ class FlujoHubspotController extends Controller
                             ]
                         ];
 
+                        $resultado = null;
                         $resultado = $leadObj->nuevoLead($req);
                         if ($resultado) {
                             $res = $resultado->getData();

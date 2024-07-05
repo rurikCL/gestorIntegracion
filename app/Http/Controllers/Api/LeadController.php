@@ -276,6 +276,7 @@ class LeadController extends Controller
 
             // CLIENTE ---------------------
             $objCliente = new MA_Clientes();
+            Log::info("Buscando cliente (rut : $rut, nombre:". ($request->input('data.nombre') ?? ''));
             if ($request->input('data.modoQA') == true) {
                 $objCliente->setConnection('mysql');
             }

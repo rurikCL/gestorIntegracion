@@ -286,7 +286,7 @@ class LeadController extends Controller
             }
 
             // Si no encuentra cliente, se crea uno nuevo si es que trae rut
-            if (!$cliente && $rut) {
+            if (!$cliente) {
 
                 $objCliente->Rut = $rut ?? '';
                 $objCliente->FechaCreacion = date('Y-m-d H:i:s');

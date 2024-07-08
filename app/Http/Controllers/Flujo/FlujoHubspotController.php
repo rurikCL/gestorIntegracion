@@ -101,7 +101,7 @@ class FlujoHubspotController extends Controller
 
                         // Si no trae data de contacto
                         if ($data->properties['email'] == '' && $data->properties['phone'] == ''
-                            && $data->properties['nombre'] == '' && $data->properties['rut'] == '') {
+                            && $data->properties['firstname'] == '' && $data->properties['rut'] == '') {
 
                             Log::info("No hay datos de cliente, se busca contacto <br>");
 
@@ -118,7 +118,9 @@ class FlujoHubspotController extends Controller
                             }
 
                         } else {
-                            $nombre = ($data->properties['nombre'] ?? '');
+                            $nombre = (($data->properties['firstname'] ?? ''). ' '. $data->properties['lastname']);
+//                            $nombre = ($data->properties['firstname'] ?? '');
+                            $apellido = ($data->properties['lastname'] ?? '');
                             $email = $data->properties['email'] ?? '';
                             $telefono = $data->properties['phone'] ?? '';
                             $rut = $data->properties['rut'] ?? '';

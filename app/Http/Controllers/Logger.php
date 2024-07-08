@@ -118,7 +118,6 @@ class Logger extends Controller
 
     public function logEvento(Request $request)
     {
-
         $idUsuario = $request->input('data.idUsuario');
         $ip = $request->input('data.ip');
         $comentario = $request->input('data.comentario');
@@ -127,22 +126,27 @@ class Logger extends Controller
         $menuSecundario = $request->input('data.menuSecundario') ?? 11;
         $evento = $request->input('data.evento') ?? 125;
 
-        $evento = SIS_Eventos::create(
-            [
-                'FechaCreacion' => $fecha ?? Carbon::now(),
-                'Ip' => $ip,
-                'Comentario' => $comentario,
-                'UsuarioCreacionID' => $idUsuario,
-                'ReferenciaID' => $referencia,
-                'MenuSecundarioID' => $menuSecundario,
-                'EventoCreacionID' => $evento
-            ]
-        );
+        $data = [
+            'FechaCreacion' => $fecha ?? Carbon::now(),
+            'Ip' => $ip,
+            'Comentario' => $comentario,
+            'UsuarioCreacionID' => $idUsuario,
+            'ReferenciaID' => $referencia,
+            'MenuSecundarioID' => $menuSecundario,
+            'EventoCreacionID' => $evento
+        ];
 
-        if($evento)
-          return response()->json(['messages' => 'Log creado'], 200);
-        else
-          return response()->json(['messages' => 'Error al crear log'], 500);
+
+        if($request->input('data.idUsuario')){
+            $evento = SIS_Eventos::create($data);
+            if($evento)
+                return response()->json(['messages' => 'Log creado'], 200);
+            else
+                return response()->json(['messages' => 'Error al crear log'], 500);
+        } else {
+            Log::error("Hubo un error al crear el registro: ". print_r($data, true));
+            return response()->json(['messages' => 'Error al crear log'], 500);
+        }
 
     }
 }

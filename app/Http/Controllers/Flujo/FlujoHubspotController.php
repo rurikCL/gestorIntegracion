@@ -50,14 +50,19 @@ class FlujoHubspotController extends Controller
                 'operator' => 'NEQ',
                 'value' => 'tailored leads flotas campaña'
             ]);
+            $filter4 = new FilterDeal([
+                'property_name' => 'preparado',
+                'operator' => 'EQ',
+                'value' => '1'
+            ]);
 
             $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1, $filter2, $filter3]
+                'filters' => [$filter1, $filter2, $filter3, $filter4]
             ]);
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','link_conversacion', 'agenda_visita'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','link_conversacion', 'agenda_visita', 'firstname', 'lastname'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);

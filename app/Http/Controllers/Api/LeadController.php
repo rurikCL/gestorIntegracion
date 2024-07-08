@@ -279,8 +279,10 @@ class LeadController extends Controller
 
             if ($rut) {
                 $cliente = $objCliente->where('Rut', $rut)->first();
-            }  else {
+            }  else if($request->input('data.email')){
                 $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
+            } else if($request->input('data.telefono')){
+                $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))->first();
             }
 
             // Si no encuentra cliente, se crea uno nuevo si es que trae rut

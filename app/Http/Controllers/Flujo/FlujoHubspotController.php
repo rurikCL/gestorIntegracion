@@ -50,6 +50,7 @@ class FlujoHubspotController extends Controller
                 'operator' => 'NEQ',
                 'value' => 'tailored leads flotas campaña'
             ]);
+
             $filter4 = new FilterDeal([
                 'property_name' => 'preparado',
                 'operator' => 'EQ',
@@ -57,7 +58,7 @@ class FlujoHubspotController extends Controller
             ]);
 
             $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1, $filter2, $filter3, $filter4]
+                'filters' => [$filter1, $filter2, $filter4]
             ]);
             // --------------------------------------------------------------
 

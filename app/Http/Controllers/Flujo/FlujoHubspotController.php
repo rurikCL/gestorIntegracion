@@ -593,7 +593,7 @@ class FlujoHubspotController extends Controller
             print_r("revisando lead : " . $lead->IDExterno . "<br>");
 
             try {
-                $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno);
+                $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
                 if($apiResponse){
                     $data = $apiResponse->jsonSerialize();
                     dd($data);

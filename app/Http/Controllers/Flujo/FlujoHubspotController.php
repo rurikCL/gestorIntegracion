@@ -585,10 +585,11 @@ class FlujoHubspotController extends Controller
         $leads = MK_Leads::where('IDExterno', '<>', '')
             ->where('FechaCreacion', '>=', '2024-07-04 00:00:00')
             ->get();
+        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+        $token = json_decode($flujo->Opciones);
+        $client = Factory::createWithAccessToken($token->token);
 
         foreach ($leads as $lead){
-            $token = json_decode($lead->flujo->Opciones);
-            $client = Factory::createWithAccessToken($token->token);
             print_r("revisando lead : " . $lead->IDExterno . "<br>");
 
             try {

@@ -604,43 +604,48 @@ class FlujoHubspotController extends Controller
                     $telefono = $data->properties['phone'] ?? '';
                     $rut = $data->properties['rut'] ?? '';
 
-                    $rut = substr($rut, 0, 15);
-                    $rut = str_replace('.', '', $rut);
-                    $rut = str_replace('-', '', $rut);
-                    $rut = str_replace(' ', '', $rut);
+                    if($rut) {
 
-                    Log::info("Buscando Rut : " . $rut);
-                    $cliente = MA_Clientes::where('Rut', $rut)->first();
+                        $rut = substr($rut, 0, 15);
+                        $rut = str_replace('.', '', $rut);
+                        $rut = str_replace('-', '', $rut);
+                        $rut = str_replace(' ', '', $rut);
 
-                    if ($cliente) {
-                        Log::info("Cliente encontrado : " . $rut);
-                        $idCliente = $cliente->ID;
+                        Log::info("Buscando Rut : " . $rut);
+                        $cliente = MA_Clientes::where('Rut', $rut)->first();
+
+                        if ($cliente) {
+                            Log::info("Cliente encontrado : " . $rut);
+                            $idCliente = $cliente->ID;
+                        } else {
+                            Log::info("Cliente no encontrado se crea uno nuevo: ");
+
+                            $cliente->Rut = $rut;
+                            $cliente->FechaCreacion = date('Y-m-d H:i:s');
+                            $cliente->EventoCreacionID = 1;
+                            $cliente->UsuarioCreacionID = 3; // 2824
+                            $cliente->Nombre = $nombre;
+                            $cliente->Apellido = $apellido;
+                            $cliente->Email = $email;
+                            $cliente->Telefono = $telefono;
+                            $cliente->FechaNacimiento = null;
+
+                            $cliente->save();
+
+                            Log::notice("Cliente creado: " . $cliente->ID);
+                            $idCliente = $cliente->ID;
+                        }
+
+                        if ($idCliente != $lead->CLienteID) {
+                            $lead->ClienteID = $idCliente;
+                            $lead->save();
+                            Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
+                        }
+
+                        dd($data);
                     } else {
-                        Log::info("Cliente no encontrado se crea uno nuevo: ");
-
-                        $cliente->Rut = $rut;
-                        $cliente->FechaCreacion = date('Y-m-d H:i:s');
-                        $cliente->EventoCreacionID = 1;
-                        $cliente->UsuarioCreacionID = 3; // 2824
-                        $cliente->Nombre = $nombre;
-                        $cliente->Apellido = $apellido;
-                        $cliente->Email = $email;
-                        $cliente->Telefono = $telefono;
-                        $cliente->FechaNacimiento = null;
-
-                        $cliente->save();
-
-                        Log::notice("Cliente creado: " . $cliente->ID);
-                        $idCliente = $cliente->ID;
+                        Log::info("Lead hubspot no posee rut");
                     }
-
-                    if ($idCliente != $lead->CLienteID) {
-                        $lead->ClienteID = $idCliente;
-                        $lead->save();
-                        Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
-                    }
-
-                    dd($data);
                 }
             } catch (ApiException $e) {
                 echo "Exception when calling basic_api->get_by_id: ", $e->getMessage();

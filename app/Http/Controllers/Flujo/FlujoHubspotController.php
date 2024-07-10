@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
+use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
@@ -63,7 +64,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','link_conversacion', 'agenda_visita', 'firstname', 'lastname'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -118,7 +119,7 @@ class FlujoHubspotController extends Controller
                             }
 
                         } else {
-                            $nombre = (($data->properties['firstname'] ?? ''). ' '. $data->properties['lastname']);
+                            $nombre = (($data->properties['firstname'] ?? '') . ' ' . $data->properties['lastname']);
 //                            $nombre = ($data->properties['firstname'] ?? '');
                             $apellido = ($data->properties['lastname'] ?? '');
                             $email = $data->properties['email'] ?? '';
@@ -140,14 +141,14 @@ class FlujoHubspotController extends Controller
                             $vpp = 0;
                         }
 
-                        if($data->properties['link_conversacion']){
+                        if ($data->properties['link_conversacion']) {
                             $linkConversacion = $data->properties['link_conversacion'];
                         } else {
                             $linkConversacion = '';
                         }
 
-                        if($data->properties['agenda_visita']){
-                            Log::info("Agenda Visita : ".$data->properties['agenda_visita']);
+                        if ($data->properties['agenda_visita']) {
+                            Log::info("Agenda Visita : " . $data->properties['agenda_visita']);
                             $agendaVisita = Carbon::parse($data->properties['agenda_visita'])
                                 ->startOfHour()
                                 ->format('Y-m-d H:i:s')
@@ -159,7 +160,7 @@ class FlujoHubspotController extends Controller
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
                         $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
 
-                        if($marca == 'USADOS'){
+                        if ($marca == 'USADOS') {
                             $sucursal = 'USADOS BILBAO';
                             $reglaSucursal = 0;
                         } else {
@@ -356,8 +357,8 @@ class FlujoHubspotController extends Controller
                 ->where('OrigenID', 8)
                 ->get();
 
-            if($leads->count()) {
-                Log::info("leads encontrados ".$leads->count());
+            if ($leads->count()) {
+                Log::info("leads encontrados " . $leads->count());
                 foreach ($leads as $lead) {
                     Log::info("Lead a actualizar : " . $lead->ID . " - " . $lead->IDExterno);
 
@@ -375,8 +376,8 @@ class FlujoHubspotController extends Controller
                             $lead->LogEstado = 0;
                             $lead->save();
 
-                        }catch (\Exception $e){
-                            Log::error("Error al actualizar deal hubspot ".$lead->IDExterno);
+                        } catch (\Exception $e) {
+                            Log::error("Error al actualizar deal hubspot " . $lead->IDExterno);
                             $lead->LogEstado = 2;
                             $lead->save();
                         }
@@ -389,7 +390,6 @@ class FlujoHubspotController extends Controller
 
         }
     }
-
 
 
     public function leadsHubspot()
@@ -580,7 +580,8 @@ class FlujoHubspotController extends Controller
         return $returnData;
     }
 
-    public function revisaLeadsHubspot(){
+    public function revisaLeadsHubspot()
+    {
 
         $leads = MK_Leads::where('IDExterno', '<>', '')
             ->where('FechaCreacion', '>=', '2024-07-04 00:00:00')
@@ -589,13 +590,56 @@ class FlujoHubspotController extends Controller
         $token = json_decode($flujo->Opciones);
         $client = Factory::createWithAccessToken($token->token);
 
-        foreach ($leads as $lead){
+        foreach ($leads as $lead) {
             print_r("revisando lead : " . $lead->IDExterno . "<br>");
 
             try {
-                $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
-                if($apiResponse){
+                $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
+                if ($apiResponse) {
                     $data = $apiResponse->jsonSerialize();
+
+                    $nombre = ($data->properties['firstname'] ?? '');
+                    $apellido = ($data->properties['lastname'] ?? '');
+                    $email = $data->properties['email'] ?? '';
+                    $telefono = $data->properties['phone'] ?? '';
+                    $rut = $data->properties['rut'] ?? '';
+
+                    $rut = substr($rut, 0, 15);
+                    $rut = str_replace('.', '', $rut);
+                    $rut = str_replace('-', '', $rut);
+                    $rut = str_replace(' ', '', $rut);
+
+                    Log::info("Buscando Rut : " . $rut);
+                    $cliente = MA_Clientes::where('Rut', $rut)->first();
+
+                    if ($cliente->count() > 0) {
+                        Log::info("Cliente encontrado : " . $rut);
+                        $idCliente = $cliente->ID;
+                    } else {
+                        Log::info("Cliente no encontrado se crea uno nuevo: ");
+
+                        $cliente->Rut = $rut;
+                        $cliente->FechaCreacion = date('Y-m-d H:i:s');
+                        $cliente->EventoCreacionID = 1;
+                        $cliente->UsuarioCreacionID = 3; // 2824
+                        $cliente->Nombre = $nombre;
+                        $cliente->Apellido = $apellido;
+                        $cliente->Email = $email;
+                        $cliente->Telefono = $telefono;
+                        $cliente->FechaNacimiento = null;
+
+                        $cliente->save();
+
+                        Log::notice("Cliente creado: " . $cliente->ID);
+                        $idCliente = $cliente->ID;
+                    }
+
+                    if ($idCliente != $lead->CLienteID) {
+                        $lead->ClienteID = $idCliente;
+                        $lead->save();
+                        Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
+                    }
+
                     dd($data);
                 }
             } catch (ApiException $e) {

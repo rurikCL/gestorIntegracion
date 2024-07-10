@@ -619,6 +619,7 @@ class FlujoHubspotController extends Controller
                             $idCliente = $cliente->ID;
                         } else {
                             Log::info("Cliente no encontrado se crea uno nuevo: ");
+                            $cliente = new MA_Clientes();
 
                             $cliente->Rut = $rut;
                             $cliente->FechaCreacion = date('Y-m-d H:i:s');

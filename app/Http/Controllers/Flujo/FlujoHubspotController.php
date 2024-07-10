@@ -19,6 +19,7 @@ use HubSpot\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use mysql_xdevapi\Exception;
+use function Psl\Str\length;
 
 class FlujoHubspotController extends Controller
 {
@@ -593,65 +594,67 @@ class FlujoHubspotController extends Controller
         foreach ($leads as $lead) {
             print_r("revisando lead : " . $lead->IDExterno . "<br>");
 
-            try {
-                $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
-                if ($apiResponse) {
-                    $data = $apiResponse->jsonSerialize();
+            if(length($lead->IDExterno) == 11) {
+                try {
+                    $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
+                    if ($apiResponse) {
+                        $data = $apiResponse->jsonSerialize();
 
-                    $nombre = ($data->properties['firstname'] ?? '');
-                    $apellido = ($data->properties['lastname'] ?? '');
-                    $email = $data->properties['email'] ?? '';
-                    $telefono = $data->properties['phone'] ?? '';
-                    $rut = $data->properties['rut'] ?? '';
+                        $nombre = ($data->properties['firstname'] ?? '');
+                        $apellido = ($data->properties['lastname'] ?? '');
+                        $email = $data->properties['email'] ?? '';
+                        $telefono = $data->properties['phone'] ?? '';
+                        $rut = $data->properties['rut'] ?? '';
 
-                    if($rut) {
+                        if ($rut) {
 
-                        $rut = substr($rut, 0, 15);
-                        $rut = str_replace('.', '', $rut);
-                        $rut = str_replace('-', '', $rut);
-                        $rut = str_replace(' ', '', $rut);
+                            $rut = substr($rut, 0, 15);
+                            $rut = str_replace('.', '', $rut);
+                            $rut = str_replace('-', '', $rut);
+                            $rut = str_replace(' ', '', $rut);
 
-                        Log::info("Buscando Rut : " . $rut);
-                        $cliente = MA_Clientes::where('Rut', $rut)->first();
+                            Log::info("Buscando Rut : " . $rut);
+                            $cliente = MA_Clientes::where('Rut', $rut)->first();
 
-                        if ($cliente) {
-                            Log::info("Cliente encontrado : " . $rut);
-                            $idCliente = $cliente->ID;
-                        } else {
-                            Log::info("Cliente no encontrado se crea uno nuevo: ");
-                            $cliente = new MA_Clientes();
+                            if ($cliente) {
+                                Log::info("Cliente encontrado : " . $rut);
+                                $idCliente = $cliente->ID;
+                            } else {
+                                Log::info("Cliente no encontrado se crea uno nuevo: ");
+                                $cliente = new MA_Clientes();
 
-                            $cliente->Rut = $rut;
-                            $cliente->FechaCreacion = date('Y-m-d H:i:s');
-                            $cliente->EventoCreacionID = 1;
-                            $cliente->UsuarioCreacionID = 3; // 2824
-                            $cliente->Nombre = $nombre;
-                            $cliente->Apellido = $apellido;
-                            $cliente->Email = $email;
-                            $cliente->Telefono = $telefono;
-                            $cliente->FechaNacimiento = null;
+                                $cliente->Rut = $rut;
+                                $cliente->FechaCreacion = date('Y-m-d H:i:s');
+                                $cliente->EventoCreacionID = 1;
+                                $cliente->UsuarioCreacionID = 3; // 2824
+                                $cliente->Nombre = $nombre;
+                                $cliente->Apellido = $apellido;
+                                $cliente->Email = $email;
+                                $cliente->Telefono = $telefono;
+                                $cliente->FechaNacimiento = null;
 
-                            $cliente->save();
+                                $cliente->save();
 
-                            Log::notice("Cliente creado: " . $cliente->ID);
-                            $idCliente = $cliente->ID;
-                        }
+                                Log::notice("Cliente creado: " . $cliente->ID);
+                                $idCliente = $cliente->ID;
+                            }
 
-                        if ($idCliente != $lead->CLienteID) {
-                            $lead->ClienteID = $idCliente;
-                            $lead->save();
-                            Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
-                        } else {
-                            Log::info("Lead correcto");
-                        }
+                            if ($idCliente != $lead->CLienteID) {
+                                $lead->ClienteID = $idCliente;
+                                $lead->save();
+                                Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
+                            } else {
+                                Log::info("Lead correcto");
+                            }
 
 //                        dd($data);
-                    } else {
-                        Log::info("Lead hubspot no posee rut");
+                        } else {
+                            Log::info("Lead hubspot no posee rut");
+                        }
                     }
+                } catch (ApiException $e) {
+                    echo "Exception when calling basic_api->get_by_id: ", $e->getMessage();
                 }
-            } catch (ApiException $e) {
-                echo "Exception when calling basic_api->get_by_id: ", $e->getMessage();
             }
         }
 

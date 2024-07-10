@@ -579,4 +579,29 @@ class FlujoHubspotController extends Controller
 
         return $returnData;
     }
+
+    public function revisaLeadsHubspot(){
+
+        $leads = MK_Leads::where('IDExterno', '<>', '')
+            ->where('FechaCreacion', '>=', '2024-07-04 00:00:00')
+            ->get();
+
+        foreach ($leads as $lead){
+            $token = json_decode($lead->flujo->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+            print_r("revisando lead : " . $lead->IDExterno . "<br>");
+
+            try {
+                $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno);
+                if($apiResponse){
+                    $data = $apiResponse->jsonSerialize();
+                    dd($data);
+                }
+            } catch (ApiException $e) {
+                echo "Exception when calling basic_api->get_by_id: ", $e->getMessage();
+            }
+        }
+
+
+    }
 }

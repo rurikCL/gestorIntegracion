@@ -43,6 +43,7 @@ Route::get('/flujo/santander/simulacion', [\App\Http\Controllers\Api\Financieras
 Route::get('/flujo/hubspot/contactos', [\App\Http\Controllers\Flujo\FlujoController::class, 'leadsHubspot']);
 Route::get('/flujo/hubspot/negocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'leadsHubspotDeals']);
 Route::get('/flujo/hubspot/actualizanegocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'actualizaLeadHubspot']);
+Route::get('/flujo/hubspot/revisanegocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'revisaLeadsHubspot']);
 
 
 Route::get('/flujo/indicador/uf', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUF']);

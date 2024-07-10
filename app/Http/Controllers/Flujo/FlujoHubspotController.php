@@ -643,7 +643,7 @@ class FlujoHubspotController extends Controller
                             Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
                         }
 
-                        dd($data);
+//                        dd($data);
                     } else {
                         Log::info("Lead hubspot no posee rut");
                     }

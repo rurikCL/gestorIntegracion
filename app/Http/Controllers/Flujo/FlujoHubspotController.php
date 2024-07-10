@@ -612,7 +612,7 @@ class FlujoHubspotController extends Controller
                     Log::info("Buscando Rut : " . $rut);
                     $cliente = MA_Clientes::where('Rut', $rut)->first();
 
-                    if ($cliente->count() > 0) {
+                    if ($cliente) {
                         Log::info("Cliente encontrado : " . $rut);
                         $idCliente = $cliente->ID;
                     } else {

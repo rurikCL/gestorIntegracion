@@ -641,6 +641,8 @@ class FlujoHubspotController extends Controller
                             $lead->ClienteID = $idCliente;
                             $lead->save();
                             Log::info("Lead cliente actualizado : " . $lead->ID . ":" . $idCliente);
+                        } else {
+                            Log::info("Lead correcto");
                         }
 
 //                        dd($data);

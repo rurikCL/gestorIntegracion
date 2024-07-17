@@ -258,4 +258,16 @@ class ClientesController extends Controller
         );
 
     }
+
+    public function revisarRutClientes(){
+
+        $clientes = MA_Clientes::all();
+        $clientes->each(function($cliente){
+            $cliente->Rut = str_replace('.','',$cliente->Rut);
+            $cliente->save();
+        });
+
+        return response()->json(['status' => 1, 'messages' => 'Ruts actualizados correctamente'], 200);
+    }
+
 }

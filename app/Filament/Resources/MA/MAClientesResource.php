@@ -64,10 +64,15 @@ class MAClientesResource extends Resource
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
                 Tables\Columns\TextColumn::make('Telefono')->searchable(),
+                Tables\Columns\TextColumn::make('RutValido'),
 //                Tables\Columns\BadgeColumn::make('ventas_count')->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('RutValido')
+                ->options([
+                    'Si' => 'Valido',
+                    'No' => 'No Valido',
+                ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver(),

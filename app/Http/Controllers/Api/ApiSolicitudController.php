@@ -697,6 +697,18 @@ class ApiSolicitudController extends Controller
 
         OrquestadorApi::dispatch($solicitud);
     }
+    public static function descargarJob($solicitud)
+    {
+//        $solicitud = ApiSolicitudes::find($solicitudID);
+        Log::info("Reprocesando solicitud " . $solicitud->ID);
+
+        if($solicitud->Respuesta != null && $solicitud->Respuesta != ''){
+            $nombre = $solicitud->Respuesta;
+            $d = Storage::download($nombre);
+        }else{
+            Log::info("No se encontro archivo para descargar");
+        }
+    }
 
     public function getData($resp)
     {

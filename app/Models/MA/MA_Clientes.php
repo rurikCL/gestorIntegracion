@@ -6,6 +6,8 @@ use App\Models\VT\VT_Ventas;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Termwind\Components\Raw;
 
 class MA_Clientes extends Model
 {
@@ -79,6 +81,12 @@ class MA_Clientes extends Model
         return substr($this->Rut, 0, strlen($this->Rut) - 1) . '-' . substr($this->Rut, -1);
     }
 
+    public function getRutValidoAttribute()
+    {
+        return DB::select("select IF('".$this->Rut."' REGEXP('^[0-9]{8,9}[0-9kK]{1}$'), IF(validate_rut('".$this->Rut."'), 'Si', 'No'), 'No') as RutValido")[0]->RutValido;
+    }
+
+
     public function region()
     {
         return $this->hasOne(MA_Regiones::class, 'ID', 'RegionID');
@@ -92,5 +100,10 @@ class MA_Clientes extends Model
     public function ventas()
     {
         return $this->hasMany(VT_Ventas::class, 'ClienteID', 'ID');
+    }
+
+    public function validacion($query)
+    {
+        $query->join(DB::selectRaw("select ".$query->ID." as ID, IF(".$query->Rut." REGEXP('^[0-9]{8,9}[0-9kK]{1}$'), validate_rut(".$query->Rut."), 'No') as RutValido from MA_Clientes v") , 'MA_Clientes.ID', '=', 'v.ID');
     }
 }

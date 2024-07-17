@@ -270,13 +270,22 @@ class ApiSolicitudesResource extends Resource
 
     public static function actions()
     {
-        return Forms\Components\Actions\Action::make('reprocesar')
+        return [Forms\Components\Actions\Action::make('reprocesar')
             ->label("Reprocesar")
             ->action(function ($record) {
                 ApiSolicitudController::reprocesarJob($record);
             })
             ->icon('heroicon-m-arrow-path')
             ->requiresConfirmation()
-            ->tooltip('Reprocesar');
+            ->tooltip('Reprocesar'),
+            Forms\Components\Actions\Action::make('descargar')
+                ->label("Descargar")
+                ->action(function ($record) {
+                    ApiSolicitudController::descargarJob($record);
+                })
+                ->icon('heroicon-s-download')
+                ->requiresConfirmation()
+                ->tooltip('Descargar'),
+        ];
     }
 }

@@ -307,6 +307,20 @@ class LeadController extends Controller
                 $cliente = $objCliente;
             } else {
                 $Log->info("Cliente encontrado: " . $cliente->Nombre. " rut: ".$cliente->ID);
+                if($request->input('data.nombre') != $cliente->Nombre) {
+                    $cliente->Nombre = $request->input('data.nombre');
+                    $Log->info("Nombre actualizado :" . $request->input('data.nombre') );
+                }
+                if($request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
+                    $cliente->Email = $request->input('data.email');
+                    $Log->info("Email actualizado :" . $request->input('data.email'));
+                }
+                if($request->input('data.telefono') != '' && $request->input('data.telefono') != $cliente->Telefono) {
+                    $cliente->Telefono = $request->input('data.telefono');
+                    $Log->info("Telefono actualizado :" . $request->input('data.telefono'));
+                }
+
+                $cliente->save();
             }
 
 

@@ -699,17 +699,16 @@ class ApiSolicitudController extends Controller
     }
     public static function descargarJob($solicitud)
     {
-//        $solicitud = ApiSolicitudes::find($solicitudID);
-        Log::info("Reprocesando solicitud " . $solicitud->ID);
-
         if($solicitud->Respuesta != null && $solicitud->Respuesta != ''){
             if (substr($solicitud->Respuesta, 0, 4) == 'file') {
                 $nombre = "storage/".substr($solicitud->Respuesta, 12, strlen($solicitud->Respuesta));
                 return response()->download($nombre);
+            } else {
+                return response()->setStatusCode(404, 'No se encontro archivo para descargar');
             }
 
-        }else{
-            Log::info("No se encontro archivo para descargar");
+        } else {
+            return response()->setStatusCode(404, 'No se encontro archivo para descargar');
         }
     }
 

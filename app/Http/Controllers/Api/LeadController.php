@@ -642,7 +642,7 @@ class LeadController extends Controller
 
                 // se ajusta ejecucion de regla sucursal. siempre se debe ejecutar en conjunto
                 if ($reglaVendedor == true) {
-                    $reglaSucursal = true;
+//                    $reglaSucursal = true;
                     // Excepto para USADOS
                     if ($marcaNombre == "USADOS") {
                         $reglaSucursal = false;

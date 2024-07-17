@@ -28,6 +28,8 @@ class Rutas extends Model
         ['id' => 20, 'label' => 'Indicador UF', 'descripcion'=>'Actualizacion de indicador UF', 'ruta'=>'/flujo/indicador/uf/', 'rutaNombre'=>'cargaIndicadoresUF'],
         ['id' => 21, 'label' => 'Indicador UTM', 'descripcion'=>'Actualizacion de indicador UTM', 'ruta'=>'/flujo/indicador/utm/', 'rutaNombre'=>'cargaIndicadoresUTM'],
         ['id' => 22, 'label' => 'Email', 'descripcion'=>'Prueba de envio de Email', 'ruta'=>'/email/', 'rutaNombre'=>'sendEmail'],
+        ['id' => 23, 'label' => 'Hubspot Clientes Update', 'descripcion'=>'Actualizas los Datos de Clientes desde Hubspot', 'ruta'=>'/flujo/hubspot/revisanegocios/', 'rutaNombre'=>'revisaNegocios'],
+
 
     ];
 }

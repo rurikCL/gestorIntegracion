@@ -598,6 +598,7 @@ class FlujoHubspotController extends Controller
             if(length($lead->IDExterno) == 11) {
                 try {
                     $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
+
                     if ($apiResponse) {
                         $data = $apiResponse->jsonSerialize();
 
@@ -620,6 +621,30 @@ class FlujoHubspotController extends Controller
                             if ($cliente) {
                                 Log::info("Cliente encontrado : " . $rut);
                                 $idCliente = $cliente->ID;
+                                LOG::info("Cliente encontrado: " . $cliente->Nombre. " rut: ".$cliente->ID);
+
+                                if($rut != $cliente->Rut) {
+                                    $cliente->Rut = $rut;
+                                    LOG::info("Rut actualizado :" . $rut );
+                                }
+                                if($nombre != $cliente->Nombre) {
+                                    $cliente->Nombre = $nombre;
+                                    LOG::info("Nombre actualizado :" . $nombre );
+                                }
+                                if($apellido != $cliente->Apellido) {
+                                    $cliente->Apellido = $apellido;
+                                    LOG::info("Apellido actualizado :" . $apellido );
+                                }
+                                if($email != '' && $email != $cliente->Email) {
+                                    $cliente->Email = $email;
+                                    LOG::info("Email actualizado :" . $email);
+                                }
+                                if($telefono != '' && $telefono != $cliente->Telefono) {
+                                    $cliente->Telefono = $telefono;
+                                    LOG::info("Telefono actualizado :" . $telefono);
+                                }
+
+                                $cliente->save();
                             } else {
                                 Log::info("Cliente no encontrado se crea uno nuevo: ");
                                 $cliente = new MA_Clientes();

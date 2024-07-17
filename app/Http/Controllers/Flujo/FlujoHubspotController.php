@@ -585,7 +585,7 @@ class FlujoHubspotController extends Controller
     {
 
         $leads = MK_Leads::where('IDExterno', '<>', '')
-            ->where('FechaCreacion', '>=', '2024-07-08 00:00:00')
+            ->where('FechaCreacion', '>=', '2024-07-15 00:00:00')
             ->where('ClienteID', 298)
             ->get();
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();

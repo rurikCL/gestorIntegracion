@@ -704,7 +704,7 @@ class ApiSolicitudController extends Controller
 
         if($solicitud->Respuesta != null && $solicitud->Respuesta != ''){
             if (substr($solicitud->Respuesta, 0, 4) == 'file') {
-                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
+                $nombre = "sorage/app/".substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
                 response()->download($nombre);
             }
 

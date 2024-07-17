@@ -278,6 +278,7 @@ class ApiSolicitudesResource extends Resource
             ->icon('heroicon-m-arrow-path')
             ->requiresConfirmation()
             ->tooltip('Reprocesar'),
+
             Forms\Components\Actions\Action::make('descargar')
                 ->label("Descargar")
                 ->action(function ($record) {

@@ -21,6 +21,10 @@ class ViewApiSolicitudes extends ViewRecord
                 ->icon('heroicon-m-arrow-path')
                 ->color('success')
                 ->requiresConfirmation(),
+            Actions\Action::make('descargar')
+                ->label("Descargar")
+                ->action(fn()  =>  ApiSolicitudController::descargarJob($this->record))
+                ->color('success')
         ];
     }
 }

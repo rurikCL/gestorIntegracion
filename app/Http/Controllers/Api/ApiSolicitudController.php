@@ -703,8 +703,11 @@ class ApiSolicitudController extends Controller
         Log::info("Reprocesando solicitud " . $solicitud->ID);
 
         if($solicitud->Respuesta != null && $solicitud->Respuesta != ''){
-            $nombre = $solicitud->Respuesta;
-            $d = Storage::download($nombre);
+            if (substr($solicitud->Respuesta, 0, 4) == 'file') {
+                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
+                $d = Storage::download($nombre);
+            }
+
         }else{
             Log::info("No se encontro archivo para descargar");
         }

@@ -309,7 +309,7 @@ class LeadController extends Controller
                 }
             } else {
                 $Log->info("Cliente encontrado: " . $cliente->Nombre. " ID: ".$cliente->ID);
-                if($rut != $cliente->Rut) {
+                if($rut != '' && $rut != $cliente->Rut) {
                     $cliente->Rut = $rut;
                     $Log->info("Rut actualizado :" . $rut );
                 }

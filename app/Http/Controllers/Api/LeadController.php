@@ -256,13 +256,9 @@ class LeadController extends Controller
             if (!$usuarioID) {
                 $Log->info("No se ha enviado usuarioID");
 
-//                Log::info("Data: " . json_encode($request->input()));
-
                 $Log->info("Asignando usuario por defecto");
                 $usuarioID = 2893; // INTEGRACION FACEBOOK
-//                return response()->json(['status' => false,
-//                    'messages' => "Data: " . json_encode($request->input()),
-//                    'LeadID' => null], 501);
+
             }
 
             // RUT ---------------------
@@ -288,25 +284,31 @@ class LeadController extends Controller
             // Si no encuentra cliente, se crea uno nuevo si es que trae rut
             if (!$cliente) {
 
-                $objCliente->Rut = $rut ?? '';
-                $objCliente->FechaCreacion = date('Y-m-d H:i:s');
-                $objCliente->EventoCreacionID = 1;
-                $objCliente->UsuarioCreacionID = $usuarioID; // 2824
-                $objCliente->Nombre = $request->input('data.nombre') ?? '';
-                $objCliente->SegundoNombre = $request->input('data.segundoNombre') ?? '';
-                $objCliente->Apellido = $request->input('data.apellido') ?? '';
-                $objCliente->SegundoApellido = $request->input('data.segundoApellido') ?? '';
-                $objCliente->Email = $request->input('data.email') ?? '';
-                $objCliente->Telefono = $request->input('data.telefono') ?? '';
-                $objCliente->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
-                $objCliente->Direccion = $request->input('data.direccion') ?? '';
+                // Si es un rut valido- se crea el cliente
+                if(preg_match("^(\d{1,2}(?:[\.]?\d{3}){2}-[\dkK])$", $rut)) {
+                    $objCliente->Rut = $rut ?? '';
+                    $objCliente->FechaCreacion = date('Y-m-d H:i:s');
+                    $objCliente->EventoCreacionID = 1;
+                    $objCliente->UsuarioCreacionID = $usuarioID; // 2824
+                    $objCliente->Nombre = $request->input('data.nombre') ?? '';
+                    $objCliente->SegundoNombre = $request->input('data.segundoNombre') ?? '';
+                    $objCliente->Apellido = $request->input('data.apellido') ?? '';
+                    $objCliente->SegundoApellido = $request->input('data.segundoApellido') ?? '';
+                    $objCliente->Email = $request->input('data.email') ?? '';
+                    $objCliente->Telefono = $request->input('data.telefono') ?? '';
+                    $objCliente->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
+                    $objCliente->Direccion = $request->input('data.direccion') ?? '';
 
-                $objCliente->save();
+                    $objCliente->save();
 
-                $Log->notice("Cliente creado: " . $objCliente->ID);
-                $cliente = $objCliente;
+                    $Log->notice("Cliente creado: " . $objCliente->ID);
+                    $cliente = $objCliente;
+                } else {
+                    $Log->error("No se creo el cliente, rut invalido o no existente");
+                    $cliente = null;
+                }
             } else {
-                $Log->info("Cliente encontrado: " . $cliente->Nombre. " rut: ".$cliente->ID);
+                $Log->info("Cliente encontrado: " . $cliente->Nombre. " ID: ".$cliente->ID);
                 if($rut != $cliente->Rut) {
                     $cliente->Rut = $rut;
                     $Log->info("Rut actualizado :" . $rut );
@@ -565,7 +567,7 @@ class LeadController extends Controller
             $IDExterno = $request->input('data.lead.externalID');
             $lead = MK_Leads::where('IDExterno', $IDExterno)
                 ->where('OrigenID', $origenID)
-                ->where('ClienteID', $cliente->ID)
+//                ->where('ClienteID', $cliente->ID)
 //                ->where('Rut', $rut)
                 ->where('ModeloID', $modeloID)
                 ->where('FechaCreacion', '>', date('Y-m-d H:i:s', strtotime('-1 day')))
@@ -585,7 +587,7 @@ class LeadController extends Controller
             $lead->SubOrigenID = $subOrigenID;
 //            $lead->ClienteID = 1;
 
-            $lead->ClienteID = $cliente->ID;
+            $lead->ClienteID = $cliente->ID ?? 1;
             $lead->Rut = $rut ?? '';
             $lead->Nombre = $request->input('data.nombre') ?? '';
             $lead->SegundoNombre = $request->input('data.segundoNombre') ?? '';

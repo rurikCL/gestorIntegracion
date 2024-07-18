@@ -65,7 +65,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -120,8 +120,8 @@ class FlujoHubspotController extends Controller
                             }
 
                         } else {
-                            $nombre = (($data->properties['firstname'] ?? '') . ' ' . $data->properties['lastname']);
-//                            $nombre = ($data->properties['firstname'] ?? '');
+//                            $nombre = (($data->properties['firstname'] ?? '') . ' ' . $data->properties['lastname']);
+                            $nombre = ($data->properties['firstname'] ?? '');
                             $apellido = ($data->properties['lastname'] ?? '');
                             $email = $data->properties['email'] ?? '';
                             $telefono = $data->properties['phone'] ?? '';
@@ -131,6 +131,7 @@ class FlujoHubspotController extends Controller
                         $marca = $data->properties['marca'] ?? '';
                         $modelo = $data->properties['modelo'] ?? '';
                         $fuente = $data->properties['hs_analytics_source_data_1'] ?? '';
+                        $idVendedor = $data->properties['idvendedor'] ?? 1;
 
                         $origenProp = $data->properties['origen'] ?? '';
                         $idExterno = $data->id ?? '';
@@ -203,6 +204,7 @@ class FlujoHubspotController extends Controller
                             "reglaSucursal" => $reglaSucursal,
                             "rut" => $rut,
                             "nombre" => $nombre,
+                            "apellido" => $apellido,
                             "email" => $email,
                             "telefono" => $telefono,
                             "lead" => [
@@ -217,6 +219,7 @@ class FlujoHubspotController extends Controller
                                 "financiamiento" => $financiamiento,
                                 "link" => $linkConversacion,
                                 "agenda" => $agendaVisita,
+                                "vendedorID" => $idVendedor,
                             ]
                         ];
 
@@ -621,7 +624,7 @@ class FlujoHubspotController extends Controller
                             if ($cliente) {
                                 Log::info("Cliente encontrado : " . $rut);
                                 $idCliente = $cliente->ID;
-                                LOG::info("Cliente encontrado: " . $cliente->Nombre. " rut: ".$cliente->ID);
+                                LOG::info("Cliente encontrado: " . $cliente->Nombre. " id: ".$cliente->ID);
 
                                 if($rut != $cliente->Rut) {
                                     $cliente->Rut = $rut;

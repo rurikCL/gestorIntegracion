@@ -286,7 +286,7 @@ class LeadController extends Controller
 
                 // Si es un rut valido- se crea el cliente
                 if ($rut != '' ) {
-                    $objCliente->Rut = $rut ?? '';
+                    $objCliente->Rut = $rut;
                     $objCliente->FechaCreacion = date('Y-m-d H:i:s');
                     $objCliente->EventoCreacionID = 1;
                     $objCliente->UsuarioCreacionID = $usuarioID; // 2824
@@ -313,11 +313,11 @@ class LeadController extends Controller
                     $cliente->Rut = $rut;
                     $Log->info("Rut actualizado :" . $rut);
                 }
-                if ($request->input('data.nombre') != $cliente->Nombre) {
+                if ($request->input('data.nombre') != '' && $request->input('data.nombre') != $cliente->Nombre) {
                     $cliente->Nombre = $request->input('data.nombre');
                     $Log->info("Nombre actualizado :" . $request->input('data.nombre'));
                 }
-                if ($request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
+                if ($request->input('data.email') != '' && $request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
                     $cliente->Email = $request->input('data.email');
                     $Log->info("Email actualizado :" . $request->input('data.email'));
                 }

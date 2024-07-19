@@ -262,22 +262,22 @@ class LeadController extends Controller
             }
 
             // RUT ---------------------
-            if($request->input('data.rut')){
+            if ($request->input('data.rut')) {
                 $rut = substr($request->input('data.rut'), 0, 15);
-                    $rut = str_replace('.', '', $rut);
-                    $rut = str_replace('-', '', $rut);
-                    $rut = str_replace(' ', '', $rut);
+                $rut = str_replace('.', '', $rut);
+                $rut = str_replace('-', '', $rut);
+                $rut = str_replace(' ', '', $rut);
             }
 
             // CLIENTE ---------------------
             $objCliente = new MA_Clientes();
-            Log::info("Buscando cliente (rut : ".$request->input('data.rut').", nombre:". ($request->input('data.nombre') ?? '').")");
+            Log::info("Buscando cliente (rut : " . $request->input('data.rut') . ", nombre:" . ($request->input('data.nombre') ?? '') . ")");
 
             if ($rut) {
                 $cliente = $objCliente->where('Rut', $rut)->first();
-            }  else if($request->input('data.email')){
+            } else if ($request->input('data.email')) {
                 $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
-            } else if($request->input('data.telefono')){
+            } else if ($request->input('data.telefono')) {
                 $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))->first();
             }
 
@@ -285,7 +285,7 @@ class LeadController extends Controller
             if (!$cliente) {
 
                 // Si es un rut valido- se crea el cliente
-                if(preg_match("(\d{1,2}(?:[\.]?\d{3}){2}-[\dkK])", $rut)) {
+                if (preg_match("(\d{1,2}(?:[\.]?\d{3}){2}-[\dkK])", $rut)) {
                     $objCliente->Rut = $rut ?? '';
                     $objCliente->FechaCreacion = date('Y-m-d H:i:s');
                     $objCliente->EventoCreacionID = 1;
@@ -308,20 +308,20 @@ class LeadController extends Controller
                     $cliente = null;
                 }
             } else {
-                $Log->info("Cliente encontrado: " . $cliente->Nombre. " ID: ".$cliente->ID);
-                if($rut != '' && $rut != $cliente->Rut) {
+                $Log->info("Cliente encontrado: " . $cliente->Nombre . " ID: " . $cliente->ID);
+                if ($rut != '' && $rut != $cliente->Rut) {
                     $cliente->Rut = $rut;
-                    $Log->info("Rut actualizado :" . $rut );
+                    $Log->info("Rut actualizado :" . $rut);
                 }
-                if($request->input('data.nombre') != $cliente->Nombre) {
+                if ($request->input('data.nombre') != $cliente->Nombre) {
                     $cliente->Nombre = $request->input('data.nombre');
-                    $Log->info("Nombre actualizado :" . $request->input('data.nombre') );
+                    $Log->info("Nombre actualizado :" . $request->input('data.nombre'));
                 }
-                if($request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
+                if ($request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
                     $cliente->Email = $request->input('data.email');
                     $Log->info("Email actualizado :" . $request->input('data.email'));
                 }
-                if($request->input('data.telefono') != '' && $request->input('data.telefono') != $cliente->Telefono) {
+                if ($request->input('data.telefono') != '' && $request->input('data.telefono') != $cliente->Telefono) {
                     $cliente->Telefono = $request->input('data.telefono');
                     $Log->info("Telefono actualizado :" . $request->input('data.telefono'));
                 }
@@ -682,31 +682,36 @@ class LeadController extends Controller
 
             // Creacion de Agenda --------------------------
 
-            if($request->input('data.lead.agenda')){
-                $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
-                $fechaFin = $fechaInicio->addHour();
+            if ($request->input('data.lead.agenda')) {
+                if ($cliente) {
 
-                $dataAgenda = [
-                    "FechaCreacion" => Carbon::now()->format("Y-m-d H:i:s"),
-                    "EventoCreacionID" => 12,
-                    "UsuarioCreacionID" => 1,
-                    "ClienteID" => $cliente->ID,
-                    "ReferenciaID" => $lead->ID,
-                    "TipoID" => 57,
-                    "UsuarioID" => $vendedorID,
-                    "EstadoID" => 1,
-                    "Inicio" => $fechaInicio,
-                    "Termino" => $fechaFin,
-                    "Comentario" => "Agendamiento de Lead",
-                ];
+                    $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
+                    $fechaFin = $fechaInicio->addHour();
 
-                $agenda = SIS_Agendamientos::create($dataAgenda);
-                if($agenda){
-                    $Log->info("Agenda creada : ".$fechaInicio, $solicitudID);
-                    $lead->Agendado = 1;
-                    $lead->save();
+                    $dataAgenda = [
+                        "FechaCreacion" => Carbon::now()->format("Y-m-d H:i:s"),
+                        "EventoCreacionID" => 12,
+                        "UsuarioCreacionID" => 1,
+                        "ClienteID" => $cliente->ID,
+                        "ReferenciaID" => $lead->ID,
+                        "TipoID" => 57,
+                        "UsuarioID" => $vendedorID,
+                        "EstadoID" => 1,
+                        "Inicio" => $fechaInicio,
+                        "Termino" => $fechaFin,
+                        "Comentario" => "Agendamiento de Lead",
+                    ];
+
+                    $agenda = SIS_Agendamientos::create($dataAgenda);
+                    if ($agenda) {
+                        $Log->info("Agenda creada : " . $fechaInicio, $solicitudID);
+                        $lead->Agendado = 1;
+                        $lead->save();
+                    } else {
+                        $Log->error("Error al crear agenda", $solicitudID);
+                    }
                 } else {
-                    $Log->error("Error al crear agenda", $solicitudID);
+                    $Log->error("No se puede crear agenda, cliente no encontrado", $solicitudID);
                 }
             }
 

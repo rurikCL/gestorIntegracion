@@ -285,7 +285,7 @@ class LeadController extends Controller
             if (!$cliente) {
 
                 // Si es un rut valido- se crea el cliente
-                if(preg_match("(\d{1,2}(?:[\.]?\d{3}){2}-[\dkK])$", $rut)) {
+                if(preg_match("(\d{1,2}(?:[\.]?\d{3}){2}-[\dkK])", $rut)) {
                     $objCliente->Rut = $rut ?? '';
                     $objCliente->FechaCreacion = date('Y-m-d H:i:s');
                     $objCliente->EventoCreacionID = 1;

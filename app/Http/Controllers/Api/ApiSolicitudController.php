@@ -131,7 +131,6 @@ class ApiSolicitudController extends Controller
                         ->get($url);
                 }
             }
-
             return [
                 "status" => $response->status(),
                 "response" => $response->json()

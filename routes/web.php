@@ -53,4 +53,8 @@ Route::get('/flujo/indicador/utm', [\App\Http\Controllers\Flujo\FlujoController:
 Route::get('/email', [\App\Http\Controllers\EmailController::class, 'sendEmail']);
 
 
+Route::get('/robot/apc/login', [\App\Http\Controllers\RobotApcController::class, 'login']);
+Route::get('/robot/apc/stock', [\App\Http\Controllers\RobotApcController::class, 'traeStock']);
+
+
 require __DIR__.'/auth.php';

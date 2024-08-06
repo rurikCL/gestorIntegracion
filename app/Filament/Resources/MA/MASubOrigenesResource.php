@@ -25,16 +25,20 @@ class MASubOrigenesResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('OrigenID')
-                    ->label('Origen')
-                    ->relationship('origen', 'Origen'),
-                Forms\Components\TextInput::make('SubOrigen')
-                    ->label('SubOrigen')
-                    ->required(),
-                Forms\Components\Toggle::make('ActivoInput'),
-                Forms\Components\TextInput::make('Alias')
-                    ->label('Alias')
-                    ->required(),
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\Select::make('OrigenID')
+                            ->label('Origen')
+                            ->relationship('origen', 'Origen'),
+                        Forms\Components\TextInput::make('SubOrigen')
+                            ->label('SubOrigen')
+                            ->required(),
+                        Forms\Components\TextInput::make('Alias')
+                            ->label('Alias'),
+                        Forms\Components\Toggle::make('ActivoInput')
+                            ->label('Activo')
+                            ->inline(false),
+                    ])->columns(2)
             ]);
     }
 

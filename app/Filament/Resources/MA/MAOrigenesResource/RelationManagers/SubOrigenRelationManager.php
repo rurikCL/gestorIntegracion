@@ -2,11 +2,13 @@
 
 namespace App\Filament\Resources\MA\MAOrigenesResource\RelationManagers;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class SubOrigenRelationManager extends RelationManager
 {
@@ -20,14 +22,17 @@ class SubOrigenRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('SubOrigen')
-                    ->label('Nombre Sub Origen')
-                    ->required(),
-                Forms\Components\TextInput::make('Alias')
-                    ->label('Alias (Hubspot)'),
-                Forms\Components\Toggle::make('ActivoInput')
-                ->inline(false),
-
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\TextInput::make('SubOrigen')
+                            ->label('Nombre Sub Origen')
+                            ->required(),
+                        Forms\Components\TextInput::make('Alias')
+                            ->label('Alias (Hubspot)'),
+                        Forms\Components\Toggle::make('ActivoInput')
+                            ->label('Activo')
+                            ->inline(false),
+                    ])->columns(2)
             ]);
     }
 
@@ -56,7 +61,14 @@ class SubOrigenRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->mutateFormDataUsing(function (array $data) {
+                        $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
+                        $data['EventoCreacionID'] = 1;
+                        $data['UsuarioCreacionID'] = Auth::user()->id;
+
+                        return $data;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

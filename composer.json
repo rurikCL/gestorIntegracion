@@ -26,7 +26,7 @@
         "livewire/livewire": "^3.1",
         "maatwebsite/excel": "^3.1",
         "phpmailer/phpmailer": "^6.9",
-        "saloonphp/xml-wrangler": "^1.1",
+        "saloonphp/xml-wrangler": "^1.2",
         "sendgrid/sendgrid": "^8.1"
     },
     "require-dev": {

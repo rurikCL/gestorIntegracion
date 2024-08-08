@@ -161,7 +161,11 @@ class FlujoHubspotController extends Controller
 
                         // REGLAS DE LEAD
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
-                        $reglaVendedor = ($idVendedor > 1) ? 0 : ($data->properties['reglavendedor'] ?? 1);
+                        if($idVendedor > 1){
+                            $reglaVendedor = 0;
+                        } else {
+                            $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
+                        }
 
                         if ($marca == 'USADOS') {
                             $sucursal = 'USADOS BILBAO';

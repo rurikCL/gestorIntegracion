@@ -656,10 +656,10 @@ class LeadController extends Controller
             // Logica de Reglas de Lead ---------------------------------------
 
             $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
-            Log::info($reglaVendedor);
+            if($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
 
             $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
-            Log::info($reglaSucursal);
+            if($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);
 
             if ($reglaVendedor == true || $reglaSucursal == true) {
                 $Log->info("Asignando reglas de Lead", $solicitudID);

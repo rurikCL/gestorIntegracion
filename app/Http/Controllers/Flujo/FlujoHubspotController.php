@@ -159,8 +159,9 @@ class FlujoHubspotController extends Controller
                             $agendaVisita = null;
                         }
 
+                        // REGLAS DE LEAD
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
-                        $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
+                        $reglaVendedor = ($idVendedor > 1) ? 0 : ($data->properties['reglavendedor'] ?? 1);
 
                         if ($marca == 'USADOS') {
                             $sucursal = 'USADOS BILBAO';

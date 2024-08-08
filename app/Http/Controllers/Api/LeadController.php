@@ -359,6 +359,7 @@ class LeadController extends Controller
             $origenID = $request->input('data.lead.origenID') ?? 3;
             $subOrigenID = $request->input('data.lead.subOrigenID') ?? 1;
             $idFlujo = $request->input('data.lead.idFlujo') ?? 0;
+
             $financiamiento = $request->input('data.lead.financiamiento') ?? 2;
             if ($financiamiento == 'SI') {
                 $financiamiento = 1;
@@ -676,6 +677,8 @@ class LeadController extends Controller
                 );
                 if ($asignado) {
                     $Log->info("Reglas de Lead ejecutadas con exito ", $solicitudID);
+                    $vendedorID = $lead->VendedorID;
+                    $sucursalID = $lead->SucursalID;
                 }
 
             }

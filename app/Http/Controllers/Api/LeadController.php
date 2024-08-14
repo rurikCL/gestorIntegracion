@@ -706,6 +706,9 @@ class LeadController extends Controller
                         "Inicio" => $fechaInicio,
                         "Termino" => $fechaFin,
                         "Comentario" => "Agendamiento de Lead",
+                        "Nombre" => ($request->input('data.nombre') ?? '') . ' ' . $request->input('data.apellido') ?? '',
+                        "Rut" => $rut,
+                        "Telefono" => $request->input('data.telefono') ?? ''
                     ];
 
                     $agenda = SIS_Agendamientos::create($dataAgenda);

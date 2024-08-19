@@ -285,7 +285,7 @@ class LeadController extends Controller
             if (!$cliente) {
 
                 // Si es un rut valido- se crea el cliente
-                if ($rut != '' ) {
+                if ($rut != '') {
                     $objCliente->Rut = $rut;
                     $objCliente->FechaCreacion = date('Y-m-d H:i:s');
                     $objCliente->EventoCreacionID = 1;
@@ -579,9 +579,23 @@ class LeadController extends Controller
             }
 
             // Creacion de Lead --------------------------------
+            $fechaCreacion = Carbon::now();
+            $fechaFinJornada = Carbon::createFromTimeString('18:30:00');
+            $fechaFinDia = Carbon::createFromTimeString('23:59:59');
+            $fechaRevision = $fechaCreacion;
+
+            if ($fechaCreacion > $fechaFinJornada) {
+
+                if ($fechaCreacion < $fechaFinDia) {
+                    $fechaRevision = $fechaRevision->addDay();
+                }
+                $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
+                $fechaCreacion = $fechaCreacion->format('Y-m-d H:i:s');
+            }
 
             $lead = new MK_Leads();
-            $lead->FechaCreacion = date('Y-m-d H:i:s');
+            $lead->FechaCreacion = $fechaCreacion;
+            $lead->FechaCreacionHorasHab = $fechaRevision;
             $lead->EventoCreacionID = 1;
             $lead->UsuarioCreacionID = $usuarioID;
             $lead->OrigenID = $origenID;
@@ -656,10 +670,10 @@ class LeadController extends Controller
             // Logica de Reglas de Lead ---------------------------------------
 
             $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
-            if($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
+            if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
 
             $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
-            if($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);
+            if ($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);
 
             if ($reglaVendedor == true || $reglaSucursal == true) {
                 $Log->info("Asignando reglas de Lead", $solicitudID);

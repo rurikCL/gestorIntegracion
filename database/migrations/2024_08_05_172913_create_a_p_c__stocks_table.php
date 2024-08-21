@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('APC_Stock', function (Blueprint $table) {
             $table->id();
 
-            // rellena con los campos necesarios con los siguientes Empresa	Sucursal	Folio Venta	Venta	Estado Venta	Fecha Venta	Tipo Documento (Folio)	Vendedor	Fecha Ingreso	Fecha Facturación	Numero VIN	Marca	Modelo	Versión	Código Versión	Año	Kilometraje	Código Interno	Placa Patente	Condición Vehículo	Color Exterior	Color Interior	Precio Venta Total	Estado AutoPro	Días Stock	Estado Dealer	Bodega	Equipamiento	Numero Motor	Numero Chasis	Proveedor	Fecha Disponibilidad	Factura Compra	Vencimiento Documento	Fecha Compra	Fecha Vencto. Revisión Técnica	N° Propietarios	Folio Retoma	Fecha Retoma	Días Reservado	Precio Compra Neto	Gasto	Accesorios	Total Costo	Precio Lista	Margen	Margen %
             $table->string('Empresa')->nullable();
             $table->string('Sucursal')->nullable();
             $table->integer('Folio_Venta')->nullable();

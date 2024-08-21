@@ -55,6 +55,9 @@ Route::get('/email', [\App\Http\Controllers\EmailController::class, 'sendEmail']
 
 Route::get('/robot/apc/login', [\App\Http\Controllers\RobotApcController::class, 'login']);
 Route::get('/robot/apc/stock', [\App\Http\Controllers\RobotApcController::class, 'traeStock']);
+Route::get('/robot/apc/sku', [\App\Http\Controllers\RobotApcController::class, 'traeSku']);
+Route::get('/robot/apc/repuestos', [\App\Http\Controllers\RobotApcController::class, 'traeRepuestos']);
+Route::get('/robot/apc/ventas', [\App\Http\Controllers\RobotApcController::class, 'traeMovimientosVentas']);
 
 
 require __DIR__.'/auth.php';

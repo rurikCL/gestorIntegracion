@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Controllers\Api\ApiSolicitudController;
+use App\Imports\ApcRepuestosImport;
+use App\Imports\ApcSkuImport;
 use App\Imports\ApcStockImport;
+use App\Models\APC_Repuestos;
+use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use Carbon\Carbon;
 use DOMDocument;
@@ -107,7 +111,7 @@ class RobotApcController extends Controller
         $this->setCookie();
 
         // Login
-        $viewstate = $this->login();
+        $viewstate = $this->login(4);
 
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -209,6 +213,7 @@ class RobotApcController extends Controller
                 }
             }
             unlink(storage_path('/app/public/' . $filename));
+            echo " Informe procesado";
 
         }
 
@@ -216,7 +221,199 @@ class RobotApcController extends Controller
 
     }
 
-    public function login()
+    public function traeSku()
+    {
+
+        set_time_limit(0);
+
+        $this->setCookie();
+
+        $url = 'https://appspsa-cl.autoprocloud.com/stk/dms_sku_kardex/ShowDms_SKU_Inventario_ValorizadoProcesosTable.aspx';
+
+        // Login
+        $viewstate = $this->login(4);
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
+            'Sec-Fetch-User' => "?1",
+            'cookie' => "_SelectedLanguage=es-cl; MC_SelectedLanguage=es-cl; ASP.NET_SessionId=5q0ommfu3xaebvijchhnoz1k; MCUserID=SqOjeXsr4Ds%3d; MCUsername=BrqOlO%2f7crG6MsfNalpelMdFBFY6cs9IwFGSLfmTmpM%3d; MCModuloID=%2b%2bUBtDC%2bg6U%3d; MCBusinessID=EEkNilVZQqQ%3d; MCBranchID=bPbWqSlsvZI%3d; BusinesCnn=x9ua6uagpNZM47bD5FZKci2IiJTRU5KAaHOqPg838vHVXK7%2bEACw3%2bjua7sfX5FNBwCIzpPDc8MdNwBflN42tyKjQxKo%2bzZ%2bV%2bElFyXXIwIXuyj6aXYTgAFA09RCXxXBUSo70zhJIWzudm3fmvD%2bNvlJDXyn7scl; MCLocalizacion=; APC-Nodo=02; ARRAffinity=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ARRAffinitySameSite=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130;",
+        ];
+
+        $filename = 'informeSku.xls';
+        $filedata = Storage::get('public/viewstates/sku.json');
+
+        $options['form_params'] = json_decode($filedata, true);
+//        $options['cookies'] = $this->cookieJar;
+        $options['sink'] = storage_path('/app/public/' . $filename);
+
+        if (file_exists(storage_path('/app/public/' . $filename))) {
+            $res = true;
+        } else {
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+        }
+
+        if($res) {
+            APC_Sku::truncate();
+
+            Excel::import(new ApcSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+        }
+
+    }
+
+    public function traeRepuestos()
+    {
+
+        set_time_limit(0);
+
+        $this->setCookie();
+
+        $url = 'https://appspsa-cl.autoprocloud.com/srv/dms_Calendario_Taller/ShowDms_SRV_InformeRepuestosEnProceso_TempTable.aspx';
+
+        // Login
+        $viewstate = $this->login(5);
+
+        $sesion = $this->cookieJar->getCookieByName('ASP.NET_SessionId')->getValue();
+        echo $sesion;
+
+        $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
+            'Domain' => '.autoprocloud.com',
+            'Name' => 'ARRAffinity',
+            'Value' => '2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130',
+            'Path' => '/',
+            'Expires' => null,
+        ]));
+        $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
+            'Domain' => '.autoprocloud.com',
+            'Name' => 'ARRAffinitySameSite',
+            'Value' => '2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130',
+            'Path' => '/',
+            'Expires' => null,
+        ]));
+        $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
+            'Domain' => '.autoprocloud.com',
+            'Name' => '_apc_lastaction',
+            'Value' => Carbon::now()->subHour()->format('D, d M Y H:i:s ').'GMT',
+            'Path' => '/',
+            'Expires' => null,
+        ]));
+        $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
+            'Domain' => '.autoprocloud.com',
+            'Name' => '_apc_endsession',
+            'Value' => Carbon::now()->addDay()->format('D, d M Y H:i:s ').'GMT',
+            'Path' => '/',
+            'Expires' => null,
+        ]));
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
+            'cookie' => "MC_RememberName=True; MC_UserName=EBLWb+rNSN/HKBrDYHRxE+XD7kks2GSgeJuUVavNDNw=; MC_RememberPassword=False; MC_Password=; __utma=20487080.1977350873.1723474990.1724098633.1724184842.14; __utmz=20487080.1723474990.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); MC_SelectedLanguage=es-cl; MCUserID=SqOjeXsr4Ds%3d; MCModuloID=H51zpQpwDZM%3d; MCBusinessID=EEkNilVZQqQ%3d; MCBranchID=MpYSzVHxcro%3d; BusinesCnn=x9ua6uagpNZM47bD5FZKci2IiJTRU5KAaHOqPg838vHVXK7%2bEACw3%2bjua7sfX5FNBwCIzpPDc8MdNwBflN42tyKjQxKo%2bzZ%2bV%2bElFyXXIwIXuyj6aXYTgAFA09RCXxXBUSo70zhJIWzudm3fmvD%2bNvlJDXyn7scl; MCBusinessName=3ZhvsWjLTmzzD%2flzyrDlLi1CaosEOyax; MCBranchName=6wK%2fUIZPUTpMq7B0wpK0PQ%3d%3d; _ga=GA1.2.1977350873.1723474990; hblid=FQg4L7WjoPmcWFyw8H2zK0T1oKCSSBA2; _ga_C3HCJSVF27=GS1.2.1724184905.12.0.1724184905.0.0.0; olfsk=olfsk9432695658890976; _ga=GA1.3.1977350873.1723474990; __utmc=20487080; ARRAffinity=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ARRAffinitySameSite=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ASP.NET_SessionId=$sesion; MCUsername=BrqOlO%2f7crG6MsfNalpelMdFBFY6cs9IwFGSLfmTmpM%3d; APC-Nodo=02; MCLocalizacion=; wcsid=bUpzFFclkoMlDTj68H2zK0TBS12CKCA1; _oklv=1724185146771%2CbUpzFFclkoMlDTj68H2zK0TBS12CKCA1; _okdetect=%7B%22token%22%3A%2217241849068560%22%2C%22proto%22%3A%22about%3A%22%2C%22host%22%3A%22%22%7D; _ok=5154-826-10-2178; __utmb=20487080.1.10.1724184842; __utmt=1; _apc_lastaction=Tue, 20 Aug 2024 20:17:47 GMT; _apc_endsession=Tue, 20 Aug 2024 20:47:47 GMT; _gid=GA1.2.527458824.1724184905; _okbk=cd4%3Dtrue%2Cvi5%3D0%2Cvi4%3D1724184908246%2Cvi3%3Dactive%2Cvi2%3Dfalse%2Cvi1%3Dfalse%2Ccd8%3Dchat%2Ccd6%3D0%2Ccd5%3Daway%2Ccd3%3Dfalse%2Ccd2%3D0%2Ccd1%3D0%2C; _gid=GA1.3.527458824.1724184905",
+        ];
+//        print_r($headers);
+
+        $request = new Request('GET', "https://provider.autoprocloud.com/mpi/mpi_empresa/showmpi_empresatable.aspx/SetSystemUse?id_Session=%22%22&Url=%22https://provider.autoprocloud.com/mc/Home/mcHome.aspx%22&SupportData=%22POMPEYO%20CARRASCO%20SPA|CITROEN%20QUILIN|RODRIGO%20LARRAIN%20ANDR%C3%89|0%200|rodrigo.larrain@pompeyo.cl|TallerPro|205|721|4967|5|$sesion|es-cl|02|AutoPro%22");
+        $res = $this->client->sendAsync($request)->wait();
+        echo $res->getBody();
+
+        $filename = 'repuestosEnProceso.xls';
+        $filedata = Storage::get('public/viewstates/repuestosEnProceso.json');
+
+        $options['form_params'] = json_decode($filedata, true);
+        $options['cookies'] = $this->cookieJar;
+//        print_r($options['cookies']);
+        $options['sink'] = storage_path('/app/public/' . $filename);
+
+        if (file_exists(storage_path('/app/public/' . $filename ."__"))) {
+            $res = true;
+        } else {
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+        }
+
+        if($res) {
+//            echo $res->getBody();
+            APC_Repuestos::truncate();
+
+            Excel::import(new ApcRepuestosImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+        }
+
+    }
+
+    public function traeMovimientosVentas()
+    {
+
+        set_time_limit(0);
+
+        $this->setCookie();
+
+        $url = 'https://appspsa-cl.autoprocloud.com/stk/Dms_SKU_ConsultaMovimientoVentas/ShowDms_SKU_ConsultaMovimientoVentasTable.aspx';
+
+        // Login
+        $viewstate = $this->login(4);
+        $sesion = $this->cookieJar->getCookieByName('ASP.NET_SessionId');
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
+            'cookie' => "_SelectedLanguage=es-cl; MC_SelectedLanguage=es-cl; MCUserID=SqOjeXsr4Ds%3d; MCUsername=BrqOlO%2f7crG6MsfNalpelMdFBFY6cs9IwFGSLfmTmpM%3d; MCModuloID=%2b%2bUBtDC%2bg6U%3d; MCBusinessID=EEkNilVZQqQ%3d; MCBranchID=9k326QgwWgg%3d; BusinesCnn=x9ua6uagpNZM47bD5FZKci2IiJTRU5KAaHOqPg838vHVXK7%2bEACw3%2bjua7sfX5FNBwCIzpPDc8MdNwBflN42tyKjQxKo%2bzZ%2bV%2bElFyXXIwIXuyj6aXYTgAFA09RCXxXBUSo70zhJIWzudm3fmvD%2bNvlJDXyn7scl;  ARRAffinity=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ARRAffinitySameSite=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ASP.NET_SessionId=mcbu1jf1wdxlkmgofr4yrmhm; MCLocalizacion=; APC-Nodo=02;",
+        ];
+
+        $filename = 'movimientoVentas.xls';
+        $filedata = Storage::get('public/viewstates/movimientoVentas.json');
+
+        $options['form_params'] = json_decode($filedata, true);
+//        $options['cookies'] = $this->cookieJar;
+        $options['sink'] = storage_path('/app/public/' . $filename);
+
+        if (file_exists(storage_path('/app/public/' . $filename))) {
+            $res = true;
+        } else {
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+        }
+
+        if($res) {
+//            echo base64_decode($options['form_params']['__VIEWSTATE']);
+//            APC_Repuestos::truncate();
+
+//            Excel::import(new ApcRepuestosImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+        }
+
+    }
+
+    public function login($modulo)
     {
 
         // login al sistema, genera las cookies con codigo de usuario
@@ -224,9 +421,7 @@ class RobotApcController extends Controller
         $headers = [
             'Content-Type' => 'application/json',
         ];
-        /*        $headers = array(
-                    'Content-Type: application/json',
-                );*/
+
         $body = '{
             "userName": "rodrigo.larrain@pompeyo.cl",
             "Password":"Xt!5LN"
@@ -235,8 +430,6 @@ class RobotApcController extends Controller
         $res = $this->client->sendAsync($request, ["cookies" => $this->cookieJar])->wait();
         $respuesta = $res->getBody();
 
-//        $respuesta = json_decode($respuesta);
-//        $respuesta = $this->get_site_html($urlPrelogin, $body, $headers);
         $respuesta = json_decode($respuesta);
         $userValidated = $respuesta->d->Message;
 
@@ -249,22 +442,25 @@ class RobotApcController extends Controller
         $body = '{
           "businessID": "205",
           "BranchID": "672",
-          "ModuleID": "2",
+          "ModuleID": "'.$modulo.'",
           "username": "rodrigo.larrain@pompeyo.cl"
         }';
 
-//        dd($this->client->getConfig("cookies"));
-
         $request = new Request('POST', $url, $headers, $body);
         $res = $this->client->sendAsync($request, ["cookies" => $this->cookieJar])->wait();
-//        $respuesta = $this->get_site_html($url, $body, $headers);
+
         $respuesta = $res->getBody();
-//        echo $respuesta;
-//        dd($respuesta);
         $respuesta = json_decode($respuesta);
         if ($respuesta->d) {
             $viewstate = $this->getViewstate($respuesta->d);
         }
+
+        // Ultima llamada para generar las cookies (HOME)
+/*        $request = new Request('GET', "https://provider.autoprocloud.com/mc/default.aspx");
+        $res = $this->client->send($request, ["cookies" => $this->cookieJar]);
+
+        $request = new Request('GET', "https://provider.autoprocloud.com/mc/Home/mcHome.aspx");
+        $res = $this->client->send($request, ["cookies" => $this->cookieJar]);*/
 
         return $viewstate;
     }
@@ -272,7 +468,6 @@ class RobotApcController extends Controller
     public function getViewstate($url)
     {
 
-//        $respuesta = $this->get_site_html('https://provider.autoprocloud.com/MC/home/mcHome.aspx/LogIn', '', [], 'GET');
         $request = new Request('GET', $url);
         $res = $this->client->sendAsync($request, ["cookies" => $this->cookieJar])->wait();
         $respuesta = $res->getBody();
@@ -281,8 +476,7 @@ class RobotApcController extends Controller
 
         $busqueda = '/id="__VIEWSTATE" value="([^"]+)"/';
         preg_match($busqueda, $respuesta, $viewstate);
-//        preg_match('~<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="(.*?)" />~',$respuesta,$viewstate);
-//        dd($viewstate);
+
         $busqueda = '/id="__VIEWSTATEGENERATOR" value="([^"]+)"/';
         preg_match($busqueda, $respuesta, $generator);
 

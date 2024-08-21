@@ -179,4 +179,6 @@ class PV_PostVenta extends Model
     {
         return $query->whereBetween('TipoMantencion', [71, 107]);
     }
+
+
 }

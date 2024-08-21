@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class APC_Stock extends Model
 {
-    use HasFactory;
 
     protected $table = 'APC_Stock';
     protected $primaryKey = 'id';

@@ -485,8 +485,8 @@ class FlujoController extends Controller
             $h = new FLU_Homologacion();
 
             $tiposOrden = [
-                'ACCESORIOS POST VENTA',
-                'ACCESORIOS POST VENTAS',
+//                'ACCESORIOS POST VENTA',
+//                'ACCESORIOS POST VENTAS',
                 'MANTENCION',
                 'MECANICA GENERAL',
                 'PARTICULAR DYP',
@@ -507,8 +507,10 @@ class FlujoController extends Controller
                 })
 //                ->where('FechaFacturacion', '>=', Carbon::now()->subDay()->format("Y-m-d"))
 //                ->limit($flujo->MaxLote ?? 5)
-                ->get();
+//                ->get();
 //            ->toSql();
+            ;
+            dd(self::getEloquentSqlWithBindings($ordenes));
 
 
             if ($ordenes) {
@@ -1894,5 +1896,11 @@ class FlujoController extends Controller
 
             }
         }
+    }
+    public static function getEloquentSqlWithBindings($query)
+    {
+        return vsprintf(str_replace('?', '%s', $query->toSql()), collect($query->getBindings())->map(function ($binding) {
+            return is_numeric($binding) ? $binding : "'{$binding}'";
+        })->toArray());
     }
 }

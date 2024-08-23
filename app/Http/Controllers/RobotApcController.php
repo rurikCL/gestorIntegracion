@@ -105,8 +105,10 @@ class RobotApcController extends Controller
 
     public function traeStock()
     {
-
         set_time_limit(0);
+
+        echo "Inicio de proceso";
+        Log::info('Inicio de proceso');
 
         $this->setCookie();
 
@@ -125,6 +127,8 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
+        print_r($options);
+
         if(file_exists(storage_path('/app/public/' . $filename))) {
             Log::info('Archivo existente');
             echo "Archivo existente".PHP_EOL;
@@ -138,6 +142,7 @@ class RobotApcController extends Controller
 
         if ($res) {
             echo "Informe descargado, procesando... ";
+            Log::info('Procesando Informe');
 
             $filedata = Storage::read('/public/' . $filename);
             if ($filedata) {
@@ -436,6 +441,8 @@ class RobotApcController extends Controller
         $res = $this->client->sendAsync($request, ["cookies" => $this->cookieJar])->wait();
         $respuesta = $res->getBody();
 
+        echo $respuesta;
+
         $respuesta = json_decode($respuesta);
         $userValidated = $respuesta->d->Message;
 
@@ -460,6 +467,8 @@ class RobotApcController extends Controller
         if ($respuesta->d) {
             $viewstate = $this->getViewstate($respuesta->d);
         }
+
+        print_r($viewstate);
 
         // Ultima llamada para generar las cookies (HOME)
 /*        $request = new Request('GET', "https://provider.autoprocloud.com/mc/default.aspx");

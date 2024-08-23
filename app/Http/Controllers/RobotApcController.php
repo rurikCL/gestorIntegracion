@@ -112,6 +112,7 @@ class RobotApcController extends Controller
 
         // Login
         $viewstate = $this->login(4);
+        if($viewstate) Log::info('Login OK');
 
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -125,10 +126,14 @@ class RobotApcController extends Controller
         $options['sink'] = storage_path('/app/public/' . $filename);
 
         if(file_exists(storage_path('/app/public/' . $filename))) {
+            Log::info('Archivo existente');
+            echo "Archivo existente".PHP_EOL;
             $res = true;
         }else{
             $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
+            Log::info('Archivo descargado');
+            echo "Archivo descargado".PHP_EOL;
         }
 
         if ($res) {
@@ -158,7 +163,7 @@ class RobotApcController extends Controller
 
                     if ($numCell > 0) {
                         $row = $dataArray[$numCell];
-                        APC_Stock::create([
+                        $res = APC_Stock::create([
                             'Empresa' => $row['empresa'],
                             'Sucursal' => $row['sucursal'],
                             'Folio_Venta' => $row['folio_venta'] ?? null,
@@ -207,6 +212,7 @@ class RobotApcController extends Controller
                             'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
 //            'Margen_porcentaje' => $row[46],
                         ]);
+                        echo $res;
                     }
 
                     $numCell++;

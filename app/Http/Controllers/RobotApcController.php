@@ -135,7 +135,8 @@ class RobotApcController extends Controller
             $res = true;
         }else{
             $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
-            $res = $this->client->sendAsync($request, $options)->wait();
+//            $res = $this->client->sendAsync($request, $options)->wait();
+            $res = $this->client->send($request, $options);
             Log::info('Archivo descargado');
             echo "Archivo descargado".PHP_EOL;
         }

@@ -141,7 +141,7 @@ class RobotApcController extends Controller
             echo "Archivo descargado".PHP_EOL;
         }
 
-        if ($res) {
+//        if ($res) {
             echo "Informe descargado, procesando... ";
             Log::info('Procesando Informe');
 
@@ -227,7 +227,7 @@ class RobotApcController extends Controller
             unlink(storage_path('/app/public/' . $filename));
             echo " Informe procesado";
 
-        }
+//        }
 
 //        Excel::import(new ApcStockImport(), $filename,  null, \Maatwebsite\Excel\Excel::XML);
 

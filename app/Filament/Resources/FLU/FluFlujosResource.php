@@ -56,7 +56,7 @@ class FluFlujosResource extends Resource
                     ->options([
                         'user' => 'Usuario',
                         'salvin' => 'Salvin',
-                        'markeging' => 'Marketing',
+                        'marketing' => 'Marketing',
                         'admin' => 'Admin',
                     ])->default('user'),
                 Forms\Components\Select::make('Recurrencia')

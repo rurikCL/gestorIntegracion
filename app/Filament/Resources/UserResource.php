@@ -49,6 +49,7 @@ class UserResource extends Resource
                         'user' => 'user',
                         'salvin' => 'salvin',
                         'marketing' => 'marketing',
+                        'analista' => 'analista',
                         'admin' => 'admin',
                     ])
                     ->default('user')

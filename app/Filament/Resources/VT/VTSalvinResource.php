@@ -8,7 +8,6 @@ use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\VT\VT_Salvin;
-use App\Models\VT\VTSalvin;
 use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;

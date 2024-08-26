@@ -505,12 +505,8 @@ class FlujoController extends Controller
                                 ->where('TipoDocumento', '<>', 'Factura Interna');
                         });
                 })
-//                ->where('FechaFacturacion', '>=', Carbon::now()->subDay()->format("Y-m-d"))
-//                ->limit($flujo->MaxLote ?? 5)
-//                ->get();
-//            ->toSql();
-            ;
-            dd(self::getEloquentSqlWithBindings($ordenes));
+                ->get();
+//            dd(self::getEloquentSqlWithBindings($ordenes));
 
 
             if ($ordenes) {

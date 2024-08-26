@@ -89,6 +89,7 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                 Tables\Columns\TextColumn::make('tipo.Tipo'),
                 Tables\Columns\TextColumn::make('SubTipo'),
                 Tables\Columns\ToggleColumn::make('Activo')->label('Activo'),
+                Tables\Columns\BooleanColumn::make('USADOS')->label('USADOS'),
                 Tables\Columns\BooleanColumn::make('KIA')->label('KIA'),
                 Tables\Columns\BooleanColumn::make('CITROEN')->label('CITROEN'),
                 Tables\Columns\BooleanColumn::make('DFSK')->label('DFSK'),
@@ -98,7 +99,6 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                 Tables\Columns\BooleanColumn::make('OPEL')->label('OPEL'),
                 Tables\Columns\BooleanColumn::make('PEUGEOT')->label('PEUGEOT'),
                 Tables\Columns\BooleanColumn::make('SUBARU')->label('SUBARU'),
-                Tables\Columns\BooleanColumn::make('USADOS')->label('USADOS'),
                 Tables\Columns\BooleanColumn::make('ConsiderarReporte'),
             ])
             ->filters([

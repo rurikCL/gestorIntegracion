@@ -580,18 +580,25 @@ class LeadController extends Controller
 
             // Creacion de Lead --------------------------------
             $fechaCreacion = Carbon::now();
+            $fechaRevision = Carbon::now();
             $fechaFinJornada = Carbon::createFromTimeString('18:30:00');
             $fechaFinDia = Carbon::createFromTimeString('23:59:59');
-            $fechaRevision = $fechaCreacion;
+            $fechaInicioDia = Carbon::createFromTimeString('09:00:00');
 
-            if ($fechaCreacion > $fechaFinJornada) {
 
-                if ($fechaCreacion < $fechaFinDia) {
-                    $fechaRevision = $fechaRevision->addDay();
-                }
+            // Si se crea posterior a las 18.30 y antes de las 00:00
+            if ($fechaCreacion > $fechaFinJornada && $fechaCreacion < $fechaFinDia) {
+                $fechaRevision = $fechaRevision->addDay();
                 $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
-                $fechaCreacion = $fechaCreacion->format('Y-m-d H:i:s');
             }
+
+            // Si se crea posterior a las 18.30 y antes de las 23.59
+            if ($fechaCreacion < $fechaInicioDia) {
+                $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
+            }
+
+            $fechaCreacion = $fechaCreacion->format('Y-m-d H:i:s');
+
 
             $lead = new MK_Leads();
             $lead->FechaCreacion = $fechaCreacion;

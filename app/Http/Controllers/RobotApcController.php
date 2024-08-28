@@ -218,7 +218,7 @@ class RobotApcController extends Controller
                             'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
 //            'Margen_porcentaje' => $row[46],
                         ]);
-                        echo $res;
+                        Log:info("Procesando " . $row['numero_vin']);
                     }
 
                     $numCell++;

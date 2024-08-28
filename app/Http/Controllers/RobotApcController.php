@@ -128,7 +128,7 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        print_r($options);
+//        print_r($options);
 
         if(file_exists(storage_path('/app/public/' . $filename))) {
             Log::info('Archivo existente');

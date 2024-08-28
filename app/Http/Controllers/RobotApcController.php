@@ -106,6 +106,8 @@ class RobotApcController extends Controller
     public function traeStock()
     {
         set_time_limit(0);
+        define( 'WP_MEMORY_LIMIT', '300M' );
+        define( 'WP_MAX_MEMORY_LIMIT', '300M' );
 
         echo "Inicio de proceso";
         Log::info('Inicio de proceso');
@@ -469,7 +471,6 @@ class RobotApcController extends Controller
             $viewstate = $this->getViewstate($respuesta->d);
         }
 
-        print_r($viewstate);
 
         // Ultima llamada para generar las cookies (HOME)
 /*        $request = new Request('GET', "https://provider.autoprocloud.com/mc/default.aspx");

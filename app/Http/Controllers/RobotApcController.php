@@ -53,11 +53,11 @@ class RobotApcController extends Controller
         $this->cookie = "cookiefileJar.txt";
 
         // si no existe el archivo, se crea
-                if(!file_exists($this->cookie)) {
-                    $fh = fopen($this->cookie, "w");
-                    fwrite($fh, "");
-                    fclose($fh);
-                }
+        if (!file_exists($this->cookie)) {
+            $fh = fopen($this->cookie, "w");
+            fwrite($fh, "");
+            fclose($fh);
+        }
         $this->cookieJar = new FileCookieJar($this->cookie, true);
     }
 
@@ -115,7 +115,7 @@ class RobotApcController extends Controller
 
         // Login
         $viewstate = $this->login(4);
-        if($viewstate) Log::info('Login OK');
+        if ($viewstate) Log::info('Login OK');
 
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -130,108 +130,109 @@ class RobotApcController extends Controller
 
 //        print_r($options);
 
-        if(file_exists(storage_path('/app/public/' . $filename))) {
+        if (file_exists(storage_path('/app/public/' . $filename))) {
             Log::info('Archivo existente');
-            echo "Archivo existente".PHP_EOL;
+            echo "Archivo existente" . PHP_EOL;
             $res = true;
-        }else{
+        } else {
             $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
 //            $res = $this->client->sendAsync($request, $options)->wait();
             $res = $this->client->send($request, $options);
             Log::info('Archivo descargado');
-            echo "Archivo descargado".PHP_EOL;
+            echo "Archivo descargado" . PHP_EOL;
         }
 
 //        if ($res) {
-            echo "Informe descargado, procesando... ";
-            Log::info('Procesando Informe');
+        echo "Informe descargado, procesando... ";
+        Log::info('Procesando Informe');
 
-            $filedata = Storage::read('/public/' . $filename);
-            if ($filedata) {
-                $xml = XmlReader::fromString(Storage::read('/public/' . $filename));
-                $numCell = 0;
-                $numCol = 0;
+        $filedata = Storage::read('/public/' . $filename);
+        if ($filedata) {
+            $xml = XmlReader::fromString(Storage::read('/public/' . $filename));
+            $numCell = 0;
+            $numCol = 0;
 
-                APC_Stock::truncate();
+            APC_Stock::truncate();
+
+            foreach ($xml->value('s:Row')->get() as $cell) {
                 try {
 
-                    foreach ($xml->value('s:Row')->get() as $cell) {
-
-                        $numCol = 0;
-                        foreach ($cell['s:Cell'] as $data) {
-
-                            if ($numCell > 0) {
-                                $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
-
-                            } else {
-                                $headers[$numCol] = Str::slug($data['s:Data'], '_');
-                            }
-                            $numCol++;
-                        }
+                    $numCol = 0;
+                    foreach ($cell['s:Cell'] as $data) {
 
                         if ($numCell > 0) {
-                            $row = $dataArray[$numCell];
-                            $res = APC_Stock::create([
-                                'Empresa' => $row['empresa'],
-                                'Sucursal' => $row['sucursal'],
-                                'Folio_Venta' => $row['folio_venta'] ?? null,
-                                'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
-                                'Estado_Venta' => $row['estado_venta'],
-                                'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
-                                'Tipo_Documento' => $row['tipo_documento_folio'],
-                                'Vendedor' => $row['vendedor'],
-                                'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
-                                'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
-                                'VIN' => $row['numero_vin'],
-                                'Marca' => $row['marca'],
-                                'Modelo' => $row['modelo'],
-                                'Version' => $row['version'],
-                                'Codigo_Version' => $row['codigo_version'],
-                                'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
-                                'Kilometraje' => $row['kilometraje'],
-                                'Codigo_Interno' => $row['codigo_interno'],
-                                'Placa_Patente' => $row['placa_patente'],
-                                'Condicion_Vehículo' => $row['condicion_vehiculo'],
-                                'Color_Exterior' => $row['color_exterior'],
-                                'Color_Interior' => $row['color_interior'],
-                                'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
-                                'Estado_AutoPro' => $row['estado_autopro'],
-                                'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
-                                'Estado_Dealer' => $row['estado_dealer'],
-                                'Bodega' => $row['bodega'],
-                                'Equipamiento' => $row['equipamiento'],
-                                'Numero_Motor' => $row['numero_motor'],
-                                'Numero_Chasis' => $row['numero_chasis'],
-                                'Proveedor' => $row['proveedor'],
-                                'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
-                                'Factura_Compra' => $row['factura_compra'],
-                                'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
-                                'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
-                                'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
-                                'N_Propietarios' => $row['n_propietarios'],
-                                'Folio_Retoma' => $row['folio_retoma'],
-                                'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
-                                'Dias_Reservado' => $row['dias_reservado'],
-                                'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
-                                'Gasto' => $row['gasto'],
-                                'Accesorios' => $row['accesorios'],
-                                'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
-                                'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
-                                'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
-//            'Margen_porcentaje' => $row[46],
-                            ]);
-//                            Log::info("Procesando " . $row['numero_vin']);
-                        }
+                            $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
 
-                        $numCell++;
+                        } else {
+                            $headers[$numCol] = Str::slug($data['s:Data'], '_');
+                        }
+                        $numCol++;
                     }
+
+                    if ($numCell > 0) {
+                        $row = $dataArray[$numCell];
+                        $res = APC_Stock::create([
+                            'Empresa' => $row['empresa'],
+                            'Sucursal' => $row['sucursal'],
+                            'Folio_Venta' => $row['folio_venta'] ?? null,
+                            'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
+                            'Estado_Venta' => $row['estado_venta'],
+                            'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
+                            'Tipo_Documento' => $row['tipo_documento_folio'],
+                            'Vendedor' => $row['vendedor'],
+                            'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
+                            'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
+                            'VIN' => $row['numero_vin'],
+                            'Marca' => $row['marca'],
+                            'Modelo' => $row['modelo'],
+                            'Version' => $row['version'],
+                            'Codigo_Version' => $row['codigo_version'],
+                            'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
+                            'Kilometraje' => $row['kilometraje'],
+                            'Codigo_Interno' => $row['codigo_interno'],
+                            'Placa_Patente' => $row['placa_patente'],
+                            'Condicion_Vehículo' => $row['condicion_vehiculo'],
+                            'Color_Exterior' => $row['color_exterior'],
+                            'Color_Interior' => $row['color_interior'],
+                            'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
+                            'Estado_AutoPro' => $row['estado_autopro'],
+                            'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
+                            'Estado_Dealer' => $row['estado_dealer'],
+                            'Bodega' => $row['bodega'],
+                            'Equipamiento' => $row['equipamiento'],
+                            'Numero_Motor' => $row['numero_motor'],
+                            'Numero_Chasis' => $row['numero_chasis'],
+                            'Proveedor' => $row['proveedor'],
+                            'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
+                            'Factura_Compra' => $row['factura_compra'],
+                            'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
+                            'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
+                            'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
+                            'N_Propietarios' => $row['n_propietarios'],
+                            'Folio_Retoma' => $row['folio_retoma'],
+                            'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
+                            'Dias_Reservado' => $row['dias_reservado'],
+                            'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
+                            'Gasto' => $row['gasto'],
+                            'Accesorios' => $row['accesorios'],
+                            'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
+                            'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
+                            'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
+//            'Margen_porcentaje' => $row[46],
+                        ]);
+//                            Log::info("Procesando " . $row['numero_vin']);
+                    }
+
+                    $numCell++;
                 } catch (\Exception $e) {
-                    Log::error("Error con registro " . $row['numero_vin'] ." : " . $e->getMessage());
+                    Log::error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
 
                 }
             }
-            unlink(storage_path('/app/public/' . $filename));
-            echo " Informe procesado";
+
+        }
+        unlink(storage_path('/app/public/' . $filename));
+        echo " Informe procesado";
 
 //        }
 
@@ -282,7 +283,7 @@ class RobotApcController extends Controller
             $res = $this->client->sendAsync($request, $options)->wait();
         }
 
-        if($res) {
+        if ($res) {
             APC_Sku::truncate();
 
             Excel::import(new ApcSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
@@ -322,14 +323,14 @@ class RobotApcController extends Controller
         $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
             'Domain' => '.autoprocloud.com',
             'Name' => '_apc_lastaction',
-            'Value' => Carbon::now()->subHour()->format('D, d M Y H:i:s ').'GMT',
+            'Value' => Carbon::now()->subHour()->format('D, d M Y H:i:s ') . 'GMT',
             'Path' => '/',
             'Expires' => null,
         ]));
         $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
             'Domain' => '.autoprocloud.com',
             'Name' => '_apc_endsession',
-            'Value' => Carbon::now()->addDay()->format('D, d M Y H:i:s ').'GMT',
+            'Value' => Carbon::now()->addDay()->format('D, d M Y H:i:s ') . 'GMT',
             'Path' => '/',
             'Expires' => null,
         ]));
@@ -363,14 +364,14 @@ class RobotApcController extends Controller
 //        print_r($options['cookies']);
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename ."__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
         }
 
-        if($res) {
+        if ($res) {
 //            echo $res->getBody();
             APC_Repuestos::truncate();
 
@@ -422,7 +423,7 @@ class RobotApcController extends Controller
             $res = $this->client->sendAsync($request, $options)->wait();
         }
 
-        if($res) {
+        if ($res) {
 //            echo base64_decode($options['form_params']['__VIEWSTATE']);
 //            APC_Repuestos::truncate();
 
@@ -462,7 +463,7 @@ class RobotApcController extends Controller
         $body = '{
           "businessID": "205",
           "BranchID": "672",
-          "ModuleID": "'.$modulo.'",
+          "ModuleID": "' . $modulo . '",
           "username": "rodrigo.larrain@pompeyo.cl"
         }';
 
@@ -477,11 +478,11 @@ class RobotApcController extends Controller
 
 
         // Ultima llamada para generar las cookies (HOME)
-/*        $request = new Request('GET', "https://provider.autoprocloud.com/mc/default.aspx");
-        $res = $this->client->send($request, ["cookies" => $this->cookieJar]);
+        /*        $request = new Request('GET', "https://provider.autoprocloud.com/mc/default.aspx");
+                $res = $this->client->send($request, ["cookies" => $this->cookieJar]);
 
-        $request = new Request('GET', "https://provider.autoprocloud.com/mc/Home/mcHome.aspx");
-        $res = $this->client->send($request, ["cookies" => $this->cookieJar]);*/
+                $request = new Request('GET', "https://provider.autoprocloud.com/mc/Home/mcHome.aspx");
+                $res = $this->client->send($request, ["cookies" => $this->cookieJar]);*/
 
         return $viewstate;
     }

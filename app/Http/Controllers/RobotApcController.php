@@ -106,8 +106,7 @@ class RobotApcController extends Controller
     public function traeStock()
     {
         set_time_limit(0);
-        define( 'WP_MEMORY_LIMIT', '300M' );
-        define( 'WP_MAX_MEMORY_LIMIT', '300M' );
+        ini_set('memory_limit', '1024M');
 
         echo "Inicio de proceso";
         Log::info('Inicio de proceso');

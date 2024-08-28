@@ -53,11 +53,11 @@ class RobotApcController extends Controller
         $this->cookie = "cookiefileJar.txt";
 
         // si no existe el archivo, se crea
-        /*        if(!file_exists($this->cookie)) {
+                if(!file_exists($this->cookie)) {
                     $fh = fopen($this->cookie, "w");
                     fwrite($fh, "");
                     fclose($fh);
-                }*/
+                }
         $this->cookieJar = new FileCookieJar($this->cookie, true);
     }
 

@@ -109,7 +109,7 @@ class RobotApcController extends Controller
         ini_set('memory_limit', '1024M');
 
         echo "Inicio de proceso";
-        Log::info('Inicio de proceso');
+        Log::info('Inicio de proceso stock APC');
 
         $this->setCookie();
 
@@ -122,7 +122,7 @@ class RobotApcController extends Controller
         ];
 
         $filename = 'informeStock.xml';
-        $filedata = Storage::get('public/viewstates/stockFull.json');
+        $filedata = Storage::get('public/viewstates/stockAll.json');
 
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;

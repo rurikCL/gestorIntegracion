@@ -239,6 +239,140 @@ class RobotApcController extends Controller
 //        Excel::import(new ApcStockImport(), $filename,  null, \Maatwebsite\Excel\Excel::XML);
 
     }
+    public function traeStockAnual()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+
+        echo "Inicio de proceso";
+        Log::info('Inicio de proceso stock APC');
+
+        $this->setCookie();
+
+        // Login
+        $viewstate = $this->login(4);
+        if ($viewstate) Log::info('Login OK');
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $periodos = [
+            2020,
+            2021,
+            2022,
+            2023,
+            2024
+        ];
+
+        $filename = 'informeStock.xml';
+        $filedata = Storage::get('public/viewstates/stockAll.json');
+        $options['form_params'] = json_decode($filedata, true);
+        $options['cookies'] = $this->cookieJar;
+        $options['sink'] = storage_path('/app/public/' . $filename);
+
+        APC_Stock::truncate();
+
+        foreach ($periodos as $periodo) {
+            $options['form_params']['ctl00$PageContent$Fecha_CompraFromFilter'] = Carbon::createFromDate($periodo)->firstOfYear()->format('d-m-Y');
+            $options['form_params']['ctl00$PageContent$Fecha_CompraToFilter'] = Carbon::createFromDate($periodo)->lastOfYear()->format('d-m-Y');
+
+            $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+//            $res = $this->client->send($request, $options);
+
+            Log::info('Archivo descargado');
+            echo "Archivo descargado, procesando $periodo..." . PHP_EOL;
+
+            Log::info("Procesando Informe $periodo");
+
+            $filedata = Storage::read('/public/' . $filename);
+            if ($filedata) {
+                $xml = XmlReader::fromString(Storage::read('/public/' . $filename));
+                $numCell = 0;
+                $numCol = 0;
+
+                foreach ($xml->value('s:Row')->get() as $cell) {
+                    try {
+
+                        $numCol = 0;
+                        foreach ($cell['s:Cell'] as $data) {
+
+                            if ($numCell > 0) {
+                                $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
+
+                            } else {
+                                $headers[$numCol] = Str::slug($data['s:Data'], '_');
+                            }
+                            $numCol++;
+                        }
+
+                        if ($numCell > 0) {
+                            $row = $dataArray[$numCell];
+                            $res = APC_Stock::create([
+                                'Empresa' => $row['empresa'],
+                                'Sucursal' => $row['sucursal'],
+                                'Folio_Venta' => $row['folio_venta'] ?? null,
+                                'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
+                                'Estado_Venta' => $row['estado_venta'],
+                                'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
+                                'Tipo_Documento' => $row['tipo_documento_folio'],
+                                'Vendedor' => $row['vendedor'],
+                                'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
+                                'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
+                                'VIN' => $row['numero_vin'],
+                                'Marca' => $row['marca'],
+                                'Modelo' => $row['modelo'],
+                                'Version' => $row['version'],
+                                'Codigo_Version' => $row['codigo_version'],
+                                'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
+                                'Kilometraje' => $row['kilometraje'],
+                                'Codigo_Interno' => $row['codigo_interno'],
+                                'Placa_Patente' => $row['placa_patente'],
+                                'Condicion_Vehículo' => $row['condicion_vehiculo'],
+                                'Color_Exterior' => $row['color_exterior'],
+                                'Color_Interior' => $row['color_interior'],
+                                'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
+                                'Estado_AutoPro' => $row['estado_autopro'],
+                                'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
+                                'Estado_Dealer' => $row['estado_dealer'],
+                                'Bodega' => $row['bodega'],
+                                'Equipamiento' => $row['equipamiento'],
+                                'Numero_Motor' => $row['numero_motor'],
+                                'Numero_Chasis' => $row['numero_chasis'],
+                                'Proveedor' => $row['proveedor'],
+                                'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
+                                'Factura_Compra' => $row['factura_compra'],
+                                'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
+                                'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
+                                'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
+                                'N_Propietarios' => $row['n_propietarios'],
+                                'Folio_Retoma' => $row['folio_retoma'],
+                                'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
+                                'Dias_Reservado' => $row['dias_reservado'],
+                                'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
+                                'Gasto' => $row['gasto'],
+                                'Accesorios' => $row['accesorios'],
+                                'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
+                                'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
+                                'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
+//            'Margen_porcentaje' => $row[46],
+                            ]);
+                        }
+
+                        $numCell++;
+                    } catch (\Exception $e) {
+                        Log::error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
+
+                    }
+                }
+
+            }
+            unlink(storage_path('/app/public/' . $filename));
+            echo " Informe procesado";
+        }
+
+    }
 
     public function traeSku()
     {

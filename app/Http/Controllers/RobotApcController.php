@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
-use App\Http\Controllers\Api\ApiSolicitudController;
 use App\Imports\ApcRepuestosImport;
 use App\Imports\ApcSkuImport;
 use App\Imports\ApcStockImport;
@@ -11,10 +9,7 @@ use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use Carbon\Carbon;
-use DOMDocument;
-use DOMXPath;
 use GuzzleHttp\Client;
-use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Cookie\FileCookieJar;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Log;
@@ -428,18 +423,17 @@ class RobotApcController extends Controller
     public function traeRepuestos()
     {
 
-        set_time_limit(0);
 
+        set_time_limit(0);
         $this->setCookie();
 
         $url = 'https://appspsa-cl.autoprocloud.com/srv/dms_Calendario_Taller/ShowDms_SRV_InformeRepuestosEnProceso_TempTable.aspx';
-
         // Login
         $viewstate = $this->login(5);
 
         $sesion = $this->cookieJar->getCookieByName('ASP.NET_SessionId')->getValue();
         echo $sesion;
-
+/*
         $this->cookieJar->setCookie(new \GuzzleHttp\Cookie\SetCookie([
             'Domain' => '.autoprocloud.com',
             'Name' => 'ARRAffinity',
@@ -467,7 +461,7 @@ class RobotApcController extends Controller
             'Value' => Carbon::now()->addDay()->format('D, d M Y H:i:s ') . 'GMT',
             'Path' => '/',
             'Expires' => null,
-        ]));
+        ]));*/
 
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -482,33 +476,34 @@ class RobotApcController extends Controller
             'Sec-Fetch-Dest' => "document",
             'Sec-Fetch-Mode' => "navigate",
             'Sec-Fetch-Site' => "same-origin",
-            'cookie' => "MC_RememberName=True; MC_UserName=EBLWb+rNSN/HKBrDYHRxE+XD7kks2GSgeJuUVavNDNw=; MC_RememberPassword=False; MC_Password=; __utma=20487080.1977350873.1723474990.1724098633.1724184842.14; __utmz=20487080.1723474990.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); MC_SelectedLanguage=es-cl; MCUserID=SqOjeXsr4Ds%3d; MCModuloID=H51zpQpwDZM%3d; MCBusinessID=EEkNilVZQqQ%3d; MCBranchID=MpYSzVHxcro%3d; BusinesCnn=x9ua6uagpNZM47bD5FZKci2IiJTRU5KAaHOqPg838vHVXK7%2bEACw3%2bjua7sfX5FNBwCIzpPDc8MdNwBflN42tyKjQxKo%2bzZ%2bV%2bElFyXXIwIXuyj6aXYTgAFA09RCXxXBUSo70zhJIWzudm3fmvD%2bNvlJDXyn7scl; MCBusinessName=3ZhvsWjLTmzzD%2flzyrDlLi1CaosEOyax; MCBranchName=6wK%2fUIZPUTpMq7B0wpK0PQ%3d%3d; _ga=GA1.2.1977350873.1723474990; hblid=FQg4L7WjoPmcWFyw8H2zK0T1oKCSSBA2; _ga_C3HCJSVF27=GS1.2.1724184905.12.0.1724184905.0.0.0; olfsk=olfsk9432695658890976; _ga=GA1.3.1977350873.1723474990; __utmc=20487080; ARRAffinity=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ARRAffinitySameSite=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ASP.NET_SessionId=$sesion; MCUsername=BrqOlO%2f7crG6MsfNalpelMdFBFY6cs9IwFGSLfmTmpM%3d; APC-Nodo=02; MCLocalizacion=; wcsid=bUpzFFclkoMlDTj68H2zK0TBS12CKCA1; _oklv=1724185146771%2CbUpzFFclkoMlDTj68H2zK0TBS12CKCA1; _okdetect=%7B%22token%22%3A%2217241849068560%22%2C%22proto%22%3A%22about%3A%22%2C%22host%22%3A%22%22%7D; _ok=5154-826-10-2178; __utmb=20487080.1.10.1724184842; __utmt=1; _apc_lastaction=Tue, 20 Aug 2024 20:17:47 GMT; _apc_endsession=Tue, 20 Aug 2024 20:47:47 GMT; _gid=GA1.2.527458824.1724184905; _okbk=cd4%3Dtrue%2Cvi5%3D0%2Cvi4%3D1724184908246%2Cvi3%3Dactive%2Cvi2%3Dfalse%2Cvi1%3Dfalse%2Ccd8%3Dchat%2Ccd6%3D0%2Ccd5%3Daway%2Ccd3%3Dfalse%2Ccd2%3D0%2Ccd1%3D0%2C; _gid=GA1.3.527458824.1724184905",
+//            'cookie' => "MC_RememberName=True; MC_UserName=EBLWb+rNSN/HKBrDYHRxE+XD7kks2GSgeJuUVavNDNw=; MC_RememberPassword=False; MC_Password=; __utma=20487080.1977350873.1723474990.1724098633.1724184842.14; __utmz=20487080.1723474990.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); MC_SelectedLanguage=es-cl; MCUserID=SqOjeXsr4Ds%3d; MCModuloID=H51zpQpwDZM%3d; MCBusinessID=EEkNilVZQqQ%3d; MCBranchID=MpYSzVHxcro%3d; BusinesCnn=x9ua6uagpNZM47bD5FZKci2IiJTRU5KAaHOqPg838vHVXK7%2bEACw3%2bjua7sfX5FNBwCIzpPDc8MdNwBflN42tyKjQxKo%2bzZ%2bV%2bElFyXXIwIXuyj6aXYTgAFA09RCXxXBUSo70zhJIWzudm3fmvD%2bNvlJDXyn7scl; MCBusinessName=3ZhvsWjLTmzzD%2flzyrDlLi1CaosEOyax; MCBranchName=6wK%2fUIZPUTpMq7B0wpK0PQ%3d%3d; _ga=GA1.2.1977350873.1723474990; hblid=FQg4L7WjoPmcWFyw8H2zK0T1oKCSSBA2; _ga_C3HCJSVF27=GS1.2.1724184905.12.0.1724184905.0.0.0; olfsk=olfsk9432695658890976; _ga=GA1.3.1977350873.1723474990; __utmc=20487080; ARRAffinity=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ARRAffinitySameSite=2d343760a8ed36b0212d0c52481d1fee3a42070a07d1709749e873bd7238f130; ASP.NET_SessionId=$sesion; MCUsername=BrqOlO%2f7crG6MsfNalpelMdFBFY6cs9IwFGSLfmTmpM%3d; APC-Nodo=02; MCLocalizacion=; wcsid=bUpzFFclkoMlDTj68H2zK0TBS12CKCA1; _oklv=1724185146771%2CbUpzFFclkoMlDTj68H2zK0TBS12CKCA1; _okdetect=%7B%22token%22%3A%2217241849068560%22%2C%22proto%22%3A%22about%3A%22%2C%22host%22%3A%22%22%7D; _ok=5154-826-10-2178; __utmb=20487080.1.10.1724184842; __utmt=1; _apc_lastaction=Tue, 20 Aug 2024 20:17:47 GMT; _apc_endsession=Tue, 20 Aug 2024 20:47:47 GMT; _gid=GA1.2.527458824.1724184905; _okbk=cd4%3Dtrue%2Cvi5%3D0%2Cvi4%3D1724184908246%2Cvi3%3Dactive%2Cvi2%3Dfalse%2Cvi1%3Dfalse%2Ccd8%3Dchat%2Ccd6%3D0%2Ccd5%3Daway%2Ccd3%3Dfalse%2Ccd2%3D0%2Ccd1%3D0%2C; _gid=GA1.3.527458824.1724184905",
         ];
 //        print_r($headers);
 
-        $request = new Request('GET', "https://provider.autoprocloud.com/mpi/mpi_empresa/showmpi_empresatable.aspx/SetSystemUse?id_Session=%22%22&Url=%22https://provider.autoprocloud.com/mc/Home/mcHome.aspx%22&SupportData=%22POMPEYO%20CARRASCO%20SPA|CITROEN%20QUILIN|RODRIGO%20LARRAIN%20ANDR%C3%89|0%200|rodrigo.larrain@pompeyo.cl|TallerPro|205|721|4967|5|$sesion|es-cl|02|AutoPro%22");
-        $res = $this->client->sendAsync($request)->wait();
-        echo $res->getBody();
+        /*$request = new Request('GET', "https://provider.autoprocloud.com/mpi/mpi_empresa/showmpi_empresatable.aspx/SetSystemUse?id_Session=%22%22&Url=%22https://provider.autoprocloud.com/mc/Home/mcHome.aspx%22&SupportData=%22POMPEYO%20CARRASCO%20SPA|CITROEN%20QUILIN|RODRIGO%20LARRAIN%20ANDR%C3%89|0%200|rodrigo.larrain@pompeyo.cl|TallerPro|205|721|4967|5|$sesion|es-cl|02|AutoPro%22");
+        $res = $this->client->sendAsync($request)->wait();*/
+//        echo $res->getBody();
 
         $filename = 'repuestosEnProceso.xls';
         $filedata = Storage::get('public/viewstates/repuestosEnProceso.json');
 
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;
-//        print_r($options['cookies']);
         $options['sink'] = storage_path('/app/public/' . $filename);
+
+        dd($options);
 
         if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
             $res = true;
         } else {
+            echo "preparando descarga de informe ";
             $request = new Request('POST', $url, $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
         }
 
         if ($res) {
-//            echo $res->getBody();
+            echo "informe desccargado, procesando... ";
             APC_Repuestos::truncate();
-
             Excel::import(new ApcRepuestosImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
         }
 
@@ -590,9 +585,6 @@ class RobotApcController extends Controller
 
         // Segundo login, entrega pagina para viewstate
         $url = 'https://provider.autoprocloud.com/MC/home/mcHome.aspx/LogIn';
-        $headers = [
-            'Content-Type' => 'application/json',
-        ];
 
         $body = '{
           "businessID": "205",

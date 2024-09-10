@@ -498,11 +498,11 @@ class FlujoController extends Controller
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
                 ->where('FechaFacturacion', '>=', "2024-05-27 00:00:00")
+                ->where('TipoDocumento', '<>', 'Factura Interna')
                 ->where(function ($query) use ($tiposOrden) {
                     $query->whereIn('TipoOT', $tiposOrden)
                         ->orWhere(function ($query) {
-                            $query->where('TipoOT', 'MECANICA GENERAL')
-                                ->where('TipoDocumento', '<>', 'Factura Interna');
+                            $query->where('TipoOT', 'MECANICA GENERAL');
                         });
                 })
                 ->get();

@@ -59,6 +59,10 @@ Route::get('/robot/apc/stockAnual', [\App\Http\Controllers\RobotApcController::c
 Route::get('/robot/apc/sku', [\App\Http\Controllers\RobotApcController::class, 'traeSku']);
 Route::get('/robot/apc/repuestos', [\App\Http\Controllers\RobotApcController::class, 'traeRepuestos']);
 Route::get('/robot/apc/ventas', [\App\Http\Controllers\RobotApcController::class, 'traeMovimientosVentas']);
+Route::get('/robot/apc/rentabilidadOt', [\App\Http\Controllers\RobotApcController::class, 'traeRentabilidadOt']);
+Route::get('/robot/apc/rentabilidadSku', [\App\Http\Controllers\RobotApcController::class, 'traeRentabilidadSku']);
+Route::get('/robot/apc/informeOt', [\App\Http\Controllers\RobotApcController::class, 'traeInformeOt']);
+Route::get('/robot/apc/rentabilidadVenta', [\App\Http\Controllers\RobotApcController::class, 'traeRentabilidadVenta']);
 
 
 require __DIR__.'/auth.php';

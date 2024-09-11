@@ -19,7 +19,7 @@ class ApcRepuestosImport implements ToModel, WithHeadingRow, WithBatchInserts
     */
     public function model(array $row)
     {
-        echo $row['fecha_de_creacion_ot'] . " ". $row['fecha_de_consumo_o_devolucion'] . " ". $row['fecha_liquidacion'] . " ". $row['fecha_facturacion'] . "<br>";
+//        echo $row['fecha_de_creacion_ot'] . " ". $row['fecha_de_consumo_o_devolucion'] . " ". $row['fecha_liquidacion'] . " ". $row['fecha_facturacion'] . "<br>";
 
         return new APC_Repuestos([
             'Sucursal' => $row['sucursal'],

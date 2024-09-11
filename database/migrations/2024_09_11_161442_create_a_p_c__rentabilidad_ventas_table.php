@@ -34,9 +34,6 @@ return new class extends Migration
             $table->integer('Margen')->nullable();
             $table->float('PorcentajeMargen')->nullable();
 
-            $table->string('')->nullable();
-            $table->string('')->nullable();
-
             $table->timestamps();
         });
     }

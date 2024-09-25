@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Http\Controllers\Flujo\FlujoController;
 use App\Http\Controllers\Flujo\FlujoHubspotController;
+use App\Http\Controllers\RobotApcController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,6 +20,8 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
 
+
+        // FLUJO CADA 30 Minutos  -----------------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
             // Envio de Leads MG
@@ -26,42 +29,57 @@ class Kernel extends ConsoleKernel
             // Envio de Cotizaciones MG
             $res = $flujoControl->sendCotizacionMG();
 
+
             // Envio de Ventas Indumotora
             $res = $flujoControl->sendVentasIndumotora();
-
+            // Envio de OTs Indumotora
             $res = $flujoControl->sendOtIndumotora();
 
         })->name("Control de Flujos : 30 minutos")->everyThirtyMinutes();
 
 
+        // FLUJO CADA 4 Horas
         $schedule->call(function () {
-            $flujoControl = new FlujoController();
+//            $flujoControl = new FlujoController();
         })->name("Control de Flujos : 4 Horas")->everyFourHours();
 
 
+        // FLUJO CADA 5 minutos -------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-//            $flujoControl->leadsHubspot(); // flujo hubspot contactos
 
             $flujoNegocio = new FlujoHubspotController();
             $flujoNegocio->leadsHubspotDeals(); // flujo hubspot negocios
+
             $flujoNegocio->actualizaLeadHubspot(); // Actualiza estado Pipeline de Deal en Hubspot
 
+            // Proceso de reproceso de solicitudes pendientes (que tengan intentos pendientes)
             $flujoControl->reprocesarSolicitudes();
 
         })->name("Control de Flujos : 5 minutos")->everyFiveMinutes();
 
 
+        // FLUJO 2 Veces al dia (7am, 14pm)
         $schedule->call(function () {
             $flujoControl = new FlujoController();
 
             $flujoControl->actualizaStockAPC();
+
+            // Extraccion datos Autored --------
             $flujoControl->autoredTransactions();
             $flujoControl->autoredInspections();
 
         })->name("Control de Flujos : 2 veces al dia")->twiceDaily(7, 14);
 
 
+        // ROBOT APC STOCK --------
+        $schedule->call(function () {
+            $robotControl = new RobotApcController();
+            $robotControl->traeStockAnual();
+        })->name("Control de Robot APC Stock : 2 veces al dia")->twiceDaily(3, 13);
+
+
+        // FLUJO DIARIO 2am --------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
 
@@ -70,15 +88,13 @@ class Kernel extends ConsoleKernel
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');
 
+
+        // FLUJO MENSUAL (Primer Dia) ------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
             $flujoControl->cargaIndicadoresUTM();
         })->name("Control de Flujos : 1 vez al mes (primer dia)")->monthlyOn(1);
 
-
-//        foreach (['08:45', '09:15', '09:45', '10:15'] as $time) {
-//            $schedule->command('command:name')->dailyAt($time);
-//        }
 
     }
 

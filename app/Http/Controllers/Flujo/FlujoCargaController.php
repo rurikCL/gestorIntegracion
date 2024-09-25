@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ApcRentabilidadOtImport;
 use App\Imports\AutoredTransactionImport;
 use App\Imports\CotizacionesForumImport;
 use App\Imports\CotizacionesNissanImport;
 use App\Imports\MK_LeadsImport;
 use App\Imports\SalvinsImport;
 use App\Imports\SantanderImport;
+use App\Models\APC_RentabilidadOt;
 use App\Models\FLU\FLU_Cargas;
 use App\Models\TDP\TDP_Cotizaciones;
 use App\Models\VT\VT_Salvin;
@@ -16,6 +18,8 @@ use http\Env\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+
+// Los metodos aqui presentes, se deben crear en apps3, Opcion Flujos, con tipo Carga y en opciones, especificar el Metodo a ejecutar
 
 class FlujoCargaController extends Controller
 {
@@ -160,6 +164,30 @@ class FlujoCargaController extends Controller
 
         return $resultado;
 
+    }
+
+    public static function importRentabilidadOt($data)
+    {
+        Log::info("Inicio de importacion Rentabilidad OT");
+        $fileName = str_replace('"', '', $data["File"]);
+        $resultado = [];
+        $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])
+            ->where('ID_Flujo', $data["ID_Flujo"])->first();
+
+        if ($fileName) {
+            Excel::import(new ApcRentabilidadOtImport($carga), "/public/" . $fileName);
+        }
+
+        $carga->fresh();
+        $resultado = [
+            "errores" => $carga->RegistrosFallidos,
+            "registros" => $carga->RegistrosCargados
+        ];
+
+        Log::info("Fin de importacion Rentabilidad OT");
+
+//        Log::info("Resultado : " . print_r($resultado, true));
+        return $resultado;
     }
 
 

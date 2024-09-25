@@ -75,9 +75,25 @@ class Kernel extends ConsoleKernel
         // ROBOT APC STOCK --------
         $schedule->call(function () {
             $robotControl = new RobotApcController();
-            $robotControl->traeStockAnual();
-        })->name("Control de Robot APC Stock : 2 veces al dia")->twiceDaily(3, 13);
 
+            // Completos
+            $robotControl->traeStockAnual();
+            $robotControl->traeRepuestos();
+            $robotControl->traeSku();
+
+            // Acumulativos
+            $robotControl->traeMovimientosVentas();
+            $robotControl->traeRentabilidadVenta();
+            $robotControl->traeRentabilidadSku();
+            $robotControl->traeInformeOt();
+
+        })->name("Control de Robot APC Nocturno")->dailyAt('03:00');
+
+        $schedule->call(function () {
+            $robotControl = new RobotApcController();
+            $robotControl->traeStockAnual();
+        })->name("Control de Robot APC Stock : 2 veces al dia")->dailyAt('13:15');
+        // --------------------------------
 
         // FLUJO DIARIO 2am --------------
         $schedule->call(function () {

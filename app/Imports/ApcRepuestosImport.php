@@ -25,7 +25,7 @@ class ApcRepuestosImport implements ToModel, WithHeadingRow, WithBatchInserts
             'Sucursal' => $row['sucursal'],
             'Recepcionista' => $row['recepcionista'],
             'Cliente' => $row['cliente'],
-            'Fecha_Consumo' => Carbon::parse($row['fecha_de_consumo_o_devolucion'])->format('Y-m-d H:i:s') ?? null,
+            'Fecha_Consumo' => $row['fecha_de_consumo_o_devolucion'] != "" ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['fecha_de_consumo_o_devolucion'])->format('Y-m-d H:i:s') : null,
             'Folio_OT' => $row['folio_ot'] ?? null,
             'Grupo' => $row['grupo'],
             'Condicion' => $row['condicion'],
@@ -40,7 +40,7 @@ class ApcRepuestosImport implements ToModel, WithHeadingRow, WithBatchInserts
             'Marca' => $row['marca'],
             'Version' => $row['version'],
             'Placa_Patente' => $row['placa_patente'],
-            'Fecha_Creacion_OT' => Carbon::parse($row['fecha_de_creacion_ot'])->format('Y-m-d H:i:s') ?? null,
+            'Fecha_Creacion_OT' => $row['fecha_de_creacion_ot'] != "" ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['fecha_de_creacion_ot'])->format('Y-m-d H:i:s') : null,
             'Tipo_Documento' => $row['tipo_documento'],
             'Folio_Documento' => $row['folio_documento'],
             'SKU' => $row['sku'],
@@ -49,8 +49,8 @@ class ApcRepuestosImport implements ToModel, WithHeadingRow, WithBatchInserts
             'Costo' => $row['costo'] ?? null,
             'Sub_Total' => $row['sub_total'] ?? null,
             'Tipo_Cargo' => $row['tipo_cargo'] ?? null,
-            'Fecha_Liquidacion' => Carbon::parse($row['fecha_liquidacion'])->format('Y-m-d H:i:s') ?? null,
-            'Fecha_Facturacion' => Carbon::parse($row['fecha_facturacion'])->format('Y-m-d H:i:s') ?? null,
+            'Fecha_Liquidacion' => $row['fecha_liquidacion'] != "" ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['fecha_liquidacion'])->format('Y-m-d H:i:s') : null,
+            'Fecha_Facturacion' => $row['fecha_facturacion'] != "" ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
         ]);
 
     }

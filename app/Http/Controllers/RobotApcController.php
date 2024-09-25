@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ApcMovimientoVentasImport;
+use App\Imports\ApcRentabilidadVentasImport;
 use App\Imports\ApcRepuestosImport;
 use App\Imports\ApcSkuImport;
 use App\Imports\ApcStockImport;
@@ -543,7 +544,6 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-            APC_MovimientoVentas::truncate();
             Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
             unlink(storage_path('/app/public/' . $filename));
 
@@ -671,9 +671,8 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-//            APC_MovimientoVentas::truncate();
-//            Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
-//            unlink(storage_path('/app/public/' . $filename));
+            Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            unlink(storage_path('/app/public/' . $filename));
 
         }
 
@@ -735,7 +734,6 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-//            APC_MovimientoVentas::truncate();
 //            Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
 //            unlink(storage_path('/app/public/' . $filename));
 
@@ -798,9 +796,8 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-//            APC_MovimientoVentas::truncate();
-//            Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
-//            unlink(storage_path('/app/public/' . $filename));
+            Excel::import(new ApcRentabilidadVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            unlink(storage_path('/app/public/' . $filename));
 
         }
 

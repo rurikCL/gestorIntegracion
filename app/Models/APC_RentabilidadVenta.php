@@ -7,5 +7,31 @@ use Illuminate\Database\Eloquent\Model;
 
 class APC_RentabilidadVenta extends Model
 {
-    use HasFactory;
+
+    protected $table = 'APC_RentabilidadVenta';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
+
+    protected $fillable = [
+        "Sucursal",
+        "FechaFacturacion",
+        "TipoDocumento",
+        "Folio",
+        "Vendedor",
+        "Cliente",
+        "Rut",
+        "Digito",
+        "CodigoUnicoExtranjero",
+        "SKU",
+        "NombreSKU",
+        "Marca",
+        "GrupoSKU",
+        "SubGrupoSKU",
+        "UnidadMediaSKU",
+        "Cantidad",
+        "Venta",
+        "Costo",
+        "Margen",
+        "PorcentajeMargen",
+    ];
 }

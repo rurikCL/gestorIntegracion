@@ -249,8 +249,21 @@ class RobotApcController extends Controller
         $viewstate = $this->login(4);
         if ($viewstate) Log::info('Login OK');
 
+        $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
+
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
         ];
 
         $periodos = [
@@ -264,15 +277,15 @@ class RobotApcController extends Controller
         $filedata = Storage::get('public/viewstates/stockBase.json');
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;
-        $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
-        $res = $this->client->sendAsync($request, $options)->wait();
+        $request = new Request('POST', $url, $headers);
+        $res = $this->client->send($request, $options);
 
 
-        $filename = 'informeStock.xml';
+
+        $filename = 'informeStock';
         $filedata = Storage::get('public/viewstates/stock.json');
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;
-        $options['sink'] = storage_path('/app/public/' . $filename);
 
         APC_Stock::truncate();
 
@@ -280,7 +293,10 @@ class RobotApcController extends Controller
             $options['form_params']['ctl00$PageContent$Fecha_CompraFromFilter'] = Carbon::createFromDate($periodo)->firstOfYear()->format('d-m-Y');
             $options['form_params']['ctl00$PageContent$Fecha_CompraToFilter'] = Carbon::createFromDate($periodo)->lastOfYear()->format('d-m-Y');
 
-            $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
+            $archivo = $filename . $periodo . ".xml";
+            $options['sink'] = storage_path('/app/public/' . $archivo);
+
+            $request = new Request('POST', $url, $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
 //            $res = $this->client->send($request, $options);
 
@@ -289,9 +305,9 @@ class RobotApcController extends Controller
 
             Log::info("Procesando Informe $periodo");
 
-            $filedata = Storage::read('/public/' . $filename);
+            $filedata = Storage::read('/public/' . $archivo);
             if ($filedata) {
-                $xml = XmlReader::fromString(Storage::read('/public/' . $filename));
+                $xml = XmlReader::fromString(Storage::read('/public/' . $archivo));
                 $numCell = 0;
                 $numCol = 0;
 
@@ -371,7 +387,7 @@ class RobotApcController extends Controller
                 }
 
             }
-            unlink(storage_path('/app/public/' . $filename));
+//            unlink(storage_path('/app/public/' . $filename));
             echo " Informe procesado";
         }
 

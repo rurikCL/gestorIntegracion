@@ -11,6 +11,7 @@ use App\Models\APC_MovimientoVentas;
 use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
+use App\Models\MA\MA_Sucursales;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -260,8 +261,15 @@ class RobotApcController extends Controller
             2024
         ];
 
+        $filedata = Storage::get('public/viewstates/stockBase.json');
+        $options['form_params'] = json_decode($filedata, true);
+        $options['cookies'] = $this->cookieJar;
+        $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
+        $res = $this->client->sendAsync($request, $options)->wait();
+
+
         $filename = 'informeStock.xml';
-        $filedata = Storage::get('public/viewstates/stockAll.json');
+        $filedata = Storage::get('public/viewstates/stock.json');
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
@@ -484,6 +492,7 @@ class RobotApcController extends Controller
             APC_Repuestos::truncate();
             Excel::import(new ApcRepuestosImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
             unlink(storage_path('/app/public/' . $filename));
+
 
         }
 

@@ -274,26 +274,16 @@ class RobotApcController extends Controller
             2024
         ];
 
-        $filedata = Storage::get('public/viewstates/stockBase.json');
-        $options['form_params'] = json_decode($filedata, true);
-        $options['cookies'] = $this->cookieJar;
-        $request = new Request('POST', $url, $headers);
-        $res = $this->client->send($request, $options);
-
-
-
-        $filename = 'informeStock';
-        $filedata = Storage::get('public/viewstates/stock.json');
-        $options['form_params'] = json_decode($filedata, true);
-        $options['cookies'] = $this->cookieJar;
-
         APC_Stock::truncate();
 
         foreach ($periodos as $periodo) {
-            $options['form_params']['ctl00$PageContent$Fecha_CompraFromFilter'] = Carbon::createFromDate($periodo)->firstOfYear()->format('d-m-Y');
-            $options['form_params']['ctl00$PageContent$Fecha_CompraToFilter'] = Carbon::createFromDate($periodo)->lastOfYear()->format('d-m-Y');
 
+            $filename = 'informeStock';
             $archivo = $filename . $periodo . ".xml";
+
+            $filedata = Storage::get('public/viewstates/stock'.$periodo.'.json');
+            $options['form_params'] = json_decode($filedata, true);
+            $options['cookies'] = $this->cookieJar;
             $options['sink'] = storage_path('/app/public/' . $archivo);
 
             $request = new Request('POST', $url, $headers);

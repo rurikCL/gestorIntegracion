@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Events\AfterChunk;
 use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Validators\Failure;
 
-class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithUpserts, WithEvents, ShouldQueue
+class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithUpserts, WithEvents
 {
 
     use RegistersEventListeners;

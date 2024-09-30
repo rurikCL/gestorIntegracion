@@ -4,13 +4,21 @@ namespace App\Imports;
 
 use App\Models\APC_Stock;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Events\BeforeSheet;
+use Maatwebsite\Excel\Validators\Failure;
 
-class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts
+class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithEvents
 {
+
     /**
     * @param array $row
     *
@@ -18,6 +26,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
     */
     public function model(array $row)
     {
+
 
         return new APC_Stock([
             'Empresa' => $row['empresa'],
@@ -52,7 +61,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
             'Numero_Chasis' => $row['numero_chasis'],
             'Proveedor' => $row['proveedor'],
             'Fecha_Disponibilidad' => ($row['fecha_disponibilidad']!='') ? Carbon::createFromFormat("d-m-Y H:i:s",$row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
-            'Factura_Compra' => $row['factura_compra'],
+            'Factura_Compra' => $row['factura_compra'] ?? 0,
             'Vencimiento_Documento' => ($row['vencimiento_documento']!='') ? Carbon::createFromFormat("d-m-Y H:i:s",$row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
             'Fecha_Compra' => ($row['fecha_compra']!='') ? Carbon::createFromFormat("d-m-Y H:i:s",$row['fecha_compra'])->format('Y-m-d H:i:s') : null,
             'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica']!='') ? Carbon::createFromFormat("d-m-Y H:i:s",$row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
@@ -79,5 +88,34 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
     {
         return 1000;
     }
+
+    public function onFailure(Failure ...$failures)
+    {
+        // Handle the failures how you'd like.
+
+        Log::notice(print_r($failures, true));
+
+        return true;
+
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            // Handle by a closure.
+            BeforeImport::class => function(BeforeImport $event) {
+                $creator = $event->reader->getProperties()->getCreator();
+            },
+
+
+            // Using a class with an __invoke method.
+            BeforeSheet::class => new BeforeSheetHandler(),
+
+            // Array callable, refering to a static method.
+            AfterSheet::class => [self::class, 'afterSheet'],
+
+        ];
+    }
+
 
 }

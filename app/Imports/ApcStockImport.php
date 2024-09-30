@@ -117,7 +117,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
 
     public static function afterChunk(AfterChunk $event)
     {
-        Log::info("Chunk Procesado");
+        Log::info("Chunk Stock Procesado");
 
     }
 

@@ -12,6 +12,7 @@ use App\Imports\MK_LeadsImport;
 use App\Imports\SalvinsImport;
 use App\Imports\SantanderImport;
 use App\Models\APC_RentabilidadOt;
+use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Cargas;
 use App\Models\TDP\TDP_Cotizaciones;
 use App\Models\VT\VT_Salvin;
@@ -202,6 +203,7 @@ class FlujoCargaController extends Controller
             ->where('ID_Flujo', $data["ID_Flujo"])->first();
 
         if ($fileName) {
+            APC_Stock::truncate();
             Excel::import(new ApcStockImport($carga), "/public/" . $fileName);
         }
 

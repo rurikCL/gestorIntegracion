@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\APC_Stock;
 use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -18,7 +19,7 @@ use Maatwebsite\Excel\Events\AfterChunk;
 use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Validators\Failure;
 
-class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithUpserts, WithEvents
+class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithUpserts, WithEvents, ShouldQueue
 {
 
     use RegistersEventListeners;
@@ -108,7 +109,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
     {
         // Handle the failures how you'd like.
 
-        Log::notice(print_r($failures, true));
+//        Log::notice(print_r($failures, true));
 
         return true;
 

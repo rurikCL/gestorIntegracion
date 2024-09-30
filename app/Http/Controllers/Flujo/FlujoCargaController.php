@@ -192,7 +192,10 @@ class FlujoCargaController extends Controller
     }
     public static function importStock($data)
     {
-        Log::info("Inicio de importacion Rentabilidad OT");
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+
+        Log::info("Inicio de importacion Stock");
         $fileName = str_replace('"', '', $data["File"]);
         $resultado = [];
         $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])
@@ -208,7 +211,7 @@ class FlujoCargaController extends Controller
             "registros" => $carga->RegistrosCargados
         ];
 
-        Log::info("Fin de importacion Rentabilidad OT");
+        Log::info("Fin de importacion Stock");
 
 //        Log::info("Resultado : " . print_r($resultado, true));
         return $resultado;

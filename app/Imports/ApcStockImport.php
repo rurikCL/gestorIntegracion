@@ -5,9 +5,11 @@ namespace App\Imports;
 use App\Models\APC_Stock;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ApcStockImport implements ToModel, WithHeadingRow
+class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts
 {
     /**
     * @param array $row
@@ -56,7 +58,7 @@ class ApcStockImport implements ToModel, WithHeadingRow
             'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica']!='') ? Carbon::createFromFormat("d-m-Y H:i:s",$row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
             'N_Propietarios' => $row['n_propietarios'],
             'Folio_Retoma' => $row['folio_retoma'],
-            'Fecha_Retoma' => $row['fecha_retoma'],
+            'Fecha_Retoma' => ($row['fecha_retoma']!='') ? Carbon::createFromFormat("d-m-Y H:i:s",$row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
             'Dias_Reservado' => $row['dias_reservado'],
             'Precio_Compra_Neto' => $row['precio_compra_neto'],
             'Gasto' => $row['gasto'],
@@ -67,4 +69,15 @@ class ApcStockImport implements ToModel, WithHeadingRow
 //            'Margen_porcentaje' => $row[46],
         ]);
     }
+
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
+
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
 }

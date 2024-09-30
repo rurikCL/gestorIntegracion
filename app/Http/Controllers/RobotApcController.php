@@ -113,7 +113,7 @@ class RobotApcController extends Controller
         $this->setCookie();
 
         // Login
-        $viewstate = $this->login(4);
+        $viewstate = $this->login(2);
         if ($viewstate) Log::info('Login OK');
 
         $headers = [
@@ -246,7 +246,7 @@ class RobotApcController extends Controller
         $this->setCookie();
 
         // Login
-        $viewstate = $this->login(4);
+        $viewstate = $this->login(2);
         if ($viewstate) Log::info('Login OK');
 
         $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
@@ -280,8 +280,9 @@ class RobotApcController extends Controller
 
             $filename = 'informeStock';
             $archivo = $filename . $periodo . ".xml";
-
             $filedata = Storage::get('public/viewstates/stock'.$periodo.'.json');
+
+            $options = [];
             $options['form_params'] = json_decode($filedata, true);
             $options['cookies'] = $this->cookieJar;
             $options['sink'] = storage_path('/app/public/' . $archivo);
@@ -292,10 +293,12 @@ class RobotApcController extends Controller
 
             Log::info('Archivo descargado');
             echo "Archivo descargado, procesando $periodo..." . PHP_EOL;
-
             Log::info("Procesando Informe $periodo");
 
+
+            Log::info("Procesando /public/$archivo ");
             $filedata = Storage::read('/public/' . $archivo);
+
             if ($filedata) {
                 $xml = XmlReader::fromString(Storage::read('/public/' . $archivo));
                 $numCell = 0;

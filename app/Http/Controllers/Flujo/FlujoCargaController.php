@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Controller;
 use App\Imports\ApcRentabilidadOtImport;
+use App\Imports\ApcStockImport;
 use App\Imports\AutoredTransactionImport;
 use App\Imports\CotizacionesForumImport;
 use App\Imports\CotizacionesNissanImport;
@@ -176,6 +177,29 @@ class FlujoCargaController extends Controller
 
         if ($fileName) {
             Excel::import(new ApcRentabilidadOtImport($carga), "/public/" . $fileName);
+        }
+
+        $carga->fresh();
+        $resultado = [
+            "errores" => $carga->RegistrosFallidos,
+            "registros" => $carga->RegistrosCargados
+        ];
+
+        Log::info("Fin de importacion Rentabilidad OT");
+
+//        Log::info("Resultado : " . print_r($resultado, true));
+        return $resultado;
+    }
+    public static function importStock($data)
+    {
+        Log::info("Inicio de importacion Rentabilidad OT");
+        $fileName = str_replace('"', '', $data["File"]);
+        $resultado = [];
+        $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])
+            ->where('ID_Flujo', $data["ID_Flujo"])->first();
+
+        if ($fileName) {
+            Excel::import(new ApcStockImport($carga), "/public/" . $fileName);
         }
 
         $carga->fresh();

@@ -5,19 +5,22 @@ namespace App\Imports;
 use App\Models\APC_Stock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Events\AfterSheet;
-use Maatwebsite\Excel\Events\BeforeImport;
-use Maatwebsite\Excel\Events\BeforeSheet;
+use Maatwebsite\Excel\Concerns\WithUpserts;
+use Maatwebsite\Excel\Events\AfterChunk;
+use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Validators\Failure;
 
-class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithEvents
+class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBatchInserts, SkipsOnFailure, WithUpserts, WithEvents
 {
+
+    use RegistersEventListeners;
 
     /**
     * @param array $row
@@ -99,23 +102,22 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
 
     }
 
-    public function registerEvents(): array
+    public static function afterChunk(AfterChunk $event)
     {
-        return [
-            // Handle by a closure.
-            BeforeImport::class => function(BeforeImport $event) {
-                $creator = $event->reader->getProperties()->getCreator();
-            },
+        Log::info("Chunk Procesado");
 
+    }
 
-            // Using a class with an __invoke method.
-            BeforeSheet::class => new BeforeSheetHandler(),
-
-            // Array callable, refering to a static method.
-            AfterSheet::class => [self::class, 'afterSheet'],
-
-        ];
+    public static function afterImport(AfterImport $event)
+    {
+        Log::info("Importacion Completada");
+        return true;
     }
 
 
+    public function uniqueBy()
+    {
+        // TODO: Implement uniqueBy() method.
+        return 'Codigo_Interno';
+    }
 }

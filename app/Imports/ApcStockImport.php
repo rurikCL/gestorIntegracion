@@ -5,6 +5,7 @@ namespace App\Imports;
 use App\Models\APC_Stock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -22,6 +23,17 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
 
     use RegistersEventListeners;
 
+    private $carga = null;
+    private $contadorRegistro = 0;
+    private $contErrores = 0;
+    private $errores = [];
+
+    use Importable;
+
+    public function __construct($carga)
+    {
+        $this->carga = $carga;
+    }
     /**
     * @param array $row
     *
@@ -110,6 +122,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
 
     public static function afterImport(AfterImport $event)
     {
+
         Log::info("Importacion Completada");
         return true;
     }

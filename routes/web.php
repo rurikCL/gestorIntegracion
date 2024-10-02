@@ -30,6 +30,8 @@ Route::get('/flujo/apcNV/', [\App\Http\Controllers\Flujo\FlujoController::class,
 Route::get('/flujo/apcHomo/', [\App\Http\Controllers\ApcDmsController::class, 'homologacionAPC']);
 Route::get('/flujo/apcHomoBancos/', [\App\Http\Controllers\ApcDmsController::class, 'getBancos']);
 Route::get('/flujo/cpd/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendCpdVentas']);
+Route::get('/flujo/inchcapeventas/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendVentasInchcape']);
+
 
 Route::get('/flujo/autored/transacciones', [\App\Http\Controllers\Flujo\FlujoController::class, 'autoredTransactions']);
 Route::get('/flujo/autored/inspecciones', [\App\Http\Controllers\Flujo\FlujoController::class, 'autoredInspections']);

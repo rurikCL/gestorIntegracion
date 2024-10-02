@@ -1893,6 +1893,149 @@ class FlujoController extends Controller
             }
         }
     }
+
+
+    public function sendVentasInchcape()
+    {
+
+        echo "Ejecutando Flujo KIA <br>";
+        Log::info("Inicio flujo Ventas Inchcape");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Inchcape Ventas')->first();
+
+        if ($flujo->Activo) {
+            Log::info("Flujo activo");
+//            $h = new FLU_Homologacion();
+
+            /*$ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
+                ->Gerencia(2)
+                ->NoNotificado($flujo->ID)
+//                ->where('FechaVenta', '>=', '2023-11-01 00:00:00')
+                ->where('FechaVenta', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->where('EstadoVentaID', 4)
+                ->where('Cajon', '<>', '')
+                ->limit($flujo->MaxLote ?? 5)
+                ->get();*/
+
+            $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
+                ->Gerencia(5)
+                ->NoNotificado($flujo->ID)
+                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
+//                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->limit($flujo->MaxLote ?? 5)
+                ->get();
+
+            dd($ventas);
+
+            if ($ventas) {
+                Log::info("Existen ventas");
+//                $cuenta = $ventas->count();
+                $solicitudCon = new ApiSolicitudController();
+                Log::info("Cantidad de ventas : " . count($ventas));
+
+                foreach ($ventas as $venta) {
+                    print PHP_EOL . "Procesando orden : " . $venta->ID . PHP_EOL;
+                    Log::info("Procesando orden : " . $venta->ID);
+                    $req = new Request();
+                    $req['referencia_id'] = $venta->ID;
+                    $req['proveedor_id'] = 14;
+                    $req['api_id'] = 31;
+                    $req['prioridad'] = 1;
+                    $req['flujoID'] = $flujo->ID;
+
+                    $rut = substr($venta->cliente->Rut, 0, length($venta->cliente->Rut) - 1) . "-" . substr($venta->cliente->Rut, -1);
+                    $rutVendedor = substr($venta->vendedor->Rut, 0, length($venta->vendedor->Rut) - 1) . "-" . substr($venta->vendedor->Rut, -1);
+
+                    if ($venta->stock) {
+                        if ($venta->stock->modeloID != 1) {
+                            $modelo = $venta->stock->modelo->Modelo;
+                        } else {
+                            $modelo = $venta->stock->Modelo;
+                        }
+
+                        if ($venta->stock->versionID != 1) {
+                            $version = $venta->stock->version->Version;
+                        } else {
+                            $version = $venta->stock->Version;
+                        }
+
+                        $vin = $venta->stock->VIN ?? $venta->Vin;
+                        $color = $venta->stock->ColorExterior ?? $venta->ColorReferencial;
+                    } else {
+                        $modelo = $venta->modelo->Modelo;
+                        $version = $venta->version->Version;
+                        $vin = $venta->Vin;
+                        $color = $venta->ColorReferencial;
+                    }
+
+                    $xml = XmlWriter::make()->write('exportacion', [
+                        'venta' => [
+                            'codigo_dealers' => 6, // Valor fijo (pompeyo)
+                            'marca' => 1, // Codigo para KIA (externo)
+                            'modelo' => $modelo,
+                            'vin' => $vin,
+                            'version' => $version,
+                            'color' => $color,
+                            'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
+                            'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
+//                            'tipo_documento' => "FA",
+                            'num_documento' => $venta->NumeroFactura,
+                            'doc_referencia' => $venta->NotaVenta,
+                            'precio' => $venta->ValorFactura,
+                            'nombre_local' => $venta->sucursal->Sucursal ?? '',
+                            'estado_envio' => 'N',
+                            'rut_cliente' => $rut,
+                            'nombre_cliente' => $venta->cliente->Nombre,
+                            'direccion_cliente' => $venta->cliente->Direccion,
+                            'ciudad_cliente' => 'SANTIAGO',
+                            'telefono_cliente' => $venta->cliente->Telefono,
+                            'rut_vendedor' => $rutVendedor,
+                            'nombre_vendedor' => $venta->vendedor->Nombre,
+                            'nv_referencia' => $venta->NotaVenta,
+                            'rut_facturacion' => $rut,
+                            'nombre_facturado' => $venta->cliente->Nombre,
+//                            'id_facturacion_dybox' => 0,
+                        ],
+                    ]);
+
+                    $xml = str_replace('<?xml version="1.0" encoding="utf-8"?>', '', $xml);
+
+                    $req['data'] = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ind="http://www.indumotora.cl/">
+                       <soapenv:Header/>
+                       <soapenv:Body>
+                          <ind:Publish>
+                             <!--Optional:-->
+                             <ind:id>001</ind:id>
+                             <!--Optional:-->
+                             <ind:canales>PompeyoCarrasco,venta</ind:canales>
+                             <!-- toma el valor venta, ot , repuestos o meson  segun corresponda-->
+                             <!--Optional:-->
+                             <ind:msg>
+                             <![CDATA[
+                             ' . $xml . '
+                                ]]>
+                             </ind:msg>
+                          </ind:Publish>
+                       </soapenv:Body>
+                    </soapenv:Envelope>';
+
+
+                    $resp = $solicitudCon->store($req, 'aislado1');
+                    echo("<br>" . ($resp->message ?? ''));
+
+                }
+            } else {
+                Log::info("No se encontraron ventas");
+            }
+
+        } else {
+            Log::error("Flujo no activo");
+        }
+
+        return true;
+    }
+
+
     public static function getEloquentSqlWithBindings($query)
     {
         return vsprintf(str_replace('?', '%s', $query->toSql()), collect($query->getBindings())->map(function ($binding) {

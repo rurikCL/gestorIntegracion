@@ -116,12 +116,34 @@ class RobotApcController extends Controller
         $viewstate = $this->login(2);
         if ($viewstate) Log::info('Login OK');
 
+        $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
+
         $headers = [
             'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
         ];
 
         $filename = 'informeStock.xml';
-        $filedata = Storage::get('public/viewstates/stockAll.json');
+        $filebase = Storage::get('public/viewstates/stockFullBase.json');
+        $filedata = Storage::get('public/viewstates/stockFull.json');
+
+        // Primer llamado
+        $options['form_params'] = json_decode($filebase, true);
+        $options['cookies'] = $this->cookieJar;
+        $request = new Request('POST', $url, $headers);
+        $res = $this->client->sendAsync($request, $options)->wait();
+
+        Log::info("Primer llamado OK. Iniciando descarga de informe");
 
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;
@@ -134,9 +156,9 @@ class RobotApcController extends Controller
             echo "Archivo existente" . PHP_EOL;
             $res = true;
         } else {
-            $request = new Request('POST', 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx', $headers);
-//            $res = $this->client->sendAsync($request, $options)->wait();
-            $res = $this->client->send($request, $options);
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+//            $res = $this->client->send($request, $options);
             Log::info('Archivo descargado');
             echo "Archivo descargado" . PHP_EOL;
         }
@@ -277,12 +299,22 @@ class RobotApcController extends Controller
         APC_Stock::truncate();
 
         foreach ($periodos as $periodo) {
+            Log::info("Procesando periodo $periodo");
 
-            $filename = 'informeStock';
-            $archivo = $filename . $periodo . ".xml";
-            $filedata = Storage::get('public/viewstates/stock'.$periodo.'.json');
+            // nombre de informe descargado
+            $archivo = "informeStock" . $periodo . ".xml";
 
+            // Primer llamado
             $options = [];
+            $filebase = Storage::get('public/viewstates/stock'.$periodo.'base.json');
+            $options['form_params'] = json_decode($filebase, true);
+            $options['cookies'] = $this->cookieJar;
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+
+            // Llamado descarga excel
+            $options = [];
+            $filedata = Storage::get('public/viewstates/stock'.$periodo.'.json');
             $options['form_params'] = json_decode($filedata, true);
             $options['cookies'] = $this->cookieJar;
             $options['sink'] = storage_path('/app/public/' . $archivo);

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('APC_Stock', function (Blueprint $table) {
-            $table->id();
+            $table->id()->autoIncrement();
 
             $table->string('Empresa')->nullable();
             $table->string('Sucursal')->nullable();
@@ -31,7 +31,10 @@ return new class extends Migration
             $table->string('Codigo_Version')->nullable();
             $table->integer('Anio')->nullable();
             $table->string('Kilometraje')->nullable();
-            $table->string('Codigo_Interno')->nullable();
+
+            // Indice codigo interno
+            $table->string('Codigo_Interno')->unique();
+
             $table->string('Placa_Patente')->nullable();
             $table->string('Condicion_Vehículo')->nullable();
             $table->string('Color_Exterior')->nullable();

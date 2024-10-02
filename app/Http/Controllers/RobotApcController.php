@@ -351,8 +351,9 @@ class RobotApcController extends Controller
                             $numCol++;
                         }
 
-                        if ($numCell > 0) {
+                        if ($numCell > 0 and $dataArray[$numCell]['codigo_interno'] != '') {
                             $row = $dataArray[$numCell];
+
                             $res = APC_Stock::updateOrCreate([
                                 'Codigo_Interno' => $row['codigo_interno'],
                                 'Bodega' => $row['bodega'],

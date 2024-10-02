@@ -297,7 +297,7 @@ class RobotApcController extends Controller
             2024
         ];
 
-        TDP_ApcStock::truncate();
+//        TDP_ApcStock::truncate();
 
         foreach ($periodos as $periodo) {
             Log::info("Procesando periodo $periodo");

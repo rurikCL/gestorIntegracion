@@ -24,6 +24,7 @@ class VTElementosFinanciadosSubTiposResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $modelLabel = 'Elementos Financiados - Sub tipo';
     protected static ?string $navigationGroup = 'Elementos Financiados';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -31,13 +32,12 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                 Forms\Components\Section::make('')
                     ->schema([
                         Forms\Components\Select::make('TipoID')
-                            ->options(fn()=>
-                            (Auth::user()->isAdmin())
+                            ->options(fn() => (Auth::user()->isAdmin())
                                 ? VT_ElementosFinanciadosTipos::where('ID', 3)->pluck('Tipo', 'ID')->toArray()
                                 : VT_ElementosFinanciadosTipos::all()->pluck('Tipo', 'ID')->toArray()
                             )
                             ->default(3)
-                        ->required(),
+                            ->required(),
                         Forms\Components\TextInput::make('SubTipo')
                             ->required(),
                         Forms\Components\Toggle::make('Activo'),
@@ -79,7 +79,7 @@ class VTElementosFinanciadosSubTiposResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function ( $query) {
+            ->modifyQueryUsing(function ($query) {
                 if (!Auth::user()->isAdmin()) {
                     $query->where('TipoID', 3);
                 }
@@ -103,9 +103,10 @@ class VTElementosFinanciadosSubTiposResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('TipoID')
-                ->relationship('tipo', 'Tipo'),
+                    ->relationship('tipo', 'Tipo')
+                    ->label('Tipo'),
                 Tables\Filters\SelectFilter::make('SubTipo')
-                ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'SubTipo')->toArray() ),
+                    ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'SubTipo')->toArray()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

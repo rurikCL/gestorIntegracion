@@ -105,7 +105,7 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                 Tables\Filters\SelectFilter::make('TipoID')
                 ->relationship('tipo', 'Tipo'),
                 Tables\Filters\SelectFilter::make('SubTipo')
-                ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'ID')->toArray() ),
+                ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'SubTipo')->toArray() ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

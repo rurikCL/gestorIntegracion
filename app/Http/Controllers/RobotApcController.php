@@ -404,7 +404,8 @@ class RobotApcController extends Controller
                                 'Accesorios' => $row['accesorios'],
                                 'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
                                 'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
-                                'Margen' => ($row['margen'] != '') ? intval($row['margen']) : null,
+                                'Margen' => null,
+//                                'Margen' => ($row['margen'] != '') ? intval($row['margen']) : null,
 //            'Margen_porcentaje' => ($row['margen'] != '') ? $row['margen'] : null,
                             ]);
                         }

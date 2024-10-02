@@ -416,7 +416,7 @@ class RobotApcController extends Controller
                 }
 
             }
-            unlink(storage_path('/app/public/' . $filename));
+            unlink(storage_path('/app/public/' . $archivo));
             Log::info("Informe procesado");
             echo " Informe procesado";
         }

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->string('Kilometraje')->nullable();
 
             // Indice codigo interno
-            $table->string('Codigo_Interno')->unique();
+            $table->string('Codigo_Interno');
 
             $table->string('Placa_Patente')->nullable();
             $table->string('Condicion_Vehículo')->nullable();
@@ -64,6 +64,8 @@ return new class extends Migration
             $table->integer('Precio_Lista')->nullable();
             $table->integer('Margen')->nullable();
             $table->float('Margen_porcentaje')->nullable();
+
+            $table->index('Codigo_Interno');
 
             $table->timestamps();
         });

@@ -203,7 +203,7 @@ class FlujoCargaController extends Controller
             ->where('ID_Flujo', $data["ID_Flujo"])->first();
 
         if ($fileName) {
-            APC_Stock::truncate();
+//            APC_Stock::truncate();
             Excel::import(new ApcStockImport($carga), "/public/" . $fileName);
 
             $carga->Estado = 2;

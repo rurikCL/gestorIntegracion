@@ -12,6 +12,7 @@ use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use App\Models\MA\MA_Sucursales;
+use App\Models\TDP_ApcStock;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
@@ -296,7 +297,7 @@ class RobotApcController extends Controller
             2024
         ];
 
-        APC_Stock::truncate();
+        TDP_ApcStock::truncate();
 
         foreach ($periodos as $periodo) {
             Log::info("Procesando periodo $periodo");
@@ -325,7 +326,6 @@ class RobotApcController extends Controller
 
             Log::info('Archivo descargado');
             echo "Archivo descargado, procesando $periodo..." . PHP_EOL;
-            Log::info("Procesando Informe $periodo");
 
 
             Log::info("Procesando /public/$archivo ");
@@ -353,7 +353,11 @@ class RobotApcController extends Controller
 
                         if ($numCell > 0) {
                             $row = $dataArray[$numCell];
-                            $res = APC_Stock::create([
+                            $res = APC_Stock::updateOrCreate([
+                                'Codigo_Interno' => $row['codigo_interno'],
+                                'Bodega' => $row['bodega'],
+                                'Estado_AutoPro' => $row['estado_autopro'],
+                            ],[
                                 'Empresa' => $row['empresa'],
                                 'Sucursal' => $row['sucursal'],
                                 'Folio_Venta' => $row['folio_venta'] ?? null,
@@ -412,9 +416,12 @@ class RobotApcController extends Controller
                 }
 
             }
-//            unlink(storage_path('/app/public/' . $filename));
+            unlink(storage_path('/app/public/' . $filename));
+            Log::info("Informe procesado");
             echo " Informe procesado";
         }
+
+        Log::info("Fin de proceso Stock");
 
     }
 

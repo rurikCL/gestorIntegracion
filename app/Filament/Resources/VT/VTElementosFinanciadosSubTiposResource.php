@@ -86,8 +86,8 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                 return $query;
             })
             ->columns([
-                Tables\Columns\TextColumn::make('tipo.Tipo'),
-                Tables\Columns\TextColumn::make('SubTipo'),
+                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
+                Tables\Columns\TextColumn::make('SubTipo')->searchable(),
                 Tables\Columns\ToggleColumn::make('Activo')->label('Activo'),
                 Tables\Columns\BooleanColumn::make('USADOS')->label('USADOS'),
                 Tables\Columns\BooleanColumn::make('KIA')->label('KIA'),
@@ -103,7 +103,9 @@ class VTElementosFinanciadosSubTiposResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('TipoID')
-                ->relationship('tipo', 'Tipo')
+                ->relationship('tipo', 'Tipo'),
+                Tables\Filters\SelectFilter::make('SubTipo')
+                ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'ID')->toArray() ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -361,7 +361,7 @@ class RobotApcController extends Controller
                             ],[
                                 'Empresa' => $row['empresa'],
                                 'Sucursal' => $row['sucursal'],
-                                'Folio_Venta' => $row['folio_venta'] ?? null,
+                                'Folio_Venta' => ($row['folio_venta'] != '') ? $row['folio_venta'] : null,
                                 'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
                                 'Estado_Venta' => $row['estado_venta'] ?? null,
                                 'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
@@ -396,7 +396,7 @@ class RobotApcController extends Controller
                                 'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
                                 'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
                                 'N_Propietarios' => $row['n_propietarios'] ?? null,
-                                'Folio_Retoma' => $row['folio_retoma'] ?? null,
+                                'Folio_Retoma' => ($row['folio_retoma'] != '') ? $row['folio_retoma'] : null,
                                 'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
                                 'Dias_Reservado' => $row['dias_reservado'] ?? null,
                                 'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,

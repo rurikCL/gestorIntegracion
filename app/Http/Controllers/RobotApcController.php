@@ -291,10 +291,10 @@ class RobotApcController extends Controller
 
         $periodos = [
             2020,
-            2021,
-            2022,
-            2023,
-            2024
+//            2021,
+//            2022,
+//            2023,
+//            2024
         ];
 
 //        TDP_ApcStock::truncate();

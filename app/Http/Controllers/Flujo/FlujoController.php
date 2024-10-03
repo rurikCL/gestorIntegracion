@@ -2009,7 +2009,6 @@ class FlujoController extends Controller
                        </soapenv:Body>
                     </soapenv:Envelope>';
 
-                    dd($req['data']);
 
                     $resp = $solicitudCon->store($req, 'aislado2');
                     echo("<br>" . ($resp->message ?? ''));

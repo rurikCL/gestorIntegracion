@@ -356,8 +356,6 @@ class RobotApcController extends Controller
 
                             $res = APC_Stock::updateOrCreate([
                                 'Codigo_Interno' => $row['codigo_interno'],
-                                'Bodega' => $row['bodega'],
-                                'Estado_AutoPro' => $row['estado_autopro'],
                             ],[
                                 'Empresa' => $row['empresa'],
                                 'Sucursal' => $row['sucursal'],

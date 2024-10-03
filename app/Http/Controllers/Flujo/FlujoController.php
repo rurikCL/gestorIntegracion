@@ -1907,25 +1907,14 @@ class FlujoController extends Controller
             Log::info("Flujo activo");
 //            $h = new FLU_Homologacion();
 
-            /*$ventas = VT_Ventas::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal")
-                ->Gerencia(2)
-                ->NoNotificado($flujo->ID)
-//                ->where('FechaVenta', '>=', '2023-11-01 00:00:00')
-                ->where('FechaVenta', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
-                ->where('EstadoVentaID', 4)
-                ->where('Cajon', '<>', '')
-                ->limit($flujo->MaxLote ?? 5)
-                ->get();*/
-
             $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
                 ->Gerencia(5)
                 ->NoNotificado($flujo->ID)
-                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
+//                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
 //                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
-
-            dd($ventas);
 
             if ($ventas) {
                 Log::info("Existen ventas");
@@ -1938,13 +1927,15 @@ class FlujoController extends Controller
                     Log::info("Procesando orden : " . $venta->ID);
                     $req = new Request();
                     $req['referencia_id'] = $venta->ID;
-                    $req['proveedor_id'] = 14;
+                    $req['proveedor_id'] = 13; // 14 en prod
                     $req['api_id'] = 31;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
 
                     $rut = substr($venta->cliente->Rut, 0, length($venta->cliente->Rut) - 1) . "-" . substr($venta->cliente->Rut, -1);
+
                     $rutVendedor = substr($venta->vendedor->Rut, 0, length($venta->vendedor->Rut) - 1) . "-" . substr($venta->vendedor->Rut, -1);
+
 
                     if ($venta->stock) {
                         if ($venta->stock->modeloID != 1) {
@@ -1970,31 +1961,30 @@ class FlujoController extends Controller
 
                     $xml = XmlWriter::make()->write('exportacion', [
                         'venta' => [
+                            'idventa' => $venta->ID,
+                            'idorigen' => 10251,
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
-                            'marca' => 1, // Codigo para KIA (externo)
+                            'marca' => 2, // Codigo para KIA (externo)
                             'modelo' => $modelo,
                             'vin' => $vin,
                             'version' => $version,
                             'color' => $color,
                             'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
+                            'nombre_local' => $venta->sucursal->Sucursal,
+                            'precio' => $venta->Precio,
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
-//                            'tipo_documento' => "FA",
                             'num_documento' => $venta->NumeroFactura,
                             'doc_referencia' => $venta->NotaVenta,
-                            'precio' => $venta->ValorFactura,
-                            'nombre_local' => $venta->sucursal->Sucursal ?? '',
-                            'estado_envio' => 'N',
                             'rut_cliente' => $rut,
                             'nombre_cliente' => $venta->cliente->Nombre,
                             'direccion_cliente' => $venta->cliente->Direccion,
                             'ciudad_cliente' => 'SANTIAGO',
                             'telefono_cliente' => $venta->cliente->Telefono,
+                            'mail_cliente' => $venta->cliente->Email,
                             'rut_vendedor' => $rutVendedor,
                             'nombre_vendedor' => $venta->vendedor->Nombre,
-                            'nv_referencia' => $venta->NotaVenta,
-                            'rut_facturacion' => $rut,
+                            'rut_facturado' => $rut,
                             'nombre_facturado' => $venta->cliente->Nombre,
-//                            'id_facturacion_dybox' => 0,
                         ],
                     ]);
 
@@ -2019,8 +2009,9 @@ class FlujoController extends Controller
                        </soapenv:Body>
                     </soapenv:Envelope>';
 
+                    dd($req['data']);
 
-                    $resp = $solicitudCon->store($req, 'aislado1');
+                    $resp = $solicitudCon->store($req, 'aislado2');
                     echo("<br>" . ($resp->message ?? ''));
 
                 }

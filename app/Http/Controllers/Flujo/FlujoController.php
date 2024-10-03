@@ -1927,7 +1927,7 @@ class FlujoController extends Controller
                     Log::info("Procesando orden : " . $venta->ID);
                     $req = new Request();
                     $req['referencia_id'] = $venta->ID;
-                    $req['proveedor_id'] = 13; // 14 en prod
+                    $req['proveedor_id'] = 14; // 14 en prod
                     $req['api_id'] = 31;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;

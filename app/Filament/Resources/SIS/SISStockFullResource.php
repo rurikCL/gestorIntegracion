@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SIS;
 
 use App\Filament\Resources\SIS\SISStockFullResource\Pages;
 use App\Filament\Resources\SIS\SISStockFullResource\RelationManagers;
+use App\Models\APC_Stock;
 use App\Models\SIS\SIS_StockFull;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,10 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SISStockFullResource extends Resource
 {
-    protected static ?string $model = SIS_StockFull::class;
+//    protected static ?string $model = SIS_StockFull::class;
+    protected static ?string $model = APC_Stock::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Stock';
+    protected static ?string $modelLabel = 'Stock APC';
+    protected static ?string $pluralLabel = 'Stock APC';
     protected static ?string $navigationGroup = 'Administracion';
 
 
@@ -33,57 +36,46 @@ class SISStockFullResource extends Resource
                 Forms\Components\TextInput::make('Venta'),
                 Forms\Components\TextInput::make('EstadoVenta'),
                 Forms\Components\TextInput::make('FechaVenta'),
-                Forms\Components\TextInput::make('TipoDocumento'),
+                Forms\Components\TextInput::make('Tipo_Documento'),
                 Forms\Components\TextInput::make('Vendedor'),
-                Forms\Components\TextInput::make('FechaIngreso'),
-                Forms\Components\TextInput::make('FechaFacturacion'),
+                Forms\Components\TextInput::make('Fecha_Ingreso'),
+                Forms\Components\TextInput::make('Fecha_Facturacion'),
                 Forms\Components\TextInput::make('VIN'),
                 Forms\Components\TextInput::make('Marca'),
                 Forms\Components\TextInput::make('Modelo'),
                 Forms\Components\TextInput::make('Version'),
-                Forms\Components\TextInput::make('CodigoVersion'),
+                Forms\Components\TextInput::make('Codigo_Version'),
                 Forms\Components\TextInput::make('Anno'),
                 Forms\Components\TextInput::make('Kilometraje'),
-                Forms\Components\TextInput::make('CodigoInterno'),
-                Forms\Components\TextInput::make('PlacaPatente'),
-                Forms\Components\TextInput::make('CondicionVehiculo'),
-                Forms\Components\TextInput::make('ColorExterior'),
-                Forms\Components\TextInput::make('ColorInterior'),
-                Forms\Components\TextInput::make('PrecioVenta'),
-                Forms\Components\TextInput::make('EstadoAutoPro'),
-                Forms\Components\TextInput::make('DiasStock'),
-                Forms\Components\TextInput::make('EstadoDealer'),
+                Forms\Components\TextInput::make('Codigo_Interno'),
+                Forms\Components\TextInput::make('Placa_Patente'),
+                Forms\Components\TextInput::make('Condicion_Vehiculo'),
+                Forms\Components\TextInput::make('Color_Exterior'),
+                Forms\Components\TextInput::make('Color_Interior'),
+                Forms\Components\TextInput::make('Precio_Venta_Total'),
+                Forms\Components\TextInput::make('Estado_AutoPro'),
+                Forms\Components\TextInput::make('Dias_Stock'),
+                Forms\Components\TextInput::make('Estado_Dealer'),
                 Forms\Components\TextInput::make('Bodega'),
                 Forms\Components\TextInput::make('Equipamiento'),
-                Forms\Components\TextInput::make('NumeroMotor'),
-                Forms\Components\TextInput::make('NumeroChasis'),
+                Forms\Components\TextInput::make('Numero_Motor'),
+                Forms\Components\TextInput::make('Numero_Chasis'),
                 Forms\Components\TextInput::make('Proveedor'),
-                Forms\Components\TextInput::make('FechaDisponibilidad'),
-                Forms\Components\TextInput::make('FacturaCompra'),
-                Forms\Components\TextInput::make('VencimientoDocumento'),
-                Forms\Components\TextInput::make('FechaCompra'),
-                Forms\Components\TextInput::make('FechaVctoRevisionTecnica'),
-                Forms\Components\TextInput::make('NPropietarios'),
-                Forms\Components\TextInput::make('FolioRetoma'),
-                Forms\Components\TextInput::make('FechaRetoma'),
-                Forms\Components\TextInput::make('DiasReservado'),
-                Forms\Components\TextInput::make('PrecioCompra'),
+                Forms\Components\TextInput::make('Fecha_Disponibilidad'),
+                Forms\Components\TextInput::make('Factura_Compra'),
+                Forms\Components\TextInput::make('Vencimiento_Documento'),
+                Forms\Components\TextInput::make('Fecha_Compra'),
+                Forms\Components\TextInput::make('Fecha_Vencto_Rev_tec'),
+                Forms\Components\TextInput::make('N_Propietarios'),
+                Forms\Components\TextInput::make('Folio_Retoma'),
+                Forms\Components\TextInput::make('Fecha_Retoma'),
+                Forms\Components\TextInput::make('Dias_Reservado'),
+                Forms\Components\TextInput::make('Precio_Compra_Neto'),
                 Forms\Components\TextInput::make('Gasto'),
                 Forms\Components\TextInput::make('Accesorios'),
-                Forms\Components\TextInput::make('TotalCosto'),
-                Forms\Components\TextInput::make('PrecioLista'),
+                Forms\Components\TextInput::make('Total_Costo'),
+                Forms\Components\TextInput::make('Precio_Lista'),
                 Forms\Components\TextInput::make('Margen'),
-                Forms\Components\TextInput::make('Z'),
-                Forms\Components\TextInput::make('DisponibleENissan'),
-                Forms\Components\TextInput::make('UnidadEspecial'),
-                Forms\Components\TextInput::make('BonoFinanciamiento'),
-                Forms\Components\TextInput::make('BonoMarca'),
-                Forms\Components\TextInput::make('BonoAdicional'),
-                Forms\Components\TextInput::make('DisponibleUsados'),
-                Forms\Components\TextInput::make('Descuento'),
-                Forms\Components\TextInput::make('MarcaID'),
-                Forms\Components\TextInput::make('ModeloID'),
-                Forms\Components\TextInput::make('VersionID'),
             ]);
     }
 
@@ -91,16 +83,25 @@ class SISStockFullResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('ID'),
+                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('Codigo_Interno')->searchable(),
+                Tables\Columns\TextColumn::make('VIN')->searchable(),
+                Tables\Columns\TextColumn::make('Marca'),
+                Tables\Columns\TextColumn::make('Modelo'),
+                Tables\Columns\TextColumn::make('Bodega'),
+                Tables\Columns\TextColumn::make('Sucursal'),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('Bodega')
+                ->options(fn() => APC_Stock::where('Bodega', '<>', '')->groupBy('Bodega')->pluck('Bodega', 'Bodega')->toArray()),
+//                ->options(fn() => SIS_StockFull::where('Bodega', '<>', '')->groupBy('Bodega')->pluck('Bodega', 'Bodega')->toArray()),
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+//                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 
@@ -115,7 +116,7 @@ class SISStockFullResource extends Resource
     {
         return [
             'index' => Pages\ListSISStockFulls::route('/'),
-            'create' => Pages\CreateSISStockFull::route('/create'),
+//            'create' => Pages\CreateSISStockFull::route('/create'),
             'edit' => Pages\EditSISStockFull::route('/{record}/edit'),
         ];
     }

@@ -22,6 +22,9 @@ class SISSolicitudesArbolAprobacionesResource extends Resource
     protected static ?string $modelLabel = 'Arbol de Aprobaciones';
     protected static ?string $navigationGroup = 'Administracion';
 
+    // desactivado
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Form $form): Form
     {
         return $form

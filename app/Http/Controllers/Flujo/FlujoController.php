@@ -1911,8 +1911,8 @@ class FlujoController extends Controller
                 ->Gerencia(5)
                 ->NoNotificado($flujo->ID)
 //                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
-//                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
-                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
+                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->firstOfMonth()->format("Y-m-d 00:00:00"))
+//                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 

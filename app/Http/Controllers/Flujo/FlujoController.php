@@ -1908,7 +1908,7 @@ class FlujoController extends Controller
 //            $h = new FLU_Homologacion();
 
             $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
-                ->Gerencia(5)
+                ->Gerencia([1,5])
                 ->NoNotificado($flujo->ID)
 //                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
                 ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->firstOfMonth()->format("Y-m-d 00:00:00"))
@@ -1959,19 +1959,21 @@ class FlujoController extends Controller
                         $color = $venta->ColorReferencial;
                     }
 
+                    $precioFinal = $venta->PrecioLista - ($venta->BonoFinanciamiento + $venta->BonoFinAdicional + $venta->BonoCliente + $venta->BonoMarca + $venta->BonoFlotas + $venta->BonoMantencionIncluida) - $venta->DescuentoVendedor;
+
                     $xml = XmlWriter::make()->write('exportacion', [
                         'venta' => [
-                            'idventa' => $venta->ID,
+                            'idventa' => $venta->VentaID,
                             'idorigen' => 10251,
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
-                            'marca' => 2, // Codigo para KIA (externo)
+                            'marca' => ($venta->sucursal->GerenciaID = 5) ? 2 : 1, // Si es gerencia 5 (Subaru), o 1 DFSK
                             'modelo' => $modelo,
                             'vin' => $vin,
                             'version' => $version,
                             'color' => $color,
                             'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
                             'nombre_local' => $venta->sucursal->Sucursal,
-                            'precio' => $venta->Precio,
+                            'precio' => $precioFinal,
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
                             'num_documento' => $venta->NumeroFactura,
                             'doc_referencia' => $venta->NotaVenta,

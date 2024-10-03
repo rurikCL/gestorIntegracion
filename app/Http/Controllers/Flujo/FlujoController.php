@@ -1923,8 +1923,8 @@ class FlujoController extends Controller
                 Log::info("Cantidad de ventas : " . count($ventas));
 
                 foreach ($ventas as $venta) {
-                    print PHP_EOL . "Procesando orden : " . $venta->ID . PHP_EOL;
-                    Log::info("Procesando orden : " . $venta->ID);
+                    print PHP_EOL . "Procesando Venta : " . $venta->ID . PHP_EOL;
+                    Log::info("Procesando Venta : " . $venta->ID);
                     $req = new Request();
                     $req['referencia_id'] = $venta->ID;
                     $req['proveedor_id'] = 14; // 14 en prod

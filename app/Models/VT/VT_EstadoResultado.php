@@ -82,9 +82,16 @@ class VT_EstadoResultado extends Model
 
     public function scopeGerencia($query, $gerenciaID)
     {
-        return $query->whereHas('sucursal', function ($query) use ($gerenciaID) {
-            $query->where('GerenciaID', $gerenciaID);
-        });
+        if (is_array($gerenciaID)){
+            return $query->whereHas('sucursal', function ($query) use ($gerenciaID) {
+                $query->whereIn('GerenciaID', $gerenciaID);
+            });
+        } else {
+            return $query->whereHas('sucursal', function ($query) use ($gerenciaID) {
+                $query->where('GerenciaID', $gerenciaID);
+            });
+        }
+
     }
 
     public function scopeFechaVenta($query, $fecha, $operador = '=')

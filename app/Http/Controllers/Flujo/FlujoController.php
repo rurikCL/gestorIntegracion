@@ -1898,7 +1898,7 @@ class FlujoController extends Controller
     public function sendVentasInchcape()
     {
 
-        echo "Ejecutando Flujo KIA <br>";
+        echo "Ejecutando Flujo Ventas Inchcape <br>";
         Log::info("Inicio flujo Ventas Inchcape");
 
         $flujo = FLU_Flujos::where('Nombre', 'Inchcape Ventas')->first();
@@ -1907,14 +1907,16 @@ class FlujoController extends Controller
             Log::info("Flujo activo");
 //            $h = new FLU_Homologacion();
 
-            $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
-                ->Gerencia([1,5])
+            $ventas = VT_EstadoResultado::with("modelo", "version", "apcstock", "cliente", "vendedor", "sucursal", "venta")
+                ->Gerencia([1, 5])
                 ->NoNotificado($flujo->ID)
 //                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
-                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->firstOfMonth()->format("Y-m-d 00:00:00"))
-//                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
+//                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->firstOfMonth()->format("Y-m-d 00:00:00"))
+                ->where('FechaDocumento', '>=', Carbon::now()->subYears(2)->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
+
+//            dd($ventas->toArray());
 
             if ($ventas) {
                 Log::info("Existen ventas");
@@ -1936,22 +1938,12 @@ class FlujoController extends Controller
 
                     $rutVendedor = substr($venta->vendedor->Rut, 0, length($venta->vendedor->Rut) - 1) . "-" . substr($venta->vendedor->Rut, -1);
 
+                    if ($venta->apcstock) {
+                        $modelo = $venta->apcstock->Modelo;
+                        $version = $venta->apcstock->Version;
 
-                    if ($venta->stock) {
-                        if ($venta->stock->modeloID != 1) {
-                            $modelo = $venta->stock->modelo->Modelo;
-                        } else {
-                            $modelo = $venta->stock->Modelo;
-                        }
-
-                        if ($venta->stock->versionID != 1) {
-                            $version = $venta->stock->version->Version;
-                        } else {
-                            $version = $venta->stock->Version;
-                        }
-
-                        $vin = $venta->stock->VIN ?? $venta->Vin;
-                        $color = $venta->stock->ColorExterior ?? $venta->ColorReferencial;
+                        $vin = $venta->apcstock->VIN ?? $venta->Vin;
+                        $color = $venta->apcstock->ColorExterior ?? $venta->ColorReferencial;
                     } else {
                         $modelo = $venta->modelo->Modelo;
                         $version = $venta->version->Version;
@@ -1959,14 +1951,22 @@ class FlujoController extends Controller
                         $color = $venta->ColorReferencial;
                     }
 
-                    $precioFinal = $venta->PrecioLista - ($venta->BonoFinanciamiento + $venta->BonoFinAdicional + $venta->BonoCliente + $venta->BonoMarca + $venta->BonoFlotas + $venta->BonoMantencionIncluida) - $venta->DescuentoVendedor;
+                    if($venta->sucursal->GerenciaID == 5) {
+                        $marca = 2;
+                    } else if ($venta->sucursal->GerenciaID == 1) {
+                        $marca = 9;
+                    } else {
+                        $marca = 6;
+                    }
 
+                    $precioFinal = $venta->PrecioLista - ($venta->BonoFinanciamiento + $venta->BonoFinAdicional + $venta->BonoCliente + $venta->BonoMarca + $venta->BonoFlotas + $venta->BonoMantencionIncluida) - $venta->DescuentoVendedor;
+//                    dd($venta);
                     $xml = XmlWriter::make()->write('exportacion', [
                         'venta' => [
                             'idventa' => $venta->VentaID,
                             'idorigen' => 10251,
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
-                            'marca' => ($venta->sucursal->GerenciaID = 5) ? 2 : 1, // Si es gerencia 5 (Subaru), o 1 DFSK
+                            'marca' => $marca, // Si es gerencia 5 (Subaru), o 1 DFSK
                             'modelo' => $modelo,
                             'vin' => $vin,
                             'version' => $version,
@@ -2010,7 +2010,7 @@ class FlujoController extends Controller
                           </ind:Publish>
                        </soapenv:Body>
                     </soapenv:Envelope>';
-
+//                    dd($req['data']);
 
                     $resp = $solicitudCon->store($req, 'aislado2');
                     echo("<br>" . ($resp->message ?? ''));

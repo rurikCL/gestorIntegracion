@@ -2,6 +2,7 @@
 
 namespace App\Models\VT;
 
+use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Notificaciones;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Marcas;
@@ -56,6 +57,10 @@ class VT_EstadoResultado extends Model
     public function stock()
     {
         return $this->hasOne(Stock::class, 'CodigoInterno', 'Cajon');
+    }
+    public function apcstock()
+    {
+        return $this->hasOne(APC_Stock::class, 'VIN', 'Vin');
     }
 
     public function sucursal()

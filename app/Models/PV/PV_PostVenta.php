@@ -2,6 +2,7 @@
 
 namespace App\Models\PV;
 
+use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Notificaciones;
 use App\Models\MA\MA_Clientes;
 use App\Models\VT_Ventas;
@@ -130,6 +131,11 @@ class PV_PostVenta extends Model
     public function venta()
     {
         return $this->belongsTo(VT_Ventas::class, 'Chasis', 'Vin');
+    }
+
+    public function apcstock()
+    {
+        return $this->hasOne(APC_Stock::class, 'VIN', 'Vin');
     }
 
     public function notificacion()

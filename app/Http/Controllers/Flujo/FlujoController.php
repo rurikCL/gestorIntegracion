@@ -355,7 +355,7 @@ class FlujoController extends Controller
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();*/
 
-            $ventas = VT_EstadoResultado::with("modelo", "version", "stock", "cliente", "vendedor", "sucursal", "venta")
+            $ventas = VT_EstadoResultado::with("modelo", "version", "apcstock", "cliente", "vendedor", "sucursal", "venta")
                 ->Gerencia(2)
                 ->NoNotificado($flujo->ID)
 //                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
@@ -384,21 +384,12 @@ class FlujoController extends Controller
                     $rut = substr($venta->cliente->Rut, 0, length($venta->cliente->Rut) - 1) . "-" . substr($venta->cliente->Rut, -1);
                     $rutVendedor = substr($venta->vendedor->Rut, 0, length($venta->vendedor->Rut) - 1) . "-" . substr($venta->vendedor->Rut, -1);
 
-                    if ($venta->stock) {
-                        if ($venta->stock->modeloID != 1) {
-                            $modelo = $venta->stock->modelo->Modelo;
-                        } else {
-                            $modelo = $venta->stock->Modelo;
-                        }
+                    if ($venta->apcstock) {
+                        $modelo = $venta->apcstock->Modelo;
+                        $version = $venta->apcstock->Version;
 
-                        if ($venta->stock->versionID != 1) {
-                            $version = $venta->stock->version->Version;
-                        } else {
-                            $version = $venta->stock->Version;
-                        }
-
-                        $vin = $venta->stock->VIN ?? $venta->Vin;
-                        $color = $venta->stock->ColorExterior ?? $venta->ColorReferencial;
+                        $vin = $venta->apcstock->VIN ?? $venta->Vin;
+                        $color = $venta->apcstock->ColorExterior ?? $venta->ColorReferencial;
                     } else {
                         $modelo = $venta->modelo->Modelo;
                         $version = $venta->version->Version;
@@ -2017,6 +2008,211 @@ class FlujoController extends Controller
                     $resp = $solicitudCon->store($req, 'aislado2');
                     echo("<br>" . ($resp->message ?? ''));
 
+                }
+            } else {
+                Log::info("No se encontraron ventas");
+            }
+
+        } else {
+            Log::error("Flujo no activo");
+        }
+
+        return true;
+    }
+
+    public function sendOTsinchcape()
+    {
+
+        echo "Ejecutando Flujo KIA OT SIC<br>";
+        Log::info("Inicio flujo OTs Indumotora");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Inchcape Ots')->first();
+
+        if ($flujo->Activo) {
+            Log::info("Flujo activo");
+            $h = new FLU_Homologacion();
+
+            $tiposOrden = [
+//                'ACCESORIOS POST VENTA',
+//                'ACCESORIOS POST VENTAS',
+                'MANTENCION',
+                'MECANICA GENERAL',
+                'PARTICULAR DYP',
+                'COMPAÑIA SEGURO',
+            ];
+
+            $ordenes = PV_PostVenta::with('cliente', 'apcstock')
+                ->whereIn('Marca', ['DFSK', 'SUBARU'])
+                ->NoNotificado($flujo->ID)
+                ->where('TipoOrigen', 'REAL')
+                ->where('FechaFacturacion', '>=', "2024-05-27 00:00:00")
+                ->where('TipoDocumento', '<>', 'Factura Interna')
+                ->where(function ($query) use ($tiposOrden) {
+                    $query->whereIn('TipoOT', $tiposOrden)
+                        ->orWhere(function ($query) {
+                            $query->where('TipoOT', 'MECANICA GENERAL');
+                        });
+                })
+                ->get();
+//            dd(self::getEloquentSqlWithBindings($ordenes));
+
+
+            if ($ordenes) {
+                Log::info("Existen Ots");
+                $solicitudCon = new ApiSolicitudController();
+                Log::info("Cantidad de Ots : " . count($ordenes));
+
+                foreach ($ordenes as $orden) {
+                    print PHP_EOL . "Procesando orden : " . $orden->ID . PHP_EOL;
+                    Log::info("Procesando orden : " . $orden->ID);
+                    $req = new Request();
+                    $req['referencia_id'] = $orden->ID;
+                    $req['proveedor_id'] = 9;
+                    $req['api_id'] = 27;
+                    $req['prioridad'] = 1;
+                    $req['flujoID'] = $flujo->ID;
+
+                    $categoriaOT = $orden->CategoriaOT;
+
+                    $checks = [
+                        'ACCESORIOS POST VENTAS' => 'accesorios',
+                        'ACCESORIOS PRE-VENTA' => 'accesorios',
+                        'ACCESORIOS VENTAS' => 'accesorios',
+                        'CAMPAÑA' => 'garantia',
+                        'CIA. SEGUROS' => 'dyp',
+                        'GARANTIA EXTENDIDA USADOS' => 'rep_varias',
+                        'GARANTIA FABRICA' => 'garantia',
+                        'MANTENCION' => 'mantencion',
+                        'MECANICA GENERAL' => 'rep_varias',
+                        'MESÓN' => 'meson',
+                        'PARTICULAR DYP' => 'dyp',
+                        'PROMOCIONES VENTAS VN' => 'rep_varias',
+                        'REVISION VU x VU' => 'rep_varias',
+                        'REVISIONES PRE-COMPRA' => 'rep_varias',
+                        'SIN REGISTRO' => 'rep_varias',
+                        'USADOS PRE-VENTA' => 'rep_varias',
+                    ];
+
+                    // Revision de RUT, validacion y creacion en Clientes
+                    $rut = $orden->ClienteRut;
+                    Log::info("Buscando cliente " . $rut);
+
+                    // SI no trae - , significa que el rut no tiene digito y hay que calcular
+                    if (str_contains($rut, '-') === false) {
+                        $s = 1;
+                        for ($m = 0; $rut != 0; $rut /= 10)
+                            $s = ($s + $rut % 10 * (9 - $m++ % 6)) % 11;
+                        $dv = chr($s ? $s + 47 : 75);
+                        $rutCliente = $orden->ClienteRut . $dv;
+                    } else {
+                        $rutCliente = str_replace('-', '', $rut);
+                    }
+
+                    $cliente = MA_Clientes::where('Rut', str_replace('-', '', $rutCliente))->first();
+                    if ($cliente) Log::info("Cliente encontrado " . $cliente->Nombre);
+                    else Log::info("Cliente no encontrado");
+
+                    // ----------------------------
+
+                    $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
+                    if ($orden->Marca == "DFSK") {
+                        $marca = 9;
+                    } else if($orden->Marca == "SUBARU") {
+                        $marca = 2;
+                    }
+
+                    $xml = XmlWriter::make()->write('exportacion', [
+                        'ot' => [
+                            'codigo_dealers' => 6, // Valor fijo (pompeyo)
+                            'numero_ot' => $orden->FolioOT, // Codigo para KIA (externo)
+                            'marca' => $marca,
+                            'fecha_atencion' => Carbon::parse($orden->FechaOT)->format("Ymd"),
+                            'rut_recepcionista' => $h->getDato($orden->Recepcionista, $flujo->ID, 'asesor', 0),
+                            'nombre_recepcionista' => $orden->Recepcionista,
+                            'rut_mecanico' => '',
+                            'nombre_mecanico' => $orden->NombreMecanico,
+                            'seguro_automotriz' => '',
+                            'vin' => $orden->Vin,
+                            'numero_motor' => $orden->Chasis,
+                            'numero_chasis' => $orden->Chasis,
+                            'patente' => $orden->Patente,
+                            'kilometraje' => $orden->Kilometraje,
+                            'rut_cliente' => $orden->ClienteRut,
+                            'tipo_persona' => '',
+                            'razon_social' => '',
+                            'nombres_cliente' => $orden->ClienteNombre,
+                            'apellidos_cliente' => '',
+                            'sexo' => '',
+                            'fecha_nacimiento' => $cliente ? Carbon::parse($cliente->FechaNacimiento)->format("Ymd") : '',
+                            'direccion' => $orden->ClienteDireccion,
+                            'villa_poblacion' => '',
+                            'codigo_region' => 13,
+                            'nombre_region' => 'REGION METROPOLITANA',
+                            'codigo_comuna' => $cliente->ComunaID ?? '',
+                            'nombre_comuna' => $cliente->comuna->Comuna ?? '',
+                            'telefono_comercial' => 0,
+                            'telefono_particular' => $cliente->Telefono ?? '',
+                            'telefono_movil' => 0,
+                            'telefono_contacto' => 0,
+                            'tipo_contacto' => 1,
+                            'nombres_contacto' => '',
+                            'apellido_contactos' => '',
+                            'correo_electronico' => $cliente->Email ?? '',
+                            'estado_ot' => 'F',
+                            'mantencion' => (($checks[$categoriaOT] ?? '') == 'mantencion') ? 'X' : '',
+                            'garantia' => (($checks[$categoriaOT] ?? '') == 'garantia') ? 'X' : '',
+                            'dyp' => (($checks[$categoriaOT] ?? '') == 'dyp') ? 'X' : '',
+                            'rep_varias' => (($checks[$categoriaOT] ?? '') == 'rep_varias') ? 'X' : '',
+                            'accesorios' => (($checks[$categoriaOT] ?? '') == 'accesorios') ? 'X' : '',
+                            'mano_obra' => $orden->VentaManoObra,
+                            'mano_obra_pint_desab' => $orden->VentaCarroceria,
+                            'repuestos_servicio' => $orden->VentaRepuestos,
+                            'repuestos_plaza' => 0,
+                            'repuestos_colision' => 0,
+                            'lubricantes_grasas' => $orden->VentaLubricantes,
+                            'trabajos_terceros' => $orden->VentaServicioTerceros,
+                            'materiales' => 0,
+                            'descuentos' => $orden->Dctos,
+                            'horas_vendidas' => 0,
+                            'estado_envio' => '',
+                            'sucursal' => $orden->Sucursal,
+                            'kilometraje_mantencion' => $orden->Kilometraje,
+                            'fecha_entrega' => Carbon::parse($orden->FechaFacturacion)->format("Ymd"),
+                            'fecha_facturacion' => Carbon::parse($orden->FechaFacturacion)->format("Ymd"),
+                            'ot_interna' => $checkOtInterna,
+                            'id_Facturacion_dybox' => '',
+                            'numero_factura' => $orden->Folio,
+                            'rut_facturado' => $orden->ClienteRutPagador,
+                            'nombre_facturado' => $orden->ClienteNombrePagador,
+                            'glosa_ot' => $orden->FolioOT,
+                            'modelo' => $orden->apcstock->Modelo ?? '',
+                            'version' => $orden->apcstock->Version ?? ''
+                        ],
+                    ]);
+
+                    $xml = str_replace('<?xml version="1.0" encoding="utf-8"?>', '', $xml);
+                    $req['data'] = '<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ind="http://www.indumotora.cl/">
+                       <soapenv:Header/>
+                       <soapenv:Body>
+                          <ind:Publish>
+                             <!--Optional:-->
+                             <ind:id>001</ind:id>
+                             <!--Optional:-->
+                             <ind:canales>PompeyoCarrasco,ot</ind:canales>
+                             <!-- toma el valor venta, ot , repuestos o meson  segun corresponda-->
+                             <!--Optional:-->
+                             <ind:msg>
+                             <![CDATA[
+                             ' . $xml . '
+                                ]]>
+                             </ind:msg>
+                          </ind:Publish>
+                       </soapenv:Body>
+                    </soapenv:Envelope>';
+
+
+                    $resp = $solicitudCon->store($req, 'aislado2');
+                    echo("<br>" . ($resp->message ?? ''));
                 }
             } else {
                 Log::info("No se encontraron ventas");

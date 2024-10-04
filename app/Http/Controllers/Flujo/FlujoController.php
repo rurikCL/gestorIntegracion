@@ -38,6 +38,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Saloon\XmlWrangler\XmlWriter;
+use function Psl\Regex\replace;
 use function Psl\Str\Byte\length;
 use HubSpot\Factory;
 use HubSpot\Client\Crm\Contacts\ApiException;
@@ -1838,9 +1839,10 @@ class FlujoController extends Controller
         if ($arrayData) {
             foreach ($arrayData->UFs as $data) {
                 $fecha = $data->Fecha;
-                $valor = $data->Valor;
+                $valor = str_replace(".", "", $data->Valor);
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
-                    ['FechaIndicador' => $fecha,
+                    [
+                        'FechaIndicador' => $fecha,
                         'Tipo' => 'UF'],
                     ['Monto' => $valor,
                         'FechaIndicador' => $fecha,

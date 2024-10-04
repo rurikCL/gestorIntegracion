@@ -1839,7 +1839,7 @@ class FlujoController extends Controller
         if ($arrayData) {
             foreach ($arrayData->UFs as $data) {
                 $fecha = $data->Fecha;
-                $valor = floatval($data->valor);
+                $valor = floatval($data->Valor);
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
                     [
                         'FechaIndicador' => $fecha,

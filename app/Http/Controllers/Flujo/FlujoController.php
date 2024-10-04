@@ -2054,7 +2054,7 @@ class FlujoController extends Controller
                 })->limit(5)
                 ->get();
 //            dd(self::getEloquentSqlWithBindings($ordenes));
-            dd($ordenes);
+            dd($ordenes->toArray());
 
 
             if ($ordenes) {

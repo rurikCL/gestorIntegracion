@@ -2051,10 +2051,10 @@ class FlujoController extends Controller
                         ->orWhere(function ($query) {
                             $query->where('TipoOT', 'MECANICA GENERAL');
                         });
-                })->limit(5)
+                })->limit(1)
                 ->get();
 //            dd(self::getEloquentSqlWithBindings($ordenes));
-            dd($ordenes->toArray());
+//            dd($ordenes->toArray());
 
 
             if ($ordenes) {

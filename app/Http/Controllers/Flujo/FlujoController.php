@@ -2026,7 +2026,7 @@ class FlujoController extends Controller
         echo "Ejecutando Flujo KIA OT SIC<br>";
         Log::info("Inicio flujo OTs Indumotora");
 
-        $flujo = FLU_Flujos::where('Nombre', 'Inchcape Ots')->first();
+        $flujo = FLU_Flujos::where('Nombre', 'Inchcape')->first();
 
         if ($flujo->Activo) {
             Log::info("Flujo activo");
@@ -2045,16 +2045,17 @@ class FlujoController extends Controller
                 ->whereIn('Marca', ['DFSK', 'SUBARU'])
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', '>=', "2024-05-27 00:00:00")
+                ->where('FechaFacturacion', '>=', "2022-05-27 00:00:00")
                 ->where('TipoDocumento', '<>', 'Factura Interna')
                 ->where(function ($query) use ($tiposOrden) {
                     $query->whereIn('TipoOT', $tiposOrden)
                         ->orWhere(function ($query) {
                             $query->where('TipoOT', 'MECANICA GENERAL');
                         });
-                })
+                })->limit(30)
                 ->get();
 //            dd(self::getEloquentSqlWithBindings($ordenes));
+            dd($ordenes);
 
 
             if ($ordenes) {
@@ -2067,8 +2068,8 @@ class FlujoController extends Controller
                     Log::info("Procesando orden : " . $orden->ID);
                     $req = new Request();
                     $req['referencia_id'] = $orden->ID;
-                    $req['proveedor_id'] = 9;
-                    $req['api_id'] = 27;
+                    $req['proveedor_id'] = 14;
+                    $req['api_id'] = 32;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
 

@@ -1894,7 +1894,7 @@ class FlujoController extends Controller
         echo "Ejecutando Flujo Ventas Inchcape <br>";
         Log::info("Inicio flujo Ventas Inchcape");
 
-        $flujo = FLU_Flujos::where('Nombre', 'Inchcape Ventas')->first();
+        $flujo = FLU_Flujos::where('Nombre', 'Inchcape')->first();
 
         if ($flujo->Activo) {
             Log::info("Flujo activo");

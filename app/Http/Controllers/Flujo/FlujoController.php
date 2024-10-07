@@ -558,6 +558,11 @@ class FlujoController extends Controller
 
                     // ----------------------------
 
+                    $comentario = $orden->Mantencion;
+                    if ($orden->Mantencion == 'No Ingresado') {
+                        $comentario = $orden->CategoriaOT;
+                    }
+
                     $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
 
                     $xml = XmlWriter::make()->write('exportacion', [
@@ -623,7 +628,7 @@ class FlujoController extends Controller
                             'numero_factura' => $orden->Folio,
                             'rut_facturado' => $orden->ClienteRutPagador,
                             'nombre_facturado' => $orden->ClienteNombrePagador,
-                            'glosa_ot' => $orden->FolioOT,
+                            'glosa_ot' => $comentario,
                         ],
                     ]);
 
@@ -2121,6 +2126,11 @@ class FlujoController extends Controller
                         $marca = 2;
                     }
 
+                    $comentario = $orden->Mantencion;
+                    if ($orden->Mantencion == 'No Ingresado') {
+                        $comentario = $orden->CategoriaOT;
+                    }
+
                     $xml = XmlWriter::make()->write('exportacion', [
                         'ot' => [
                             'codigo_dealers' => 6, // Valor fijo (pompeyo)
@@ -2184,7 +2194,7 @@ class FlujoController extends Controller
                             'numero_factura' => $orden->Folio,
                             'rut_facturado' => $orden->ClienteRutPagador,
                             'nombre_facturado' => $orden->ClienteNombrePagador,
-                            'glosa_ot' => $orden->FolioOT,
+                            'glosa_ot' => $comentario,
                             'modelo' => $orden->apcstock->Modelo ?? '',
                             'version' => $orden->apcstock->Version ?? ''
                         ],

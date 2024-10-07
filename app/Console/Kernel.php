@@ -35,6 +35,10 @@ class Kernel extends ConsoleKernel
             // Envio de OTs Indumotora
             $res = $flujoControl->sendOtIndumotora();
 
+            // Envio de Ventas Inchcape
+            $res = $flujoControl->sendVentasInchcape();
+
+
         })->name("Control de Flujos : 30 minutos")->everyThirtyMinutes();
 
 
@@ -100,6 +104,9 @@ class Kernel extends ConsoleKernel
             $flujoControl = new FlujoController();
 
             $res = $flujoControl->sendOTsSICIndumotora();
+
+            $res = $flujoControl->sendOTsinchcape();
+
             $flujoControl->cargaIndicadoresUF();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');

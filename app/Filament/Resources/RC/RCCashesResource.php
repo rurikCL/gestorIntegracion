@@ -60,18 +60,19 @@ class RCCashesResource extends Resource
                                     ->relationship('articulos')
                                     ->label(false)
                                     ->schema([
-                                        Forms\Components\TextInput::make('number_document'),
-                                        Forms\Components\DatePicker::make('date'),
-                                        Forms\Components\ToggleButtons::make('type_document')
+                                        Forms\Components\TextInput::make('number_document')->label('Numero Documento'),
+                                        Forms\Components\DatePicker::make('date')->label('Fecha'),
+                                        Forms\Components\ToggleButtons::make('type_document')->label('Tipo Documento')
                                             ->options([
                                                 1 => 'Boleta',
                                                 2 => 'Factura',
                                                 3 => 'Boleta Honorarios'
                                             ])->inline()->grouped(),
-                                        Forms\Components\TextInput::make('provider'),
-                                        Forms\Components\TextInput::make('description'),
+                                        Forms\Components\TextInput::make('provider')->label('Proveedor'),
+                                        Forms\Components\TextInput::make('description')->label('Descripcion'),
                                         Forms\Components\Select::make('account_id')
-                                            ->relationship('account', 'name'),
+                                            ->relationship('account', 'name')
+                                            ->label('Cuenta Contable'),
                                         Forms\Components\TextInput::make('total')->numeric()->minValue(1)
                                             ->label('Total'),
                                         Forms\Components\ToggleButtons::make('state')
@@ -82,7 +83,8 @@ class RCCashesResource extends Resource
                                             ->colors([
                                                 0 => 'warning',
                                                 1 => 'success',
-                                            ])->inline()->grouped(),
+                                            ])->inline()->grouped()
+                                        ->label('Estado'),
                                     ])
                                     ->grid(3),
 

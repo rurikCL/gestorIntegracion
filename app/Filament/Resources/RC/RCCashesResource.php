@@ -50,51 +50,89 @@ class RCCashesResource extends Resource
                             ])->required()
                             ->label('Estado'),
                     ])->columns(2),
-                Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make("Aprobadores Caja Chica")
-                        ->schema([
-                            Forms\Components\Repeater::make('NivelesCajaChica')
-                                ->relationship('aprobadores')
-                                ->label(false)
-                                ->schema([
-                                    Forms\Components\Select::make('level')
-                                        ->options([
-                                            1 => 'Nivel 1',
-                                            2 => 'Nivel 2',
-                                            3 => 'Nivel 3',
-                                            4 => 'Nivel 4',
-                                            5 => 'Nivel 5',
-                                        ])
-                                        ->label('Nivel'),
-                                    Forms\Components\Select::make('cashier_approver_id')
-                                        ->relationship('usuarios', 'Nombre')
-                                        ->label('Aprobador')
-                                        ->searchable(),
-                                    Forms\Components\ToggleButtons::make('state')
-                                        ->label('Estado')
-                                        ->options([
-                                            '2' => 'Espera',
-                                            '1' => 'Pendiente',
-                                            '0' => 'Aprobado',
-                                        ])
-                                        ->colors([
-                                            '2' => 'info',
-                                            '1' => 'warning',
-                                            '0' => 'success',
-                                        ])
-                                        ->icons([
-                                            '2' => 'heroicon-o-bolt',
-                                            '1' => 'heroicon-o-clock',
-                                            '0' => 'heroicon-o-check-circle',
-                                        ])
-                                        ->inline()
-                                        ->grouped()
-                                ])
-                                ->deletable(auth()->user()->isAdmin())
-                                ->addable(auth()->user()->isAdmin())
-                                ->columns(3),
-                        ]),
-                ])->columnSpan(2),
+//                Forms\Components\Section::make('')
+//                    ->schema([
+                Forms\Components\Tabs::make()
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Articulos')
+                            ->schema([
+                                Forms\Components\Repeater::make('ArticulosCajaChica')
+                                    ->relationship('articulos')
+                                    ->label(false)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('number_document'),
+                                        Forms\Components\DatePicker::make('date'),
+                                        Forms\Components\ToggleButtons::make('type_document')
+                                            ->options([
+                                                1 => 'Boleta',
+                                                2 => 'Factura',
+                                                3 => 'Boleta Honorarios'
+                                            ])->inline()->grouped(),
+                                        Forms\Components\TextInput::make('provider'),
+                                        Forms\Components\TextInput::make('description'),
+                                        Forms\Components\Select::make('account_id')
+                                            ->relationship('account', 'name'),
+                                        Forms\Components\TextInput::make('total')->numeric()->minValue(1)
+                                            ->label('Total'),
+                                        Forms\Components\ToggleButtons::make('state')
+                                            ->options([
+                                                1 => 'Aprobado',
+                                                0 => 'Anulado'
+                                            ])
+                                            ->colors([
+                                                0 => 'warning',
+                                                1 => 'success',
+                                            ])->inline()->grouped(),
+                                    ])
+                                    ->grid(3),
+
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Aprobadores')
+                            ->schema([
+                                Forms\Components\Repeater::make('NivelesCajaChica')
+                                    ->relationship('aprobadores')
+                                    ->label(false)
+                                    ->schema([
+                                        Forms\Components\Select::make('level')
+                                            ->options([
+                                                1 => 'Nivel 1',
+                                                2 => 'Nivel 2',
+                                                3 => 'Nivel 3',
+                                                4 => 'Nivel 4',
+                                                5 => 'Nivel 5',
+                                            ])
+                                            ->label('Nivel'),
+                                        Forms\Components\Select::make('cashier_approver_id')
+                                            ->relationship('usuarios', 'Nombre')
+                                            ->label('Aprobador')
+                                            ->searchable(),
+                                        Forms\Components\ToggleButtons::make('state')
+                                            ->label('Estado')
+                                            ->options([
+                                                '2' => 'Espera',
+                                                '1' => 'Pendiente',
+                                                '0' => 'Aprobado',
+                                            ])
+                                            ->colors([
+                                                '2' => 'info',
+                                                '1' => 'warning',
+                                                '0' => 'success',
+                                            ])
+                                            ->icons([
+                                                '2' => 'heroicon-o-bolt',
+                                                '1' => 'heroicon-o-clock',
+                                                '0' => 'heroicon-o-check-circle',
+                                            ])
+                                            ->inline()
+                                            ->grouped()
+                                    ])
+                                    ->deletable(auth()->user()->isAdmin())
+                                    ->addable(auth()->user()->isAdmin())
+                                    ->columns(3),
+                            ]),
+                    ])->columnSpanFull(),
+//                    ]),
+
 
             ]);
     }

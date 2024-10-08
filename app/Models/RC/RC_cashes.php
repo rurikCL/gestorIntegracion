@@ -36,4 +36,8 @@ class RC_cashes extends Model
     {
         return $this->hasMany('App\Models\RC\RC_cashier_approvals', 'cash_id', 'id');
     }
+
+    public function articulos(){
+        return $this->hasMany('App\Models\RC\RC_cash_details', 'cash_id', 'id');
+    }
 }

@@ -73,14 +73,17 @@ class RCCashesResource extends Resource
                                     Forms\Components\ToggleButtons::make('state')
                                         ->label('Estado')
                                         ->options([
+                                            '2' => 'Espera',
                                             '1' => 'Pendiente',
                                             '0' => 'Aprobado',
                                         ])
                                         ->colors([
+                                            '2' => 'info',
                                             '1' => 'warning',
                                             '0' => 'success',
                                         ])
                                         ->icons([
+                                            '2' => 'heroicon-o-bolt',
                                             '1' => 'heroicon-o-clock',
                                             '0' => 'heroicon-o-check-circle',
                                         ])

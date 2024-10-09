@@ -49,6 +49,9 @@ class RCCashesResource extends Resource
                                 '6' => 'Anulado',
                             ])->required()
                             ->label('Estado'),
+                        Forms\Components\TextInput::make('total')
+                            ->numeric()
+                            ->label('Total'),
                     ])->columns(2),
 //                Forms\Components\Section::make('')
 //                    ->schema([
@@ -84,7 +87,7 @@ class RCCashesResource extends Resource
                                                 0 => 'warning',
                                                 1 => 'success',
                                             ])->inline()->grouped()
-                                        ->label('Estado'),
+                                            ->label('Estado'),
                                     ])
                                     ->grid(3),
 
@@ -143,12 +146,20 @@ class RCCashesResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('usuarios.Nombre')->searchable(),
-                Tables\Columns\TextColumn::make('sucursales.Sucursal')->searchable(),
-                Tables\Columns\TextColumn::make('comment')->label('Comentario'),
-                Tables\Columns\TextColumn::make('total'),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('id')->searchable(),
+                Tables\Columns\TextColumn::make('usuarios.Nombre')
+                    ->label('Solicitante')->searchable(),
+                Tables\Columns\TextColumn::make('sucursales.Sucursal')
+                    ->label('Sucursal')->searchable(),
+                Tables\Columns\TextColumn::make('total')
+                    ->money('')
+                    ->prefix('$')
+                    ->formatStateUsing(fn($state) => number_format($state, 0, ',', '.')),
+                Tables\Columns\ViewColumn::make('status')
+                    ->view('components.stateRCcash') // 1: pendiente, 2: proceso, 3: finalizado
+                    ->label('Estado'),
+//                Tables\Columns\TextColumn::make('comment')->label('Comentario'),
+
             ])
             ->filters([
                 //

@@ -307,7 +307,7 @@ class RobotApcController extends Controller
 
             // Primer llamado
             $options = [];
-            $filebase = Storage::get('public/viewstates/stock'.$periodo.'base.json');
+            $filebase = Storage::get('public/viewstates/stock' . $periodo . 'base.json');
             $options['form_params'] = json_decode($filebase, true);
             $options['cookies'] = $this->cookieJar;
             $request = new Request('POST', $url, $headers);
@@ -315,7 +315,7 @@ class RobotApcController extends Controller
 
             // Llamado descarga excel
             $options = [];
-            $filedata = Storage::get('public/viewstates/stock'.$periodo.'.json');
+            $filedata = Storage::get('public/viewstates/stock' . $periodo . '.json');
             $options['form_params'] = json_decode($filedata, true);
             $options['cookies'] = $this->cookieJar;
             $options['sink'] = storage_path('/app/public/' . $archivo);
@@ -336,82 +336,84 @@ class RobotApcController extends Controller
                 $numCell = 0;
                 $numCol = 0;
 
-                foreach ($xml->value('s:Row')->get() as $cell) {
-                    try {
+                if ($xml) {
+                    foreach ($xml->value('s:Row')->get() as $cell) {
+                        try {
 
-                        $numCol = 0;
-                        foreach ($cell['s:Cell'] as $data) {
+                            $numCol = 0;
+                            foreach ($cell['s:Cell'] as $data) {
 
-                            if ($numCell > 0) {
-                                $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
+                                if ($numCell > 0) {
+                                    $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
 
-                            } else {
-                                $headers[$numCol] = Str::slug($data['s:Data'], '_');
+                                } else {
+                                    $headers[$numCol] = Str::slug($data['s:Data'], '_');
+                                }
+                                $numCol++;
                             }
-                            $numCol++;
-                        }
 
-                        if ($numCell > 0 and $dataArray[$numCell]['codigo_interno'] != '') {
-                            $row = $dataArray[$numCell];
+                            if ($numCell > 0 and $dataArray[$numCell]['codigo_interno'] != '') {
+                                $row = $dataArray[$numCell];
 
-                            $res = APC_Stock::updateOrCreate([
-                                'Codigo_Interno' => $row['codigo_interno'],
-                            ],[
-                                'Empresa' => $row['empresa'],
-                                'Sucursal' => $row['sucursal'],
-                                'Folio_Venta' => ($row['folio_venta'] != '') ? $row['folio_venta'] : null,
-                                'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
-                                'Estado_Venta' => $row['estado_venta'] ?? null,
-                                'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
-                                'Tipo_Documento' => $row['tipo_documento_folio'] ?? null,
-                                'Vendedor' => $row['vendedor'] ?? null,
-                                'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
-                                'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
-                                'VIN' => $row['numero_vin'],
-                                'Marca' => $row['marca'],
-                                'Modelo' => $row['modelo'],
-                                'Version' => $row['version'],
-                                'Codigo_Version' => $row['codigo_version'],
-                                'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
-                                'Kilometraje' => $row['kilometraje'] ?? null,
-                                'Codigo_Interno' => $row['codigo_interno'],
-                                'Placa_Patente' => $row['placa_patente'],
-                                'Condicion_Vehículo' => $row['condicion_vehiculo'],
-                                'Color_Exterior' => $row['color_exterior'],
-                                'Color_Interior' => $row['color_interior'],
-                                'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
-                                'Estado_AutoPro' => $row['estado_autopro'],
-                                'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
-                                'Estado_Dealer' => $row['estado_dealer'],
-                                'Bodega' => $row['bodega'],
-                                'Equipamiento' => $row['equipamiento'],
-                                'Numero_Motor' => $row['numero_motor'],
-                                'Numero_Chasis' => $row['numero_chasis'],
-                                'Proveedor' => $row['proveedor'],
-                                'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
-                                'Factura_Compra' => ($row['factura_compra'] != '') ? ($row['factura_compra'] ?? 0) : null,
-                                'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
-                                'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
-                                'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
-                                'N_Propietarios' => $row['n_propietarios'] ?? null,
-                                'Folio_Retoma' => ($row['folio_retoma'] != '') ? $row['folio_retoma'] : null,
-                                'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
-                                'Dias_Reservado' => $row['dias_reservado'] ?? null,
-                                'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
-                                'Gasto' => $row['gasto'],
-                                'Accesorios' => $row['accesorios'],
-                                'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
-                                'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
-                                'Margen' => null,
+                                $res = APC_Stock::updateOrCreate([
+                                    'Codigo_Interno' => $row['codigo_interno'],
+                                ], [
+                                    'Empresa' => $row['empresa'],
+                                    'Sucursal' => $row['sucursal'],
+                                    'Folio_Venta' => ($row['folio_venta'] != '') ? $row['folio_venta'] : null,
+                                    'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
+                                    'Estado_Venta' => $row['estado_venta'] ?? null,
+                                    'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
+                                    'Tipo_Documento' => $row['tipo_documento_folio'] ?? null,
+                                    'Vendedor' => $row['vendedor'] ?? null,
+                                    'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
+                                    'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
+                                    'VIN' => $row['numero_vin'],
+                                    'Marca' => $row['marca'],
+                                    'Modelo' => $row['modelo'],
+                                    'Version' => $row['version'],
+                                    'Codigo_Version' => $row['codigo_version'],
+                                    'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
+                                    'Kilometraje' => $row['kilometraje'] ?? null,
+                                    'Codigo_Interno' => $row['codigo_interno'],
+                                    'Placa_Patente' => $row['placa_patente'],
+                                    'Condicion_Vehículo' => $row['condicion_vehiculo'],
+                                    'Color_Exterior' => $row['color_exterior'],
+                                    'Color_Interior' => $row['color_interior'],
+                                    'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
+                                    'Estado_AutoPro' => $row['estado_autopro'],
+                                    'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
+                                    'Estado_Dealer' => $row['estado_dealer'],
+                                    'Bodega' => $row['bodega'],
+                                    'Equipamiento' => $row['equipamiento'],
+                                    'Numero_Motor' => $row['numero_motor'],
+                                    'Numero_Chasis' => $row['numero_chasis'],
+                                    'Proveedor' => $row['proveedor'],
+                                    'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
+                                    'Factura_Compra' => ($row['factura_compra'] != '') ? ($row['factura_compra'] ?? 0) : null,
+                                    'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
+                                    'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
+                                    'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
+                                    'N_Propietarios' => $row['n_propietarios'] ?? null,
+                                    'Folio_Retoma' => ($row['folio_retoma'] != '') ? $row['folio_retoma'] : null,
+                                    'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
+                                    'Dias_Reservado' => $row['dias_reservado'] ?? null,
+                                    'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
+                                    'Gasto' => $row['gasto'],
+                                    'Accesorios' => $row['accesorios'],
+                                    'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
+                                    'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
+                                    'Margen' => null,
 //                                'Margen' => ($row['margen'] != '') ? intval($row['margen']) : null,
 //            'Margen_porcentaje' => ($row['margen'] != '') ? $row['margen'] : null,
-                            ]);
+                                ]);
+                            }
+
+                            $numCell++;
+                        } catch (\Exception $e) {
+                            Log::error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
+
                         }
-
-                        $numCell++;
-                    } catch (\Exception $e) {
-                        Log::error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
-
                     }
                 }
 
@@ -656,7 +658,7 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename."__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);
@@ -720,7 +722,7 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename."__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);
@@ -783,7 +785,7 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename."__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);
@@ -797,6 +799,7 @@ class RobotApcController extends Controller
         }
 
     }
+
     public function traeRentabilidadVenta()
     {
         set_time_limit(0);
@@ -845,7 +848,7 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename."__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);

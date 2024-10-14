@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OC;
 
 use App\Filament\Resources\OC\OCPurchaseOrdersResource\Pages;
 use App\Filament\Resources\OC\OCPurchaseOrdersResource\RelationManagers;
+use App\Models\MA\MA_Sucursales;
 use App\Models\OC\OC_purchase_orders;
 use App\Models\OC\OCPurchaseOrders;
 use Filament\Forms;
@@ -67,48 +68,68 @@ class OCPurchaseOrdersResource extends Resource
                         ])->required(),
                 ])->columns(2),
 
-                Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make("Aprobadores Ordenes de Compra")
-                        ->schema([
-                            Forms\Components\Repeater::make('NivelesOrdenesCompra')
-                                ->relationship('approvals')
-                                ->label(false)
-                                ->schema([
-                                    Forms\Components\Select::make('level')
-                                        ->options([
-                                            1 => 'Nivel 1',
-                                            2 => 'Nivel 2',
-                                            3 => 'Nivel 3',
-                                            4 => 'Nivel 4',
-                                            5 => 'Nivel 5',
-                                        ])
-                                        ->label('Nivel'),
-                                    Forms\Components\Select::make('approver_id')
-                                        ->relationship('usuarios', 'Nombre')
-                                        ->label('Aprobador')
-                                        ->searchable(),
-                                    Forms\Components\ToggleButtons::make('state')
-                                        ->label('Estado')
-                                        ->options([
-                                            '1' => 'Pendiente',
-                                            '0' => 'Aprobado',
-                                        ])
-                                        ->colors([
-                                            '1' => 'warning',
-                                            '0' => 'success',
-                                        ])
-                                        ->icons([
-                                            '1' => 'heroicon-o-clock',
-                                            '0' => 'heroicon-o-check-circle',
-                                        ])
-                                        ->inline()
-                                        ->grouped()
-                                ])
-                                ->deletable(auth()->user()->isAdmin())
-                                ->addable(auth()->user()->isAdmin())
-                                ->columns(3),
-                        ]),
-                ])->columnSpan(2),
+
+                Forms\Components\Tabs::make()
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Articulos')
+                            ->schema([
+                                Forms\Components\Repeater::make('ArticulosOrdenCompra')
+                                    ->relationship('articulos')
+                                    ->label(false)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('ocCategory_id')->label('Categoria'),
+                                        Forms\Components\TextInput::make('ocSubCategory_id')->label('Sub Categoria'),
+                                        Forms\Components\TextInput::make('ocProduct_id')->label('Producto'),
+                                        Forms\Components\TextInput::make('ammount')->label('Monto'),
+                                        Forms\Components\TextInput::make('unitPrice')->label('Precio'),
+                                    ])
+                                    ->grid(3),
+
+                            ]),
+                        Forms\Components\Tabs\Tab::make('Aprobadores')
+                            ->schema([
+                                Forms\Components\Repeater::make('NivelesOrdenesCompra')
+                                    ->relationship('approvals')
+                                    ->label(false)
+                                    ->schema([
+                                        Forms\Components\Select::make('level')
+                                            ->options([
+                                                1 => 'Nivel 1',
+                                                2 => 'Nivel 2',
+                                                3 => 'Nivel 3',
+                                                4 => 'Nivel 4',
+                                                5 => 'Nivel 5',
+                                            ])
+                                            ->label('Nivel'),
+                                        Forms\Components\Select::make('approver_id')
+                                            ->relationship('usuarios', 'Nombre')
+                                            ->label('Aprobador')
+                                            ->searchable(),
+                                        Forms\Components\ToggleButtons::make('state')
+                                            ->label('Estado')
+                                            ->options([
+                                                '2' => 'Espera',
+                                                '1' => 'Pendiente',
+                                                '0' => 'Aprobado',
+                                            ])
+                                            ->colors([
+                                                '2' => 'info',
+                                                '1' => 'warning',
+                                                '0' => 'success',
+                                            ])
+                                            ->icons([
+                                                '2' => 'heroicon-o-bolt',
+                                                '1' => 'heroicon-o-clock',
+                                                '0' => 'heroicon-o-check-circle',
+                                            ])
+                                            ->inline()
+                                            ->grouped()
+                                    ])
+                                    ->deletable(auth()->user()->isAdmin())
+                                    ->addable(auth()->user()->isAdmin())
+                                    ->columns(3),
+                            ]),
+                    ])->columnSpanFull(),
             ]);
     }
 
@@ -121,13 +142,16 @@ class OCPurchaseOrdersResource extends Resource
                 Tables\Columns\TextColumn::make('gerencia.Gerencia'),
                 Tables\Columns\TextColumn::make('sucursal.Sucursal')
                     ->description(fn($record) => $record->tipoSucursal->TipoSucursal ?? ''),
-                Tables\Columns\TextColumn::make('comprador.Nombre'),
-                Tables\Columns\TextColumn::make('contacto.Nombre'),
+                Tables\Columns\TextColumn::make('comprador.Nombre')->searchable(),
+                Tables\Columns\TextColumn::make('contacto.Nombre')->searchable(),
                 Tables\Columns\ViewColumn::make('state')->view('components.state'),
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('branch_id')
+                    ->options(fn()=>MA_Sucursales::where('Activa',1 )->pluck('Sucursal','id'))
+                    ->searchable()
+                    ->label('Sucursal'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

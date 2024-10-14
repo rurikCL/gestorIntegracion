@@ -2,6 +2,7 @@
 
 namespace App\Models\OC;
 
+use App\Models\OC_DetalleOrdenCompra;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -70,5 +71,10 @@ class OC_purchase_orders extends Model
     public function approvals()
     {
         return $this->hasMany(OC_Approvals::class, 'ocOrderRequest_id', 'id');
+    }
+
+    public function articulos()
+    {
+        return $this->hasMany(OC_DetalleOrdenCompra::class, 'ocPurchaseOrder_id', 'id');
     }
 }

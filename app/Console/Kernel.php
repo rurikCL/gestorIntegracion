@@ -108,6 +108,7 @@ class Kernel extends ConsoleKernel
             $res = $flujoControl->sendOTsinchcape();
 
             $flujoControl->cargaIndicadoresUF();
+            $flujoControl->cargaIndicadoresDolar();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');
 

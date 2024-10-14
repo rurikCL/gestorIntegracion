@@ -1852,6 +1852,48 @@ class FlujoController extends Controller
         }
     }
 
+    public function cargaIndicadoresDolar()
+    {
+
+        $flujo = FLU_Flujos::where('Nombre', 'Datos CMF Indicadores')->first();
+
+        $solicitudCon = new ApiSolicitudController();
+        $req = new Request();
+        $req['referencia_id'] = $flujo->ID;
+        $req['api_id'] = 33;
+        $req['proveedor_id'] = 13;
+        $req['prioridad'] = 1;
+        $req['flujoID'] = $flujo->ID;
+        $req['OnDemand'] = true;
+        $req['data'] = [];
+        $resp = $solicitudCon->store($req);
+        $resp = $resp->getData();
+
+        $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+
+        $arrayData = json_decode($solicitud->Respuesta);
+
+        if ($arrayData) {
+            foreach ($arrayData->Dolares as $data) {
+                $fecha = $data->Fecha;
+                $valor = intval(str_replace(".","",$data->Valor));
+                $indicador = MA_IndicadorMonetario::updateOrCreate(
+                    [
+                        'FechaIndicador' => $fecha,
+                        'Tipo' => 'Dolar'],
+                    [
+                        'Monto' => $valor,
+                        'FechaIndicador' => $fecha,
+                        'Tipo' => 'Dolar',
+                        'Fuente' => 'CMF'
+                    ]
+                );
+
+
+            }
+        }
+    }
+
     public function cargaIndicadoresUTM()
     {
 

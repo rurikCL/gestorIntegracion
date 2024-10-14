@@ -27,9 +27,9 @@ class Rutas extends Model
         ['id' => 19, 'label' => 'Hubspot Actualiza Negocios', 'descripcion'=>'Flujo de Actualizacion de Negocios Hubspot', 'ruta'=>'/flujo/hubspot/actualizanegocios/', 'rutaNombre'=>'actualizaLeadHubspot'],
         ['id' => 20, 'label' => 'Indicador UF', 'descripcion'=>'Actualizacion de indicador UF', 'ruta'=>'/flujo/indicador/uf/', 'rutaNombre'=>'cargaIndicadoresUF'],
         ['id' => 21, 'label' => 'Indicador UTM', 'descripcion'=>'Actualizacion de indicador UTM', 'ruta'=>'/flujo/indicador/utm/', 'rutaNombre'=>'cargaIndicadoresUTM'],
-        ['id' => 22, 'label' => 'Email', 'descripcion'=>'Prueba de envio de Email', 'ruta'=>'/email/', 'rutaNombre'=>'sendEmail'],
-        ['id' => 23, 'label' => 'Hubspot Clientes Update', 'descripcion'=>'Actualizas los Datos de Clientes desde Hubspot', 'ruta'=>'/flujo/hubspot/revisanegocios/', 'rutaNombre'=>'revisaNegocios'],
-
+        ['id' => 22, 'label' => 'Indicador Dolar', 'descripcion'=>'Actualizacion de indicador Dolar', 'ruta'=>'/flujo/indicador/dolar/', 'rutaNombre'=>'cargaIndicadoresDolar'],
+        ['id' => 23, 'label' => 'Email', 'descripcion'=>'Prueba de envio de Email', 'ruta'=>'/email/', 'rutaNombre'=>'sendEmail'],
+        ['id' => 24, 'label' => 'Hubspot Clientes Update', 'descripcion'=>'Actualizas los Datos de Clientes desde Hubspot', 'ruta'=>'/flujo/hubspot/revisanegocios/', 'rutaNombre'=>'revisaNegocios'],
 
     ];
 }

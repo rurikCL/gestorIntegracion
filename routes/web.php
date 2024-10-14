@@ -51,6 +51,7 @@ Route::get('/flujo/hubspot/revisanegocios', [\App\Http\Controllers\Flujo\FlujoHu
 
 Route::get('/flujo/indicador/uf', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUF']);
 Route::get('/flujo/indicador/utm', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUTM']);
+Route::get('/flujo/indicador/dolar', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresDolar']);
 
 //Route::get('posts', [PostController::class, 'index']);
 Route::get('/email', [\App\Http\Controllers\EmailController::class, 'sendEmail']);

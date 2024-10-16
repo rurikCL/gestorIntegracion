@@ -13,6 +13,8 @@ class SP_oc_categories extends Model
     use HasFactory, hasSku;
 
     protected $table = 'SP_oc_categories';
+    protected $primaryKey = 'id';
+
     protected $fillable = ['name', 'sku', 'FechaCreacion', 'EventoCreacionID', 'UsuarioCreacionID', 'FechaActualizacion', 'EventoActualizacionID', 'UsuarioActualizacionID'];
 
     public function skuOptions(): SkuOptions

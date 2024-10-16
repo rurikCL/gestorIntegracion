@@ -77,14 +77,25 @@ class OCPurchaseOrdersResource extends Resource
                                     ->relationship('articulos')
                                     ->label(false)
                                     ->schema([
-                                        Forms\Components\TextInput::make('ocCategory_id')->label('Categoria'),
-                                        Forms\Components\TextInput::make('ocSubCategory_id')->label('Sub Categoria'),
-                                        Forms\Components\TextInput::make('ocProduct_id')->label('Producto'),
-                                        Forms\Components\TextInput::make('ammount')->label('Monto'),
+                                        Forms\Components\Select::make('ocCategory_id')
+                                            ->relationship('categoria', 'name')
+                                            ->columnSpan(3)
+                                            ->label('Categoria'),
+                                        Forms\Components\Select::make('ocSubCategory_id')
+                                            ->relationship('subcategoria', 'name')
+                                            ->columnSpan(3)
+                                            ->label('Sub Categoria'),
+                                        Forms\Components\Select::make('ocProduct_id')
+                                            ->relationship('producto', 'name')
+                                            ->columnSpan(3)
+                                            ->label('Producto'),
+                                        Forms\Components\TextInput::make('description')->label('Descripcion')
+                                            ->columnSpan(3),
+                                        Forms\Components\TextInput::make('amount')->label('Monto'),
                                         Forms\Components\TextInput::make('unitPrice')->label('Precio'),
-                                    ])
-                                    ->grid(3),
-
+                                        Forms\Components\TextInput::make('totalPrice')->label('Total'),
+                                    ])->columns(3)
+                                    ->grid(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Aprobadores')
                             ->schema([

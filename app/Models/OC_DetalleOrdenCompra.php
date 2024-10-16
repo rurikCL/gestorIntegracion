@@ -28,4 +28,14 @@ class OC_DetalleOrdenCompra extends Model
         'section_id',
     ];
 
+    public function categoria(){
+        return $this->hasOne('App\Models\SP\SP_oc_categories', 'ID', 'ocCategory_id');
+    }
+    public function subcategoria(){
+        return $this->hasOne('App\Models\SP\SP_oc_sub_categories', 'ID', 'ocSubCategory_id');
+    }
+    public function producto(){
+        return $this->hasOne('App\Models\SP\SP_oc_products', 'ID', 'ocProduct_id');
+    }
+
 }

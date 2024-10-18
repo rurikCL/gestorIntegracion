@@ -19,6 +19,10 @@ class SPProvidersResource extends Resource
     protected static ?string $model = SP_providers::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Ordenes de Compra';
+    protected static ?string $modelLabel = 'Proveedor';
+    protected static ?string $navigationLabel = 'Proveedores';
+    protected static ?string $pluralLabel = 'Proveedores';
 
     public static function form(Form $form): Form
     {

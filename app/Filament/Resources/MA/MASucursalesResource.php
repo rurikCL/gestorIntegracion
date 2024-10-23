@@ -8,6 +8,7 @@ use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MASucursales;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -55,71 +56,78 @@ class MASucursalesResource extends Resource
                 ])->inlineLabel(),
 
                 Forms\Components\Group::make()->schema([
-                    Forms\Components\Section::make("Aprobadores Caja Chica")->schema([
-                        Forms\Components\Repeater::make('Niveles')
-                            ->relationship('aprobadores')
-                            ->label(false)
-                            ->schema([
-                                Forms\Components\Select::make('level')
-                                    ->options([
-                                        1 => 'Nivel 1',
-                                        2 => 'Nivel 2',
-                                        3 => 'Nivel 3',
-                                        4 => 'Nivel 4',
-                                        5 => 'Nivel 5',
-                                        6 => 'Nivel 6',
-                                        7 => 'Nivel 7',
-                                        8 => 'Nivel 8',
-                                        9 => 'Nivel 9',
-                                        10 => 'Nivel 10',
-                                    ]),
-                                Forms\Components\Select::make('user_id')
-                                    ->relationship('usuarios', 'Nombre')
-                                    ->searchable(),
+                    Forms\Components\Tabs::make()
+                        ->tabs([
+                            Forms\Components\Tabs\Tab::make("Aprobadores Ordenes de Compra")
+                                ->schema([
+                                    Forms\Components\Repeater::make('NivelesOrdenesCompra')
+                                        ->relationship('aprobadoresordenes')
+                                        ->label(false)
+                                        ->schema([
+                                            Forms\Components\Select::make('level')
+                                                ->options([
+                                                    1 => 'Nivel 1',
+                                                    2 => 'Nivel 2',
+                                                    3 => 'Nivel 3',
+                                                    4 => 'Nivel 4',
+                                                    5 => 'Nivel 5',
+                                                ])
+                                                ->label('Nivel'),
+                                            Forms\Components\Select::make('user_id')
+                                                ->relationship('usuarios', 'Nombre')
+                                                ->searchable()
+                                                ->label('Aprobador')
+                                        ])
+                                        ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                            $data['branchOffice_id'] = $get('ID');
+                                            $data['min'] = 2 * ($data['level'] - 1);
+                                            $data['max'] = 2 * ($data['level'] - 1) + 1;
+
+                                            return $data;
+                                        })
+//                            ->maxItems(10)
+                                        ->columns(2),
+                                ]),
+
+                            Forms\Components\Tabs\Tab::make('Aprobadores Caja Chica')
+                                ->schema([
+                                    Forms\Components\Repeater::make('Niveles')
+                                        ->relationship('aprobadores')
+                                        ->label(false)
+                                        ->schema([
+                                            Forms\Components\Select::make('level')
+                                                ->options([
+                                                    1 => 'Nivel 1',
+                                                    2 => 'Nivel 2',
+                                                    3 => 'Nivel 3',
+                                                    4 => 'Nivel 4',
+                                                    5 => 'Nivel 5',
+                                                    6 => 'Nivel 6',
+                                                    7 => 'Nivel 7',
+                                                    8 => 'Nivel 8',
+                                                    9 => 'Nivel 9',
+                                                    10 => 'Nivel 10',
+                                                ]),
+                                            Forms\Components\Select::make('user_id')
+                                                ->relationship('usuarios', 'Nombre')
+                                                ->searchable(),
 //                                Forms\Components\TextInput::make('min'),
 //                                Forms\Components\TextInput::make('max'),
-                            ])
-                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
-                                $data['branch_office_id'] = $get('ID');
-                                $data['min'] = 2 * ($data['level'] - 1);
-                                $data['max'] = 2 * ($data['level'] - 1) + 1;
-
-                                return $data;
-                            })
-                            ->maxItems(10)
-//                            ->cloneable()
-                            ->columns(2),
-                    ]),
-                    Forms\Components\Section::make("Aprobadores Ordenes de Compra")
-                        ->schema([
-                            Forms\Components\Repeater::make('NivelesOrdenesCompra')
-                                ->relationship('aprobadoresordenes')
-                                ->label(false)
-                                ->schema([
-                                    Forms\Components\Select::make('level')
-                                        ->options([
-                                            1 => 'Nivel 1',
-                                            2 => 'Nivel 2',
-                                            3 => 'Nivel 3',
-                                            4 => 'Nivel 4',
-                                            5 => 'Nivel 5',
                                         ])
-                                        ->label('Nivel'),
-                                    Forms\Components\Select::make('user_id')
-                                        ->relationship('usuarios', 'Nombre')
-                                        ->searchable()
-                                        ->label('Aprobador')
-                                ])
-                                ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
-                                    $data['branchOffice_id'] = $get('ID');
-                                    $data['min'] = 2 * ($data['level'] - 1);
-                                    $data['max'] = 2 * ($data['level'] - 1) + 1;
+                                        ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                            $data['branch_office_id'] = $get('ID');
+                                            $data['min'] = 2 * ($data['level'] - 1);
+                                            $data['max'] = 2 * ($data['level'] - 1) + 1;
 
-                                    return $data;
-                                })
-//                            ->maxItems(10)
-                                ->columns(2),
+                                            return $data;
+                                        })
+                                        ->maxItems(10)
+//                            ->cloneable()
+                                        ->columns(2),
+                                ]),
+
                         ]),
+
                 ])->columnSpan(3),
             ])->columns(3);
 

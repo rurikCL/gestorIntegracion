@@ -50,7 +50,7 @@ class RobotApcController extends Controller
 
     public function setCookie()
     {
-        Log::info("definiendo cookie");
+        Log::channel('robots')->info("definiendo cookie");
         $this->cookie = "cookiefileJar.txt";
 
         // si no existe el archivo, se crea
@@ -110,13 +110,13 @@ class RobotApcController extends Controller
         ini_set('memory_limit', '1024M');
 
         echo "Inicio de proceso";
-        Log::info('Inicio de proceso stock APC');
+        Log::channel('robots')->info('Inicio de proceso stock APC');
 
         $this->setCookie();
 
         // Login
         $viewstate = $this->login(2);
-        if ($viewstate) Log::info('Login OK');
+        if ($viewstate) Log::channel('robots')->info('Login OK');
 
         $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
 
@@ -145,7 +145,7 @@ class RobotApcController extends Controller
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
 
-        Log::info("Primer llamado OK. Iniciando descarga de informe");
+        Log::channel('robots')->info("Primer llamado OK. Iniciando descarga de informe");
 
         $options['form_params'] = json_decode($filedata, true);
         $options['cookies'] = $this->cookieJar;
@@ -154,20 +154,20 @@ class RobotApcController extends Controller
 //        print_r($options);
 
         if (file_exists(storage_path('/app/public/' . $filename))) {
-            Log::info('Archivo existente');
+            Log::channel('robots')->info('Archivo existente');
             echo "Archivo existente" . PHP_EOL;
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
 //            $res = $this->client->send($request, $options);
-            Log::info('Archivo descargado');
+            Log::channel('robots')->info('Archivo descargado');
             echo "Archivo descargado" . PHP_EOL;
         }
 
 //        if ($res) {
         echo "Informe descargado, procesando... ";
-        Log::info('Procesando Informe');
+        Log::channel('robots')->info('Procesando Informe');
 
         $filedata = Storage::read('/public/' . $filename);
         if ($filedata) {
@@ -243,12 +243,12 @@ class RobotApcController extends Controller
                             'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
 //            'Margen_porcentaje' => $row[46],
                         ]);
-//                            Log::info("Procesando " . $row['numero_vin']);
+//                            Log::channel('robots')->info("Procesando " . $row['numero_vin']);
                     }
 
                     $numCell++;
                 } catch (\Exception $e) {
-                    Log::error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
+                    Log::channel('robots')->error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
 
                 }
             }
@@ -268,13 +268,13 @@ class RobotApcController extends Controller
         error_reporting(E_ALL);
 
         echo "Inicio de proceso";
-        Log::info('Inicio de proceso stock APC');
+        Log::channel('robots')->info('Inicio de proceso stock APC');
 
         $this->setCookie();
 
         // Login
         $viewstate = $this->login(2);
-        if ($viewstate) Log::info('Login OK');
+        if ($viewstate) Log::channel('robots')->info('Login OK');
 
         $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
 
@@ -304,7 +304,7 @@ class RobotApcController extends Controller
 //        TDP_ApcStock::truncate();
 
         foreach ($periodos as $periodo) {
-            Log::info("Procesando periodo $periodo");
+            Log::channel('robots')->info("Procesando periodo $periodo");
 
             // nombre de informe descargado
             $archivo = "informeStock" . $periodo . ".xml";
@@ -327,11 +327,11 @@ class RobotApcController extends Controller
             $request = new Request('POST', $url, $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
 
-            Log::info('Archivo descargado');
+            Log::channel('robots')->info('Archivo descargado');
             echo "Archivo descargado, procesando $periodo..." . PHP_EOL;
 
 
-            Log::info("Procesando /public/$archivo ");
+            Log::channel('robots')->info("Procesando /public/$archivo ");
             $filedata = Storage::read('/public/' . $archivo);
 
             if ($filedata) {
@@ -345,8 +345,8 @@ class RobotApcController extends Controller
                 try {
                     $xml = XmlReader::fromFile(storage_path('/app/public/' . $archivo));
                 } catch (XmlReaderException $e) {
-                    Log::info($e->getMessage());
-                    Log::error("No se pudo cargar el archivo XML");
+                    Log::channel('robots')->info($e->getMessage());
+                    Log::channel('robots')->error("No se pudo cargar el archivo XML");
                     $xml = null;
                 }
                 $numCell = 0;
@@ -426,12 +426,12 @@ class RobotApcController extends Controller
                                 ]);
                             } else {
                                 if($numCell == 0)
-                                    Log::info("Xml valido - cabeceras procesadas");
+                                    Log::channel('robots')->info("Xml valido - cabeceras procesadas");
                             }
 
                             $numCell++;
                         } catch (\Exception $e) {
-                            Log::error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
+                            Log::channel('robots')->error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
 
                         }
                     }
@@ -439,11 +439,11 @@ class RobotApcController extends Controller
 
             }
             unlink(storage_path('/app/public/' . $archivo));
-            Log::info("Informe procesado");
+            Log::channel('robots')->info("Informe procesado");
             echo " Informe procesado";
         }
 
-        Log::info("Fin de proceso Stock");
+        Log::channel('robots')->info("Fin de proceso Stock");
 
     }
 

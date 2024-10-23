@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use Saloon\XmlWrangler\Exceptions\XmlReaderException;
 use Saloon\XmlWrangler\XmlReader;
 
 
@@ -261,7 +262,10 @@ class RobotApcController extends Controller
     public function traeStockAnual()
     {
         set_time_limit(0);
-        ini_set('memory_limit', '1024M');
+        ini_set('memory_limit', '2048M');
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
 
         echo "Inicio de proceso";
         Log::info('Inicio de proceso stock APC');
@@ -290,7 +294,7 @@ class RobotApcController extends Controller
         ];
 
         $periodos = [
-            2020,
+//            2020,
             2021,
             2022,
             2023,
@@ -322,7 +326,6 @@ class RobotApcController extends Controller
 
             $request = new Request('POST', $url, $headers);
             $res = $this->client->sendAsync($request, $options)->wait();
-//            $res = $this->client->send($request, $options);
 
             Log::info('Archivo descargado');
             echo "Archivo descargado, procesando $periodo..." . PHP_EOL;
@@ -332,12 +335,26 @@ class RobotApcController extends Controller
             $filedata = Storage::read('/public/' . $archivo);
 
             if ($filedata) {
-                $xml = XmlReader::fromString(Storage::read('/public/' . $archivo));
+//                $xml = XmlReader::fromString(Storage::read('/public/' . $archivo));
+                /*$xml = simplexml_load_string(Storage::read('/public/' . $archivo));
+
+                foreach($xml->children() as $child) {
+                    echo $child;
+                }*/
+
+                try {
+                    $xml = XmlReader::fromFile(storage_path('/app/public/' . $archivo));
+                } catch (XmlReaderException $e) {
+                    Log::info($e->getMessage());
+                    Log::error("No se pudo cargar el archivo XML");
+                    $xml = null;
+                }
                 $numCell = 0;
                 $numCol = 0;
 
                 if ($xml) {
                     foreach ($xml->value('s:Row')->get() as $cell) {
+
                         try {
 
                             $numCol = 0;
@@ -407,6 +424,9 @@ class RobotApcController extends Controller
 //                                'Margen' => ($row['margen'] != '') ? intval($row['margen']) : null,
 //            'Margen_porcentaje' => ($row['margen'] != '') ? $row['margen'] : null,
                                 ]);
+                            } else {
+                                if($numCell == 0)
+                                    Log::info("Xml valido - cabeceras procesadas");
                             }
 
                             $numCell++;

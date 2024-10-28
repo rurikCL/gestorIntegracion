@@ -12,9 +12,13 @@ use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
 use HubSpot\Client\Crm\Contacts\ApiException;
 use HubSpot\Client\Crm\Contacts\Model\Filter;
+use HubSpot\Client\Crm\Deals\Model\AssociationSpec;
 use HubSpot\Client\Crm\Deals\Model\Filter as FilterDeal;
 use HubSpot\Client\Crm\Deals\Model\FilterGroup;
+use HubSpot\Client\Crm\Deals\Model\PublicAssociationsForObject;
+use HubSpot\Client\Crm\Deals\Model\PublicObjectId;
 use HubSpot\Client\Crm\Deals\Model\PublicObjectSearchRequest;
+use HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInputForCreate;
 use HubSpot\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -704,24 +708,39 @@ class FlujoHubspotController extends Controller
     {
 
         $leads = MK_Leads::where('IDHubspot', '0')
-            ->where('FechaCreacion', '>', '2024-10-27 00:00:00')
+            ->where('FechaCreacion', '>', '2023-10-27 00:00:00')
             ->limit(1)
             ->get();
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujo->Opciones);
         $client = Factory::createWithAccessToken($token->token);
+        $h = new FLU_Homologacion();
 
         foreach ($leads as $lead) {
+//            $email = $lead->cliente->Email;
+            $email = 'rurik.neologik@gmail.com';
+            $nombre = $lead->cliente->Nombre;
+            $apellido = $lead->cliente->Apellido;
+            $telefono = $lead->cliente->Telefono;
+            $rut = $lead->cliente->Rut;
+            $dv = substr($rut, -1);
+            $rut = substr($rut, 0, length($rut) - 1);
+            $rutFormateado = number_format($rut, 0, ',', '.') . "-" . $dv;
+            $idContacto = 0;
+
             print_r("revisando lead : " . $lead->ID . "<br>");
-            print_r("revisando cliente :" . $lead->cliente->Email . "<br>");
+            print_r("revisando cliente : ".$lead->cliente->Rut." ($rutFormateado) | " . $email . "<br>");
+
+
+            // Creacion del CLIENTE (CONTACT)  -------------------------------------------
 
             // Busca cliente por email
             $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
             $filter->setOperator('EQ')
                 ->setPropertyName('email')
 //                ->setValue($lead->cliente->Email);
-                ->setValue('rurik.neologik@gmail.com');
+                ->setValue($email);
 
             $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
             $filterGroup->setFilters([$filter]);
@@ -732,27 +751,87 @@ class FlujoHubspotController extends Controller
             $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email']);
 
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-            $idContacto = 0;
             if (count($contacto) > 0) {
                 foreach ($contacto as $item) {
                     $data = $item->jsonSerialize();
-                    print_r($data);
                     $idContacto = $data->properties["hs_object_id"];
+                    print_r("contacto encontrado : " .$data->id);
+
                 }
 
             } else {
                 try {
                     $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
                     $contactInput->setProperties([
-                        'email' => $lead->cliente->Email
+                        'email' => $email,
+                        'firstname' => $nombre,
+                        'lastname' => $apellido,
+                        'phone' => $telefono,
+                        'rut' => $rutFormateado
                     ]);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
-                    print_r($contact);
+//                    print_r($contact);
+                    $idContacto = $contact->getId();
+                    print_r("Contacto creado : " .$idContacto);
 
                 } catch (\Exception $e) {
                     echo $e->getMessage();
                 }
 
+            }
+
+
+            // Creacion del NEGOCIO (DEAL)  -------------------------------------------
+
+            $estadoHomologado = $h->getDato($lead->estadoLead->Estado, $flujo->ID, 'estado', false);
+
+            $associationSpec1 = new AssociationSpec([
+                'association_category' => 'HUBSPOT_DEFINED',
+                'association_type_id' => 3
+            ]);
+            $to1 = new PublicObjectId([
+                'id' => $idContacto
+            ]);
+            $publicAssociationsForObject1 = new PublicAssociationsForObject([
+                'types' => [$associationSpec1],
+                'to' => $to1
+            ]);
+            $properties1 = [
+                'idpompeyo' => $lead->ID,
+                'record_id___contacto' => $idContacto,
+                'email' => $email,
+                'phone' => $telefono,
+                'rut' => $rutFormateado,
+                'firstname' => $nombre,
+                'lastname' => $apellido,
+                'dealname' => $nombre.' '.$apellido,
+                'idvendedor' => $lead->VendedorID,
+                'nombrevendedor' => $lead->vendedor->Nombre,
+                'sucursal' => $lead->sucursal->Sucursal,
+                'origen' => $lead->origen->Origen,
+//                'modelo' => $lead->modelo->Modelo,
+//                'marca' => $lead->modelo->marca->Marca,
+//                'dealstage' => $estadoHomologado
+
+            ];
+
+//            ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor']
+            $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
+                'associations' => [$publicAssociationsForObject1],
+                'object_write_trace_id' => 'string',
+                'properties' => $properties1,
+            ]);
+
+            try {
+                $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
+                $idNegocio = $apiResponse->getId();
+                print_r("<br>Negocio Creado : " . $idNegocio);
+
+                $lead->IDHubspot = $idNegocio;
+                $lead->save();
+
+            } catch (ApiException $e) {
+                echo "Exception when calling basic_api->create: ", $e->getMessage();
             }
         }
     }

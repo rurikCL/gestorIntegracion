@@ -5,6 +5,7 @@ namespace App\Models\MK;
 use App\Models\Api\API_LogSolicitud;
 use App\Models\Api\ApiSolicitudes;
 use App\Models\FLU\FLU_Notificaciones;
+use App\Models\MA\MA_Canales;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_LeadsEstados;
 use App\Models\MA\MA_Marcas;
@@ -152,6 +153,10 @@ class MK_Leads extends Model
         return $this->belongsTo(MA_SubOrigenes::class, 'SubOrigenID', 'ID');
     }
 
+    public function canal()
+    {
+        return $this->hasOne(MA_Canales::class, 'ID', 'CanalID');
+    }
     public function sucursal()
     {
         return $this->hasOne(MA_Sucursales::class, 'ID', 'SucursalID');

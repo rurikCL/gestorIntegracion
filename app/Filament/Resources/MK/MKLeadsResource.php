@@ -6,6 +6,7 @@ use App\Filament\Resources\MK\MKLeadsResource\Pages;
 use App\Filament\Resources\MK\MKLeadsResource\RelationManagers;
 use App\Http\Controllers\Api\ApiSolicitudController;
 use App\Http\Controllers\Api\LeadController;
+use App\Models\MA\MA_Canales;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Gerencias;
 use App\Models\MA\MA_Marcas;
@@ -62,6 +63,9 @@ class MKLeadsResource extends Resource
                         })
 //                        ->relationship('suborigen2', 'SubOrigen')
                         ->label('Sub Origen'),
+                    Forms\Components\Select::make('CanalID')
+                        ->options(MA_Canales::all()->pluck('Canal', 'ID')->toArray())
+                        ->label('Canal'),
                     Forms\Components\MarkdownEditor::make('Comentario')
                         ->columnSpanFull(),
                     Forms\Components\TextInput::make('LinkInteres')

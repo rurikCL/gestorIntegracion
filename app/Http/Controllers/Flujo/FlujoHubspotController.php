@@ -740,8 +740,7 @@ class FlujoHubspotController extends Controller
 
             if(!count($contacto))
             {
-                $data = $contacto->jsonSerialize();
-                print_r($data);
+                print_r($contacto);
 
             } else {
                 try{

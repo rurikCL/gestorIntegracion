@@ -47,6 +47,7 @@ Route::get('/flujo/hubspot/contactos', [\App\Http\Controllers\Flujo\FlujoControl
 Route::get('/flujo/hubspot/negocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'leadsHubspotDeals']);
 Route::get('/flujo/hubspot/actualizanegocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'actualizaLeadHubspot']);
 Route::get('/flujo/hubspot/revisanegocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'revisaLeadsHubspot']);
+Route::get('/flujo/hubspot/sincroniza', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'sincronizaLeads']);
 
 
 Route::get('/flujo/indicador/uf', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUF']);

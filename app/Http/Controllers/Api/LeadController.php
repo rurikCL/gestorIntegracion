@@ -359,6 +359,7 @@ class LeadController extends Controller
             $origenID = $request->input('data.lead.origenID') ?? 3;
             $subOrigenID = $request->input('data.lead.subOrigenID') ?? 1;
             $idFlujo = $request->input('data.lead.idFlujo') ?? 0;
+            $fuente = $request->input('data.fuente') ?? 1;
 
             $financiamiento = $request->input('data.lead.financiamiento') ?? 2;
             if ($financiamiento == 'SI') {
@@ -607,7 +608,7 @@ class LeadController extends Controller
             $lead->UsuarioCreacionID = $usuarioID;
             $lead->OrigenID = $origenID;
             $lead->SubOrigenID = $subOrigenID;
-//            $lead->ClienteID = 1;
+            $lead->IntegracionID = $fuente;
 
             $lead->ClienteID = $cliente->ID ?? 1;
             $lead->Rut = $rut ?? '';
@@ -626,7 +627,8 @@ class LeadController extends Controller
             $lead->VendedorID = $vendedorID > 0 ? $vendedorID : $usuarioID;
             $lead->MarcaID = $marcaID ?? 1;
             $lead->ModeloID = $modeloID ?? 1;
-            $lead->IDExterno = $request->input('data.lead.externalID') ?? null;
+            $lead->IDExterno = ($fuente == 1) ? ($request->input('data.lead.externalID') ?? null) : null;
+            $lead->IDHubspot = ($fuente == 2) ? $request->input('data.lead.externalID') : 0;  // si la fuente es hubspot, guardamos ID
             $lead->Comentario = $comentario ?? null;
             $lead->Financiamiento = $financiamiento;
             $lead->LinkInteres = $linkInteres;
@@ -809,11 +811,6 @@ class LeadController extends Controller
 
 
         return true;
-    }
-
-    public function crearAgenda($fechaAgenda, $tipoAgenda)
-    {
-        // Crear agenda
     }
 
 }

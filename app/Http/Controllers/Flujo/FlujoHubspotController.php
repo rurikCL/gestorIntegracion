@@ -96,6 +96,8 @@ class FlujoHubspotController extends Controller
                             'nombrevendedor' => $lead->vendedor->Nombre,
                         ]);
                         $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+                        $lead->IntegracionID = 2; // Hubspot
+                        $lead->save();
 
                     } else {
                         print("Lead no encontrado <br>");
@@ -212,6 +214,7 @@ class FlujoHubspotController extends Controller
                             "apellido" => $apellido,
                             "email" => $email,
                             "telefono" => $telefono,
+                            "fuente" => 2, // hubspot
                             "lead" => [
                                 "idFlujo" => $flujo->ID,
                                 "origenID" => $origen,
@@ -469,6 +472,7 @@ class FlujoHubspotController extends Controller
                         $telefono = $data->properties['phone'] ?? '';
                         $origenProp = $data->properties['origen'] ?? '';
                         $idExterno = $data->id ?? '';
+                        $comentario = '';
 
                         $vpp = $data->properties['vpp'] ?? 0;
                         if ($vpp === 'SI') {
@@ -593,7 +597,7 @@ class FlujoHubspotController extends Controller
     public function revisaLeadsHubspot()
     {
 
-        $leads = MK_Leads::where('IDExterno', '<>', '')
+        $leads = MK_Leads::where('IDHubspot', '<>', '0')
             ->where('FechaCreacion', '>=', '2024-07-15 00:00:00')
 //            ->where('ClienteID', 298)
             ->get();
@@ -694,5 +698,57 @@ class FlujoHubspotController extends Controller
         }
 
 
+    }
+
+    public function sincronizaLeads()
+    {
+
+        $leads = MK_Leads::where('IDHubspot', '0')
+        ->where('FechaCreacion', '>', '2023-10-27 00:00:00')
+            ->limit(100)
+        ->get();
+
+        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+        $token = json_decode($flujo->Opciones);
+        $client = Factory::createWithAccessToken($token->token);
+
+        foreach ($leads as $lead) {
+            print_r("revisando lead : " . $lead->ID . "<br>");
+            // Busca cliente por rut
+
+            $filter = $filter2 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+            $filter->setOperator('EQ')
+                ->setPropertyName('email')
+                ->setValue($lead->cliente->Email);
+
+            $filter2->setOperator('EQ')
+                ->setPropertyName('rut')
+                ->setValue($lead->cliente->Rut);
+
+            $filterGroup = $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+            $filterGroup->setFilters([$filter]);
+            $filterGroup2->setFilters([$filter2]);
+
+            $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
+            $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
+
+// Get specific properties
+//            $searchRequest->setProperties(['recordId','firstname', 'lastname', 'email']);
+
+            var_dump($searchRequest);
+// @var CollectionResponseWithTotalSimplePublicObject $contactsPage
+            $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest);
+
+            if($contacto->getResults())
+            {
+                $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
+                $contactInput->setProperties([
+                    'email' => $lead->cliente->Email
+                ]);
+                $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+                var_dump($contact);
+            }
+            var_dump($contacto);
+        }
     }
 }

@@ -149,8 +149,10 @@ class OCPurchaseOrdersResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\ViewColumn::make('state')
-                    ->view('components.state'),
+//                Tables\Columns\ViewColumn::make('state')
+//                    ->view('components.state'),
+                Tables\Columns\ToggleColumn::make('state')
+                    ,
                 Tables\Columns\TextColumn::make('empresa.Empresa'),
                 Tables\Columns\TextColumn::make('gerencia.Gerencia'),
                 Tables\Columns\TextColumn::make('sucursal.Sucursal')

@@ -743,7 +743,9 @@ class FlujoHubspotController extends Controller
                     $contactInput->setProperties([
                         'email' => $lead->cliente->Email
                     ]);
-//                    $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+                    $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+                    print_r($contact);
+
                 }catch (\Exception $e){
                     echo $e->getMessage();
                 }

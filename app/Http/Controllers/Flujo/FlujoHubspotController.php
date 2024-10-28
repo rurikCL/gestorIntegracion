@@ -705,7 +705,7 @@ class FlujoHubspotController extends Controller
 
         $leads = MK_Leads::where('IDHubspot', '0')
             ->where('FechaCreacion', '>', '2024-10-27 00:00:00')
-            ->limit(3)
+            ->limit(1)
             ->get();
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
@@ -720,7 +720,8 @@ class FlujoHubspotController extends Controller
             $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
             $filter->setOperator('EQ')
                 ->setPropertyName('email')
-                ->setValue($lead->cliente->Email);
+//                ->setValue($lead->cliente->Email);
+                ->setValue('rurik.neologik@gmail.com');
 
             $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
             $filterGroup->setFilters([$filter]);
@@ -731,10 +732,12 @@ class FlujoHubspotController extends Controller
             $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email']);
 
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
+            $idContacto = 0;
             if (count($contacto) > 0) {
                 foreach ($contacto as $item) {
                     $data = $item->jsonSerialize();
                     print_r($data);
+                    $idContacto = $data->properties["hs_object_id"];
                 }
 
             } else {

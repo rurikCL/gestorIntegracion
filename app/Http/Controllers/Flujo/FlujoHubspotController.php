@@ -163,7 +163,7 @@ class FlujoHubspotController extends Controller
 
                         // REGLAS DE LEAD
                         $reglaSucursal = $data->properties['reglasucursal'] ?? 1;
-                        if($idVendedor > 1){
+                        if ($idVendedor > 1) {
                             $reglaVendedor = 0;
                         } else {
                             $reglaVendedor = $data->properties['reglavendedor'] ?? 1;
@@ -387,7 +387,7 @@ class FlujoHubspotController extends Controller
 
                             $lead->LogEstado = 0;
                             $lead->save();
-                            Log::info("Estado Lead ".$lead->ID . " actualizado : ". $estadoHomologado);
+                            Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado);
 
                         } catch (\Exception $e) {
                             Log::error("Error al actualizar deal hubspot " . $lead->IDExterno);
@@ -606,9 +606,9 @@ class FlujoHubspotController extends Controller
         $client = Factory::createWithAccessToken($token->token);
 
         foreach ($leads as $lead) {
-            print_r("revisando lead : " . $lead->ID. " (".$lead->IDExterno . ")<br>");
+            print_r("revisando lead : " . $lead->ID . " (" . $lead->IDExterno . ")<br>");
 
-            if(length($lead->IDExterno) == 11) {
+            if (length($lead->IDExterno) == 11) {
                 try {
                     $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
 
@@ -634,25 +634,25 @@ class FlujoHubspotController extends Controller
                             if ($cliente) {
                                 Log::info("Cliente encontrado : " . $rut);
                                 $idCliente = $cliente->ID;
-                                LOG::info("Cliente encontrado: " . $cliente->Nombre. " id: ".$cliente->ID);
+                                LOG::info("Cliente encontrado: " . $cliente->Nombre . " id: " . $cliente->ID);
 
-                                if($rut != $cliente->Rut) {
+                                if ($rut != $cliente->Rut) {
                                     $cliente->Rut = $rut;
-                                    LOG::info("Rut actualizado :" . $rut );
+                                    LOG::info("Rut actualizado :" . $rut);
                                 }
-                                if($nombre != $cliente->Nombre) {
+                                if ($nombre != $cliente->Nombre) {
                                     $cliente->Nombre = $nombre;
-                                    LOG::info("Nombre actualizado :" . $nombre );
+                                    LOG::info("Nombre actualizado :" . $nombre);
                                 }
-                                if($apellido != $cliente->Apellido) {
+                                if ($apellido != $cliente->Apellido) {
                                     $cliente->Apellido = $apellido;
-                                    LOG::info("Apellido actualizado :" . $apellido );
+                                    LOG::info("Apellido actualizado :" . $apellido);
                                 }
-                                if($email != '' && $email != $cliente->Email) {
+                                if ($email != '' && $email != $cliente->Email) {
                                     $cliente->Email = $email;
                                     LOG::info("Email actualizado :" . $email);
                                 }
-                                if($telefono != '' && $telefono != $cliente->Telefono) {
+                                if ($telefono != '' && $telefono != $cliente->Telefono) {
                                     $cliente->Telefono = $telefono;
                                     LOG::info("Telefono actualizado :" . $telefono);
                                 }
@@ -704,9 +704,9 @@ class FlujoHubspotController extends Controller
     {
 
         $leads = MK_Leads::where('IDHubspot', '0')
-        ->where('FechaCreacion', '>', '2024-10-27 00:00:00')
+            ->where('FechaCreacion', '>', '2024-10-27 00:00:00')
             ->limit(3)
-        ->get();
+            ->get();
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujo->Opciones);
@@ -714,8 +714,9 @@ class FlujoHubspotController extends Controller
 
         foreach ($leads as $lead) {
             print_r("revisando lead : " . $lead->ID . "<br>");
-            // Busca cliente por rut
+            print_r("revisando cliente :" . $lead->cliente->Email . "<br>");
 
+            // Busca cliente por email
             $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
             $filter->setOperator('EQ')
                 ->setPropertyName('email')
@@ -727,18 +728,17 @@ class FlujoHubspotController extends Controller
             $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
             $searchRequest->setFilterGroups([$filterGroup]);
 
-// Get specific properties
-            $searchRequest->setProperties(['hs_object_id','firstname', 'lastname', 'email']);
+            $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email']);
 
-// @var CollectionResponseWithTotalSimplePublicObject $contactsPage
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-
-            if(count($contacto) > 0)
-            {
-                print_r($contacto);
+            if (count($contacto) > 0) {
+                foreach ($contacto as $item) {
+                    $data = $item->jsonSerialize();
+                    print_r($data);
+                }
 
             } else {
-                try{
+                try {
                     $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
                     $contactInput->setProperties([
                         'email' => $lead->cliente->Email
@@ -746,7 +746,7 @@ class FlujoHubspotController extends Controller
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                     print_r($contact);
 
-                }catch (\Exception $e){
+                } catch (\Exception $e) {
                     echo $e->getMessage();
                 }
 

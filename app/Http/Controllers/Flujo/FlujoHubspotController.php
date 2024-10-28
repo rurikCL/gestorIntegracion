@@ -735,7 +735,6 @@ class FlujoHubspotController extends Controller
 // Get specific properties
             $searchRequest->setProperties(['id','firstname', 'lastname', 'email']);
 
-            var_dump($searchRequest);
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
@@ -750,7 +749,7 @@ class FlujoHubspotController extends Controller
                     $contactInput->setProperties([
                         'email' => $lead->cliente->Email
                     ]);
-                    $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+//                    $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                 }catch (\Exception $e){
                     echo $e->getMessage();
                 }

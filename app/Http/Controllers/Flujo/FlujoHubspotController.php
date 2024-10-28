@@ -738,6 +738,7 @@ class FlujoHubspotController extends Controller
             var_dump($searchRequest);
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
+            var_dump($contacto);
 
             if(count($contacto))
             {

@@ -738,7 +738,7 @@ class FlujoHubspotController extends Controller
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
-            if(count($contacto))
+            if(!count($contacto))
             {
                 $data = $contacto->jsonSerialize();
                 print_r($data);

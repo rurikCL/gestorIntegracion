@@ -728,12 +728,12 @@ class FlujoHubspotController extends Controller
             $searchRequest->setFilterGroups([$filterGroup]);
 
 // Get specific properties
-            $searchRequest->setProperties(['id','firstname', 'lastname', 'email']);
+            $searchRequest->setProperties(['hs_object_id','firstname', 'lastname', 'email']);
 
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
-            if(!count($contacto))
+            if(count($contacto) > 0)
             {
                 print_r($contacto);
 

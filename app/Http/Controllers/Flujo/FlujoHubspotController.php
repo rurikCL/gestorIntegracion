@@ -738,12 +738,11 @@ class FlujoHubspotController extends Controller
             var_dump($searchRequest);
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-            var_dump($contacto);
 
             if(count($contacto))
             {
                 $data = $contacto->jsonSerialize();
-                var_dump($data);
+                print_r($data);
 
             } else {
                 try{
@@ -752,7 +751,6 @@ class FlujoHubspotController extends Controller
                         'email' => $lead->cliente->Email
                     ]);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
-                    var_dump($contact);
                 }catch (\Exception $e){
                     echo $e->getMessage();
                 }

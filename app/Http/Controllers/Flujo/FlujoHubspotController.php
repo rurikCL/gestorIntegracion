@@ -733,7 +733,7 @@ class FlujoHubspotController extends Controller
             $searchRequest->setFilterGroups([$filterGroup]);
 
 // Get specific properties
-//            $searchRequest->setProperties(['recordId','firstname', 'lastname', 'email']);
+            $searchRequest->setProperties(['id','firstname', 'lastname', 'email']);
 
             var_dump($searchRequest);
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage

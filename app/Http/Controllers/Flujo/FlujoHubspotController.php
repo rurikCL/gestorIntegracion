@@ -737,12 +737,12 @@ class FlujoHubspotController extends Controller
 
             var_dump($searchRequest);
 // @var CollectionResponseWithTotalSimplePublicObject $contactsPage
-            $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest);
+            $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
-            if($contacto->getResults())
+            if(count($contacto))
             {
-                var_dump($contacto);
-
+                $data = $contacto->jsonSerialize();
+                var_dump($data);
 
             } else {
                 $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();

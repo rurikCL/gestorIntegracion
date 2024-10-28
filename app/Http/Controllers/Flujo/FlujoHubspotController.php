@@ -704,8 +704,8 @@ class FlujoHubspotController extends Controller
     {
 
         $leads = MK_Leads::where('IDHubspot', '0')
-        ->where('FechaCreacion', '>', '2023-10-27 00:00:00')
-            ->limit(100)
+        ->where('FechaCreacion', '>', '2024-10-27 00:00:00')
+            ->limit(3)
         ->get();
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
@@ -741,6 +741,10 @@ class FlujoHubspotController extends Controller
 
             if($contacto->getResults())
             {
+                var_dump($contacto);
+
+
+            } else {
                 $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
                 $contactInput->setProperties([
                     'email' => $lead->cliente->Email
@@ -748,7 +752,6 @@ class FlujoHubspotController extends Controller
                 $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                 var_dump($contact);
             }
-            var_dump($contacto);
         }
     }
 }

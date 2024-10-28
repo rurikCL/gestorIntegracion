@@ -730,7 +730,7 @@ class FlujoHubspotController extends Controller
             $filterGroup2->setFilters([$filter2]);
 
             $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
-            $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
+            $searchRequest->setFilterGroups([$filterGroup]);
 
 // Get specific properties
 //            $searchRequest->setProperties(['recordId','firstname', 'lastname', 'email']);

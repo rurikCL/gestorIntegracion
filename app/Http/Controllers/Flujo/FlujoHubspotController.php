@@ -745,12 +745,17 @@ class FlujoHubspotController extends Controller
                 var_dump($data);
 
             } else {
-                $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
-                $contactInput->setProperties([
-                    'email' => $lead->cliente->Email
-                ]);
-                $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
-                var_dump($contact);
+                try{
+                    $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
+                    $contactInput->setProperties([
+                        'email' => $lead->cliente->Email
+                    ]);
+                    $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+                    var_dump($contact);
+                }catch (\Exception $e){
+                    echo $e->getMessage();
+                }
+
             }
         }
     }

@@ -716,18 +716,13 @@ class FlujoHubspotController extends Controller
             print_r("revisando lead : " . $lead->ID . "<br>");
             // Busca cliente por rut
 
-            $filter = $filter2 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+            $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
             $filter->setOperator('EQ')
                 ->setPropertyName('email')
                 ->setValue($lead->cliente->Email);
 
-            $filter2->setOperator('EQ')
-                ->setPropertyName('rut')
-                ->setValue($lead->cliente->Rut);
-
-            $filterGroup = $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+            $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
             $filterGroup->setFilters([$filter]);
-            $filterGroup2->setFilters([$filter2]);
 
             $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
             $searchRequest->setFilterGroups([$filterGroup]);

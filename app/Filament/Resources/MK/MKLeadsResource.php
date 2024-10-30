@@ -74,6 +74,19 @@ class MKLeadsResource extends Resource
 
                 ])->columns(2)->compact(),
                 Section::make('Otra informacion')->schema([
+
+                    Forms\Components\TextInput::make('IDExterno')->label('ID Externo'),
+                    Forms\Components\TextInput::make('IDHubspot')->label('ID Hubspot'),
+                    Forms\Components\TextInput::make('ConcatID')->label('ID Concat'),
+
+                    Forms\Components\TextInput::make('SubEstadoID'),
+                    Forms\Components\TextInput::make('IntegracionID'),
+                    Forms\Components\TextInput::make('CampanaID'),
+
+                    Forms\Components\TextInput::make('Venta')->label('ID Venta'),
+                    Forms\Components\TextInput::make('CotizacionID')->label('ID Cotizacion'),
+                    Forms\Components\TextInput::make('FechaReAsignado'),
+
                     Forms\Components\Toggle::make('Financiamiento'),
                     Forms\Components\Toggle::make('Asignado'),
                     Forms\Components\Toggle::make('Llamado'),
@@ -83,15 +96,6 @@ class MKLeadsResource extends Resource
                     Forms\Components\Toggle::make('Contesta'),
                     Forms\Components\Toggle::make('Contactado'),
                     Forms\Components\Toggle::make('LogEstado'),
-                    Forms\Components\TextInput::make('IDExterno'),
-                    Forms\Components\TextInput::make('SubEstadoID'),
-                    Forms\Components\TextInput::make('CampanaID'),
-                    Forms\Components\TextInput::make('IntegracionID'),
-                    Forms\Components\TextInput::make('ConcatID'),
-                    Forms\Components\TextInput::make('Venta'),
-                    Forms\Components\TextInput::make('CotizacionID'),
-                    Forms\Components\TextInput::make('FechaReAsignado'),
-                    Forms\Components\TextInput::make('LandBotID'),
                 ])->columns(3)->collapsible()
 
             ])->columnSpan(2),

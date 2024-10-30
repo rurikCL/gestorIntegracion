@@ -106,4 +106,13 @@ class MA_Clientes extends Model
     {
         $query->join(DB::selectRaw("select ".$query->ID." as ID, IF(".$query->Rut." REGEXP('^[0-9]{8,9}[0-9kK]{1}$'), validate_rut(".$query->Rut."), 'No') as RutValido from MA_Clientes v") , 'MA_Clientes.ID', '=', 'v.ID');
     }
+
+    public function clientes(){
+        return $this->hasMany(MA_Clientes::class, 'Rut', 'Rut')->having('count(Rut)', '>', 1)->groupBy('Rut');
+    }
+
+    public function scopeDuplicados($query, $threshold = 1)
+    {
+        return $query->groupBy('Rut')->havingRaw('COUNT(*) > '. $threshold)->groupBy('Rut');
+    }
 }

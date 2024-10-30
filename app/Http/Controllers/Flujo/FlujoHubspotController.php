@@ -804,16 +804,21 @@ class FlujoHubspotController extends Controller
                 'rut' => $rutFormateado,
                 'firstname' => $nombre,
                 'lastname' => $apellido,
-                'dealname' => $nombre.' '.$apellido,
+                'dealname' => $nombre.' '.$apellido . ' ' , // + marca + modelo
                 'idvendedor' => $lead->VendedorID,
                 'nombrevendedor' => $lead->vendedor->Nombre,
                 'sucursal' => $lead->sucursal->Sucursal,
-                'origen' => $lead->origen->Origen,
+//                'origen_roma' => $lead->origen->Origen,
+//                'suborigen_roma' => $lead->suborigen->SubOrigen,
+//                'canal_roma' => $lead->canal->Canal,
 //                'modelo' => $lead->modelo->Modelo,
 //                'marca' => $lead->modelo->marca->Marca,
-//                'dealstage' => $estadoHomologado
+//                'dealstage' => $estadoHomologado,
+                'createdate' => $lead->FechaCreacion,
 
             ];
+
+            print_r($lead->FechaCreacion);
 
 //            ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor']
             $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([

@@ -2284,4 +2284,5 @@ class FlujoController extends Controller
             return is_numeric($binding) ? $binding : "'{$binding}'";
         })->toArray());
     }
+
 }

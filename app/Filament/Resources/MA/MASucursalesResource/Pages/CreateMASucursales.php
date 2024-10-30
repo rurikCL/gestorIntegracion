@@ -7,7 +7,8 @@ use App\Models\RC\RC_cashier_approvers;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
-use HubSpot\Http\Auth;
+use Illuminate\Support\Facades\Auth;
+
 
 class CreateMASucursales extends CreateRecord
 {

@@ -57,6 +57,8 @@ class Kernel extends ConsoleKernel
 
             $flujoNegocio->actualizaLeadHubspot(); // Actualiza estado Pipeline de Deal en Hubspot
 
+            $flujoNegocio->sincronizaLeads(); // Sincroniza Leads de Roma hacia Hubspot
+
             // Proceso de reproceso de solicitudes pendientes (que tengan intentos pendientes)
             $flujoControl->reprocesarSolicitudes();
 

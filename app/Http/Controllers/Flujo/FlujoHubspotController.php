@@ -725,9 +725,13 @@ class FlujoHubspotController extends Controller
             $apellido = $lead->cliente->Apellido;
             $telefono = $lead->cliente->Telefono;
             $rut = $lead->cliente->Rut;
-            $dv = substr($rut, -1);
-            $rut = substr($rut, 0, length($rut) - 1);
-            $rutFormateado = number_format(str_replace("."," ", str_replace(","," ",$rut)), 0, ',', '.') . "-" . $dv;
+            if($rut) {
+                $dv = substr($rut, -1);
+                $rut = substr($rut, 0, length($rut) - 1);
+                $rutFormateado = number_format($rut, 0, ',', '.') . "-" . $dv;
+            } else {
+                $rutFormateado = null;
+            }
             $idContacto = 0;
 
             print_r("revisando lead : " . $lead->ID . "<br>");

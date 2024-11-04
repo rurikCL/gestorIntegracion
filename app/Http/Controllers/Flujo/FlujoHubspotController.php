@@ -818,6 +818,7 @@ class FlujoHubspotController extends Controller
                 'dealstage' => $estadoHomologado,
                 'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
             ];
+            dd($properties1);
 
             try {
                 $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([

@@ -87,13 +87,13 @@ class FlujoHubspotController extends Controller
                     $data = $item->jsonSerialize();
 
                     print("Buscando Lead : " . $data->id . "<br>");
-                    $lead = MK_Leads::where('IDExterno', $data->id)->first();
+                    $lead = MK_Leads::where('IDHubspot', $data->id)->first();
 
                     $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
 
                     if ($lead) {
                         print("Lead encontrado : " . $lead->ID . "<br>");
-                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDExterno;
+                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
 
                         $newProperties->setProperties([
                             'idpompeyo' => $lead->ID,
@@ -325,13 +325,13 @@ class FlujoHubspotController extends Controller
                     $data = $item->jsonSerialize();
 
                     print("Buscando Lead : " . $data->id . "<br>");
-                    $lead = MK_Leads::where('IDExterno', $data->id)->first();
+                    $lead = MK_Leads::where('IDHubspot', $data->id)->first();
 
                     $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
 
                     if ($lead) {
                         print("Lead encontrado : " . $lead->ID . "<br>");
-                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDExterno;
+                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
                         $lead->FechaCreacion = $item->getProperties()['createdate'];
 
                         $newProperties->setProperties([
@@ -451,13 +451,13 @@ class FlujoHubspotController extends Controller
                     $data = $item->jsonSerialize();
 
                     print("Buscando Lead : " . $data->id . "<br>");
-                    $lead = MK_Leads::where('IDExterno', $data->id)->first();
+                    $lead = MK_Leads::where('IDHubspot', $data->id)->first();
 
                     $newProperties = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInput();
 
                     if ($lead) {
                         print("Lead encontrado : " . $lead->ID . "<br>");
-                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDExterno;
+                        Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
 
                         $newProperties->setProperties([
                             'idpompeyo' => $lead->ID,
@@ -611,11 +611,11 @@ class FlujoHubspotController extends Controller
         $client = Factory::createWithAccessToken($token->token);
 
         foreach ($leads as $lead) {
-            print_r("revisando lead : " . $lead->ID . " (" . $lead->IDExterno . ")<br>");
+            print_r("revisando lead : " . $lead->ID . " (" . $lead->IDHubspot . ")<br>");
 
-            if (length($lead->IDExterno) == 11) {
+            if (length($lead->IDHubspot) == 11) {
                 try {
-                    $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDExterno, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
+                    $apiResponse = $client->crm()->deals()->basicApi()->getById($lead->IDHubspot, ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname']);
 
                     if ($apiResponse) {
                         $data = $apiResponse->jsonSerialize();

@@ -720,7 +720,6 @@ class FlujoHubspotController extends Controller
 
         foreach ($leads as $lead) {
             $email = $lead->cliente->Email;
-//            $email = 'rurik.neologik@gmail.com';
             $nombre = $lead->cliente->Nombre;
             $apellido = $lead->cliente->Apellido;
             $telefono = $lead->cliente->Telefono;
@@ -751,15 +750,15 @@ class FlujoHubspotController extends Controller
             $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email']);
 
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-            if (count($contacto) > 0) {
-                foreach ($contacto as $item) {
-                    $data = $item->jsonSerialize();
-                    $idContacto = $data->properties["hs_object_id"];
-                    print_r("contacto encontrado : " .$data->id);
 
-                }
+            foreach ($contacto as $item) {
+                $data = $item->jsonSerialize();
+                $idContacto = $data->id;
+                print_r("contacto encontrado : " .$data->id);
+                break;
+            }
 
-            } else {
+            if ($idContacto == 0) {
                 try {
                     $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
                     $contactInput->setProperties([
@@ -770,7 +769,6 @@ class FlujoHubspotController extends Controller
                         'rut' => $rutFormateado
                     ]);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
-//                    print_r($contact);
                     $idContacto = $contact->getId();
                     print_r("Contacto creado : " .$idContacto);
 

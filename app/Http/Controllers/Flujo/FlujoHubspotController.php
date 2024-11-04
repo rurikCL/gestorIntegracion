@@ -377,7 +377,7 @@ class FlujoHubspotController extends Controller
             if ($leads->count()) {
                 Log::info("leads encontrados " . $leads->count());
                 foreach ($leads as $lead) {
-                    Log::info("Lead a actualizar : " . $lead->ID . " - " . $lead->IDExterno);
+                    Log::info("Lead a actualizar : " . $lead->ID . " - " . $lead->IDHubspot);
 
                     $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
                     $estadoHomologado = $h->getDato($lead->estadoLead->Estado, $flujo->ID, 'estado', false);

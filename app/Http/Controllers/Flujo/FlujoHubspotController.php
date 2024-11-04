@@ -814,11 +814,12 @@ class FlujoHubspotController extends Controller
                 'suborigen_roma' => $lead->suborigen->SubOrigen,
                 'canal_roma' => $lead->canal->Canal ?? null,
                 'modelo_roma' => $lead->modelo->Modelo,
-                'marca' => $lead->modelo->marca->Marca,
+                'marca' => $lead->marca->Marca,
                 'dealstage' => $estadoHomologado,
                 'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
             ];
-            dd($properties1);
+            print_r($properties1);
+//            dd($properties1);
 
             try {
                 $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([

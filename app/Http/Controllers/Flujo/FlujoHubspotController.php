@@ -388,7 +388,7 @@ class FlujoHubspotController extends Controller
                         ]);
 
                         try {
-                            $res = $client->crm()->deals()->basicApi()->update($lead->IDExterno, $newProperties);
+                            $res = $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
 
                             $lead->LogEstado = 0;
                             $lead->save();

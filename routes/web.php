@@ -70,4 +70,7 @@ Route::get('/robot/apc/informeOt', [\App\Http\Controllers\RobotApcController::cl
 Route::get('/robot/apc/rentabilidadVenta', [\App\Http\Controllers\RobotApcController::class, 'traeRentabilidadVenta']);
 
 
+Route::get('/robot/apc/comparar', [\App\Http\Controllers\RobotApcController::class, 'compare']);
+
+
 require __DIR__.'/auth.php';

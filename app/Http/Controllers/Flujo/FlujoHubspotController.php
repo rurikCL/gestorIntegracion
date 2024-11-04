@@ -828,7 +828,7 @@ class FlujoHubspotController extends Controller
                 'suborigen_roma' => $lead->suborigen->SubOrigen,
                 'canal_roma' => $lead->canal->Canal ?? null,
                 'modelo_roma' => $lead->modelo->Modelo,
-                'marca' => $lead->marca->Marca,
+                'marca_roma' => $lead->marca->Marca,
                 'dealstage' => $estadoHomologado,
                 'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
                 'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID

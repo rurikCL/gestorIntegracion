@@ -830,6 +830,7 @@ class FlujoHubspotController extends Controller
                 'marca' => $lead->marca->Marca,
                 'dealstage' => $estadoHomologado,
                 'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
+                'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID
             ];
             print_r($properties1);
 //            dd($properties1);

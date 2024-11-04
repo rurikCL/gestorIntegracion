@@ -719,6 +719,7 @@ class FlujoHubspotController extends Controller
         $h = new FLU_Homologacion();
 
         foreach ($leads as $lead) {
+            Log::info('Sincronizando Lead : '. $lead->ID);
             $email = $lead->cliente->Email;
             $nombre = $lead->cliente->Nombre;
             $apellido = $lead->cliente->Apellido;
@@ -834,6 +835,8 @@ class FlujoHubspotController extends Controller
 
                 $lead->IDHubspot = $idNegocio;
                 $lead->save();
+
+                Log::info('Lead ' .$lead->ID . ' sincronizado con exito');
 
             } catch (\Exception $e) {
                 echo "Exception when calling basic_api->create: ", $e->getMessage();

@@ -707,17 +707,17 @@ class FlujoHubspotController extends Controller
 
     public function sincronizaLeads()
     {
-
-        $leads = MK_Leads::where('IDHubspot', '0')
-            ->where('FechaCreacion', '>', '2024-06-01 00:00:00')
-            ->limit($flujo->MaxLote ?? 10)
-            ->get();
+        Log::info("Inicio sincronizacion Leads Roma -> Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujo->Opciones);
         $client = Factory::createWithAccessToken($token->token);
         $h = new FLU_Homologacion();
 
+        $leads = MK_Leads::where('IDHubspot', '0')
+            ->where('FechaCreacion', '>', '2024-06-01 00:00:00')
+            ->limit($flujo->MaxLote ?? 10)
+            ->get();
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : '. $lead->ID);
             $email = $lead->cliente->Email;

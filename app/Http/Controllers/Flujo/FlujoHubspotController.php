@@ -776,7 +776,7 @@ class FlujoHubspotController extends Controller
                 try {
                     $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
                     $contactInput->setProperties([
-                        'email' => $email,
+                        'email' => filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null,
                         'firstname' => $nombre,
                         'lastname' => $apellido,
                         'phone' => $telefono,

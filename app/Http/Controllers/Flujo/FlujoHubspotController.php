@@ -395,7 +395,7 @@ class FlujoHubspotController extends Controller
                             Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado.")");
 
                         } catch (\Exception $e) {
-                            Log::error("Error al actualizar deal hubspot " . $lead->IDExterno);
+                            Log::error("Error al actualizar deal hubspot " . $lead->IDExterno . " " . $e->getMessage());
                             $lead->LogEstado = 2;
                             $lead->save();
                         }

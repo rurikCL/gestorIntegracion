@@ -10,6 +10,7 @@ use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
+use http\Exception\BadUrlException;
 use HubSpot\Client\Crm\Contacts\ApiException;
 use HubSpot\Client\Crm\Contacts\Model\Filter;
 use HubSpot\Client\Crm\Deals\Model\AssociationSpec;
@@ -391,7 +392,7 @@ class FlujoHubspotController extends Controller
 
                             $lead->LogEstado = 0;
                             $lead->save();
-                            Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado);
+                            Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado.")");
 
                         } catch (\Exception $e) {
                             Log::error("Error al actualizar deal hubspot " . $lead->IDExterno);
@@ -708,8 +709,8 @@ class FlujoHubspotController extends Controller
     {
 
         $leads = MK_Leads::where('IDHubspot', '0')
-            ->where('FechaCreacion', '>', '2023-10-27 00:00:00')
-            ->limit(1)
+            ->where('FechaCreacion', '>', '2024-06-01 00:00:00')
+            ->limit($flujo->MaxLote ?? 10)
             ->get();
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
@@ -718,8 +719,8 @@ class FlujoHubspotController extends Controller
         $h = new FLU_Homologacion();
 
         foreach ($leads as $lead) {
-//            $email = $lead->cliente->Email;
-            $email = 'rurik.neologik@gmail.com';
+            $email = $lead->cliente->Email;
+//            $email = 'rurik.neologik@gmail.com';
             $nombre = $lead->cliente->Nombre;
             $apellido = $lead->cliente->Apellido;
             $telefono = $lead->cliente->Telefono;
@@ -739,7 +740,6 @@ class FlujoHubspotController extends Controller
             $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
             $filter->setOperator('EQ')
                 ->setPropertyName('email')
-//                ->setValue($lead->cliente->Email);
                 ->setValue($email);
 
             $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
@@ -796,6 +796,10 @@ class FlujoHubspotController extends Controller
                 'types' => [$associationSpec1],
                 'to' => $to1
             ]);
+
+            $marca = $lead->marca->Marca;
+            $modelo = $lead->modelo->Modelo;
+
             $properties1 = [
                 'idpompeyo' => $lead->ID,
                 'record_id___contacto' => $idContacto,
@@ -804,30 +808,26 @@ class FlujoHubspotController extends Controller
                 'rut' => $rutFormateado,
                 'firstname' => $nombre,
                 'lastname' => $apellido,
-                'dealname' => $nombre.' '.$apellido . ' ' , // + marca + modelo
+                'dealname' => $nombre.' '.$apellido . ' - ' .$marca . ' ' . $modelo , // + marca + modelo
                 'idvendedor' => $lead->VendedorID,
                 'nombrevendedor' => $lead->vendedor->Nombre,
                 'sucursal' => $lead->sucursal->Sucursal,
-//                'origen_roma' => $lead->origen->Origen,
-//                'suborigen_roma' => $lead->suborigen->SubOrigen,
-//                'canal_roma' => $lead->canal->Canal,
-//                'modelo' => $lead->modelo->Modelo,
-//                'marca' => $lead->modelo->marca->Marca,
-//                'dealstage' => $estadoHomologado,
-                'createdate' => $lead->FechaCreacion,
-
+                'origen_roma' => $lead->origen->Origen,
+                'suborigen_roma' => $lead->suborigen->SubOrigen,
+                'canal_roma' => $lead->canal->Canal ?? null,
+                'modelo_roma' => $lead->modelo->Modelo,
+                'marca' => $lead->modelo->marca->Marca,
+                'dealstage' => $estadoHomologado,
+                'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
             ];
 
-            print_r($lead->FechaCreacion);
-
-//            ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor']
-            $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
-                'associations' => [$publicAssociationsForObject1],
-                'object_write_trace_id' => 'string',
-                'properties' => $properties1,
-            ]);
-
             try {
+                $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
+                    'associations' => [$publicAssociationsForObject1],
+                    'object_write_trace_id' => 'string',
+                    'properties' => $properties1,
+                ]);
+
                 $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
                 $idNegocio = $apiResponse->getId();
                 print_r("<br>Negocio Creado : " . $idNegocio);
@@ -835,7 +835,7 @@ class FlujoHubspotController extends Controller
                 $lead->IDHubspot = $idNegocio;
                 $lead->save();
 
-            } catch (ApiException $e) {
+            } catch (\Exception $e) {
                 echo "Exception when calling basic_api->create: ", $e->getMessage();
             }
         }

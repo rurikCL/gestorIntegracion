@@ -34,7 +34,7 @@ class RCCashesResource extends Resource
                         Forms\Components\Select::make('comment')
                             ->relationship('usuarios', 'Nombre')
                             ->label('Solicitante'),
-                        Forms\Components\Select::make('comment')
+                        Forms\Components\Select::make('branch_office_id')
                             ->relationship('sucursales', 'Sucursal')
                             ->label('Sucursal'),
                         Forms\Components\TextInput::make('comment')

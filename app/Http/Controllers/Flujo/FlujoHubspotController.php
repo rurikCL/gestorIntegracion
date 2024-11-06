@@ -744,7 +744,7 @@ class FlujoHubspotController extends Controller
             // Busca cliente por email
             $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
 
-            if($email != ''){
+            if($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)){
                 $filter->setOperator('EQ')
                     ->setPropertyName('email')
                     ->setValue($email);

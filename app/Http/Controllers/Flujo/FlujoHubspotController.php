@@ -749,11 +749,16 @@ class FlujoHubspotController extends Controller
                     ->setPropertyName('email')
                     ->setValue($email);
                 Log::info("Buscando por Email : " . $email);
-            } else {
+            } else if ($rut != '' ) {
                 $filter->setOperator('EQ')
                     ->setPropertyName('rut')
                     ->setValue($rutFormateado);
                 Log::info("Buscando por Rut : " . $rutFormateado);
+            } else {
+                $filter->setOperator('EQ')
+                    ->setPropertyName('phone')
+                    ->setValue($telefono);
+                Log::info("Buscando por Telefono : " . $telefono);
             }
 
 
@@ -763,7 +768,7 @@ class FlujoHubspotController extends Controller
             $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
             $searchRequest->setFilterGroups([$filterGroup]);
 
-            $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email']);
+            $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
 
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 

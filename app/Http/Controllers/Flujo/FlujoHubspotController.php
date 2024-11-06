@@ -844,7 +844,7 @@ class FlujoHubspotController extends Controller
                 'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
                 'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID
             ];
-            print_r($properties1);
+//            print_r($properties1);
 //            dd($properties1);
 
             try {
@@ -856,7 +856,7 @@ class FlujoHubspotController extends Controller
 
                 $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
                 $idNegocio = $apiResponse->getId();
-                print_r("<br>Negocio Creado : " . $idNegocio);
+                print_r("<br>Negocio Creado : " . $idNegocio ."<br>");
 
                 $lead->IDHubspot = $idNegocio;
                 $lead->save();

@@ -828,8 +828,8 @@ class FlujoHubspotController extends Controller
                 'firstname' => $nombre,
                 'lastname' => $apellido,
                 'dealname' => $nombre.' '.$apellido . ' - ' .$marca . ' ' . $modelo , // + marca + modelo
-                'idvendedor' => $lead->VendedorID,
-                'nombrevendedor' => $lead->vendedor->Nombre,
+                'idvendedor' => $lead->VendedorID ?? null,
+                'nombrevendedor' => $lead->vendedor->Nombre ?? null,
                 'sucursal' => $lead->sucursal->Sucursal,
                 'origen_roma' => $lead->origen->Origen,
                 'suborigen_roma' => $lead->suborigen->SubOrigen,

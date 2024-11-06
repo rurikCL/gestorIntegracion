@@ -748,10 +748,12 @@ class FlujoHubspotController extends Controller
                 $filter->setOperator('EQ')
                     ->setPropertyName('email')
                     ->setValue($email);
+                Log::info("Buscando por Email : " . $email);
             } else {
                 $filter->setOperator('EQ')
                     ->setPropertyName('rut')
                     ->setValue($rutFormateado);
+                Log::info("Buscando por Rut : " . $rutFormateado);
             }
 
 

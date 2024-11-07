@@ -794,15 +794,12 @@ class FlujoHubspotController extends Controller
                     print_r("Contacto creado : " . $idContacto);
 
                 } catch (\Exception $e) {
-                    echo $e->getMessage();
-                    $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-                    if ($contacto) {
-                        foreach ($contacto as $item) {
-                            $data = $item->jsonSerialize();
-                            $idContacto = $data->id;
-                            print_r("contacto encontrado : " . $data->id);
-                            break;
-                        }
+                    $respuesta = $e->getMessage();
+                    $regex = "/Existing ID: (\d*)\"/m";
+                    $posibleID = preg_match($regex, $respuesta);
+                    if($posibleID){
+                        print_r("Contacto existente: " . $posibleID);
+                        $idContacto = $posibleID;
                     }
                 }
 

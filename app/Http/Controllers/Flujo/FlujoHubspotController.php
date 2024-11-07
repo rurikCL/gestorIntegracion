@@ -797,10 +797,11 @@ class FlujoHubspotController extends Controller
                     $respuesta = $e->getMessage();
                     echo $respuesta;
                     $regex = "/Existing ID: (\d*)\"/m";
-                    $posibleID = preg_match($regex, $respuesta);
-                    if($posibleID){
-                        print_r("Contacto existente: " . $posibleID);
-                        $idContacto = $posibleID;
+                    $posibleID = '';
+
+                    if (preg_match($regex, $respuesta, $posibleID)) {
+                        print_r("Contacto existente: " . $posibleID[0]);
+                        $idContacto = $posibleID[0];
                     }
                 }
 

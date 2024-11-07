@@ -800,8 +800,8 @@ class FlujoHubspotController extends Controller
                     $posibleID = '';
 
                     if (preg_match($regex, $respuesta, $posibleID)) {
-                        print_r("Contacto existente: " . $posibleID[0]);
-                        $idContacto = $posibleID[0];
+                        print_r("Contacto existente: " . $posibleID[1]);
+                        $idContacto = $posibleID[1];
                     }
                 }
 

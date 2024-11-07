@@ -725,10 +725,10 @@ class FlujoHubspotController extends Controller
             $nombre = $lead->cliente->Nombre;
             $apellido = $lead->cliente->Apellido;
             $telefono = $lead->cliente->Telefono;
-            $rut = $lead->cliente->Rut;
+            $rut = trim($lead->cliente->Rut);
             if($rut) {
                 $dv = substr($rut, -1);
-                $rut = substr($rut, 0, length($rut) - 1);
+                $rut = ltrim(substr($rut, 0, length($rut) - 1), "0");
                 $rutFormateado = number_format($rut, 0, ',', '.') . "-" . $dv;
             } else {
                 $rutFormateado = null;

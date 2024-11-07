@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
+use App\Mail\EmailsErroneos;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
-use http\Exception\BadUrlException;
 use HubSpot\Client\Crm\Contacts\ApiException;
 use HubSpot\Client\Crm\Contacts\Model\Filter;
 use HubSpot\Client\Crm\Deals\Model\AssociationSpec;
@@ -23,7 +23,7 @@ use HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInputForCreate;
 use HubSpot\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use mysql_xdevapi\Exception;
+use Illuminate\Support\Facades\Mail;
 use function Psl\Str\length;
 
 class FlujoHubspotController extends Controller
@@ -715,6 +715,8 @@ class FlujoHubspotController extends Controller
         $client = Factory::createWithAccessToken($token->token);
         $h = new FLU_Homologacion();
 
+        $emailsErroneos = [];
+
         $leads = MK_Leads::where('IDHubspot', '0')
             ->where('FechaCreacion', '>', '2024-06-01 00:00:00')
             ->limit($flujo->MaxLote ?? 10)
@@ -803,6 +805,15 @@ class FlujoHubspotController extends Controller
                         print_r("Contacto existente: " . $posibleID[1]);
                         $idContacto = $posibleID[1];
                     }
+
+                    $regex = "/Property values were not valid/m";
+                    if (preg_match($regex, $respuesta)) {
+                        $emailsErroneos[] = [
+                            "idLead" => $lead->ID,
+                            "idCliente" => $lead->cliente->ID,
+                            "email" => $email,
+                        ];
+                    }
                 }
 
             }
@@ -870,6 +881,16 @@ class FlujoHubspotController extends Controller
             } catch (\Exception $e) {
                 echo "Exception when calling basic_api->create: ", $e->getMessage();
             }
+        }
+
+        if (count($emailsErroneos)) {
+            try {
+                Mail::to('cristian.fuentealba@pompeyo.cl')->cc('rodrigo.larrain@pompeyo.cl')
+                    ->send(new EmailsErroneos($emailsErroneos));
+            }catch (\Exception $e) {
+                Log::error("Error al enviar el correo de errores");
+            }
+
         }
     }
 }

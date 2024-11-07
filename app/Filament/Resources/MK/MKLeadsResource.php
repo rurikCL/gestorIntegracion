@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MK;
 
+use App\Filament\Resources\MA\MAClientesResource;
 use App\Filament\Resources\MK\MKLeadsResource\Pages;
 use App\Filament\Resources\MK\MKLeadsResource\RelationManagers;
 use App\Http\Controllers\Api\ApiSolicitudController;
@@ -16,6 +17,8 @@ use App\Models\MA\MA_SubOrigenes;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Section;
@@ -105,12 +108,22 @@ class MKLeadsResource extends Resource
                         ->relationship('cliente2', 'Nombre')
                         ->label('Nombre Cliente')
                         ->searchable(),
+                    Forms\Components\Placeholder::make('cliente2.Rut')
+                        ->label('Rut')
+                        ->content(fn(MK_Leads $record): ?string => $record->cliente->Rut),
                     Forms\Components\Placeholder::make('cliente2.Email')
                         ->label('Email')
                         ->content(fn(MK_Leads $record): ?string => $record->cliente->Email),
                     Forms\Components\Placeholder::make('cliente2.Telefono')
                         ->label('Telefono')
                         ->content(fn(MK_Leads $record): ?string => $record->cliente->Telefono ?? 'Sin Telefono'),
+                    Forms\Components\Actions::make([
+                        Forms\Components\Actions\Action::make('EditarCliente')
+                        ->url(fn(MK_Leads $record): ?string => MAClientesResource::getNavigationUrl() .'/' .($record->ClienteID ?? '') . '/edit')
+                        ->slideOver()
+                            ->label('Editar Cliente'),
+                    ]),
+
                 ]),
 
                 Section::make('Cliente Lead')->schema([

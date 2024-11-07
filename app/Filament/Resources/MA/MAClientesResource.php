@@ -24,28 +24,29 @@ class MAClientesResource extends Resource
     protected static ?string $pluralLabel = 'Clientes';
 
 
-
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('Nombre'),
-                Forms\Components\TextInput::make('Rut'),
-                Forms\Components\TextInput::make('Email'),
-                Forms\Components\TextInput::make('Telefono'),
-                Forms\Components\TextInput::make('Direccion'),
-                Forms\Components\Select::make('ComunaID')
-                ->options(fn() => \App\Models\MA\MA_Comunas::pluck('Comuna', 'ID'))->searchable(),
-                Forms\Components\Select::make('RegionID')
-                ->options(fn() => \App\Models\MA\MA_Regiones::pluck('Region', 'ID'))->searchable(),
-                Forms\Components\DatePicker::make('FechaNacimiento'),
-                Forms\Components\Select::make('Sexo')
-                ->options([
-                    'Masculino' => 'Masculino',
-                    'Femenino' => 'Femenino',
-                ]),
-                Forms\Components\TextInput::make('id_usuario'),
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\TextInput::make('Nombre')->required(),
+                        Forms\Components\TextInput::make('Rut'),
+                        Forms\Components\TextInput::make('Email')->email(),
+                        Forms\Components\TextInput::make('Telefono')->numeric(),
+                        Forms\Components\TextInput::make('Direccion'),
+                        Forms\Components\Select::make('ComunaID')
+                            ->options(fn() => \App\Models\MA\MA_Comunas::pluck('Comuna', 'ID'))->searchable(),
+                        Forms\Components\Select::make('RegionID')
+                            ->options(fn() => \App\Models\MA\MA_Regiones::pluck('Region', 'ID'))->searchable(),
+                        Forms\Components\DatePicker::make('FechaNacimiento')->default(fn() => now()),
+                        Forms\Components\Select::make('Sexo')
+                            ->options([
+                                'Masculino' => 'Masculino',
+                                'Femenino' => 'Femenino',
+                            ]),
+                    ])->columns(2)
+
             ]);
     }
 
@@ -60,7 +61,7 @@ class MAClientesResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
                 Tables\Columns\TextColumn::make('Nombre')->searchable()
-                ->description(fn(MA_Clientes $record) => $record->Direccion),
+                    ->description(fn(MA_Clientes $record) => $record->Direccion),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
                 Tables\Columns\TextColumn::make('Telefono')->searchable(),
@@ -69,10 +70,10 @@ class MAClientesResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('RutValido')
-                ->options([
-                    'Si' => 'Valido',
-                    'No' => 'No Valido',
-                ]),
+                    ->options([
+                        'Si' => 'Valido',
+                        'No' => 'No Valido',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->slideOver(),

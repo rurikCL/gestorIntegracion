@@ -887,7 +887,9 @@ class FlujoHubspotController extends Controller
             try {
                 Mail::to('cristian.fuentealba@pompeyo.cl')->cc('rodrigo.larrain@pompeyo.cl')
                     ->send(new EmailsErroneos($emailsErroneos));
+                Log::info("Correo de errores enviado");
             }catch (\Exception $e) {
+                print_r($e->getMessage());
                 Log::error("Error al enviar el correo de errores");
             }
 

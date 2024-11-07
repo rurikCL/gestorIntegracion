@@ -795,6 +795,7 @@ class FlujoHubspotController extends Controller
 
                 } catch (\Exception $e) {
                     $respuesta = $e->getMessage();
+                    echo $respuesta;
                     $regex = "/Existing ID: (\d*)\"/m";
                     $posibleID = preg_match($regex, $respuesta);
                     if($posibleID){

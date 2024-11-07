@@ -393,7 +393,7 @@ class FlujoHubspotController extends Controller
 
                             $lead->LogEstado = 0;
                             $lead->save();
-                            Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado.")");
+                            Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado . ")");
 
                         } catch (\Exception $e) {
                             Log::error("Error al actualizar deal hubspot " . $lead->IDHubspot . " " . $e->getMessage());
@@ -720,13 +720,13 @@ class FlujoHubspotController extends Controller
             ->limit($flujo->MaxLote ?? 10)
             ->get();
         foreach ($leads as $lead) {
-            Log::info('Sincronizando Lead : '. $lead->ID);
+            Log::info('Sincronizando Lead : ' . $lead->ID);
             $email = $lead->cliente->Email;
             $nombre = $lead->cliente->Nombre;
             $apellido = $lead->cliente->Apellido;
             $telefono = $lead->cliente->Telefono;
             $rut = trim($lead->cliente->Rut);
-            if($rut) {
+            if ($rut) {
                 $dv = substr($rut, -1);
                 $rut = ltrim(substr($rut, 0, length($rut) - 1), "0");
                 $rutFormateado = number_format($rut, 0, ',', '.') . "-" . $dv;
@@ -736,7 +736,7 @@ class FlujoHubspotController extends Controller
             $idContacto = 0;
 
             print_r("revisando lead : " . $lead->ID . "<br>");
-            print_r("revisando cliente : ".$lead->cliente->Rut." ($rutFormateado) | " . $email . "<br>");
+            print_r("revisando cliente : " . $lead->cliente->Rut . " ($rutFormateado) | " . $email . "<br>");
 
 
             // Creacion del CLIENTE (CONTACT)  -------------------------------------------
@@ -744,16 +744,16 @@ class FlujoHubspotController extends Controller
             // Busca cliente por email
             $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
 
-            if($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)){
-                $filter->setOperator('EQ')
-                    ->setPropertyName('email')
-                    ->setValue($email);
-                Log::info("Buscando por Email : " . $email);
-            } else if ($rut != '' ) {
+            if ($rut != '') {
                 $filter->setOperator('EQ')
                     ->setPropertyName('rut')
                     ->setValue($rutFormateado);
                 Log::info("Buscando por Rut : " . $rutFormateado);
+            } else if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $filter->setOperator('EQ')
+                    ->setPropertyName('email')
+                    ->setValue($email);
+                Log::info("Buscando por Email : " . $email);
             } else {
                 $filter->setOperator('EQ')
                     ->setPropertyName('phone')
@@ -775,7 +775,7 @@ class FlujoHubspotController extends Controller
             foreach ($contacto as $item) {
                 $data = $item->jsonSerialize();
                 $idContacto = $data->id;
-                print_r("contacto encontrado : " .$data->id);
+                print_r("contacto encontrado : " . $data->id);
                 break;
             }
 
@@ -791,16 +791,16 @@ class FlujoHubspotController extends Controller
                     ]);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                     $idContacto = $contact->getId();
-                    print_r("Contacto creado : " .$idContacto);
+                    print_r("Contacto creado : " . $idContacto);
 
                 } catch (\Exception $e) {
                     echo $e->getMessage();
                     $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-                    if($contacto){
+                    if ($contacto) {
                         foreach ($contacto as $item) {
                             $data = $item->jsonSerialize();
                             $idContacto = $data->id;
-                            print_r("contacto encontrado : " .$data->id);
+                            print_r("contacto encontrado : " . $data->id);
                             break;
                         }
                     }
@@ -836,7 +836,7 @@ class FlujoHubspotController extends Controller
                 'rut' => $rutFormateado,
                 'firstname' => $nombre,
                 'lastname' => $apellido,
-                'dealname' => $nombre.' '.$apellido . ' - ' .$marca . ' ' . $modelo , // + marca + modelo
+                'dealname' => $nombre . ' ' . $apellido . ' - ' . $marca . ' ' . $modelo, // + marca + modelo
                 'idvendedor' => $lead->VendedorID ?? null,
                 'nombrevendedor' => $lead->vendedor->Nombre ?? null,
                 'sucursal' => $lead->sucursal->Sucursal,
@@ -861,12 +861,12 @@ class FlujoHubspotController extends Controller
 
                 $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
                 $idNegocio = $apiResponse->getId();
-                print_r("<br>Negocio Creado : " . $idNegocio ."<br>");
+                print_r("<br>Negocio Creado : " . $idNegocio . "<br>");
 
                 $lead->IDHubspot = $idNegocio;
                 $lead->save();
 
-                Log::info('Lead ' .$lead->ID . ' sincronizado con exito');
+                Log::info('Lead ' . $lead->ID . ' sincronizado con exito');
 
             } catch (\Exception $e) {
                 echo "Exception when calling basic_api->create: ", $e->getMessage();

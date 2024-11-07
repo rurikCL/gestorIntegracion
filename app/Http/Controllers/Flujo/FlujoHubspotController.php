@@ -886,7 +886,7 @@ class FlujoHubspotController extends Controller
         if (count($emailsErroneos)) {
             try {
                 print_r($emailsErroneos);
-                Mail::to('cristian.fuentealba@pompeyo.cl')->cc('rodrigo.larrain@pompeyo.cl')
+                Mail::to('cristian.fuentealba@pompeyo.cl')->cc(['rodrigo.larrain@pompeyo.cl', 'pedro.godoy@pompeyo.cl'])
                     ->send(new EmailsErroneos($emailsErroneos));
                 Log::info("Correo de errores enviado");
             }catch (\Exception $e) {

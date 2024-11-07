@@ -797,8 +797,13 @@ class FlujoHubspotController extends Controller
                     echo $e->getMessage();
                     $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
                     if($contacto){
-                        print_r($contacto, true);
                         $idContacto = $contacto->getId();
+                        foreach ($contacto as $item) {
+                            $data = $item->jsonSerialize();
+                            $idContacto = $data->id;
+                            print_r("contacto encontrado : " .$data->id);
+                            break;
+                        }
                     }
                 }
 

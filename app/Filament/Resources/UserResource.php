@@ -45,7 +45,9 @@ class UserResource extends Resource
                     ->offIcon('heroicon-s-user')
                     ->required(),
                 Forms\Components\Select::make('userRomaID')
-                    ->relationship('usuarioroma', 'Nombre'),
+                    ->options(fn() => \App\Models\MA\MA_Usuarios::all()->pluck('Nombre', 'ID'))
+                    ->searchable(),
+
                 Forms\Components\Select::make('role')
                     ->options([
                         'user' => 'user',
@@ -60,8 +62,8 @@ class UserResource extends Resource
 //                Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->dehydrated(fn ($state) => filled($state))
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
                     ->maxLength(191),
             ]);
     }

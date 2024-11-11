@@ -67,11 +67,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function management()
     {
-        return $this->belongsTo( Management::class, 'brand_id', 'userRomaID' );
+        return $this->belongsTo( Management::class, 'brand_id', 'ID' );
     }
 
     public function usuarioroma(){
-        return $this->hasOne(MA_Usuarios::class, 'ID', 'User');
+        return $this->hasOne(MA_Usuarios::class, 'ID', 'userRomaID');
     }
 
     public function brand()

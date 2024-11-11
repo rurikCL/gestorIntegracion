@@ -20,6 +20,8 @@ class SIS_Noticias extends Model
         'Ruta',
         'Descripcion',
         'Activo',
+        'Texto',
+        'Area'
     ];
     public $timestamps = false;
 }

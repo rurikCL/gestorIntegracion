@@ -809,11 +809,16 @@ class FlujoHubspotController extends Controller
 
                     $regex = "/Property values were not valid/m";
                     if (preg_match($regex, $respuesta)) {
-                        $emailsErroneos[] = [
-                            "idLead" => $lead->ID,
-                            "idCliente" => $lead->cliente->ID,
-                            "email" => $email,
-                        ];
+                        if($lead->cliente->Correccion == 0){
+                            $emailsErroneos[] = [
+                                "idLead" => $lead->ID,
+                                "idCliente" => $lead->cliente->ID,
+                                "email" => $email,
+                            ];
+                            $lead->cliente->Correccion = 1;
+                            $lead->cliente->save();
+                        }
+
                     }
                 }
 

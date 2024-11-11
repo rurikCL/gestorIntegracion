@@ -26,12 +26,15 @@ class SISNoticiasResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('Titulo'),
-                Forms\Components\TextInput::make('Ruta'),
-                Forms\Components\TextInput::make('Descripcion'),
-                Forms\Components\MarkdownEditor::make('Texto'),
-                Forms\Components\TextInput::make('Area'),
-                Forms\Components\Toggle::make('Activo'),
+                Forms\Components\Section::make('')
+                    ->schema([
+                        Forms\Components\TextInput::make('Titulo'),
+                        Forms\Components\TextInput::make('Ruta'),
+                        Forms\Components\TextInput::make('Descripcion'),
+                        Forms\Components\MarkdownEditor::make('Texto'),
+                        Forms\Components\TextInput::make('Area'),
+                        Forms\Components\Toggle::make('Activo')->inline(),
+                    ])
 
             ]);
     }

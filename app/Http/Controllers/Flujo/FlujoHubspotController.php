@@ -723,11 +723,21 @@ class FlujoHubspotController extends Controller
             ->get();
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
-            $email = $lead->cliente->Email;
-            $nombre = $lead->cliente->Nombre;
-            $apellido = $lead->cliente->Apellido;
-            $telefono = $lead->cliente->Telefono;
-            $rut = trim($lead->cliente->Rut);
+
+            if($lead->cliente->ID == 1){
+                $email = $lead->Email;
+                $nombre = $lead->Nombre;
+                $apellido = $lead->Apellido;
+                $telefono = $lead->Telefono;
+                $rut = trim($lead->Rut);
+            } else {
+                $email = $lead->cliente->Email;
+                $nombre = $lead->cliente->Nombre;
+                $apellido = $lead->cliente->Apellido;
+                $telefono = $lead->cliente->Telefono;
+                $rut = trim($lead->cliente->Rut);
+            }
+
             if ($rut) {
                 $dv = substr($rut, -1);
                 $rut = ltrim(substr($rut, 0, length($rut) - 1), "0");

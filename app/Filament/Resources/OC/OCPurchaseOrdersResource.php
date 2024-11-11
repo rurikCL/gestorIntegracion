@@ -93,6 +93,7 @@ class OCPurchaseOrdersResource extends Resource
                                             ->columnSpan(3),
                                         Forms\Components\TextInput::make('amount')->label('Monto'),
                                         Forms\Components\TextInput::make('unitPrice')->label('Precio'),
+                                        Forms\Components\TextInput::make('taxAmount')->label('Impuesto'),
                                         Forms\Components\TextInput::make('totalPrice')->label('Total'),
                                     ])->columns(3)
                                     ->grid(2),

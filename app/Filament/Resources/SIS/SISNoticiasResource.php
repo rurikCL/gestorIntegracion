@@ -29,7 +29,7 @@ class SISNoticiasResource extends Resource
                 Forms\Components\TextInput::make('Titulo'),
                 Forms\Components\TextInput::make('Ruta'),
                 Forms\Components\TextInput::make('Descripcion'),
-                Forms\Components\RichEditor::make('Texto'),
+                Forms\Components\MarkdownEditor::make('Texto'),
                 Forms\Components\TextInput::make('Area'),
                 Forms\Components\Toggle::make('Activo'),
 

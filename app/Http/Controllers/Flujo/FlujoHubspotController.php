@@ -782,10 +782,10 @@ class FlujoHubspotController extends Controller
 
             $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
 
+            print_r("Datos contacto : $email, $nombre, $apellido, $telefono, $rut");
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
             if($contacto) {
-                print_r($contacto, true);
                 foreach ($contacto as $item) {
                     $data = $item->jsonSerialize();
                     $idContacto = $data->id;

@@ -760,17 +760,17 @@ class FlujoHubspotController extends Controller
                 $filter->setOperator('EQ')
                     ->setPropertyName('rut')
                     ->setValue($rutFormateado);
-                Log::info("Buscando por Rut : " . $rutFormateado);
+//                Log::info("Buscando por Rut : " . $rutFormateado);
             } else if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $filter->setOperator('EQ')
                     ->setPropertyName('email')
                     ->setValue($email);
-                Log::info("Buscando por Email : " . $email);
+//                Log::info("Buscando por Email : " . $email);
             } else {
                 $filter->setOperator('EQ')
                     ->setPropertyName('phone')
                     ->setValue($telefono);
-                Log::info("Buscando por Telefono : " . $telefono);
+//                Log::info("Buscando por Telefono : " . $telefono);
             }
 
 
@@ -784,11 +784,16 @@ class FlujoHubspotController extends Controller
 
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
-            foreach ($contacto as $item) {
-                $data = $item->jsonSerialize();
-                $idContacto = $data->id;
-                print_r("contacto encontrado : " . $data->id);
-                break;
+            if($contacto) {
+                foreach ($contacto as $item) {
+                    $data = $item->jsonSerialize();
+                    $idContacto = $data->id;
+                    print_r("contacto encontrado : " . $data->id);
+                    break;
+                }
+
+            } else {
+                print_r("No se pudo buscar el contacto");
             }
 
             if ($idContacto == 0) {

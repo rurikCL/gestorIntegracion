@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\MA\MA_Usuarios;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -33,7 +34,8 @@ class User extends Authenticatable implements FilamentUser
         'brand_id',
         'password',
         'brand_id',
-        'state'
+        'state',
+        'userRomaID'
     ];
 
     /**
@@ -65,7 +67,11 @@ class User extends Authenticatable implements FilamentUser
 
     public function management()
     {
-        return $this->belongsTo( Management::class, 'brand_id', 'ID' );
+        return $this->belongsTo( Management::class, 'brand_id', 'userRomaID' );
+    }
+
+    public function usuarioroma(){
+        return $this->hasOne(MA_Usuarios::class, 'ID', 'User');
     }
 
     public function brand()

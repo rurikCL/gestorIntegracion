@@ -44,6 +44,8 @@ class UserResource extends Resource
                     ->onIcon('heroicon-m-bolt')
                     ->offIcon('heroicon-s-user')
                     ->required(),
+                Forms\Components\Select::make('userRomaID')
+                    ->relationship('usuarioroma', 'Usuario Roma'),
                 Forms\Components\Select::make('role')
                     ->options([
                         'user' => 'user',

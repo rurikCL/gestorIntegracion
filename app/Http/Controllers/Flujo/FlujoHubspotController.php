@@ -784,6 +784,7 @@ class FlujoHubspotController extends Controller
 
             print_r("Datos contacto : $email, $nombre, $apellido, $telefono, $rut");
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
+            print_r($contacto);
 
             if($contacto) {
                 foreach ($contacto as $item) {

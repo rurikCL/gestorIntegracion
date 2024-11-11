@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\MA\MA_Usuarios;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -45,9 +46,8 @@ class UserResource extends Resource
                     ->offIcon('heroicon-s-user')
                     ->required(),
                 Forms\Components\Select::make('userRomaID')
-                    ->options(fn() => \App\Models\MA\MA_Usuarios::all()->pluck('Nombre', 'ID'))
+                    ->options(fn() => MA_Usuarios::where('Activo', 1)->pluck('Nombre', 'ID'))
                     ->searchable(),
-
                 Forms\Components\Select::make('role')
                     ->options([
                         'user' => 'user',

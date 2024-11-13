@@ -31,7 +31,9 @@ class MAAccesoriosResource extends Resource
                             ->relationship('marca', 'Marca')
                             ->live()
                             ->reactive()
-                            ->default(fn(callable $get) => MA_Marcas::where('Marca', $get('Marca')))
+                            ->default(function(callable $get) {
+                                return MA_Marcas::where('Marca', $get('Marca'));
+                            })
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Marca', MA_Marcas::find($state)->Marca);
                             }),
@@ -39,7 +41,9 @@ class MAAccesoriosResource extends Resource
                             ->relationship('modelo', 'Modelo')
                             ->reactive()
                             ->live()
-                            ->default(fn(callable $get) => MA_Modelos::where('Modelo', $get('Modelo')))
+                            ->default(function(callable $get) {
+                                return MA_Modelos::where('Modelo', $get('Modelo'));
+                            })
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Modelo', MA_Modelos::find($state)->Modelo);
                             }),

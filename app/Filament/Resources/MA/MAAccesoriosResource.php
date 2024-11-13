@@ -35,7 +35,7 @@ class MAAccesoriosResource extends Resource
                             ->live()
                             ->reactive()
                             ->default(function(callable $get) {
-                                return MA_Marcas::where('Marca', $get('Marca'))->pluck('ID');
+//                                return MA_Marcas::where('Marca', $get('Marca'))->pluck('ID');
                             })
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Marca', MA_Marcas::find($state)->Marca);

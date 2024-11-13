@@ -34,9 +34,7 @@ class MAAccesoriosResource extends Resource
                             ->relationship('marca', 'Marca')
                             ->live()
                             ->reactive()
-                            ->default(function(callable $get) {
-//                                return MA_Marcas::where('Marca', $get('Marca'))->pluck('ID');
-                            })
+                            ->default(fn($record) => MA_Marcas::where('Marca', $record->MarcaID))
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Marca', MA_Marcas::find($state)->Marca);
                             }),

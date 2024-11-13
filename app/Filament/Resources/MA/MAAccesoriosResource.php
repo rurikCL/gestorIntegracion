@@ -47,7 +47,7 @@ class MAAccesoriosResource extends Resource
                             ->relationship('modelo', 'Modelo')
                         ->reactive()
                         ->afterStateUpdated(function ($state, Set $set) {
-                            $set('Modelo', $state->getModeloID()->getModel()->Modelo);
+                            $set('Modelo', $state);
                         }),
                     ])->columns(2),
             ]);

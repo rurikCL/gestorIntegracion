@@ -2,6 +2,7 @@
 
 namespace App\Models\MA;
 
+use App\Models\VT\VT_ElementosFinanciadosSubTipos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,7 +34,7 @@ class MA_Accesorios extends Model
 
     public function subtipo()
     {
-        return $this->hasOne(MA_Accesorios::class, 'ID', 'SubTipoID');
+        return $this->hasOne(VT_ElementosFinanciadosSubTipos::class, 'ID', 'SubTipoID');
     }
 
     public function marca()

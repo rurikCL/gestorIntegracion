@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\MA;
 
 use App\Filament\Resources\MA\MAAccesoriosResource\Pages;
-use App\Filament\Resources\MA\MAAccesoriosResource\RelationManagers;
 use App\Models\MA\MA_Accesorios;
+use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Modelos;
-use App\Models\MA\MAAccesorios;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -28,8 +27,24 @@ class MAAccesoriosResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Informacion de Accesorio')
                     ->schema([
-                        Forms\Components\TextInput::make('Marca')->disabled(),
-                        Forms\Components\TextInput::make('Modelo')->disabled(),
+                        Forms\Components\Select::make('MarcaID')
+                            ->relationship('marca', 'Marca')
+                            ->live()
+                            ->reactive()
+                            ->default(fn(callable $get) => MA_Marcas::where('Marca', $get('Marca')))
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                $set('Marca', MA_Marcas::find($state)->Marca);
+                            }),
+                        Forms\Components\Select::make('ModeloID')
+                            ->relationship('modelo', 'Modelo')
+                            ->reactive()
+                            ->live()
+                            ->default(fn(callable $get) => MA_Modelos::where('Modelo', $get('Modelo')))
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                $set('Modelo', MA_Modelos::find($state)->Modelo);
+                            }),
+                        Forms\Components\TextInput::make('Marca')->hidden()->reactive(),
+                        Forms\Components\TextInput::make('Modelo')->hidden()->reactive(),
                         Forms\Components\TextInput::make('Familia'),
                         Forms\Components\TextInput::make('TipoTxt'),
                         Forms\Components\TextInput::make('SKU'),
@@ -40,17 +55,7 @@ class MAAccesoriosResource extends Resource
                         Forms\Components\Toggle::make('Activo'),
                         Forms\Components\Select::make('SubTipoID')
                             ->relationship('subtipo', 'SubTipo')
-                        ->reactive(),
-                        Forms\Components\Select::make('MarcaID')
-                            ->relationship('marca', 'Marca')
-                        ->reactive(),
-                        Forms\Components\Select::make('ModeloID')
-                            ->relationship('modelo', 'Modelo')
-                            ->reactive()
-                            ->live()
-                            ->afterStateUpdated(function ($state, Set $set) {
-                                $set('Modelo', MA_Modelos::find($state)->Modelo);
-                            }),
+                            ->reactive(),
                     ])->columns(2),
             ]);
     }

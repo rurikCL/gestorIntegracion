@@ -5,6 +5,7 @@ namespace App\Filament\Resources\MA;
 use App\Filament\Resources\MA\MAAccesoriosResource\Pages;
 use App\Filament\Resources\MA\MAAccesoriosResource\RelationManagers;
 use App\Models\MA\MA_Accesorios;
+use App\Models\MA\MA_Modelos;
 use App\Models\MA\MAAccesorios;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -45,11 +46,11 @@ class MAAccesoriosResource extends Resource
                         ->reactive(),
                         Forms\Components\Select::make('ModeloID')
                             ->relationship('modelo', 'Modelo')
-                        ->reactive()
+                            ->reactive()
                             ->live()
-                        ->afterStateUpdated(function ($state, Set $set) {
-                            $set('Modelo', $state);
-                        }),
+                            ->afterStateUpdated(function ($state, Set $set) {
+                                $set('Modelo', MA_Modelos::find($state)->Modelo);
+                            }),
                     ])->columns(2),
             ]);
     }

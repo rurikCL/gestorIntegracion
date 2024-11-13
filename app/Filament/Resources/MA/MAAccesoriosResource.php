@@ -32,7 +32,6 @@ class MAAccesoriosResource extends Resource
                             ->live()
                             ->reactive()
                             ->default(function(callable $get) {
-                                return 1;
                                 return MA_Marcas::where('Marca', $get('Marca'))->pluck('ID');
                             })
                             ->afterStateUpdated(function ($state, Set $set) {
@@ -49,8 +48,8 @@ class MAAccesoriosResource extends Resource
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Modelo', MA_Modelos::find($state)->Modelo);
                             }),
-                        Forms\Components\TextInput::make('Marca')->hidden()->reactive(),
-                        Forms\Components\TextInput::make('Modelo')->hidden()->reactive(),
+                        Forms\Components\TextInput::make('Marca')->reactive(),
+                        Forms\Components\TextInput::make('Modelo')->reactive(),
                         Forms\Components\TextInput::make('Familia'),
                         Forms\Components\TextInput::make('TipoTxt'),
                         Forms\Components\TextInput::make('SKU'),

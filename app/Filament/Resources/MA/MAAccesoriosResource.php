@@ -46,6 +46,7 @@ class MAAccesoriosResource extends Resource
                         Forms\Components\Select::make('ModeloID')
                             ->relationship('modelo', 'Modelo')
                         ->reactive()
+                            ->live()
                         ->afterStateUpdated(function ($state, Set $set) {
                             $set('Modelo', $state);
                         }),

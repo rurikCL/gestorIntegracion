@@ -8,6 +8,7 @@ use App\Models\MA\MA_Accesorios;
 use App\Models\MA\MAAccesorios;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,8 +27,8 @@ class MAAccesoriosResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Informacion de Accesorio')
                     ->schema([
-                        Forms\Components\TextInput::make('Marca'),
-                        Forms\Components\TextInput::make('Modelo'),
+                        Forms\Components\TextInput::make('Marca')->disabled(),
+                        Forms\Components\TextInput::make('Modelo')->disabled(),
                         Forms\Components\TextInput::make('Familia'),
                         Forms\Components\TextInput::make('TipoTxt'),
                         Forms\Components\TextInput::make('SKU'),
@@ -36,10 +37,19 @@ class MAAccesoriosResource extends Resource
                         Forms\Components\TextInput::make('PrecioCostoRoma'),
                         Forms\Components\TextInput::make('PrecioVenta'),
                         Forms\Components\Toggle::make('Activo'),
-                        Forms\Components\Select::make('SubTipoID')->relationship('subtipo', 'SubTipo'),
-                        Forms\Components\Select::make('MarcaID')->relationship('marca', 'Marca'),
-                        Forms\Components\Select::make('ModeloID')->relationship('modelo', 'Modelo'),
-                    ]),
+                        Forms\Components\Select::make('SubTipoID')
+                            ->relationship('subtipo', 'SubTipo')
+                        ->reactive(),
+                        Forms\Components\Select::make('MarcaID')
+                            ->relationship('marca', 'Marca')
+                        ->reactive(),
+                        Forms\Components\Select::make('ModeloID')
+                            ->relationship('modelo', 'Modelo')
+                        ->reactive()
+                        ->afterStateUpdated(function ($state, Set $set) {
+                            $set('Modelo', $state->getModeloID()->getModel()->Modelo);
+                        }),
+                    ])->columns(2),
             ]);
     }
 

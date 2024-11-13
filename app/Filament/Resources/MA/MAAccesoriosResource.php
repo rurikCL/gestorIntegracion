@@ -32,6 +32,7 @@ class MAAccesoriosResource extends Resource
                             ->live()
                             ->reactive()
                             ->default(function(callable $get) {
+                                return 1;
                                 return MA_Marcas::where('Marca', $get('Marca'))->pluck('ID');
                             })
                             ->afterStateUpdated(function ($state, Set $set) {
@@ -42,6 +43,7 @@ class MAAccesoriosResource extends Resource
                             ->reactive()
                             ->live()
                             ->default(function(callable $get) {
+                                return 1;
                                 return MA_Modelos::where('Modelo', $get('Modelo'))->pluck('ID');
                             })
                             ->afterStateUpdated(function ($state, Set $set) {

@@ -724,7 +724,7 @@ class FlujoHubspotController extends Controller
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
 
-            if($lead->cliente->ID == 1){
+            if ($lead->cliente->ID == 1) {
                 $email = $lead->Email;
                 $nombre = $lead->Nombre;
                 $apellido = $lead->Apellido;
@@ -786,7 +786,7 @@ class FlujoHubspotController extends Controller
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 //            print_r($contacto);
 
-            if($contacto) {
+            if ($contacto) {
                 foreach ($contacto as $item) {
                     $data = $item->jsonSerialize();
                     $idContacto = $data->id;
@@ -827,14 +827,21 @@ class FlujoHubspotController extends Controller
 
                     $regex = "/Property values were not valid/m";
                     if (preg_match($regex, $respuesta)) {
-                        if($lead->cliente->Correccion == 0){
+
+
+                        if ($lead->cliente->Correccion == 0 || $lead->LandBotID == 0) {
                             $emailsErroneos[] = [
                                 "idLead" => $lead->ID,
                                 "idCliente" => $lead->cliente->ID,
                                 "email" => $email,
                             ];
-                            $lead->cliente->Correccion = 1;
-                            $lead->cliente->save();
+                            if ($lead->cliente->ID > 1) {
+                                $lead->cliente->Correccion = 1;
+                                $lead->cliente->save();
+                            } else {
+                                $lead->LandBotID = 1;
+                                $lead->save();
+                            }
                         }
 
                     }
@@ -915,7 +922,7 @@ class FlujoHubspotController extends Controller
                 Mail::to('cristian.fuentealba@pompeyo.cl')->cc(['rodrigo.larrain@pompeyo.cl', 'pedro.godoy@pompeyo.cl'])
                     ->send(new EmailsErroneos($emailsErroneos));
                 Log::info("Correo de errores enviado");
-            }catch (\Exception $e) {
+            } catch (\Exception $e) {
                 print_r($e->getMessage());
                 Log::error("Error al enviar el correo de errores");
             }

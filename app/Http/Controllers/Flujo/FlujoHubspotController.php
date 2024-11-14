@@ -782,9 +782,9 @@ class FlujoHubspotController extends Controller
 
             $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
 
-            print_r("Datos contacto : $email, $nombre, $apellido, $telefono, $rut");
+//            print_r("Datos contacto : $email, $nombre, $apellido, $telefono, $rut");
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-            print_r($contacto);
+//            print_r($contacto);
 
             if($contacto) {
                 foreach ($contacto as $item) {
@@ -795,7 +795,7 @@ class FlujoHubspotController extends Controller
                 }
 
             } else {
-                print_r("No se pudo buscar el contacto");
+                print_r("Contacto no encontrado");
             }
 
             if ($idContacto == 0) {

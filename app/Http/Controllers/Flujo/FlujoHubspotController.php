@@ -807,7 +807,7 @@ class FlujoHubspotController extends Controller
                         'lastname' => $apellido,
                         'phone' => $telefono,
                         'rut' => $rutFormateado,
-                        'idpompeyo' => $lead->ClienteID
+                        'idpompeyo' => ($lead->ClienteID != 1) ? $lead->ClienteID : null,
                     ]);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                     $idContacto = $contact->getId();

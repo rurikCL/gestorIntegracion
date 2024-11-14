@@ -54,7 +54,7 @@ class MAAccesoriosResource extends Resource
                             ->live()
                             ->reactive()
                             ->label("ID Marca")
-                            ->default(fn($record) => ($record) ? MA_Marcas::where('Marca', $record->Marca)->pluck('ID') : null)
+                            ->after(fn($record) => ($record) ? MA_Marcas::where('Marca', $record->Marca)->pluck('ID') : null)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Marca', MA_Marcas::find($state)->Marca);
                             }),

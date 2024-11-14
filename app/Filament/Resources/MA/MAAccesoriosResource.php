@@ -14,12 +14,15 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use function Psl\Type\null;
 
 class MAAccesoriosResource extends Resource
 {
     protected static ?string $model = MA_Accesorios::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Accesorios';
+    protected static ?string $navigationGroup = 'Elementos Financiados';
 
     public static function form(Form $form): Form
     {
@@ -27,8 +30,20 @@ class MAAccesoriosResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Informacion de Accesorio')
                     ->schema([
-                        Forms\Components\TextInput::make('Marca')->reactive(),
-                        Forms\Components\TextInput::make('Modelo')->reactive(),
+                        Forms\Components\TextInput::make('Marca')->reactive()
+                        ->afterStateUpdated(function ($state, $set) {
+                            if($state){
+                                $marca = MA_Marcas::where('Marca', 'like', "%$state%")->first();
+                                if($marca) $set('MarcaID', $marca->ID);
+                            }
+                        }),
+                        Forms\Components\TextInput::make('Modelo')->reactive()
+                            ->afterStateUpdated(function ($state, $set) {
+                                if($state){
+                                    $modelo = MA_Modelos::where('Modelo', 'like', "%$state%")->first();
+                                    if($modelo) $set('ModeloID', $modelo->ID);
+                                }
+                            }),
 
                         Forms\Components\Select::make('MarcaID')
                             ->relationship('marca', 'Marca')
@@ -39,12 +54,17 @@ class MAAccesoriosResource extends Resource
                                 $set('Marca', MA_Marcas::find($state)->Marca);
                             }),
                         Forms\Components\Select::make('ModeloID')
-                            ->relationship('modelo', 'Modelo')
+//                            ->relationship('modelo', 'Modelo')
+                                ->options(function (callable $get) {
+                                    if($get('MarcaID')){
+                                        return MA_Marcas::find($get('MarcaID'))->modelos->pluck('Modelo', 'ID') ?? null;
+                                    } else{
+                                        return null;
+                                    }
+                            })
                             ->reactive()
                             ->live()
-                            ->default(function(callable $get) {
-                                return MA_Modelos::where('Modelo', $get('Modelo'))->pluck('ID');
-                            })
+                            ->default(fn($record) => ($record) ? MA_Modelos::where('Modelo', $record->ModeloID)->pluck('ID') : null)
                             ->afterStateUpdated(function ($state, Set $set) {
                                 $set('Modelo', MA_Modelos::find($state)->Modelo);
                             }),

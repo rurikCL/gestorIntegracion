@@ -889,7 +889,7 @@ class FlujoHubspotController extends Controller
                 'dealstage' => $estadoHomologado,
                 'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
                 'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID,
-                'tipo_vehiculo' => (substr($lead->sucursal->Sucursal, 0, 5) == "USADOS") ? 'Usado' : 'Nuevo',
+                'tipo_vehiculo' => ($lead->sucursal) ? (substr($lead->sucursal->Sucursal, 0, 5) == "USADOS") ? 'Usado' : 'Nuevo' : 'Nuevo',
 
             ];
 //            print_r($properties1);

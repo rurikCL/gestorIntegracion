@@ -91,10 +91,22 @@ class OCPurchaseOrdersResource extends Resource
                                             ->label('Producto'),
                                         Forms\Components\TextInput::make('description')->label('Descripcion')
                                             ->columnSpan(3),
-                                        Forms\Components\TextInput::make('amount')->label('Monto'),
-                                        Forms\Components\TextInput::make('unitPrice')->label('Precio'),
-                                        Forms\Components\TextInput::make('taxAmount')->label('Impuesto'),
-                                        Forms\Components\TextInput::make('totalPrice')->label('Total'),
+                                        Forms\Components\TextInput::make('amount')->label('Monto')
+                                            ->numeric()
+                                            ->live()
+                                            ->afterStateUpdated(function ($state, $set, $get) {
+                                                $set('totalPrice', $state * $get('unitPrice'));
+                                            }),
+                                        Forms\Components\TextInput::make('unitPrice')
+                                            ->label('Precio')
+                                            ->reactive(),
+                                        Forms\Components\TextInput::make('taxAmount')
+                                            ->label('Impuesto')
+                                            ->readOnly(),
+                                        Forms\Components\TextInput::make('totalPrice')
+                                            ->label('Total')
+                                            ->reactive()
+                                            ->readOnly(),
                                     ])->columns(3)
                                     ->grid(2),
                             ]),
@@ -153,7 +165,7 @@ class OCPurchaseOrdersResource extends Resource
 //                Tables\Columns\ViewColumn::make('state')
 //                    ->view('components.state'),
                 Tables\Columns\ToggleColumn::make('state')
-                    ,
+                ,
                 Tables\Columns\TextColumn::make('empresa.Empresa'),
                 Tables\Columns\TextColumn::make('gerencia.Gerencia'),
                 Tables\Columns\TextColumn::make('sucursal.Sucursal')
@@ -165,7 +177,7 @@ class OCPurchaseOrdersResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('branch_id')
-                    ->options(fn()=>MA_Sucursales::where('Activa',1 )->pluck('Sucursal','id'))
+                    ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'id'))
                     ->searchable()
                     ->label('Sucursal'),
             ])

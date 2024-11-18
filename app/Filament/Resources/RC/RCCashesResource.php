@@ -31,8 +31,9 @@ class RCCashesResource extends Resource
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Select::make('comment')
+                        Forms\Components\Select::make('user_id')
                             ->relationship('usuarios', 'Nombre')
+                            ->searchable()
                             ->label('Solicitante'),
                         Forms\Components\Select::make('branch_office_id')
                             ->relationship('sucursales', 'Sucursal')

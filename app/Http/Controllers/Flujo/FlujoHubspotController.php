@@ -801,7 +801,7 @@ class FlujoHubspotController extends Controller
             if ($idContacto == 0) {
                 try {
                     $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
-                    $contactInput->setProperties([
+                    $dataContacto = [
                         'email' => filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null,
                         'firstname' => $nombre,
                         'lastname' => $apellido,
@@ -809,7 +809,9 @@ class FlujoHubspotController extends Controller
                         'rut' => $rutFormateado,
                         'idpompeyo' => ($lead->ClienteID != 1) ? $lead->ClienteID : null,
                         'hs_marketable_status' => 2,  // 1: Marketing contact, 2: Non-marketing contact
-                    ]);
+                    ];
+                    dump($dataContacto);
+                    $contactInput->setProperties($dataContacto);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                     $idContacto = $contact->getId();
                     print_r("Contacto creado : " . $idContacto);

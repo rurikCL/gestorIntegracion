@@ -261,92 +261,6 @@ class LeadController extends Controller
 
             }
 
-            // RUT ---------------------
-            if ($request->input('data.rut')) {
-                $rut = substr($request->input('data.rut'), 0, 15);
-                $rut = str_replace('.', '', $rut);
-                $rut = str_replace('-', '', $rut);
-                $rut = str_replace(' ', '', $rut);
-            }
-
-            // CLIENTE ---------------------
-            $objCliente = new MA_Clientes();
-            Log::info("Buscando cliente (rut : " . $request->input('data.rut') . ", nombre:" . ($request->input('data.nombre') ?? '') . ")");
-
-            if ($rut) {
-                $cliente = $objCliente->where('Rut', $rut)->first();
-            } else if ($request->input('data.email')) {
-                $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
-            } else if ($request->input('data.telefono')) {
-                $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))->first();
-            }
-
-            // Si no encuentra cliente, se crea uno nuevo si es que trae rut
-            if (!$cliente) {
-
-                // Si es un rut valido- se crea el cliente
-                if ($rut != '') {
-                    $objCliente->Rut = $rut;
-                    $objCliente->FechaCreacion = date('Y-m-d H:i:s');
-                    $objCliente->EventoCreacionID = 1;
-                    $objCliente->UsuarioCreacionID = $usuarioID; // 2824
-                    $objCliente->Nombre = $request->input('data.nombre') ?? '';
-                    $objCliente->SegundoNombre = $request->input('data.segundoNombre') ?? '';
-                    $objCliente->Apellido = $request->input('data.apellido') ?? '';
-                    $objCliente->SegundoApellido = $request->input('data.segundoApellido') ?? '';
-                    $objCliente->Email = $request->input('data.email') ?? '';
-                    $objCliente->Telefono = $request->input('data.telefono') ?? '';
-                    $objCliente->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
-                    $objCliente->Direccion = $request->input('data.direccion') ?? '';
-
-                    $objCliente->save();
-
-                    $Log->notice("Cliente creado: " . $objCliente->ID);
-                    $cliente = $objCliente;
-                } else {
-                    $Log->error("No se creo el cliente, rut invalido o no existente");
-                    $cliente = null;
-                }
-            } else {
-                $Log->info("Cliente encontrado: " . $cliente->Nombre . " ID: " . $cliente->ID);
-                if ($rut != '' && $rut != $cliente->Rut) {
-                    $cliente->Rut = $rut;
-                    $Log->info("Rut actualizado :" . $rut);
-                }
-                if ($request->input('data.nombre') != '' && $request->input('data.nombre') != $cliente->Nombre) {
-                    $cliente->Nombre = $request->input('data.nombre');
-                    $Log->info("Nombre actualizado :" . $request->input('data.nombre'));
-                }
-                if ($request->input('data.email') != '' && $request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
-                    $cliente->Email = $request->input('data.email');
-                    $Log->info("Email actualizado :" . $request->input('data.email'));
-                }
-                if ($request->input('data.telefono') != '' && $request->input('data.telefono') != $cliente->Telefono) {
-                    $cliente->Telefono = $request->input('data.telefono');
-                    $Log->info("Telefono actualizado :" . $request->input('data.telefono'));
-                }
-
-                $cliente->save();
-            }
-
-
-            // CREACION DE LEAD ---------------------
-            $vendedorID = 1;
-
-            // Asignacion vendedor desde Genesys
-            $asignacion = CC_AsignacionLeadGenesys::where('GerenciaID',
-                $request->input('data.lead.marcaID'))
-                ->where('Activo', 1)
-                ->first();
-
-            $vendedorID = $request->input('data.lead.vendedorID') ?? 1;
-
-            if ($asignacion && $vendedorID == 0) {
-                $Log->info("Asignacion de vendedor desde Genesys: " . $asignacion->VendedorID);
-                $vendedorID = $asignacion->VendedorID;
-            }
-            // ---------------------
-
             // Variables y validaciones
             $comentario = $request->input('data.lead.comentario');
             $sucursalID = $request->input('data.lead.sucursalID') ?? null;
@@ -368,387 +282,491 @@ class LeadController extends Controller
                 $financiamiento = 2;
             }
 
-            $returnMessage = "Lead creado correctamente";
+//            Validaciones previas
+            $procesar = true;
 
-
-            // REGISTRO LOG ---------------------
-            LOG_IntegracionLeads::info(
-                [
-                    'Fecha' => date('Y-m-d H:i:s'),
-                    'Rut' => $rut,
-                    'Nombre' => $request->input('data.nombre'),
-                    'Email' => $request->input('data.email'),
-                    'Telefono' => $request->input('data.telefono'),
-                    'Modelo' => $modeloID ?? $modeloNombre,
-                    'Version' => '',
-                    'Sucursal' => $sucursalID ?? $sucursalNombre,
-                    'Origen' => $origenID ?? $origen,
-                    'SubOrigen' => $subOrigenID,
-                    'IdExterno' => $request->input('data.lead.externalID'),
-                    'SP' => 'API',
-                ]
-            );
-
-            // HOMOLOGACIONES ---------------------
-
-            $gerenciaHomologada = 0;
-
-            // Homologacion Marca
-            if (!$marcaID && $marcaNombre && $idFlujo) {
-                $marcaHomologada = FLU_Homologacion::GetDato(
-                    $marcaNombre,
-                    $idFlujo,
-                    'marca',
-                    1
-                );
-
-                if ($marcaHomologada == 1) {
-                    $marca = MA_Gerencias::where('Gerencia', 'like', $marcaNombre)->first();
-                    if ($marca) {
-                        $marcaHomologada = $marca->MarcaAsociada;
-                        $gerenciaHomologada = $marca->ID;
-
-                        $Log->info("Marca encontrada : " . $marca->Gerencia . " (" . $marcaHomologada . ") gerenciaID : " . $gerenciaHomologada);
-
-                        if ($marcaHomologada == 0) {
-                            $marcaHomologada = 1; // Sin Info
-                        }
-                    } else {
-                        $Log->warning("Marca no encontrada");
-                    }
-                } else {
-                    $Log->info("Homologacion de marca encontrada: " . $marcaNombre . " (" . $marcaHomologada . ")");
-                    $marcaID = 0;
+            // Si es Hubspot
+            if($fuente == 2){
+                $lead = MK_Leads::where('IDHubspot', $request->input('data.lead.externalID'))->pluck('id');
+                // si existe, no se crea
+                if ($lead) {
+                    $procesar = false;
                 }
-
-                if (!$marcaID) {
-                    $marcaID = $marcaHomologada;
-                }
-
-                // Guardamos marca y modelo en el comentario, en caso de que falle la homologacion.
-                $comentario = "Marca: " . $request->input('data.lead.marca') . " " . $comentario;
             }
 
 
-            // Homologacion Modelo
-            if (!$modeloID && $modeloNombre && $idFlujo) {
-                $modeloHomologado = FLU_Homologacion::GetDato(
-                    $modeloNombre,
-                    $idFlujo,
-                    'modelo', 1
-                );
+            if($procesar === true) {
+                // RUT ---------------------
+                if ($request->input('data.rut')) {
+                    $rut = substr($request->input('data.rut'), 0, 15);
+                    $rut = str_replace('.', '', $rut);
+                    $rut = str_replace('-', '', $rut);
+                    $rut = str_replace(' ', '', $rut);
+                }
 
-                if ($modeloHomologado == 1) {
-                    $modelo = MA_Modelos::where('Modelo', 'like', $modeloNombre)
-                        ->orWhere('H_Texto', 'like', $modeloNombre)
-                        ->where('Activo', 1)
-                        ->first();
+                // CLIENTE ---------------------
+                $objCliente = new MA_Clientes();
+                Log::info("Buscando cliente (rut : " . $request->input('data.rut') . ", nombre:" . ($request->input('data.nombre') ?? '') . ")");
 
-                    if ($modelo) {
-                        $Log->info("Modelo encontrado: " . $modelo->Modelo);
-                        $modeloHomologado = $modelo->ID;
-                        if ($marcaID == 0) {
-                            $marcaID = $modelo->MarcaID;
-                        }
+                if ($rut) {
+                    $cliente = $objCliente->where('Rut', $rut)->first();
+                } else if ($request->input('data.email')) {
+                    $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
+                } else if ($request->input('data.telefono')) {
+                    $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))->first();
+                }
+
+                // Si no encuentra cliente, se crea uno nuevo si es que trae rut
+                if (!$cliente) {
+
+                    // Si es un rut valido- se crea el cliente
+                    if ($rut != '') {
+                        $objCliente->Rut = $rut;
+                        $objCliente->FechaCreacion = date('Y-m-d H:i:s');
+                        $objCliente->EventoCreacionID = 1;
+                        $objCliente->UsuarioCreacionID = $usuarioID; // 2824
+                        $objCliente->Nombre = $request->input('data.nombre') ?? '';
+                        $objCliente->SegundoNombre = $request->input('data.segundoNombre') ?? '';
+                        $objCliente->Apellido = $request->input('data.apellido') ?? '';
+                        $objCliente->SegundoApellido = $request->input('data.segundoApellido') ?? '';
+                        $objCliente->Email = $request->input('data.email') ?? '';
+                        $objCliente->Telefono = $request->input('data.telefono') ?? '';
+                        $objCliente->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
+                        $objCliente->Direccion = $request->input('data.direccion') ?? '';
+
+                        $objCliente->save();
+
+                        $Log->notice("Cliente creado: " . $objCliente->ID);
+                        $cliente = $objCliente;
                     } else {
-                        $Log->warning("Modelo no encontrado");
-
+                        $Log->error("No se creo el cliente, rut invalido o no existente");
+                        $cliente = null;
                     }
                 } else {
-                    $Log->info("Homologacion de modelo encontrada: " . $modeloNombre . " (" . $modeloHomologado . ")");
+                    $Log->info("Cliente encontrado: " . $cliente->Nombre . " ID: " . $cliente->ID);
+                    if ($rut != '' && $rut != $cliente->Rut) {
+                        $cliente->Rut = $rut;
+                        $Log->info("Rut actualizado :" . $rut);
+                    }
+                    if ($request->input('data.nombre') != '' && $request->input('data.nombre') != $cliente->Nombre) {
+                        $cliente->Nombre = $request->input('data.nombre');
+                        $Log->info("Nombre actualizado :" . $request->input('data.nombre'));
+                    }
+                    if ($request->input('data.email') != '' && $request->input('data.email') != '' && $request->input('data.email') != $cliente->Email) {
+                        $cliente->Email = $request->input('data.email');
+                        $Log->info("Email actualizado :" . $request->input('data.email'));
+                    }
+                    if ($request->input('data.telefono') != '' && $request->input('data.telefono') != $cliente->Telefono) {
+                        $cliente->Telefono = $request->input('data.telefono');
+                        $Log->info("Telefono actualizado :" . $request->input('data.telefono'));
+                    }
+
+                    $cliente->save();
                 }
 
-                if (!$modeloID) {
-                    $modeloID = $modeloHomologado;
+
+                // CREACION DE LEAD ---------------------
+                $vendedorID = 1;
+
+                // Asignacion vendedor desde Genesys
+                $asignacion = CC_AsignacionLeadGenesys::where('GerenciaID',
+                    $request->input('data.lead.marcaID'))
+                    ->where('Activo', 1)
+                    ->first();
+
+                $vendedorID = $request->input('data.lead.vendedorID') ?? 1;
+
+                if ($asignacion && $vendedorID == 0) {
+                    $Log->info("Asignacion de vendedor desde Genesys: " . $asignacion->VendedorID);
+                    $vendedorID = $asignacion->VendedorID;
                 }
-                $comentario = "Modelo: " . $modeloNombre . " " . $comentario;
-
-            } else if ($marcaID == 0 && $modeloID != 0) {
-                $modelo = MA_Modelos::where('ID', $modeloID)->first();
-                $marcaID = $modelo->MarcaID;
-                $Log->info("Marca asignada : " . $marcaID);
-            }
+                // ---------------------
 
 
-            // Homlogacion Sucursal
-            if (!$sucursalID && $sucursalNombre && $idFlujo) {
 
-                // Busca en Tabla Homologacion
-                $sucursalHomologada = FLU_Homologacion::GetDato(
-                    $sucursalNombre,
-                    $idFlujo,
-                    'sucursal',
-                    1 // Valor no encontrado
+                $returnMessage = "Lead creado correctamente";
+
+
+                // REGISTRO LOG ---------------------
+                LOG_IntegracionLeads::info(
+                    [
+                        'Fecha' => date('Y-m-d H:i:s'),
+                        'Rut' => $rut,
+                        'Nombre' => $request->input('data.nombre'),
+                        'Email' => $request->input('data.email'),
+                        'Telefono' => $request->input('data.telefono'),
+                        'Modelo' => $modeloID ?? $modeloNombre,
+                        'Version' => '',
+                        'Sucursal' => $sucursalID ?? $sucursalNombre,
+                        'Origen' => $origenID ?? $origen,
+                        'SubOrigen' => $subOrigenID,
+                        'IdExterno' => $request->input('data.lead.externalID'),
+                        'SP' => 'API',
+                    ]
                 );
 
-                if ($sucursalHomologada == 1) {
-                    $sucursal = MA_Sucursales::where('Sucursal', $sucursalNombre)
-                        ->where('Activa', 1)
-                        ->first();
+                // HOMOLOGACIONES ---------------------
 
-                    if ($sucursal) {
-                        $Log->info("Sucursal encontrada: " . $sucursal->Sucursal);
-                        $sucursalHomologada = $sucursal->ID;
+                $gerenciaHomologada = 0;
 
-                        /*if($sucursal->gerencia->MarcaAsociada != $marcaID){
-                            $marcaID = $sucursal->gerencia->MarcaAsociada;
-                            $Log->warning("Marca de sucursal no coincide con marca de lead. Se asigna marca de sucursal: " . $marcaID);
-                        }*/
+                // Homologacion Marca
+                if (!$marcaID && $marcaNombre && $idFlujo) {
+                    $marcaHomologada = FLU_Homologacion::GetDato(
+                        $marcaNombre,
+                        $idFlujo,
+                        'marca',
+                        1
+                    );
 
-                    } else {
-                        $Log->warning("Sucursal no encontrada, Buscando sucursal Facebook");
-                        $sucursalFB = TDP_FacebookSucursales::where('Sucursal', $sucursalNombre)
-                            ->where('GerenciaID', $gerenciaHomologada)
-                            ->first();
-                        if ($sucursalFB) {
-                            $Log->info("Sucursal Facebook encontrada: " . $sucursalFB->Sucursal);
-                            $sucursalHomologada = $sucursalFB->SucursalID;
+                    if ($marcaHomologada == 1) {
+                        $marca = MA_Gerencias::where('Gerencia', 'like', $marcaNombre)->first();
+                        if ($marca) {
+                            $marcaHomologada = $marca->MarcaAsociada;
+                            $gerenciaHomologada = $marca->ID;
+
+                            $Log->info("Marca encontrada : " . $marca->Gerencia . " (" . $marcaHomologada . ") gerenciaID : " . $gerenciaHomologada);
+
+                            if ($marcaHomologada == 0) {
+                                $marcaHomologada = 1; // Sin Info
+                            }
                         } else {
-                            $Log->warning("Sucursal Facebook no encontrada. Buscando sucursal Web");
+                            $Log->warning("Marca no encontrada");
+                        }
+                    } else {
+                        $Log->info("Homologacion de marca encontrada: " . $marcaNombre . " (" . $marcaHomologada . ")");
+                        $marcaID = 0;
+                    }
 
-                            $sucursalWeb = TDP_WebPompeyoSucursales::where('Sucursal', $sucursalNombre)
-                                ->orWhere('Sucursal', str_replace(" ", "_", $sucursalNombre))
+                    if (!$marcaID) {
+                        $marcaID = $marcaHomologada;
+                    }
+
+                    // Guardamos marca y modelo en el comentario, en caso de que falle la homologacion.
+                    $comentario = "Marca: " . $request->input('data.lead.marca') . " " . $comentario;
+                }
+
+
+                // Homologacion Modelo
+                if (!$modeloID && $modeloNombre && $idFlujo) {
+                    $modeloHomologado = FLU_Homologacion::GetDato(
+                        $modeloNombre,
+                        $idFlujo,
+                        'modelo', 1
+                    );
+
+                    if ($modeloHomologado == 1) {
+                        $modelo = MA_Modelos::where('Modelo', 'like', $modeloNombre)
+                            ->orWhere('H_Texto', 'like', $modeloNombre)
+                            ->where('Activo', 1)
+                            ->first();
+
+                        if ($modelo) {
+                            $Log->info("Modelo encontrado: " . $modelo->Modelo);
+                            $modeloHomologado = $modelo->ID;
+                            if ($marcaID == 0) {
+                                $marcaID = $modelo->MarcaID;
+                            }
+                        } else {
+                            $Log->warning("Modelo no encontrado");
+
+                        }
+                    } else {
+                        $Log->info("Homologacion de modelo encontrada: " . $modeloNombre . " (" . $modeloHomologado . ")");
+                    }
+
+                    if (!$modeloID) {
+                        $modeloID = $modeloHomologado;
+                    }
+                    $comentario = "Modelo: " . $modeloNombre . " " . $comentario;
+
+                } else if ($marcaID == 0 && $modeloID != 0) {
+                    $modelo = MA_Modelos::where('ID', $modeloID)->first();
+                    $marcaID = $modelo->MarcaID;
+                    $Log->info("Marca asignada : " . $marcaID);
+                }
+
+
+                // Homlogacion Sucursal
+                if (!$sucursalID && $sucursalNombre && $idFlujo) {
+
+                    // Busca en Tabla Homologacion
+                    $sucursalHomologada = FLU_Homologacion::GetDato(
+                        $sucursalNombre,
+                        $idFlujo,
+                        'sucursal',
+                        1 // Valor no encontrado
+                    );
+
+                    if ($sucursalHomologada == 1) {
+                        $sucursal = MA_Sucursales::where('Sucursal', $sucursalNombre)
+                            ->where('Activa', 1)
+                            ->first();
+
+                        if ($sucursal) {
+                            $Log->info("Sucursal encontrada: " . $sucursal->Sucursal);
+                            $sucursalHomologada = $sucursal->ID;
+
+                            /*if($sucursal->gerencia->MarcaAsociada != $marcaID){
+                                $marcaID = $sucursal->gerencia->MarcaAsociada;
+                                $Log->warning("Marca de sucursal no coincide con marca de lead. Se asigna marca de sucursal: " . $marcaID);
+                            }*/
+
+                        } else {
+                            $Log->warning("Sucursal no encontrada, Buscando sucursal Facebook");
+                            $sucursalFB = TDP_FacebookSucursales::where('Sucursal', $sucursalNombre)
+                                ->where('GerenciaID', $gerenciaHomologada)
                                 ->first();
-                            if ($sucursalWeb) {
-                                $Log->info("Sucursal Web encontrada: " . $sucursalWeb->Sucursal);
-                                $sucursalHomologada = $sucursalWeb->SucursalID;
+                            if ($sucursalFB) {
+                                $Log->info("Sucursal Facebook encontrada: " . $sucursalFB->Sucursal);
+                                $sucursalHomologada = $sucursalFB->SucursalID;
                             } else {
-                                $Log->error("Sucursal Web no encontrada");
+                                $Log->warning("Sucursal Facebook no encontrada. Buscando sucursal Web");
+
+                                $sucursalWeb = TDP_WebPompeyoSucursales::where('Sucursal', $sucursalNombre)
+                                    ->orWhere('Sucursal', str_replace(" ", "_", $sucursalNombre))
+                                    ->first();
+                                if ($sucursalWeb) {
+                                    $Log->info("Sucursal Web encontrada: " . $sucursalWeb->Sucursal);
+                                    $sucursalHomologada = $sucursalWeb->SucursalID;
+                                } else {
+                                    $Log->error("Sucursal Web no encontrada");
+                                }
                             }
                         }
+                    } else {
+                        $Log->info("Homologacion de sucursal encontrada: " . $sucursalNombre . " (" . $sucursalHomologada . ")");
                     }
-                } else {
-                    $Log->info("Homologacion de sucursal encontrada: " . $sucursalNombre . " (" . $sucursalHomologada . ")");
-                }
 
-                if (!$sucursalID) {
-                    // SI se encontro alguna sucursal.
-                    if ($sucursalHomologada > 1) {
-                        $sucursalID = $sucursalHomologada;
-                    } // SI no se encontro sucursal, se toma la primera sucursal de la Marca / Gerencia
-                    else {
-                        $Log->info("No se encontro sucursal. Buscando sucursal por Marca / Gerencia (" . $marcaID . " / " . $gerenciaHomologada . ")");
-                        if ($gerenciaHomologada > 0) {
-                            $sucursalDefecto = MA_Sucursales::where('GerenciaID', $gerenciaHomologada)->first();
-                            $sucursalID = $sucursalDefecto->ID;
-                            $Log->info("Sucursal por Marca asignada : " . $sucursalDefecto->Sucursal);
-                        } else {
-                            $sucursalID = 1;
-                            $Log->error("No se encontro sucursal por Marca. Se asigna sucursal 1");
+                    if (!$sucursalID) {
+                        // SI se encontro alguna sucursal.
+                        if ($sucursalHomologada > 1) {
+                            $sucursalID = $sucursalHomologada;
+                        } // SI no se encontro sucursal, se toma la primera sucursal de la Marca / Gerencia
+                        else {
+                            $Log->info("No se encontro sucursal. Buscando sucursal por Marca / Gerencia (" . $marcaID . " / " . $gerenciaHomologada . ")");
+                            if ($gerenciaHomologada > 0) {
+                                $sucursalDefecto = MA_Sucursales::where('GerenciaID', $gerenciaHomologada)->first();
+                                $sucursalID = $sucursalDefecto->ID;
+                                $Log->info("Sucursal por Marca asignada : " . $sucursalDefecto->Sucursal);
+                            } else {
+                                $sucursalID = 1;
+                                $Log->error("No se encontro sucursal por Marca. Se asigna sucursal 1");
+                            }
+
                         }
-
                     }
                 }
-            }
 
 
-            // Homologacion Origen
-            if ($origen != null) {
-                if ($origen == "fb") {
-                    $origenID = 8;
-                    $subOrigenID = 36;
-                } else if ($origen == "ig") {
-                    $origenID = 8;
-                    $subOrigenID = 37;
-                } else {
-                    $origenID = 3;
-                    $subOrigenID = 1;
+                // Homologacion Origen
+                if ($origen != null) {
+                    if ($origen == "fb") {
+                        $origenID = 8;
+                        $subOrigenID = 36;
+                    } else if ($origen == "ig") {
+                        $origenID = 8;
+                        $subOrigenID = 37;
+                    } else {
+                        $origenID = 3;
+                        $subOrigenID = 1;
+                    }
                 }
-            }
 
-            // Correccion de origen de Lead (Facebook marketing)
-            if ($origenID == 8 && $subOrigenID == 15) {
-                $subOrigenID = 36;
-                $usuarioID = 2893; // INTEGRACION FACEBOOK
-            }
+                // Correccion de origen de Lead (Facebook marketing)
+                if ($origenID == 8 && $subOrigenID == 15) {
+                    $subOrigenID = 36;
+                    $usuarioID = 2893; // INTEGRACION FACEBOOK
+                }
 
-            // Link de conversacion RELIF
-            $linkInteres = $request->input('data.lead.link') ?? null;
+                // Link de conversacion RELIF
+                $linkInteres = $request->input('data.lead.link') ?? null;
 
-            // Verificacion de existencia de Lead
-            $IDExterno = $request->input('data.lead.externalID');
-            $lead = MK_Leads::where('IDExterno', $IDExterno)
-                ->where('OrigenID', $origenID)
+                // Verificacion de existencia de Lead
+                $IDExterno = $request->input('data.lead.externalID');
+                $lead = MK_Leads::where('IDExterno', $IDExterno)
+                    ->where('OrigenID', $origenID)
 //                ->where('ClienteID', $cliente->ID)
 //                ->where('Rut', $rut)
-                ->where('ModeloID', $modeloID)
-                ->where('FechaCreacion', '>', date('Y-m-d H:i:s', strtotime('-1 day')))
-                ->first();
+                    ->where('ModeloID', $modeloID)
+                    ->where('FechaCreacion', '>', date('Y-m-d H:i:s', strtotime('-1 day')))
+                    ->first();
 
-            if ($lead) {
-                $Log->info("Lead ya existe: " . $lead->ID);
-            }
-
-            // Creacion de Lead --------------------------------
-            $fechaCreacion = Carbon::now();
-            $fechaRevision = Carbon::now();
-            $fechaFinJornada = Carbon::createFromTimeString('18:30:00');
-            $fechaFinDia = Carbon::createFromTimeString('23:59:59');
-            $fechaInicioDia = Carbon::createFromTimeString('09:00:00');
-
-
-            // Si se crea posterior a las 18.30 y antes de las 00:00
-            if ($fechaCreacion > $fechaFinJornada && $fechaCreacion < $fechaFinDia) {
-                $fechaRevision = $fechaRevision->addDay();
-                $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
-            }
-
-            // Si se crea posterior a las 18.30 y antes de las 23.59
-            if ($fechaCreacion < $fechaInicioDia) {
-                $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
-            }
-
-            $fechaCreacion = $fechaCreacion->format('Y-m-d H:i:s');
-
-
-            $lead = new MK_Leads();
-            $lead->FechaCreacion = $fechaCreacion;
-            $lead->FechaCreacionHorasHab = $fechaRevision;
-            $lead->EventoCreacionID = 1;
-            $lead->UsuarioCreacionID = $usuarioID;
-            $lead->OrigenID = $origenID;
-            $lead->SubOrigenID = $subOrigenID;
-            $lead->IntegracionID = $fuente;
-
-            $lead->ClienteID = $cliente->ID ?? 1;
-            $lead->Rut = $rut ?? '';
-            $lead->Nombre = $request->input('data.nombre') ?? '';
-            $lead->SegundoNombre = $request->input('data.segundoNombre') ?? '';
-            $lead->Apellido = $request->input('data.apellido') ?? '';
-            $lead->SegundoApellido = $request->input('data.segundoApellido') ?? '';
-            $lead->Email = $request->input('data.email') ?? '';
-            $lead->Telefono = $request->input('data.telefono') ?? '';
-            $lead->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
-            $lead->Direccion = $request->input('data.direccion') ?? '';
-            $lead->ComunaID = 1;
-
-            $lead->CampanaId = $request->input('data.lead.campana') ?? null;
-            $lead->SucursalID = $sucursalID; // htext
-            $lead->VendedorID = $vendedorID > 0 ? $vendedorID : $usuarioID;
-            $lead->MarcaID = $marcaID ?? 1;
-            $lead->ModeloID = $modeloID ?? 1;
-            $lead->IDExterno = ($fuente == 1) ? ($request->input('data.lead.externalID') ?? null) : null;
-            $lead->IDHubspot = ($fuente == 2) ? $request->input('data.lead.externalID') : 0;  // si la fuente es hubspot, guardamos ID
-            $lead->Comentario = $comentario ?? null;
-            $lead->Financiamiento = $financiamiento;
-            $lead->LinkInteres = $linkInteres;
-            $lead->OrigenIngreso = 1; // canal API
-
-            $lead->save();
-            $returnMessage = "Lead creado correctamente";
-
-            $Log->info("LEAD " . $lead->ID . " creado con exito");
-
-
-            // Creacion de Solicitud API, para registro (No se puede reprocesar) ----
-
-            $solicitud = ApiSolicitudes::create([
-                'FechaCreacion' => date('Y-m-d H:i:s'),
-                'EventoCreacionID' => 1,
-                'UsuarioCreacionID' => 1,
-                'ReferenciaID' => $lead->ID,
-                'ProveedorID' => 6,
-                'ApiID' => 0,
-                'Prioridad' => 1,
-                'Peticion' => json_encode($request->input()),
-                'CodigoRespuesta' => 200,
-                'Respuesta' => json_encode(['status' => true,
-                    'messages' => 'Lead creado correctamente',
-                    'LeadID' => $lead->ID]),
-                'FechaPeticion' => date('Y-m-d H:i:s'),
-                'FechaResolucion' => date('Y-m-d H:i:s'),
-                'Exito' => 1,
-                'FlujoID' => $idFlujo,
-            ]);
-
-            $solicitudID = null;
-            if ($solicitud) {
-                $Log->info("Solicitud creada con exito");
-
-                // Resuelve el arreglo de Log
-                $Log->solveArray($solicitud->id);
-
-                $solicitudID = $solicitud->id;
-
-                $notificacion = FLU_Notificaciones::Notificar($solicitudID, $idFlujo);
-                if ($notificacion) {
-                    $Log->info("Notificacion creada con exito", $solicitudID);
+                if ($lead) {
+                    $Log->info("Lead ya existe: " . $lead->ID);
                 }
-            }
 
-            // Logica de Reglas de Lead ---------------------------------------
+                // Creacion de Lead --------------------------------
+                $fechaCreacion = Carbon::now();
+                $fechaRevision = Carbon::now();
+                $fechaFinJornada = Carbon::createFromTimeString('18:30:00');
+                $fechaFinDia = Carbon::createFromTimeString('23:59:59');
+                $fechaInicioDia = Carbon::createFromTimeString('09:00:00');
 
-            $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
-            if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
 
-            $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
-            if ($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);
+                // Si se crea posterior a las 18.30 y antes de las 00:00
+                if ($fechaCreacion > $fechaFinJornada && $fechaCreacion < $fechaFinDia) {
+                    $fechaRevision = $fechaRevision->addDay();
+                    $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
+                }
 
-            if ($reglaVendedor == true || $reglaSucursal == true) {
-                $Log->info("Asignando reglas de Lead", $solicitudID);
+                // Si se crea posterior a las 18.30 y antes de las 23.59
+                if ($fechaCreacion < $fechaInicioDia) {
+                    $fechaRevision = $fechaRevision->format("Y-m-d 09:00:00");
+                }
 
-                // se ajusta ejecucion de regla sucursal. siempre se debe ejecutar en conjunto
-                if ($reglaVendedor == true) {
+                $fechaCreacion = $fechaCreacion->format('Y-m-d H:i:s');
+
+
+                $lead = new MK_Leads();
+                $lead->FechaCreacion = $fechaCreacion;
+                $lead->FechaCreacionHorasHab = $fechaRevision;
+                $lead->EventoCreacionID = 1;
+                $lead->UsuarioCreacionID = $usuarioID;
+                $lead->OrigenID = $origenID;
+                $lead->SubOrigenID = $subOrigenID;
+                $lead->IntegracionID = $fuente;
+
+                $lead->ClienteID = $cliente->ID ?? 1;
+                $lead->Rut = $rut ?? '';
+                $lead->Nombre = $request->input('data.nombre') ?? '';
+                $lead->SegundoNombre = $request->input('data.segundoNombre') ?? '';
+                $lead->Apellido = $request->input('data.apellido') ?? '';
+                $lead->SegundoApellido = $request->input('data.segundoApellido') ?? '';
+                $lead->Email = $request->input('data.email') ?? '';
+                $lead->Telefono = $request->input('data.telefono') ?? '';
+                $lead->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
+                $lead->Direccion = $request->input('data.direccion') ?? '';
+                $lead->ComunaID = 1;
+
+                $lead->CampanaId = $request->input('data.lead.campana') ?? null;
+                $lead->SucursalID = $sucursalID; // htext
+                $lead->VendedorID = $vendedorID > 0 ? $vendedorID : $usuarioID;
+                $lead->MarcaID = $marcaID ?? 1;
+                $lead->ModeloID = $modeloID ?? 1;
+                $lead->IDExterno = ($fuente == 1) ? ($request->input('data.lead.externalID') ?? null) : null;
+                $lead->IDHubspot = ($fuente == 2) ? $request->input('data.lead.externalID') : 0;  // si la fuente es hubspot, guardamos ID
+                $lead->Comentario = $comentario ?? null;
+                $lead->Financiamiento = $financiamiento;
+                $lead->LinkInteres = $linkInteres;
+                $lead->OrigenIngreso = 1; // canal API
+
+                $lead->save();
+                $returnMessage = "Lead creado correctamente";
+
+                $Log->info("LEAD " . $lead->ID . " creado con exito");
+
+
+                // Creacion de Solicitud API, para registro (No se puede reprocesar) ----
+
+                $solicitud = ApiSolicitudes::create([
+                    'FechaCreacion' => date('Y-m-d H:i:s'),
+                    'EventoCreacionID' => 1,
+                    'UsuarioCreacionID' => 1,
+                    'ReferenciaID' => $lead->ID,
+                    'ProveedorID' => 6,
+                    'ApiID' => 0,
+                    'Prioridad' => 1,
+                    'Peticion' => json_encode($request->input()),
+                    'CodigoRespuesta' => 200,
+                    'Respuesta' => json_encode(['status' => true,
+                        'messages' => 'Lead creado correctamente',
+                        'LeadID' => $lead->ID]),
+                    'FechaPeticion' => date('Y-m-d H:i:s'),
+                    'FechaResolucion' => date('Y-m-d H:i:s'),
+                    'Exito' => 1,
+                    'FlujoID' => $idFlujo,
+                ]);
+
+                $solicitudID = null;
+                if ($solicitud) {
+                    $Log->info("Solicitud creada con exito");
+
+                    // Resuelve el arreglo de Log
+                    $Log->solveArray($solicitud->id);
+
+                    $solicitudID = $solicitud->id;
+
+                    $notificacion = FLU_Notificaciones::Notificar($solicitudID, $idFlujo);
+                    if ($notificacion) {
+                        $Log->info("Notificacion creada con exito", $solicitudID);
+                    }
+                }
+
+                // Logica de Reglas de Lead ---------------------------------------
+
+                $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
+                if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
+
+                $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
+                if ($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);
+
+                if ($reglaVendedor == true || $reglaSucursal == true) {
+                    $Log->info("Asignando reglas de Lead", $solicitudID);
+
+                    // se ajusta ejecucion de regla sucursal. siempre se debe ejecutar en conjunto
+                    if ($reglaVendedor == true) {
 //                    $reglaSucursal = true;
-                    // Excepto para USADOS
-                    if ($marcaNombre == "USADOS") {
-                        $reglaSucursal = false;
+                        // Excepto para USADOS
+                        if ($marcaNombre == "USADOS") {
+                            $reglaSucursal = false;
+                        }
                     }
+                    $asignado = $this->reglaLead($lead,
+                        $reglaVendedor,
+                        $reglaSucursal,
+                        $solicitudID,
+                        $gerenciaHomologada
+                    );
+                    if ($asignado) {
+                        $Log->info("Reglas de Lead ejecutadas con exito ", $solicitudID);
+                        $vendedorID = $lead->VendedorID;
+                        $sucursalID = $lead->SucursalID;
+                    }
+
                 }
-                $asignado = $this->reglaLead($lead,
-                    $reglaVendedor,
-                    $reglaSucursal,
-                    $solicitudID,
-                    $gerenciaHomologada
-                );
-                if ($asignado) {
-                    $Log->info("Reglas de Lead ejecutadas con exito ", $solicitudID);
-                    $vendedorID = $lead->VendedorID;
-                    $sucursalID = $lead->SucursalID;
-                }
 
-            }
+                // Creacion de Agenda --------------------------
 
-            // Creacion de Agenda --------------------------
+                if ($request->input('data.lead.agenda')) {
+                    if ($cliente) {
 
-            if ($request->input('data.lead.agenda')) {
-                if ($cliente) {
+                        $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
+                        $fechaFin = $fechaInicio->addHour();
 
-                    $fechaInicio = Carbon::create($request->input('data.lead.agenda'));
-                    $fechaFin = $fechaInicio->addHour();
+                        $dataAgenda = [
+                            "FechaCreacion" => Carbon::now()->format("Y-m-d H:i:s"),
+                            "EventoCreacionID" => 12,
+                            "UsuarioCreacionID" => 1,
+                            "ClienteID" => $cliente->ID,
+                            "ReferenciaID" => $lead->ID,
+                            "TipoID" => 57,
+                            "UsuarioID" => $vendedorID,
+                            "EstadoID" => 1,
+                            "Inicio" => $fechaInicio,
+                            "Termino" => $fechaFin,
+                            "Comentario" => "Agendamiento de Lead",
+                            "Nombre" => ($request->input('data.nombre') ?? '') . ' ' . $request->input('data.apellido') ?? '',
+                            "Rut" => $rut,
+                            "Telefono" => $request->input('data.telefono') ?? ''
+                        ];
 
-                    $dataAgenda = [
-                        "FechaCreacion" => Carbon::now()->format("Y-m-d H:i:s"),
-                        "EventoCreacionID" => 12,
-                        "UsuarioCreacionID" => 1,
-                        "ClienteID" => $cliente->ID,
-                        "ReferenciaID" => $lead->ID,
-                        "TipoID" => 57,
-                        "UsuarioID" => $vendedorID,
-                        "EstadoID" => 1,
-                        "Inicio" => $fechaInicio,
-                        "Termino" => $fechaFin,
-                        "Comentario" => "Agendamiento de Lead",
-                        "Nombre" => ($request->input('data.nombre') ?? '') . ' ' . $request->input('data.apellido') ?? '',
-                        "Rut" => $rut,
-                        "Telefono" => $request->input('data.telefono') ?? ''
-                    ];
-
-                    $agenda = SIS_Agendamientos::create($dataAgenda);
-                    if ($agenda) {
-                        $Log->info("Agenda creada : " . $fechaInicio, $solicitudID);
-                        $lead->Agendado = 1;
-                        $lead->save();
+                        $agenda = SIS_Agendamientos::create($dataAgenda);
+                        if ($agenda) {
+                            $Log->info("Agenda creada : " . $fechaInicio, $solicitudID);
+                            $lead->Agendado = 1;
+                            $lead->save();
+                        } else {
+                            $Log->error("Error al crear agenda", $solicitudID);
+                        }
                     } else {
-                        $Log->error("Error al crear agenda", $solicitudID);
+                        $Log->error("No se puede crear agenda, cliente no encontrado", $solicitudID);
                     }
-                } else {
-                    $Log->error("No se puede crear agenda, cliente no encontrado", $solicitudID);
                 }
+
+                // ---------------------------------------
+            } else {
+                Log::notice('Validacion de Lead incorrecta, no se procesa');
             }
-
-            // ---------------------------------------
-
 
         } catch (Exception $e) {
 

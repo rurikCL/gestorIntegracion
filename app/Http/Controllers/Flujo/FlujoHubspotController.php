@@ -729,18 +729,18 @@ class FlujoHubspotController extends Controller
                 $nombre = $lead->Nombre;
                 $apellido = $lead->Apellido;
                 $telefono = $lead->Telefono;
-                $rut = trim($lead->Rut);
+                $rut = ltrim(trim($lead->Rut),"0");
             } else {
                 $email = $lead->cliente->Email;
                 $nombre = $lead->cliente->Nombre;
                 $apellido = $lead->cliente->Apellido;
                 $telefono = $lead->cliente->Telefono;
-                $rut = trim($lead->cliente->Rut);
+                $rut = ltrim(trim($lead->cliente->Rut),"0");
             }
 
             if ($rut) {
                 $dv = substr($rut, -1);
-                $rut = ltrim(substr($rut, 0, length($rut) - 1), "0");
+                $rut = substr($rut, 0, length($rut) - 1);
                 $rutFormateado = number_format($rut, 0, ',', '.') . "-" . $dv;
             } else {
                 $rutFormateado = null;

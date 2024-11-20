@@ -291,6 +291,7 @@ class LeadController extends Controller
                 $lead = MK_Leads::where('IDHubspot', $request->input('data.lead.externalID'))->pluck('id');
                 // si existe, no se crea
                 if ($lead) {
+                    Log::notice('Lead ya existe en BD Roma : ' . $lead->ID);
                     $procesar = false;
                 }
             }

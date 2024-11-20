@@ -587,8 +587,6 @@ class LeadController extends Controller
                 $IDExterno = $request->input('data.lead.externalID');
                 $lead = MK_Leads::where('IDExterno', $IDExterno)
                     ->where('OrigenID', $origenID)
-//                ->where('ClienteID', $cliente->ID)
-//                ->where('Rut', $rut)
                     ->where('ModeloID', $modeloID)
                     ->where('FechaCreacion', '>', date('Y-m-d H:i:s', strtotime('-1 day')))
                     ->first();

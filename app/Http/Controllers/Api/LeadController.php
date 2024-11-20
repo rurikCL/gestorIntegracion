@@ -288,7 +288,7 @@ class LeadController extends Controller
 
             // Si es Hubspot
             if($fuente == 2){
-                $lead = MK_Leads::where('IDHubspot', $request->input('data.lead.externalID'))->get();
+                $lead = MK_Leads::select('ID')->where('IDHubspot', $request->input('data.lead.externalID'))->first();
                 // si existe, no se crea
                 if ($lead->count()) {
                     Log::notice('Lead ya existe en BD Roma : ' . $lead->ID);

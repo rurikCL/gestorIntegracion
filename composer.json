@@ -26,6 +26,7 @@
         "livewire/livewire": "^3.1",
         "maatwebsite/excel": "^3.1",
         "phpmailer/phpmailer": "^6.9",
+        "rebing/graphql-laravel": "^9.6",
         "saloonphp/xml-wrangler": "^1.2",
         "sendgrid/sendgrid": "^8.1"
     },

@@ -274,6 +274,7 @@ class LeadController extends Controller
             $subOrigenID = $request->input('data.lead.subOrigenID') ?? 1;
             $idFlujo = $request->input('data.lead.idFlujo') ?? 0;
             $fuente = $request->input('data.fuente') ?? 1;
+            $lead = null;
 
             $financiamiento = $request->input('data.lead.financiamiento') ?? 2;
             if ($financiamiento == 'SI') {

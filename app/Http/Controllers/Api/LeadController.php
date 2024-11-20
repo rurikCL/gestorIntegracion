@@ -778,7 +778,7 @@ class LeadController extends Controller
         return response()->json([
             'status' => true,
             'messages' => $returnMessage ?? "Ocurrio un error",
-            'LeadID' => $lead->ID ?? null,
+            'LeadID' => ($lead) ? $lead->ID : null,
         ], 200);
     }
 

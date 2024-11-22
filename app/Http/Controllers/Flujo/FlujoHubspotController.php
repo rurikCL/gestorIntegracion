@@ -758,7 +758,7 @@ class FlujoHubspotController extends Controller
             $idContacto = 0;
 
             print_r("revisando lead : " . $lead->ID . "<br>");
-            print_r("revisando cliente : " . $lead->cliente->Rut . " ($rutFormateado) | " . $email . "<br>");
+            print_r("revisando cliente : " . $rut . " ($rutFormateado) | " . $email . "<br>");
 
 
             // Creacion del CLIENTE (CONTACT)  -------------------------------------------

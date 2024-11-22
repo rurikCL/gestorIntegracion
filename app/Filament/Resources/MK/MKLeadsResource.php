@@ -203,7 +203,8 @@ class MKLeadsResource extends Resource
                 Tables\Columns\TextColumn::make('marca.Marca')->weight('medium')->searchable(),
                 Tables\Columns\TextColumn::make('modelo.Modelo')->size('sm')->searchable(),
 //                        Tables\Columns\TextColumn::make('version.Version')->searchable(),
-                Tables\Columns\TextColumn::make('IDExterno')
+                Tables\Columns\TextColumn::make('IDHubspot')
+                    ->label('ID Hubspot')
 //                        ->copyable()->copyMessage('Lead ID copiado al portapapeles')->copyMessageDuration(1500)
                     ->searchable(),
             ])->defaultSort('ID', 'desc')

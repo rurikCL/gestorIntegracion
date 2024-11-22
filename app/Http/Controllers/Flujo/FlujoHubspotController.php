@@ -724,19 +724,29 @@ class FlujoHubspotController extends Controller
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
 
-            if ($lead->cliente && $lead->cliente->ID == 1) {
+            if($lead->cliente){
+                if($lead->ClienteID > 1){
+                    $email = $lead->cliente->Email;
+                    $nombre = $lead->cliente->Nombre;
+                    $apellido = $lead->cliente->Apellido;
+                    $telefono = $lead->cliente->Telefono;
+                    $rut = ltrim(trim($lead->cliente->Rut),"0");
+                }
+                else {
+                    $email = $lead->Email;
+                    $nombre = $lead->Nombre;
+                    $apellido = $lead->Apellido;
+                    $telefono = $lead->Telefono;
+                    $rut = ltrim(trim($lead->Rut),"0");
+                }
+            } else {
                 $email = $lead->Email;
                 $nombre = $lead->Nombre;
                 $apellido = $lead->Apellido;
                 $telefono = $lead->Telefono;
                 $rut = ltrim(trim($lead->Rut),"0");
-            } else {
-                $email = $lead->cliente->Email;
-                $nombre = $lead->cliente->Nombre;
-                $apellido = $lead->cliente->Apellido;
-                $telefono = $lead->cliente->Telefono;
-                $rut = ltrim(trim($lead->cliente->Rut),"0");
             }
+
 
             if ($rut) {
                 $dv = substr($rut, -1);

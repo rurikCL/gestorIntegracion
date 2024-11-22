@@ -308,7 +308,7 @@ class LeadController extends Controller
 
                 // CLIENTE ---------------------
                 $objCliente = new MA_Clientes();
-                Log::info("Buscando cliente (rut : " . $request->input('data.rut') . ", nombre:" . ($request->input('data.nombre') ?? '') . ")");
+//                Log::info("Buscando cliente (rut : " . $request->input('data.rut') . ", nombre:" . ($request->input('data.nombre') ?? '') . ")");
 
                 if ($rut) {
                     $cliente = $objCliente->where('Rut', $rut)->first();

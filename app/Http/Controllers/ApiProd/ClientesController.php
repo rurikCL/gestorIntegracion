@@ -259,15 +259,23 @@ class ClientesController extends Controller
 
     }
 
-    public function revisarRutClientes(){
 
-        $clientes = MA_Clientes::all();
-        $clientes->each(function($cliente){
-            $cliente->Rut = str_replace('.','',$cliente->Rut);
-            $cliente->save();
-        });
+    public function revisarClientesDuplicados(){
 
-        return response()->json(['status' => 1, 'messages' => 'Ruts actualizados correctamente'], 200);
+        $duplicados = MA_Clientes::select('Rut', 'ID', DB::raw('count(*) as cantidad'))
+        ->groupBy('Rut')
+        ->havingRaw('count(*) > 1')
+        ->get();
+
+        foreach ($duplicados as $duplicado) {
+            echo $duplicado->Rut;
+            $casos = MA_Clientes::where('Rut', $duplicado->Rut)->get();
+
+            foreach ($casos as $caso) {
+                echo $caso->ID;
+            }
+
+        }
     }
 
 }

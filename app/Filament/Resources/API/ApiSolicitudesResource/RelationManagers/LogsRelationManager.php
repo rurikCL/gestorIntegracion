@@ -54,6 +54,7 @@ class LogsRelationManager extends RelationManager
             ])
             ->bulkActions([
 //                Tables\Actions\DeleteBulkAction::make(),
-            ]);
+            ])
+            ->defaultSort('created_at', 'asc');
     }
 }

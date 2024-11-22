@@ -39,17 +39,21 @@ Route::get('/flujo/autored/inspecciones', [\App\Http\Controllers\Flujo\FlujoCont
 
 Route::get('/flujo/gema/', [\App\Http\Controllers\Flujo\FlujoController::class, 'leadsGema']);
 
-
+// SANTANDER
 Route::get('/flujo/santander/modelos', [\App\Http\Controllers\Api\FinancierasController::class, 'homologacionModelos']);
 Route::get('/flujo/santander/simulacion', [\App\Http\Controllers\Api\FinancierasController::class, 'simulacionSantander']);
 
+// HUBSPOT
 Route::get('/flujo/hubspot/contactos', [\App\Http\Controllers\Flujo\FlujoController::class, 'leadsHubspot']);
 Route::get('/flujo/hubspot/negocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'leadsHubspotDeals']);
 Route::get('/flujo/hubspot/actualizanegocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'actualizaLeadHubspot']);
 Route::get('/flujo/hubspot/revisanegocios', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'revisaLeadsHubspot']);
 Route::get('/flujo/hubspot/sincroniza', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'sincronizaLeads']);
 
+// Clientes
+Route::get('/flujo/clientes/duplicados', [\App\Http\Controllers\ApiProd\ClientesController::class, 'revisarClientesDuplicados']);
 
+// INDICADORES
 Route::get('/flujo/indicador/uf', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUF']);
 Route::get('/flujo/indicador/utm', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresUTM']);
 Route::get('/flujo/indicador/dolar', [\App\Http\Controllers\Flujo\FlujoController::class, 'cargaIndicadoresDolar']);
@@ -57,7 +61,7 @@ Route::get('/flujo/indicador/dolar', [\App\Http\Controllers\Flujo\FlujoControlle
 //Route::get('posts', [PostController::class, 'index']);
 Route::get('/email', [\App\Http\Controllers\EmailController::class, 'sendEmail']);
 
-
+// ROBOTS
 Route::get('/robot/apc/login', [\App\Http\Controllers\RobotApcController::class, 'login']);
 Route::get('/robot/apc/stock', [\App\Http\Controllers\RobotApcController::class, 'traeStock']);
 Route::get('/robot/apc/stockAnual', [\App\Http\Controllers\RobotApcController::class, 'traeStockAnual']);

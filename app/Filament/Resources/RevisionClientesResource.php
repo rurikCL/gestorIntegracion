@@ -56,22 +56,22 @@ class RevisionClientesResource extends Resource
                                 Forms\Components\TextInput::make('Email'),
                                 Forms\Components\TextInput::make('Telefono'),
 
-                                Forms\Components\Placeholder::make('LeadsCount')
+                                /*Forms\Components\Placeholder::make('LeadsCount')
                                 ->content(fn($record)=>$record->leads->count()),
                                 Forms\Components\Placeholder::make('CotizacionesCount')
                                 ->content(fn($record)=>$record->cotizaciones->count()),
                                 Forms\Components\Placeholder::make('VentasCount')
-                                ->content(fn($record)=>$record->ventas->count()),
+                                ->content(fn($record)=>$record->ventas->count()),*/
 
 
-                                /*Forms\Components\Placeholder::make('VentasCount')
+                                Forms\Components\Placeholder::make('VentasCount')
                                     ->content(fn($record) => VT_Ventas::where('ClienteID', $record->ID)->count()),
 
                                 Forms\Components\Placeholder::make('LeadsCount')
                                     ->content(fn($record) => MK_Leads::where('ClienteID', $record->ID)->count()),
 
                                 Forms\Components\Placeholder::make('CotizacionesCount')
-                                    ->content(fn($record) => VT_Cotizaciones::where('ClienteID', $record->ID)->count()),*/
+                                    ->content(fn($record) => VT_Cotizaciones::where('ClienteID', $record->ID)->count()),
 
                             ])->columns(3)
                             ->addable(false)

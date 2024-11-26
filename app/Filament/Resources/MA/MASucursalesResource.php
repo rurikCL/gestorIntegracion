@@ -88,6 +88,24 @@ class MASucursalesResource extends Resource
 //                            ->maxItems(10)
                                         ->columns(2),
                                 ]),
+Forms\Components\Tabs\Tab::make("Solicitantes Solicitud de Compra")
+                                ->schema([
+                                    Forms\Components\Repeater::make('NivelesSolicitudCompra')
+                                        ->relationship('aprobadoressolicitud')
+                                        ->label(false)
+                                        ->schema([
+                                            Forms\Components\Select::make('user_id')
+                                                ->relationship('usuarios', 'Nombre')
+                                                ->searchable()
+                                                ->label('Solicitante')
+                                        ])
+                                        ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                            $data['branchOffice_id'] = $get('ID');
+                                            return $data;
+                                        })
+//                            ->maxItems(10)
+                                        ->columns(2),
+                                ]),
 
                             Forms\Components\Tabs\Tab::make('Aprobadores Caja Chica')
                                 ->schema([

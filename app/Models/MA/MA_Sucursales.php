@@ -5,6 +5,7 @@ namespace App\Models\MA;
 use App\Models\OC\OC_Approvers;
 use App\Models\OC_Aprobadores;
 use App\Models\RC\RC_cashier_approvers;
+use App\Models\SP\SP_oc_quotegenerator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -60,6 +61,11 @@ class MA_Sucursales extends Model
     public function aprobadoresordenes() : hasMany
     {
         return $this->hasMany(OC_Approvers::class, 'branchOffice_id', 'ID');
+    }
+
+    public function aprobadoressolicitud() : hasMany
+    {
+        return $this->hasMany(SP_oc_quotegenerator::class, 'branchOffice_id', 'ID');
     }
 
     public function tipoSucursal()

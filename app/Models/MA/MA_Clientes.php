@@ -2,6 +2,8 @@
 
 namespace App\Models\MA;
 
+use App\Models\MK\MK_Leads;
+use App\Models\VT\VT_Cotizaciones;
 use App\Models\VT\VT_Ventas;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -102,13 +104,23 @@ class MA_Clientes extends Model
         return $this->hasMany(VT_Ventas::class, 'ClienteID', 'ID');
     }
 
+    public function leads()
+    {
+        return $this->hasMany(MK_Leads::class, 'ClienteID', 'ID');
+    }
+
+    public function cotizaciones(){
+        return $this->hasMany(VT_Cotizaciones::class, 'ClienteID', 'ID');
+    }
+
     public function validacion($query)
     {
         $query->join(DB::selectRaw("select ".$query->ID." as ID, IF(".$query->Rut." REGEXP('^[0-9]{8,9}[0-9kK]{1}$'), validate_rut(".$query->Rut."), 'No') as RutValido from MA_Clientes v") , 'MA_Clientes.ID', '=', 'v.ID');
     }
 
-    public function clientes(){
-        return $this->hasMany(MA_Clientes::class, 'Rut', 'Rut')->having('count(Rut)', '>', 1)->groupBy('Rut');
+    public function clientesDuplicados(){
+        return $this->hasMany(MA_Clientes::class, 'Rut', 'Rut')
+            ->where('ID' ,'<>', $this->ID);
     }
 
     public function scopeDuplicados($query, $threshold = 1)

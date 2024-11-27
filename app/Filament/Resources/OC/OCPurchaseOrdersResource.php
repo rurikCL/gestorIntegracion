@@ -101,12 +101,10 @@ class OCPurchaseOrdersResource extends Resource
                                             ->label('Precio')
                                             ->reactive(),
                                         Forms\Components\TextInput::make('taxAmount')
-                                            ->label('Impuesto')
-                                            ->readOnly(),
+                                            ->label('Impuesto'),
                                         Forms\Components\TextInput::make('totalPrice')
                                             ->label('Total')
-                                            ->reactive()
-                                            ->readOnly(),
+                                            ->reactive(),
                                     ])->columns(3)
                                     ->grid(2),
                             ]),

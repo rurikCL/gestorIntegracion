@@ -2051,7 +2051,7 @@ class FlujoController extends Controller
                     </soapenv:Envelope>';
 //                    dd($req['data']);
 
-                    $resp = $solicitudCon->store($req, 'aislado2');
+                    $resp = $solicitudCon->store($req, 'aislado1');
                     echo("<br>" . ($resp->message ?? ''));
 
                 }

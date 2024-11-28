@@ -84,7 +84,7 @@ class MKLeadsResource extends Resource
 
                     Forms\Components\TextInput::make('SubEstadoID'),
                     Forms\Components\TextInput::make('IntegracionID'),
-                    Forms\Components\TextInput::make('CampanaID'),
+                    Forms\Components\TextInput::make('LandBotID'),
 
                     Forms\Components\TextInput::make('Venta')->label('ID Venta'),
                     Forms\Components\TextInput::make('CotizacionID')->label('ID Cotizacion'),

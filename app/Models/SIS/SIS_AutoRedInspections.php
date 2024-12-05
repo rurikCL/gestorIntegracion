@@ -11,7 +11,7 @@ class SIS_AutoRedInspections extends Model
 
     protected $table = 'SIS_AutoRedInspections';
     protected $primaryKey = 'ID';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'FechaCreacion',

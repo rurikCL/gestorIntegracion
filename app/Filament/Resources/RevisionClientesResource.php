@@ -49,6 +49,7 @@ class RevisionClientesResource extends Resource
                             ->relationship('clientesDuplicados')
                             ->schema([
                                 Forms\Components\TextInput::make('ID')
+                                    ->readOnly()
                                     ->reactive(),
                                 Forms\Components\TextInput::make('Nombre'),
                                 Forms\Components\TextInput::make('Apellido'),
@@ -76,6 +77,7 @@ class RevisionClientesResource extends Resource
                             ])->columns(3)
                             ->addable(false)
                             ->deletable(false)
+                            ->itemLabel(fn($state)=>$state["Nombre"])
                             ->extraItemActions([
 //                            Forms\Components\Actions\Action::make('delete')
                             ]),

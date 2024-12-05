@@ -841,7 +841,7 @@ class FlujoHubspotController extends Controller
                     if (preg_match($regex, $respuesta)) {
 
 
-                        if ($lead->cliente->Correccion == 0 || $lead->LandBotID == 0) {
+                        if (($lead->cliente->ID != 1 && $lead->cliente->Correccion == 0) || ($lead->cliente->ID == 1 && $lead->LandBotID == 0)) {
                             $emailsErroneos[] = [
                                 "idLead" => $lead->ID,
                                 "idCliente" => $lead->cliente->ID,

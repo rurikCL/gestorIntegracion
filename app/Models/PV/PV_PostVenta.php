@@ -147,6 +147,10 @@ class PV_PostVenta extends Model
     {
         return $query->where('Marca', 'LIKE', '%KIA%');
     }
+    public function scopeOrdenesLandking($query)
+    {
+        return $query->where('Marca', 'LIKE', '%LANDKING%');
+    }
 
     public function scopeNoNotificado__($query)
     {

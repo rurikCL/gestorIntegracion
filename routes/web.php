@@ -32,6 +32,8 @@ Route::get('/flujo/apcHomoBancos/', [\App\Http\Controllers\ApcDmsController::cla
 Route::get('/flujo/cpd/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendCpdVentas']);
 Route::get('/flujo/inchcapeventas/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendVentasInchcape']);
 Route::get('/flujo/inchcapeots/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendOTsinchcape']);
+Route::get('/flujo/landkingventas/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendVentasLandking']);
+Route::get('/flujo/landkingots/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendOTsSICLandking']);
 
 
 Route::get('/flujo/autored/transacciones', [\App\Http\Controllers\Flujo\FlujoController::class, 'autoredTransactions']);

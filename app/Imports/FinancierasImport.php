@@ -125,8 +125,8 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
 
         $json = json_encode($registros);
         $errorJson = json_encode($errores);
-        Storage::put(storage_path('app/public/santander'.$this->contadorRegistro.'.json'), $json);
-        Storage::put(storage_path('app/public/santanderErrors'.$this->contadorRegistro.'.json'), $errorJson);
+        Storage::put(storage_path('app/public/financieras'.$this->contadorRegistro.'.json'), $json);
+        Storage::put(storage_path('app/public/financierasErrors'.$this->contadorRegistro.'.json'), $errorJson);
 
 
         // paso final --------------------------------------------------
@@ -143,7 +143,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
         }
         $this->carga->save();
 
-        Log::info("Fin de importacion de Solicitudes Santander");
+        Log::info("Fin de importacion de Solicitudes Financieras");
 
         return true;
     }

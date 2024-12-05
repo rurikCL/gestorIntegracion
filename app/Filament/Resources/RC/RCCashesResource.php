@@ -90,6 +90,7 @@ class RCCashesResource extends Resource
                                             ])->inline()->grouped()
                                             ->label('Estado'),
                                     ])
+                                    ->itemLabel(fn($state)=>$state["id"])
                                     ->grid(3),
 
                             ]),

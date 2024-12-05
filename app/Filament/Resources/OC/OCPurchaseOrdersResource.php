@@ -105,7 +105,9 @@ class OCPurchaseOrdersResource extends Resource
                                             ->reactive(),
                                         Forms\Components\TextInput::make('taxAmount')
                                             ->label('Impuesto'),
-                                    ])->columns(3)
+                                    ])
+                                    ->columns(3)
+                                    ->itemLabel(fn($state)=>$state["id"])
                                     ->grid(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Aprobadores')

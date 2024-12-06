@@ -2,6 +2,7 @@
 
 namespace App\Models\VT;
 
+use App\Models\MA\MA_Accesorios;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,5 +42,10 @@ class VT_ElementosFinanciadosSubTipos extends Model
 
     public function tipo(){
         return $this->belongsTo(VT_ElementosFinanciadosTipos::class, 'TipoID', 'ID');
+    }
+
+    public function accesorios()
+    {
+        return $this->hasMany(MA_Accesorios::class, 'ID', 'SubTipo');
     }
 }

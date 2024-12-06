@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\VT;
 
-use App\Filament\Resources\VT\VTElementosFinanciadosSubTiposResource\Pages;
-use App\Filament\Resources\VT\VTElementosFinanciadosSubTiposResource\RelationManagers;
+use App\Filament\Resources\VT\VTAccesoriosMantenedorResource\Pages;
+use App\Filament\Resources\VT\VTAccesoriosMantenedorResource\RelationManagers;
 use App\Models\VT\VT_ElementosFinanciadosSubTipos;
 use App\Models\VT\VT_ElementosFinanciadosTipos;
 use Filament\Forms;
@@ -16,12 +16,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use function VeeWee\Xml\Dom\Xpath\Locator\query;
 
-class VTElementosFinanciadosSubTiposResource extends Resource
+class VTAccesoriosMantenedorResource extends Resource
 {
     protected static ?string $model = VT_ElementosFinanciadosSubTipos::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Elementos Financiados - Sub tipo';
+    protected static ?string $modelLabel = 'Mantenedor Accesorios';
     protected static ?string $navigationGroup = 'Elementos Financiados';
 
     public static function form(Form $form): Form
@@ -30,17 +30,12 @@ class VTElementosFinanciadosSubTiposResource extends Resource
             ->schema([
                 Forms\Components\Section::make('')
                     ->schema([
-                        Forms\Components\Select::make('TipoID')
-                            ->options(fn() => (Auth::user()->isAdmin())
-                                ? VT_ElementosFinanciadosTipos::where('ID', 3)->pluck('Tipo', 'ID')->toArray()
-                                : VT_ElementosFinanciadosTipos::all()->pluck('Tipo', 'ID')->toArray()
-                            )
-                            ->default(3)
-                            ->required(),
                         Forms\Components\TextInput::make('SubTipo')
-                            ->required(),
-                        Forms\Components\Toggle::make('Activo'),
-                    ])->columns(2),
+                            ->required()
+                        ->columnSpan(3),
+                        Forms\Components\Toggle::make('Activo')
+                        ->inline(false),
+                    ])->columns(4),
                 Forms\Components\Section::make('')
                     ->schema([
                         Forms\Components\Toggle::make('USADOS')
@@ -63,23 +58,28 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                             ->label('PEUGEOT'),
                         Forms\Components\Toggle::make('SUBARU')
                             ->label('SUBARU'),
-                    ])->columns(3),
+                    ])->columns(4),
                 Forms\Components\Section::make('')
                     ->schema([
-                        Forms\Components\Toggle::make('TieneInstalacionAcc')
-                            ->inline(false),
-                        Forms\Components\TextInput::make('TiempoInstalacion'),
                         Forms\Components\Toggle::make('ConsiderarReporte')
                             ->inline(false),
-                    ])->columns(2)
+                        Forms\Components\Toggle::make('TieneInstalacionAcc')
+                            ->inline(false),
+                        Forms\Components\TextInput::make('TiempoInstalacion')
+                            ->numeric()
+                            ->suffix("hrs")
+                        ->columnSpan(2),
+                    ])->columns(4)
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                return $query->where('TipoID', 3);
+            })
             ->columns([
-                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
                 Tables\Columns\TextColumn::make('SubTipo')->searchable(),
                 Tables\Columns\ToggleColumn::make('Activo')->label('Activo'),
                 Tables\Columns\BooleanColumn::make('USADOS')->label('USADOS'),
@@ -95,11 +95,25 @@ class VTElementosFinanciadosSubTiposResource extends Resource
                 Tables\Columns\BooleanColumn::make('ConsiderarReporte'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('TipoID')
-                    ->relationship('tipo', 'Tipo')
-                    ->label('Tipo'),
                 Tables\Filters\SelectFilter::make('SubTipo')
-                    ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'SubTipo')->toArray()),
+                    ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'SubTipo')->toArray())
+                ->searchable(),
+                Tables\Filters\Filter::make('Activo')
+                    ->form([
+                        Forms\Components\Toggle::make('Activo')
+                            ->default(true)
+                            ->inline(false)
+                    ])->query(function (Builder $query, array $data): Builder {
+                        if ($data['Activo'] != null) {
+                            $query->where('Activo', $data['Activo']);
+                        }
+                        return $query;
+                    })
+                    ->indicateUsing(function (array $data): ?string {
+                        if ($data['Activo'] != null)
+                            return 'Activos ';
+                        else return null;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -114,15 +128,16 @@ class VTElementosFinanciadosSubTiposResource extends Resource
     public static function getRelations(): array
     {
         return [
+            VTAccesoriosMantenedorResource\RelationManagers\AccesoriosRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVTElementosFinanciadosSubTipos::route('/'),
-            'create' => Pages\CreateVTElementosFinanciadosSubTipos::route('/create'),
-            'edit' => Pages\EditVTElementosFinanciadosSubTipos::route('/{record}/edit'),
+            'index' => VTAccesoriosMantenedorResource\Pages\ListVTAccesoriosMantenedor::route('/'),
+            'create' => VTAccesoriosMantenedorResource\Pages\CreateVTAccesoriosMantenedor::route('/create'),
+            'edit' => VTAccesoriosMantenedorResource\Pages\EditVTAccesoriosMantenedor::route('/{record}/edit'),
         ];
     }
 }

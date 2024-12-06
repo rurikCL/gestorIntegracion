@@ -2299,10 +2299,10 @@ class FlujoController extends Controller
 
 
             $ventas = VT_EstadoResultado::with("modelo", "version", "apcstock", "cliente", "vendedor", "sucursal", "venta")
-                ->Gerencia(20)
+                ->Gerencia(1)
                 ->NoNotificado($flujo->ID)
-//                ->FechaVenta(Carbon::now()->subMonth()->format("Y-m-d 00:00:00"),'>=')
-                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+//                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
@@ -2394,7 +2394,7 @@ class FlujoController extends Controller
 
                     $resp = $solicitudCon->store($req, 'aislado1');
                     echo("<br>" . ($resp->message ?? ''));
-
+                    dd("asdf");
                 }
             } else {
                 Log::info("No se encontraron ventas");

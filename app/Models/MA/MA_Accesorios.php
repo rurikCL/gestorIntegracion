@@ -47,4 +47,6 @@ class MA_Accesorios extends Model
         return $this->hasOne(MA_Modelos::class, 'ID', 'ModeloID');
     }
 
+
+
 }

@@ -26,54 +26,31 @@ class AccesoriosRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('Descripcion')
+                    ->label('Descripcion (SKU)')
+                    ->columnSpanFull(),
                 Forms\Components\Select::make('MarcaID')
                     ->relationship('marca', 'Marca')
-                    ->live()
-                    ->reactive()
                     ->label("Marca")
-                    ->searchable()
-                    ->after(fn($record) => ($record) ? MA_Marcas::where('Marca', $record->Marca)->pluck('ID') : null)
-                    ->afterStateUpdated(function ($state, Set $set) {
-//                                $set('Marca', MA_Marcas::find($state)->Marca);
-                    }),
-                Forms\Components\Select::make('ModeloID')
-//                            ->relationship('modelo', 'Modelo')
-                    ->options(function (callable $get) {
-                        if ($get('MarcaID')) {
-                            return MA_Marcas::find($get('MarcaID'))->modelos->pluck('Modelo', 'ID') ?? null;
-                        } else {
-                            return null;
-                        }
-                    })
-                    ->reactive()
-                    ->live()
-                    ->searchable()
-                    ->label("Modelo")
-                    ->default(fn($record) => ($record) ? MA_Modelos::where('Modelo', $record->Modelo)->pluck('ID') : null)
-                    ->afterStateUpdated(function ($state, Set $set) {
-//                                $set('Modelo', MA_Modelos::find($state)->Modelo);
-                    }),
-
-                Forms\Components\Select::make('SubTipoID')
-                    ->options(fn() => VT_ElementosFinanciadosSubTipos::where('TipoID', 3)
-                        ->where('Activo', 1)->pluck('SubTipo', 'ID') ?? null)
-                    ->reactive()
-                    ->label("Subtipo")
-                    ->prefixAction(Forms\Components\Actions\Action::make('CrearSubtipo')
-                        ->url(fn($record) => ($record->ordenCompra) ? (VTElementosFinanciadosSubTiposResource::getNavigationUrl() . '/create') : null, true)),
-//                        Forms\Components\TextInput::make('TipoTxt'),
+                    ->searchable(),
 
                 Forms\Components\TextInput::make('Familia'),
-                Forms\Components\TextInput::make('SKU'),
-                Forms\Components\TextInput::make('Descripcion'),
-                Forms\Components\TextInput::make('PrecioCosto')
-                    ->label('Precio Costo (Neto)'),
-                Forms\Components\TextInput::make('PrecioCostoRoma')
-                    ->label('Precio Costo (Bruto)')
-                    ->readOnly(),
-                Forms\Components\TextInput::make('PrecioVenta')
-                    ->label('Precio Venta (Bruto)'),
-                Forms\Components\Toggle::make('Activo'),
+                Forms\Components\TextInput::make('SKU')->columnSpanFull(),
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('PrecioCosto')
+                            ->label('Precio Costo (Neto)'),
+                        Forms\Components\TextInput::make('PrecioCostoRoma')
+                            ->label('Precio Costo (Bruto)')
+                            ->readOnly(),
+                        Forms\Components\TextInput::make('PrecioVenta')
+                            ->label('Precio Venta (Bruto)'),
+                    ])->columns(3)
+                ->columnSpanFull(),
+
+                Forms\Components\Toggle::make('Activo')
+                ->default(true),
+
             ])->columns(2);
     }
 

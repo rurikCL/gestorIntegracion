@@ -46,6 +46,7 @@ class VT_ElementosFinanciadosSubTipos extends Model
 
     public function accesorios()
     {
-        return $this->hasMany(MA_Accesorios::class, 'ID', 'SubTipo');
+        return $this->hasMany(MA_Accesorios::class, 'SubTipoID', 'ID');
     }
+
 }

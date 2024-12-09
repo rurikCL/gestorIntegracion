@@ -22,13 +22,14 @@ class MA_AccesoriosPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'analista']);
+
     }
 
     public function create(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'analista']);
 
     }
     public function update(User $user)

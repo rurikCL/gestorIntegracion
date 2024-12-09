@@ -6,6 +6,7 @@ use App\Filament\Resources\VT\VTElementosFinanciadosSubTiposResource;
 use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Modelos;
 use App\Models\VT\VT_ElementosFinanciadosSubTipos;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
@@ -14,13 +15,13 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class AccesoriosRelationManager extends RelationManager
 {
     protected static string $relationship = 'accesorios';
     protected static ?string $modelLabel = 'Accesorio';
     protected static ?string $modelLabelPlural = 'Accesorios';
-
 
     public function form(Form $form): Form
     {
@@ -39,17 +40,25 @@ class AccesoriosRelationManager extends RelationManager
                 Forms\Components\Group::make()
                     ->schema([
                         Forms\Components\TextInput::make('PrecioCosto')
-                            ->label('Precio Costo (Neto)'),
+                            ->label('Precio Costo (Neto)')
+                            ->numeric()
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                $set('PrecioCostoRoma', round($state * 1.19));
+                            }),
                         Forms\Components\TextInput::make('PrecioCostoRoma')
                             ->label('Precio Costo (Bruto)')
-                            ->readOnly(),
+                            ->readOnly()
+                            ->numeric()
+                            ->reactive(),
                         Forms\Components\TextInput::make('PrecioVenta')
-                            ->label('Precio Venta (Bruto)'),
+                            ->label('Precio Venta (Bruto)')
+                            ->numeric(),
                     ])->columns(3)
-                ->columnSpanFull(),
+                    ->columnSpanFull(),
 
                 Forms\Components\Toggle::make('Activo')
-                ->default(true),
+                    ->default(true),
 
             ])->columns(2);
     }
@@ -73,7 +82,15 @@ class AccesoriosRelationManager extends RelationManager
                     ->relationship('marca', 'Marca'),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->mutateFormDataUsing(function (array $data) {
+
+                        $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
+                        $data['EventoCreacionID'] = 1;
+                        $data['UsuarioCreacionID'] = Auth::user()->id;
+
+                        return $data;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

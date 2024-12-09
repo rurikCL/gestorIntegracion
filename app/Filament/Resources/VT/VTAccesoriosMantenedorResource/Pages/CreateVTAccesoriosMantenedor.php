@@ -18,6 +18,8 @@ class CreateVTAccesoriosMantenedor extends CreateRecord
         $data['EventoCreacionID'] = 1;
         $data['UsuarioCreacionID'] = Auth::user()->id;
 
+        $data['TipoID'] = 3;
+
         return $data;
     }
 }

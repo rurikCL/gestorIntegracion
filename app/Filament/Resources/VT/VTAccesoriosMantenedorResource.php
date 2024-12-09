@@ -26,7 +26,7 @@ class VTAccesoriosMantenedorResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user()->isRole(['admin','analista']);
+        return auth()->user()->isRole(['admin', 'analista']);
     }
 
     public static function form(Form $form): Form
@@ -37,9 +37,10 @@ class VTAccesoriosMantenedorResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('SubTipo')
                             ->required()
-                        ->columnSpan(3),
+                            ->columnSpan(3),
                         Forms\Components\Toggle::make('Activo')
-                        ->inline(false),
+                            ->default(true)
+                            ->inline(false),
                     ])->columns(4),
                 Forms\Components\Section::make('')
                     ->schema([
@@ -73,7 +74,7 @@ class VTAccesoriosMantenedorResource extends Resource
                         Forms\Components\TextInput::make('TiempoInstalacion')
                             ->numeric()
                             ->suffix("hrs")
-                        ->columnSpan(2),
+                            ->columnSpan(2),
                     ])->columns(4)
             ]);
     }
@@ -103,7 +104,7 @@ class VTAccesoriosMantenedorResource extends Resource
                 Tables\Filters\SelectFilter::make('SubTipo')
                     ->options(fn() => VT_ElementosFinanciadosSubTipos::where('TipoID', 3)
                         ->pluck('SubTipo', 'SubTipo')->toArray())
-                ->searchable(),
+                    ->searchable(),
                 Tables\Filters\Filter::make('Activo')
                     ->form([
                         Forms\Components\Toggle::make('Activo')
@@ -128,7 +129,8 @@ class VTAccesoriosMantenedorResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('SubTipo', 'asc');
     }
 
     public static function getRelations(): array

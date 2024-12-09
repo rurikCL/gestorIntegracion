@@ -66,7 +66,7 @@ class AccesoriosRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('PrecioCosto'),
                 Tables\Columns\TextColumn::make('PrecioCostoRoma'),
                 Tables\Columns\TextColumn::make('PrecioVenta'),
-                Tables\Columns\BooleanColumn::make('Activo'),
+                Tables\Columns\ToggleColumn::make('Activo'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('MarcaID')

@@ -17,19 +17,19 @@ class VT_ElementosFinanciadosSubTiposPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isRole(['admin','analista']);
+        return $user->isRole(['admin']);
     }
 
     public function create(User $user)
     {
         //
-        return $user->isRole(['admin','analista']);
+        return $user->isRole(['admin']);
 
     }
     public function update(User $user)
     {
         //
-        return $user->isRole(['admin','analista']);
+        return $user->isRole(['admin']);
 
     }
 }

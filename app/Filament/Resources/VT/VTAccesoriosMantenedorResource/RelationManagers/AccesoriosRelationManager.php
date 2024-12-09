@@ -47,8 +47,7 @@ class AccesoriosRelationManager extends RelationManager
                             }),
                         Forms\Components\TextInput::make('PrecioCostoRoma')
                             ->label('Precio Costo (Bruto)')
-                            ->readOnly()
-                            ->reactive(),
+                            ->readOnly(),
                         Forms\Components\TextInput::make('PrecioVenta')
                             ->label('Precio Venta (Bruto)'),
                     ])->columns(3)

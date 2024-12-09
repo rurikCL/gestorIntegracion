@@ -43,8 +43,8 @@ class VTAccesoriosMantenedorResource extends Resource
                     ])->columns(4),
                 Forms\Components\Section::make('')
                     ->schema([
-                        Forms\Components\Toggle::make('USADOS')
-                            ->label('USADOS'),
+                        /*Forms\Components\Toggle::make('USADOS')
+                            ->label('USADOS'),*/
                         Forms\Components\Toggle::make('KIA')
                             ->label('KIA'),
                         Forms\Components\Toggle::make('CITROEN')
@@ -87,7 +87,7 @@ class VTAccesoriosMantenedorResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('SubTipo')->searchable(),
                 Tables\Columns\ToggleColumn::make('Activo')->label('Activo'),
-                Tables\Columns\BooleanColumn::make('USADOS')->label('USADOS'),
+//                Tables\Columns\BooleanColumn::make('USADOS')->label('USADOS'),
                 Tables\Columns\BooleanColumn::make('KIA')->label('KIA'),
                 Tables\Columns\BooleanColumn::make('CITROEN')->label('CITROEN'),
                 Tables\Columns\BooleanColumn::make('DFSK')->label('DFSK'),
@@ -101,7 +101,8 @@ class VTAccesoriosMantenedorResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('SubTipo')
-                    ->options(fn() => VT_ElementosFinanciadosSubTipos::pluck('SubTipo', 'SubTipo')->toArray())
+                    ->options(fn() => VT_ElementosFinanciadosSubTipos::where('TipoID', 3)
+                        ->pluck('SubTipo', 'SubTipo')->toArray())
                 ->searchable(),
                 Tables\Filters\Filter::make('Activo')
                     ->form([
@@ -125,7 +126,7 @@ class VTAccesoriosMantenedorResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

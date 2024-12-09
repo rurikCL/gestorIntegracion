@@ -41,7 +41,6 @@ class AccesoriosRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\TextInput::make('PrecioCosto')
                             ->label('Precio Costo (Neto)')
-                            ->numeric()
                             ->reactive()
                             ->afterStateUpdated(function ($state, $set, $get) {
                                 $set('PrecioCostoRoma', round($state * 1.19));
@@ -49,11 +48,9 @@ class AccesoriosRelationManager extends RelationManager
                         Forms\Components\TextInput::make('PrecioCostoRoma')
                             ->label('Precio Costo (Bruto)')
                             ->readOnly()
-                            ->numeric()
                             ->reactive(),
                         Forms\Components\TextInput::make('PrecioVenta')
-                            ->label('Precio Venta (Bruto)')
-                            ->numeric(),
+                            ->label('Precio Venta (Bruto)'),
                     ])->columns(3)
                     ->columnSpanFull(),
 

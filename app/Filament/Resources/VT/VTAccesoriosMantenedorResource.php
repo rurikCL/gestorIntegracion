@@ -26,7 +26,7 @@ class VTAccesoriosMantenedorResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user->isRole(['admin','analista']);
+        return auth()->user()->isRole(['admin','analista']);
     }
 
     public static function form(Form $form): Form

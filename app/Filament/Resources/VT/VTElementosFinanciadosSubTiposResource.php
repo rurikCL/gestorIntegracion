@@ -26,7 +26,7 @@ class VTElementosFinanciadosSubTiposResource extends Resource
 
     public static function canAccess(): bool
     {
-        return auth()->user->isAdmin();
+        return auth()->user()->isAdmin();
     }
 
     public static function form(Form $form): Form

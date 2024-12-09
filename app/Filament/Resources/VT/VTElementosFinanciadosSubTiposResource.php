@@ -24,6 +24,11 @@ class VTElementosFinanciadosSubTiposResource extends Resource
     protected static ?string $modelLabel = 'Elementos Financiados - Sub tipo';
     protected static ?string $navigationGroup = 'Elementos Financiados';
 
+    public static function canAccess(): bool
+    {
+        return auth()->user->isAdmin();
+    }
+
     public static function form(Form $form): Form
     {
         return $form

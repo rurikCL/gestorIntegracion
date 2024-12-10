@@ -631,7 +631,7 @@ class LeadController extends Controller
                     $alias = MA_SubOrigenes::where('Alias', $origen)->first();
                     if($alias){
                         $origenID = $alias->OrigenID;
-                        $subOrigenID = $alias->SubOrigenID;
+                        $subOrigenID = $alias->ID;
                     } else {
                         $origenID = 3;
                         $subOrigenID = 1;

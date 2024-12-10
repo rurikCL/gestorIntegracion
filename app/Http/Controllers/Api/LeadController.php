@@ -20,6 +20,7 @@ use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Gerencias;
 use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Modelos;
+use App\Models\MA\MA_SubOrigenes;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
@@ -627,12 +628,10 @@ class LeadController extends Controller
 
                 // Homologacion Origen
                 if ($origen != null) {
-                    if ($origen == "fb") {
-                        $origenID = 8;
-                        $subOrigenID = 36;
-                    } else if ($origen == "ig") {
-                        $origenID = 8;
-                        $subOrigenID = 37;
+                    $alias = MA_SubOrigenes::where('Alias', $origen)->first();
+                    if($alias){
+                        $origenID = $alias->OrigenID;
+                        $subOrigenID = $alias->SubOrigenID;
                     } else {
                         $origenID = 3;
                         $subOrigenID = 1;

@@ -73,7 +73,7 @@ class VTAccesoriosMantenedorResource extends Resource
                             ->inline(false),
                         Forms\Components\TextInput::make('TiempoInstalacion')
                             ->numeric()
-                            ->suffix("hrs")
+                            ->suffix("dias")
                             ->columnSpan(2),
                     ])->columns(4)
             ]);

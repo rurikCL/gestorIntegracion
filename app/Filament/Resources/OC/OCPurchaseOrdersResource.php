@@ -93,7 +93,7 @@ class OCPurchaseOrdersResource extends Resource
                                             ->columnSpan(3),
                                         Forms\Components\TextInput::make('amount')->label('Monto')
                                             ->numeric()
-                                            ->live()
+                                            ->live(onBlur: true)
                                             ->afterStateUpdated(function ($state, $set, $get) {
                                                 $set('totalPrice', $state * $get('unitPrice'));
                                             }),

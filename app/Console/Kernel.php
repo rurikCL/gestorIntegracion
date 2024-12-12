@@ -105,12 +105,11 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $flujoControl = new FlujoController();
 
-            $res = $flujoControl->sendOTsSICIndumotora();
-
-            $res = $flujoControl->sendOTsinchcape();
-
             $flujoControl->cargaIndicadoresUF();
             $flujoControl->cargaIndicadoresDolar();
+
+            $flujoControl->sendOTsSICIndumotora();
+            $flujoControl->sendOTsinchcape();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');
 

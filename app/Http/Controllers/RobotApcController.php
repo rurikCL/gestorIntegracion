@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Api\ApiSolicitudController;
 use App\Imports\ApcMovimientoVentasImport;
 use App\Imports\ApcRentabilidadVentasImport;
 use App\Imports\ApcRepuestosImport;
@@ -436,12 +437,19 @@ class RobotApcController extends Controller
 
                         }
                     }
+
+
                 }
 
             }
             unlink(storage_path('/app/public/' . $archivo));
             Log::channel('robots')->info("Informe procesado");
             echo " Informe procesado";
+
+            // Ejecucion de callback after
+            $solicitudObj = new ApiSolicitudController();
+            $res = $solicitudObj->urlCallParam("https://apps2.pompeyo.cl/api/cpd/actualizarubicacion", "POST");
+
         }
 
         Log::channel('robots')->info("Fin de proceso Stock");

@@ -13,6 +13,7 @@ use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class MAUsuariosResource extends Resource
 {
@@ -53,7 +54,9 @@ class MAUsuariosResource extends Resource
                             ->label('Supervisor asignado'),
 
                         Forms\Components\TextInput::make('Clave')
-                            ->password(),
+                            ->password()
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state)),
 
                         Forms\Components\Toggle::make('Disponible')
                             ->inline(false),

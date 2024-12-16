@@ -263,17 +263,41 @@ class ClientesController extends Controller
     public function revisarClientesDuplicados(){
 
         $duplicados = MA_Clientes::select('Rut', 'ID', DB::raw('count(*) as cantidad'))
-        ->groupBy('Rut')
+            ->where('Rut','<>', '')
+            ->groupBy('Rut')
+            ->limit(5)
         ->havingRaw('count(*) > 1')
         ->get();
 
         foreach ($duplicados as $duplicado) {
             echo $duplicado->Rut;
+            echo " (". $duplicado->ID. ")";
             $casos = MA_Clientes::where('Rut', $duplicado->Rut)->get();
+            $datosDefinitivos = [];
+            $clientes = [];
 
             foreach ($casos as $caso) {
-                echo $caso->ID;
+
+                $nombre = $caso->Nombre;
+                $apellido = $caso->Apellido;
+                $email = $caso->Email;
+                $telefono = $caso->Telefono;
+                $rut = $caso->Rut;
+
+                $clientes[] = [
+                    'Nombre' => $nombre,
+                    'Apellido' => $apellido,
+                    'Email' => $email,
+                    'Telefono' => $telefono,
+                    'Rut' => $rut,
+                    'ID' => $caso->ID,
+                    'ventas' => $caso->ventas->pluck('ID')->toArray(),
+                    'leads' => $caso->leads->pluck('ID')->toArray(),
+                    'cotizaciones' => $caso->cotizaciones->pluck('ID')->toArray(),
+                ];
+
             }
+            dump($clientes);
 
         }
     }

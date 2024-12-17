@@ -194,6 +194,9 @@ class ApiSolicitudesResource extends Resource
                     })->indicateUsing(function (array $data): ?string {
                         return ($data['Excluidos']) ? 'Registros Excluidos' : null;
                     }),
+
+                Tables\Filters\SelectFilter::make('ProveedorID')
+                    ->relationship('proveedores', 'Nombre')
             ], FiltersLayout::Modal)
             ->persistFiltersInSession()
             ->filtersFormColumns(3)

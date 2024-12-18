@@ -64,7 +64,7 @@ class AccesoriosRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Accesorios')
             ->columns([
-                Tables\Columns\TextColumn::make('marca.Marca')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('gerencia.Gerencia')->searchable()->sortable(),
                 Tables\Columns\TextColumn::make('Familia')->searchable(),
                 Tables\Columns\TextColumn::make('SKU'),
                 Tables\Columns\TextColumn::make('Descripcion'),

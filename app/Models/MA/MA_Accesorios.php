@@ -29,7 +29,7 @@ class MA_Accesorios extends Model
         'Activo',
         'SubTipoID',
         'MarcaID',
-        'ModeloID',
+//        'ModeloID',
     ];
 
     public function subtipo()
@@ -40,6 +40,11 @@ class MA_Accesorios extends Model
     public function marca()
     {
         return $this->hasOne(MA_Marcas::class, 'ID', 'MarcaID');
+    }
+
+    public function gerencia()
+    {
+        return $this->hasOne(MA_Gerencias::class, 'ID', 'MarcaID');
     }
 
     public function modelo()

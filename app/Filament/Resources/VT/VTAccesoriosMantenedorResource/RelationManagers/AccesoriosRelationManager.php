@@ -31,7 +31,7 @@ class AccesoriosRelationManager extends RelationManager
                     ->label('Descripcion (SKU)')
                     ->columnSpanFull(),
                 Forms\Components\Select::make('MarcaID')
-                    ->relationship('marca', 'Marca')
+                    ->relationship('gerencia', 'Gerencia')
                     ->label("Marca")
                     ->searchable(),
 

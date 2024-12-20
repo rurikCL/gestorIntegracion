@@ -100,6 +100,7 @@ class VTAccesoriosMantenedorResource extends Resource
                 Tables\Columns\BooleanColumn::make('OPEL')->label('OPEL'),
                 Tables\Columns\BooleanColumn::make('PEUGEOT')->label('PEUGEOT'),
                 Tables\Columns\BooleanColumn::make('SUBARU')->label('SUBARU'),
+                Tables\Columns\BooleanColumn::make('LANDKING')->label('LANDKING'),
                 Tables\Columns\BooleanColumn::make('ConsiderarReporte'),
             ])
             ->filters([

@@ -35,6 +35,7 @@ class VT_ElementosFinanciadosSubTipos extends Model
         'OPEL',
         'PEUGEOT',
         'SUBARU',
+        'LANDKING',
         'TieneInstalacionAcc',
         'TiempoInstalacion',
         'ConsiderarReporte',

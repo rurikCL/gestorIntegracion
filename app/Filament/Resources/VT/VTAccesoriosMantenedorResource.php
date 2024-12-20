@@ -64,6 +64,8 @@ class VTAccesoriosMantenedorResource extends Resource
                             ->label('PEUGEOT'),
                         Forms\Components\Toggle::make('SUBARU')
                             ->label('SUBARU'),
+                        Forms\Components\Toggle::make('LANDKING')
+                            ->label('LANDKING'),
                     ])->columns(4),
                 Forms\Components\Section::make('')
                     ->schema([

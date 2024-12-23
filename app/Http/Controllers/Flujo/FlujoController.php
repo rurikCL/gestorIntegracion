@@ -2301,8 +2301,8 @@ class FlujoController extends Controller
             $ventas = VT_EstadoResultado::with("modelo", "version", "apcstock", "cliente", "vendedor", "sucursal", "venta")
                 ->Gerencia(1)
                 ->NoNotificado($flujo->ID)
-//                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
-                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
+                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+//                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
@@ -2434,7 +2434,7 @@ class FlujoController extends Controller
                 ->OrdenesLandking()
                 ->NoNotificado($flujo->ID)
                 ->where('TipoOrigen', 'REAL')
-                ->where('FechaFacturacion', '>=', "2024-05-27 00:00:00")
+                ->where('FechaFacturacion', '>=', "2024-12-01 00:00:00")
                 ->where('TipoDocumento', '<>', 'Factura Interna')
                 ->where(function ($query) use ($tiposOrden) {
                     $query->whereIn('TipoOT', $tiposOrden)

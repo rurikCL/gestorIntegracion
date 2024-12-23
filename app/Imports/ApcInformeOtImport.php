@@ -89,6 +89,9 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
 
     }
 
+    /**
+     * @return string|array
+     */
     public function uniqueBy()
     {
         return 'Folio';
@@ -102,7 +105,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
     public static function afterImport(AfterImport $event)
     {
 
-        dd($event);
+//        dd($event);
 
     }
 

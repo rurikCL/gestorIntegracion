@@ -804,7 +804,7 @@ class RobotApcController extends Controller
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
-        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfYear()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
 //        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
 //        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
@@ -814,7 +814,7 @@ class RobotApcController extends Controller
 
         // Excel
         $options['form_params'] = json_decode($filedata, true);
-        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfYear()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
 //        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
 //        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');

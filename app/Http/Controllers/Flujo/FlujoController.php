@@ -918,7 +918,7 @@ class FlujoController extends Controller
                 ->porMarca($flujo->Nombre)
                 ->Validado()
                 ->NoNotificado($flujo->ID)
-                ->Desde('2023-10-01')
+                ->Desde(Carbon::now()->firstOfMonth()->format('Y-m-d'))
                 ->where('EstadoID', 1)
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();

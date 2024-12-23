@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiSolicitudController;
+use App\Imports\ApcInformeOtImport;
 use App\Imports\ApcMovimientoVentasImport;
 use App\Imports\ApcRentabilidadVentasImport;
 use App\Imports\ApcRepuestosImport;
@@ -794,23 +795,30 @@ class RobotApcController extends Controller
         ];
 
         $filename = 'informeOT.xls';
-        $filebase = Storage::get('public/viewstates/informeOtBase.json');
-        $filedata = Storage::get('public/viewstates/informeOt.json');
+        $filebase = Storage::get('public/viewstates/informeOtSemanalBase.json');
+        $filedata = Storage::get('public/viewstates/informeOtSemanal.json');
+//        $filebase = Storage::get('public/viewstates/informeOtBase.json');
+//        $filedata = Storage::get('public/viewstates/informeOt.json');
 
 
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+//        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
+//        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
 
 
         // Excel
         $options['form_params'] = json_decode($filedata, true);
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+//        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
+//        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
+
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
@@ -822,8 +830,78 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-//            Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
-//            unlink(storage_path('/app/public/' . $filename));
+            Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            unlink(storage_path('/app/public/' . $filename));
+
+        }
+
+    }
+
+    public function traeInformeOtAcotado()
+    {
+        set_time_limit(0);
+        $this->setCookie();
+
+        $url = 'https://appspsa-cl.autoprocloud.com/srv/Gestion/ShowDms_OT_InformeOTTable.aspx';
+
+        // Login
+        $viewstate = $this->login(5);
+        $sesion = $this->cookieJar->getCookieByName('ASP.NET_SessionId');
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
+
+        ];
+
+        $filename = 'informeOTAcotado.xls';
+        $filebase = Storage::get('public/viewstates/informeOtSemanalBase.json');
+        $filedata = Storage::get('public/viewstates/informeOtSemanal.json');
+//        $filebase = Storage::get('public/viewstates/informeOtBase.json');
+//        $filedata = Storage::get('public/viewstates/informeOt.json');
+
+
+        // Primer llamado
+        $options['form_params'] = json_decode($filebase, true);
+        $options['cookies'] = $this->cookieJar;
+//        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
+//        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
+        $request = new Request('POST', $url, $headers);
+        $res = $this->client->sendAsync($request, $options)->wait();
+
+
+        // Excel
+        $options['form_params'] = json_decode($filedata, true);
+//        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
+//        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
+
+        $options['cookies'] = $this->cookieJar;
+        $options['sink'] = storage_path('/app/public/' . $filename);
+
+        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
+            $res = true;
+        } else {
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+        }
+
+        if ($res) {
+            Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            unlink(storage_path('/app/public/' . $filename));
 
         }
 

@@ -2,12 +2,14 @@
 
 namespace App\Filament\Resources\MA\MAModelosResource\RelationManagers;
 
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 
 class VersionesRelationManager extends RelationManager
 {
@@ -71,7 +73,18 @@ class VersionesRelationManager extends RelationManager
                     }),
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->mutateFormDataUsing(function (array $data) {
+                        $data['FechaCreacion'] = Carbon::now()->format('Y-m-d H:i:s');
+                        $data['EventoCreacionID'] = 1;
+                        $data['UsuarioCreacionID'] = Auth::user()->id;
+
+                        if($data['H_TannerID'] == '') $data['H_TannerID'] = 0;
+                        if($data['H_KiaID'] == '') $data['H_KiaID'] = 0;
+                        if($data['H_ForumID'] == '') $data['H_ForumID'] = 0;
+
+                        return $data;
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ApcInformeOtImport;
 use App\Imports\ApcRentabilidadOtImport;
 use App\Imports\ApcStockImport;
 use App\Imports\AutoredTransactionImport;
 use App\Imports\CotizacionesForumImport;
 use App\Imports\CotizacionesNissanImport;
+use App\Imports\FinancierasImport;
 use App\Imports\MK_LeadsImport;
 use App\Imports\SalvinsImport;
 use App\Imports\SantanderImport;
@@ -15,6 +17,7 @@ use App\Models\APC_RentabilidadOt;
 use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Cargas;
 use App\Models\TDP\TDP_Cotizaciones;
+use App\Models\VT\VT_CotizacionesSolicitudesCredito;
 use App\Models\VT\VT_Salvin;
 use http\Env\Request;
 use Illuminate\Support\Facades\Log;
@@ -222,5 +225,81 @@ class FlujoCargaController extends Controller
         return $resultado;
     }
 
+
+    public static function importFinancieras($data): array
+    {
+
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+
+        $resultado = [];
+
+        $fileName = str_replace('"', '', $data["File"]);
+        $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])
+            ->where('ID_Flujo', $data["ID_Flujo"])->first();
+
+        try {
+            if ($fileName) {
+//                VT_CotizacionesSolicitudesCredito::truncate();
+                $import = new FinancierasImport($carga);
+                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLSX);
+            }
+            $carga->fresh();
+//            $carga->RegistrosFallidos = count($import->failures() ?? []);
+//            $carga->save();
+
+            $resultado = [
+                "errores" => $carga->RegistrosFallidos,
+                "registros" => $carga->RegistrosCargados
+            ];
+
+//            Log::info("Resultado : " . print_r($resultado, true));
+
+        } catch (\Exception $e) {
+            Log::error("Error al importar financieras : " . $e->getMessage());
+            $carga->Estado = 1;
+            $carga->save();
+        }
+
+        return $resultado;
+
+    }
+
+
+    public static function importInformeOt($data)
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+
+        $resultado = [];
+
+        $fileName = str_replace('"', '', $data["File"]);
+        $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])
+            ->where('ID_Flujo', $data["ID_Flujo"])->first();
+
+        try {
+            if ($fileName) {
+                $import = new ApcInformeOtImport($carga);
+                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
+            }
+            $carga->fresh();
+//            $carga->RegistrosFallidos = count($import->failures() ?? []);
+//            $carga->save();
+
+            $resultado = [
+                "errores" => $carga->RegistrosFallidos,
+                "registros" => $carga->RegistrosCargados
+            ];
+
+            Log::info("Resultado : " . print_r($resultado, true));
+
+        } catch (\Exception $e) {
+            Log::error("Error al importar financieras : " . $e->getMessage());
+            $carga->Estado = 1;
+            $carga->save();
+        }
+
+        return $resultado;
+    }
 
 }

@@ -7,6 +7,7 @@ use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Usuarios;
+use App\Models\VT\VT_CotizacionesSolicitudesCredito;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
@@ -47,18 +48,44 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
 //        $datosPrevios = VT_Salvin::all();
 //        VT_Salvin::query()->delete();
 
+        $datos = [
+            "id_roma" => null,
+            "financiera_origen" => "NTFS",
+            "estado" => "sin_enviar_a_evaluar",
+            "fecha_cotizacion" => 45635,
+            "sucursal" => "P. SUR I",
+            "vendedor" => "FRANCISCO GABRIEL VALENZUELA SANCHEZ",
+            "nombre_ejecutivo" => "DAVID GERMAN CONCHA ZAMORANO",
+            "rut_cliente" => "17908760-K",
+            "nombre_cliente" => "YASNA MACARENA NÚÑEZ COLLAO",
+            "email_cliente" => "YASNITA1632@GMAIL.COM",
+            "telefono_cliente" => "948748878",
+            "marca" => "NISSAN",
+            "modelo" => "VERSA",
+            "producto" => "Credinissan Plus Credimás",
+            "tipo_credito" => "Credinissan Plus",
+            "nuevo_usado" => "Nuevo",
+            "tipocreditoid" => 2,
+            "idsucursal" => 31,
+            "idestado" => 1,
+            "idmarca" => 3,
+            "idmodelo" => 57,
+            "idcanal" => 3,
+        ];
+
         // Seccion de importacion --------------------------------------------------
         foreach ($collection as $record) {
+//            dd($record);
             if ($this->contadorRegistro > 0) {
 
-                $sucursalID = $h->getDato($record['dealer'], 21, 'sucursal', 0);
-                $marcaID = MA_Marcas::where('Marca', $record['marca'])->first()->ID ?? 1;
-                $modeloID = $h->getDato($record['modelo'], 21, 'modelo', 0);
-                $productoID = $h->getDato($record['producto'], 21, 'producto', 0);
-                $estadoID = $h->getDato($record['estado'], 21, 'estado', 0);
+                $idFlujo = 24; // Carga Financieras
+
+//                $marcaID = MA_Marcas::where('Marca', $record['marca'])->first()->ID ?? 1;
+//                $modeloID = $h->getDato($record['modelo'], $idFlujo, 'modelo', 0);
+//                $productoID = $h->getDato($record['producto'], $idFlujo, 'producto', 0);
+//                $estadoID = $h->getDato($record['estado'], $idFlujo, 'estado', 0);
 
                 $vendedorID = MA_Usuarios::where('Nombre', $record['vendedor'])->first()->ID ?? 1;
-                $ejecutivoID = MA_Usuarios::where('Nombre', $record['ejecutivo'])->first()->ID ?? 0;
 
                 $rut = $record['rut_cliente'];
                 $rut = substr($rut, 0, strlen($rut) - 1) . "-" . substr($rut, -1, 1);
@@ -77,11 +104,19 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     continue;
                 }
 
+
+                if(is_numeric($record['fecha_cotizacion'])){
+                    $fechaCotizacion = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($record['fecha_cotizacion']);
+                } else {
+                    $fechaCotizacion = Carbon::createFromFormat("d-m-Y",$record['fecha_cotizacion'])->format('Y-m-d');
+                }
+//                Log::info("registro : ". $this->contadorRegistro . " ". $record['fecha_cotizacion']);
+
                 // Preparacion de datos desde CSV ------------------------------------------
                 $registro = [
                     'Financiera' => $record['financiera_origen'],
                     'Estado' => $record['estado'],
-                    'FechaCotizacion' => $record['fecha_cotizacion'],
+                    'FechaCotizacion' => $fechaCotizacion,
                     'Sucursal' => $record['sucursal'],
                     'Vendedor' => $record['vendedor'],
                     'NombreEjecutivo' => $record['nombre_ejecutivo'],
@@ -102,7 +137,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     'ModeloID' => $record['idmodelo'],
 
                     'VendedorID' => $vendedorID,
-                    'EjecutivoID' => $ejecutivoID,
+//                    'EjecutivoID' => $ejecutivoID,
                     'ClienteID' => $clienteID,
 
                     'Cargado' => 0,
@@ -111,9 +146,14 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     'OrigenID' => 0,
                     'SubOrigenID' => 0,
 
-                    'Concat' => $record['rut_cliente'] . $sucursalID . $vendedorID . $modeloID,
+                    'Concat' => $record['rut_cliente'] . $record['idsucursal'] . $vendedorID . $record['idmodelo'],
 
                     ];
+
+                VT_CotizacionesSolicitudesCredito::create($registro);
+//                dd($registro);
+
+
                 $registros[] = $registro;
 
             } // Fin contador registro

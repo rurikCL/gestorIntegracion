@@ -9,7 +9,10 @@ use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\SkipsFailures;
+use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -22,6 +25,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
 {
 
     use RegistersEventListeners;
+    use Importable, SkipsFailures;
 
     /**
      * @param array $row
@@ -46,7 +50,8 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             $contErrores = $this->carga->RegistrosFallidos ?? 0;
             $idCarga = $this->carga->ID;
         }
-        return new APC_InformeOt([
+
+        $result = new APC_InformeOt([
             "Sucursal" => $row[0],
             "FechaIngreso" => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[1]),
             "FechaCierre" => ($row[2] != "") ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[2]) : null,
@@ -87,7 +92,13 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             "ObservacionOt" => $row[37],
         ]);
 
+        if($result){
+            $this->contadorRegistro++;
+        }
+        return $result;
+
     }
+
 
     /**
      * @return string|array
@@ -102,10 +113,8 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         return 1000;
     }
 
-    public static function afterImport(AfterImport $event)
+    public static function beforeImport(AfterImport $event)
     {
-
-//        dd($event);
 
     }
 

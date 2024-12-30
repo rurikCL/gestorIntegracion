@@ -21,7 +21,7 @@ class CreateMASucursales extends CreateRecord
         $data['EventoCreacionID'] = 1;
         $data['UsuarioCreacionID'] = Auth::user()->id;
 
-        foreach ($data["Niveles"] as $key => $value) {
+        /*foreach ($data["Niveles"] as $key => $value) {
             if ($value["level"] <> $data["level"]) {
                 $resultado = RC_cashier_approvers::updateOrCreate(
                     [
@@ -48,7 +48,7 @@ class CreateMASucursales extends CreateRecord
                         ->send();
                 }
             }
-        }
+        }*/
         return $data;
     }
 }

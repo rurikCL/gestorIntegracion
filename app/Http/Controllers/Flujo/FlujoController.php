@@ -2306,7 +2306,7 @@ class FlujoController extends Controller
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
-//            dd($ventas);
+            dd($ventas);
 
             if ($ventas) {
                 Log::info("Existen ventas");

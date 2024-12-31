@@ -21,7 +21,8 @@ class RC_cashier_approvers extends Model
         'level',
         'min',
         'max',
-        'branch_office_id'
+        'branch_office_id',
+        'active'
     ];
 
     public function sucursales()

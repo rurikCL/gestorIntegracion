@@ -130,6 +130,9 @@ class MASucursalesResource extends Resource
                                             Forms\Components\Select::make('user_id')
                                                 ->relationship('usuarios', 'Nombre')
                                                 ->searchable(),
+                                            Forms\Components\Toggle::make('acvive')
+                                            ->default(true),
+
 //                                Forms\Components\TextInput::make('min'),
 //                                Forms\Components\TextInput::make('max'),
                                         ])

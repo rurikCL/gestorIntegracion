@@ -2394,7 +2394,6 @@ class FlujoController extends Controller
 
                     $resp = $solicitudCon->store($req, 'aislado1');
                     echo("<br>" . ($resp->message ?? ''));
-                    dd("asdf");
                 }
             } else {
                 Log::info("No se encontraron ventas");

@@ -2299,7 +2299,7 @@ class FlujoController extends Controller
 
 
             $ventas = VT_EstadoResultado::with("modelo", "version", "apcstock", "cliente", "vendedor", "sucursal", "venta")
-                ->Gerencia(1)
+                ->Gerencia(20)
                 ->NoNotificado($flujo->ID)
                 ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
 //                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))

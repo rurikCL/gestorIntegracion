@@ -131,6 +131,7 @@ class MASucursalesResource extends Resource
                                                 ->relationship('usuarios', 'Nombre')
                                                 ->searchable(),
                                             Forms\Components\Toggle::make('active')
+                                                ->label('Activo')
                                             ->default(true),
 
 //                                Forms\Components\TextInput::make('min'),

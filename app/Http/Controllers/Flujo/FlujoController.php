@@ -204,7 +204,7 @@ class FlujoController extends Controller
             $ordenes = PV_PostVenta::with('venta')
                 ->OrdenesKia()
                 ->NoNotificado($flujo->ID)
-                ->VentasDesde('2022-01-01 00:00:00')
+                ->VentasDesde('2024-12-01 00:00:00')
                 ->TipoMantencion()
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();

@@ -107,7 +107,7 @@ class OCPurchaseOrdersResource extends Resource
                                             ->label('Impuesto'),
                                     ])
                                     ->columns(3)
-                                    ->itemLabel(fn($state)=>$state["id"])
+                                    ->itemLabel(fn($record)=>$record["id"])
                                     ->grid(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Aprobadores')

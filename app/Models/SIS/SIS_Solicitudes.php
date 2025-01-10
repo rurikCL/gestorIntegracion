@@ -11,6 +11,7 @@ class SIS_Solicitudes extends Model
 
     protected $table = 'SIS_Solicitudes';
     protected $primaryKey = 'ID';
+    public $timestamps = false;
 
     protected $fillable = [
         'FechaCreacion',

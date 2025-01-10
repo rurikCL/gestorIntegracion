@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SIS_DatosTransferencias extends Model
 {
-    use HasFactory;
 
     protected $table = 'SIS_DatosTransferencias';
     protected $primaryKey = 'ID';

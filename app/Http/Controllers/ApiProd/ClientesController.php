@@ -10,6 +10,13 @@ use App\Http\Resources\VT\VT_VentasInfoCollection;
 use App\Models\CC\CC_Reclamos;
 use App\Models\Client;
 use App\Models\MA\MA_Clientes;
+use App\Models\MK\MK_Leads;
+use App\Models\SIS\SIS_Agendamientos;
+use App\Models\SIS\SIS_Seguimientos;
+use App\Models\SIS\SIS_Solicitudes;
+use App\Models\VT\VT_ClientesDiarios;
+use App\Models\VT\VT_Cotizaciones;
+use App\Models\VT\VT_Renovaciones;
 use App\Models\VT\VT_Ventas;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -254,47 +261,90 @@ class ClientesController extends Controller
         }
 
         return new CC_ReclamosCollection(
-            CC_Reclamos::where('ClienteID',$idCliente)->get()
+            CC_Reclamos::where('ClienteID', $idCliente)->get()
         );
 
     }
 
 
-    public function revisarClientesDuplicados(){
+    public function revisarClientesDuplicados()
+    {
 
         $duplicados = MA_Clientes::select('Rut', 'ID', DB::raw('count(*) as cantidad'))
-            ->where('Rut','<>', '')
+            ->where('Rut', '<>', '')
+            ->where('Rut', '<>', 0)
             ->groupBy('Rut')
-            ->limit(5)
-        ->havingRaw('count(*) > 1')
-        ->get();
+//            ->limit(5)
+            ->havingRaw('count(*) > 1')
+            ->get();
 
         foreach ($duplicados as $duplicado) {
             echo $duplicado->Rut;
-            echo " (". $duplicado->ID. ")";
+            echo " (" . $duplicado->ID . ")";
             $casos = MA_Clientes::where('Rut', $duplicado->Rut)->get();
-            $datosDefinitivos = [];
             $clientes = [];
 
+            $primerCaso = $casos[0];
+            $primerCasoID = $casos[0]->ID;
+
             foreach ($casos as $caso) {
+                if ($caso->ID <> $primerCasoID) {
 
-                $nombre = $caso->Nombre;
-                $apellido = $caso->Apellido;
-                $email = $caso->Email;
-                $telefono = $caso->Telefono;
-                $rut = $caso->Rut;
+                    $nombre = $caso->Nombre;
+                    $apellido = $caso->Apellido;
+                    $email = $caso->Email;
+                    $telefono = $caso->Telefono;
+                    $rut = $caso->Rut;
 
-                $clientes[] = [
-                    'Nombre' => $nombre,
-                    'Apellido' => $apellido,
-                    'Email' => $email,
-                    'Telefono' => $telefono,
-                    'Rut' => $rut,
-                    'ID' => $caso->ID,
-                    'ventas' => $caso->ventas->pluck('ID')->toArray(),
-                    'leads' => $caso->leads->pluck('ID')->toArray(),
-                    'cotizaciones' => $caso->cotizaciones->pluck('ID')->toArray(),
-                ];
+                    $ventas = $caso->ventas->pluck('ID')->toArray();
+                    $leads = $caso->leads->pluck('ID')->toArray();
+                    $cotizaciones = $caso->cotizaciones->pluck('ID')->toArray();
+                    $seguimientos = $caso->seguimientos->pluck('ID')->toArray();
+                    $diarios = $caso->diarios->pluck('ID')->toArray();
+                    $solicitudes = $caso->solicitudes->pluck('ID')->toArray();
+                    $agendamientos = $caso->agendamientos->pluck('ID')->toArray();
+                    $renovaciones = $caso->renovaciones->pluck('ID')->toArray();
+                    $reclamos = $caso->reclamos->pluck('ID')->toArray();
+
+                    VT_Ventas::whereIn('ID',$ventas)->update(['ClienteID' => $primerCasoID]);
+                    MK_Leads::whereIn('ID',$leads)->update(['ClienteID' => $primerCasoID]);
+                    VT_Cotizaciones::whereIn('ID',$cotizaciones)->update(['ClienteID' => $primerCasoID]);
+                    SIS_Seguimientos::whereIn('ID',$seguimientos)->update(['ClienteID' => $primerCasoID]);
+                    VT_ClientesDiarios::whereIn('ID', $diarios)->update(['ClienteID' => $primerCasoID]);
+                    SIS_Solicitudes::whereIn('ID', $solicitudes)->update(['ClienteID' => $primerCasoID]);
+                    SIS_Agendamientos::whereIn('ID', $agendamientos)->update(['ClienteID' => $primerCasoID]);
+                    VT_Renovaciones::whereIn('ID', $renovaciones)->update(['ClienteID' => $primerCasoID]);
+                    CC_Reclamos::whereIn('ID', $reclamos)->update(['ClienteID' => $primerCasoID]);
+
+                    $clientes[] = [
+                        'Nombre' => $nombre,
+                        'Apellido' => $apellido,
+                        'Email' => $email,
+                        'Telefono' => $telefono,
+                        'Rut' => $rut,
+                        'ID' => $caso->ID,
+                        'ventas' => $caso->ventas->pluck('ID')->toArray(),
+                        'leads' => $caso->leads->pluck('ID')->toArray(),
+                        'cotizaciones' => $caso->cotizaciones->pluck('ID')->toArray(),
+                    ];
+
+                    if ($nombre) {
+                        $primerCaso->Nombre = $nombre;
+                    }
+                    if ($apellido) {
+                        $primerCaso->Apellido = $apellido;
+                    }
+                    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $primerCaso->Email = $email;
+                    }
+                    if($telefono){
+                        $primerCaso->Telefono = $telefono;
+                    }
+
+                    $primerCaso->save();
+
+                    $caso->delete();
+                }
 
             }
             dump($clientes);

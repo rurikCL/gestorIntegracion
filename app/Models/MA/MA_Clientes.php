@@ -2,8 +2,14 @@
 
 namespace App\Models\MA;
 
+use App\Models\CC\CC_Reclamos;
 use App\Models\MK\MK_Leads;
+use App\Models\SIS\SIS_Agendamientos;
+use App\Models\SIS\SIS_Seguimientos;
+use App\Models\SIS\SIS_Solicitudes;
+use App\Models\VT\VT_ClientesDiarios;
 use App\Models\VT\VT_Cotizaciones;
+use App\Models\VT\VT_Renovaciones;
 use App\Models\VT\VT_Ventas;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -111,6 +117,30 @@ class MA_Clientes extends Model
 
     public function cotizaciones(){
         return $this->hasMany(VT_Cotizaciones::class, 'ClienteID', 'ID');
+    }
+
+    public function seguimientos(){
+        return $this->hasMany(SIS_Seguimientos::class, 'ClienteID', 'ID');
+    }
+
+    public function diarios(){
+        return $this->hasMany(VT_ClientesDiarios::class, 'ClienteID', 'ID');
+    }
+
+    public function solicitudes(){
+        return $this->hasMany(SIS_Solicitudes::class, 'ClienteID', 'ID');
+    }
+
+    public function agendamientos(){
+        return $this->hasMany(SIS_Agendamientos::class, 'ClienteID', 'ID');
+    }
+
+    public function renovaciones(){
+        return $this->hasMany(VT_Renovaciones::class, 'ClienteID', 'ID');
+    }
+
+    public function reclamos(){
+        return $this->hasMany(CC_Reclamos::class, 'ClienteID', 'ID');
     }
 
     public function validacion($query)

@@ -450,10 +450,7 @@ class LeadController extends Controller
                 }
                 // ---------------------
 
-
-
                 $returnMessage = "Lead creado correctamente";
-
 
                 // REGISTRO LOG ---------------------
                 LOG_IntegracionLeads::info(
@@ -767,7 +764,7 @@ class LeadController extends Controller
                 if ($reglaVendedor == true || $reglaSucursal == true) {
                     $Log->info("Asignando reglas de Lead", $solicitudID);
 
-                    // se ajusta ejecucion de regla sucursal. siempre se debe ejecutar en conjunto
+                    // Se ajusta ejecución de regla sucursal. Siempre se debe ejecutar en conjunto
                     if ($reglaVendedor == true) {
 //                    $reglaSucursal = true;
                         // Excepto para USADOS

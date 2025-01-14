@@ -10,6 +10,7 @@ use App\Http\Resources\VT\VT_VentasInfoCollection;
 use App\Models\CC\CC_Reclamos;
 use App\Models\Client;
 use App\Models\MA\MA_Clientes;
+use App\Models\MA\MA_ClientesTmp;
 use App\Models\MK\MK_Leads;
 use App\Models\SIS\SIS_Agendamientos;
 use App\Models\SIS\SIS_Seguimientos;
@@ -342,6 +343,8 @@ class ClientesController extends Controller
                     }
 
                     $primerCaso->save();
+
+                    MA_ClientesTmp::create($caso);
 
                     $caso->delete();
                 }

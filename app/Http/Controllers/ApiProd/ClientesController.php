@@ -275,7 +275,7 @@ class ClientesController extends Controller
             ->where('Rut', '<>', '')
             ->where('Rut', '<>', 0)
             ->groupBy('Rut')
-            ->limit(5)
+            ->limit(1000)
             ->havingRaw('count(*) > 1')
             ->get();
 

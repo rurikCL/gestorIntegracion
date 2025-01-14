@@ -350,7 +350,7 @@ class ClientesController extends Controller
                 }
 
             }
-            dump($clientes);
+//            dump($clientes);
 
         }
     }

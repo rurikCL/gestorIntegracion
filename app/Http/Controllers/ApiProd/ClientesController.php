@@ -344,7 +344,7 @@ class ClientesController extends Controller
 
                     $primerCaso->save();
 
-                    MA_ClientesTmp::create($caso);
+                    MA_ClientesTmp::create($caso->toArray());
 
                     $caso->delete();
                 }

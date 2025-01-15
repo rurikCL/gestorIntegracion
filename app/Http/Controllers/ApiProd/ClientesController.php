@@ -19,6 +19,7 @@ use App\Models\VT\VT_ClientesDiarios;
 use App\Models\VT\VT_Cotizaciones;
 use App\Models\VT\VT_Renovaciones;
 use App\Models\VT\VT_Ventas;
+use App\Models\VT\VT_VentasComentarios;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -306,6 +307,7 @@ class ClientesController extends Controller
                     $agendamientos = $caso->agendamientos->pluck('ID')->toArray();
                     $renovaciones = $caso->renovaciones->pluck('ID')->toArray();
                     $reclamos = $caso->reclamos->pluck('ID')->toArray();
+                    $comentarios = $caso->comentarios->pluck('ID')->toArray();
 
                     VT_Ventas::whereIn('ID',$ventas)->update(['ClienteID' => $primerCasoID]);
                     MK_Leads::whereIn('ID',$leads)->update(['ClienteID' => $primerCasoID]);
@@ -316,6 +318,7 @@ class ClientesController extends Controller
                     SIS_Agendamientos::whereIn('ID', $agendamientos)->update(['ClienteID' => $primerCasoID]);
                     VT_Renovaciones::whereIn('ID', $renovaciones)->update(['ClienteID' => $primerCasoID]);
                     CC_Reclamos::whereIn('ID', $reclamos)->update(['ClienteID' => $primerCasoID]);
+                    VT_VentasComentarios::whereIn('ID', $comentarios)->update(['ClienteID' => $primerCasoID]);
 
                     $clientes[] = [
                         'Nombre' => $nombre,

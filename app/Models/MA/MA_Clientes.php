@@ -11,6 +11,7 @@ use App\Models\VT\VT_ClientesDiarios;
 use App\Models\VT\VT_Cotizaciones;
 use App\Models\VT\VT_Renovaciones;
 use App\Models\VT\VT_Ventas;
+use App\Models\VT\VT_VentasComentarios;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -141,6 +142,11 @@ class MA_Clientes extends Model
 
     public function reclamos(){
         return $this->hasMany(CC_Reclamos::class, 'ClienteID', 'ID');
+    }
+
+    public function comentarios(){
+        return $this->hasMany(VT_VentasComentarios::class, 'ClienteID', 'ID');
+
     }
 
     public function validacion($query)

@@ -29,6 +29,7 @@ class MA_Clientes extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'ID',
         'FechaCreacion',
         'EventoCreacionID',
         'UsuarioCreacionID',

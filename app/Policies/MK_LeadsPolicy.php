@@ -21,7 +21,7 @@ class MK_LeadsPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isAdmin() || $user->isMarketing();
     }
 
     public function create(User $user)

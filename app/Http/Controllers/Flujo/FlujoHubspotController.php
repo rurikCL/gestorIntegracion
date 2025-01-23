@@ -750,7 +750,7 @@ class FlujoHubspotController extends Controller
 
             if ($rut) {
                 $dv = substr($rut, -1);
-                $rut = substr($rut, 0, length($rut) - 1);
+                $rut = (float)(substr($rut, 0, length($rut) - 1));
                 $rutFormateado = number_format($rut, 0, ',', '.') . "-" . $dv;
             } else {
                 $rutFormateado = null;

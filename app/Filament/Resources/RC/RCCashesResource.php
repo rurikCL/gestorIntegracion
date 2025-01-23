@@ -130,8 +130,9 @@ class RCCashesResource extends Resource
                                                 '1' => 'heroicon-o-clock',
                                                 '0' => 'heroicon-o-check-circle',
                                             ])
+                                            ->default(1)
                                             ->inline()
-                                            ->grouped()
+                                            ->grouped(),
                                     ])
                                     ->deletable(auth()->user()->isAdmin())
                                     ->addable(auth()->user()->isAdmin())

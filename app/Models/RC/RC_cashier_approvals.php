@@ -12,7 +12,7 @@ class RC_cashier_approvals extends Model
     protected $table = 'RC_cashier_approvals';
 
     protected $primaryKey = 'id';
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'cash_id',

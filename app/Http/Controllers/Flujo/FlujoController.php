@@ -1835,7 +1835,7 @@ class FlujoController extends Controller
         if ($arrayData) {
             foreach ($arrayData->UFs as $data) {
                 $fecha = $data->Fecha;
-                $valor = intval(str_replace(".","",$data->Valor));
+                $valor = intval(str_replace(".", "", $data->Valor));
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
                     [
                         'FechaIndicador' => $fecha,
@@ -1876,7 +1876,7 @@ class FlujoController extends Controller
         if ($arrayData) {
             foreach ($arrayData->Dolares as $data) {
                 $fecha = $data->Fecha;
-                $valor = intval(str_replace(".","",$data->Valor));
+                $valor = intval(str_replace(".", "", $data->Valor));
                 $indicador = MA_IndicadorMonetario::updateOrCreate(
                     [
                         'FechaIndicador' => $fecha,
@@ -1990,7 +1990,7 @@ class FlujoController extends Controller
                         $color = $venta->ColorReferencial;
                     }
 
-                    if($venta->sucursal->GerenciaID == 5) {
+                    if ($venta->sucursal->GerenciaID == 5) {
                         $marca = 2;
                     } else if ($venta->sucursal->GerenciaID == 1) {
                         $marca = 9;
@@ -2164,7 +2164,7 @@ class FlujoController extends Controller
                     $checkOtInterna = $categoriaOT == 'Factura Interna' ? 'X' : '';
                     if ($orden->Marca == "DFSK") {
                         $marca = 9;
-                    } else if($orden->Marca == "SUBARU") {
+                    } else if ($orden->Marca == "SUBARU") {
                         $marca = 2;
                     }
 
@@ -2407,7 +2407,6 @@ class FlujoController extends Controller
     }
 
 
-
     public function sendOTsSICLandking()
     {
 
@@ -2612,53 +2611,4 @@ class FlujoController extends Controller
     }
 
 
-    public function leadsGeely(){
-        echo "Ejecutando Flujo Gema <br>";
-        Log::info("Inicio de flujo Geely");
-
-        $flujo = FLU_Flujos::where('Nombre', 'Geely')->first();
-
-        if ($flujo->Activo) {
-            $h = new FLU_Homologacion();
-
-            echo ". . . <br>";
-
-            $solicitudCon = new ApiSolicitudController();
-
-            $referencia = $flujo->ID . date("ymdh");
-
-            $req = new Request();
-            $req['referencia_id'] = $referencia;
-            $req['proveedor_id'] = 16;
-            $req['api_id'] = 36;
-            $req['prioridad'] = 1;
-            $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
-
-            $req['data'] = [
-                "QueryDealerLeadInfoDTO" => [
-                    "appId" => "",
-                    "brandId" => "",
-                    "startingTime" => "",
-                    "endingTime" => "",
-                    "pageNum" => 0,
-                    "pageSize" => 0
-                ]
-            ]; ;
-
-            $resp = $solicitudCon->store($req);
-            $resp = $resp->getData();
-
-            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
-
-            if (substr($solicitud->Respuesta, 0, 4) == 'file') {
-                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
-                Log::info("Archivo json leads generado " . $nombre);
-
-                $arrayData = json_decode(Storage::get($nombre));
-            } else {
-                $arrayData = json_decode($solicitud->Respuesta);
-            }
-        }
-    }
 }

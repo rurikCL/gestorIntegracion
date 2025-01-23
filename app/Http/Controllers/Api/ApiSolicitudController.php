@@ -61,7 +61,7 @@ class ApiSolicitudController extends Controller
             $solicitud->ApiID = $request->input('api_id');
             $solicitud->Prioridad = $request->input('prioridad');
             $solicitud->Peticion = (is_array($request->input('data'))) ? json_encode($request->input('data'), JSON_UNESCAPED_SLASHES) : $request->input('data');
-            $solicitud->PeticionHeader = (is_array($request->input('dataHeader'))) ? json_encode($request->input('data')) : $request->input('dataHeader');
+            $solicitud->PeticionHeader = (is_array($request->input('dataHeader'))) ? json_encode($request->input('dataHeader')) : $request->input('dataHeader');
             $solicitud->FechaPeticion = Carbon::now();
             $solicitud->FlujoID = $request->input('flujoID');
             $solicitud->Reintentos = 3; //Numero de reintentos por default
@@ -500,6 +500,14 @@ class ApiSolicitudController extends Controller
                                 foreach ($params as $param) {
                                     $explodedParam = explode(":", $param);
                                     $header[trim($explodedParam[0])] = trim($explodedParam[1]);
+                                }
+                            }
+
+                            // Param HEADERS
+                            if ($solicitud->PeticionHeader != '') {
+                                $paramsHeader = json_decode($solicitud->PeticionHeader);
+                                foreach ($paramsHeader as $key=>$param) {
+                                    $header[$key] = $param;
                                 }
                             }
 

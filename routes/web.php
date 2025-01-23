@@ -77,6 +77,9 @@ Route::get('/robot/apc/informeOtAcotado', [\App\Http\Controllers\RobotApcControl
 Route::get('/robot/apc/rentabilidadVenta', [\App\Http\Controllers\RobotApcController::class, 'traeRentabilidadVenta']);
 
 
+Route::get('/geely/leads', [\App\Http\Controllers\Flujo\FlujoGeelyController::class, 'leadsGeely']);
+
+
 Route::get('/robot/apc/comparar', [\App\Http\Controllers\RobotApcController::class, 'compare']);
 
 

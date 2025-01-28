@@ -2350,7 +2350,7 @@ class FlujoController extends Controller
                             'color' => $color,
                             'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
-                            'num_documento' => $venta->NumeroFactura,
+                            'num_documento' => $venta->venta->NumeroFactura ?? '',
                             'doc_referencia' => $venta->NotaVenta,
                             'precio' => $venta->ValorFactura,
                             'nombre_local' => $venta->sucursal->Sucursal ?? '',

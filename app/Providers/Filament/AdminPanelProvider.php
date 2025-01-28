@@ -60,7 +60,7 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
 
-            ->databaseNotifications()
+//            ->databaseNotifications()
 //            ->databaseNotificationsPolling('30s')
 
             ->viteTheme('resources/css/filament/admin/theme.css')

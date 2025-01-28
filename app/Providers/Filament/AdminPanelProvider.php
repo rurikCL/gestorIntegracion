@@ -59,6 +59,10 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
+
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth(150);

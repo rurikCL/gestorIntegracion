@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\MA;
 
+use App\Filament\Exports\MA\MAModelosExporter;
 use App\Filament\Resources\MA\MAModelosResource\Pages;
 use App\Filament\Resources\MA\MAModelosResource\RelationManagers;
 use App\Models\MA\MA_Modelos;
+use Filament\Tables\Actions\ExportAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -91,6 +93,10 @@ class MAModelosResource extends Resource
                     ->relationship('marca', 'Marca')
                     ->searchable()
                     ->label('Marca')
+            ])
+            ->headerActions([
+                ExportAction::make()
+                    ->exporter(MAModelosExporter::class),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

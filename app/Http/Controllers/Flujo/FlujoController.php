@@ -2314,6 +2314,7 @@ class FlujoController extends Controller
                 Log::info("Cantidad de ventas : " . count($ventas));
 
                 foreach ($ventas as $venta) {
+                    dump($venta);
                     print PHP_EOL . "Procesando orden : " . $venta->ID . PHP_EOL;
                     Log::info("Procesando orden : " . $venta->ID);
                     $req = new Request();

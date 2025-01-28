@@ -2306,7 +2306,6 @@ class FlujoController extends Controller
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 
-            dd($ventas);
 
             if ($ventas) {
                 Log::info("Existen ventas");
@@ -2350,7 +2349,6 @@ class FlujoController extends Controller
                             'color' => $color,
                             'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
-//                            'tipo_documento' => "FA",
                             'num_documento' => $venta->NumeroFactura,
                             'doc_referencia' => $venta->NotaVenta,
                             'precio' => $venta->ValorFactura,
@@ -2366,7 +2364,6 @@ class FlujoController extends Controller
                             'nv_referencia' => $venta->NotaVenta,
                             'rut_facturacion' => $rut,
                             'nombre_facturado' => $venta->cliente->Nombre,
-//                            'id_facturacion_dybox' => 0,
                         ],
                     ]);
 

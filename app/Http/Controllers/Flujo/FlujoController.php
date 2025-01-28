@@ -2352,7 +2352,7 @@ class FlujoController extends Controller
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
                             'num_documento' => $venta->venta->NumeroFactura ?? '',
                             'doc_referencia' => $venta->NotaVenta,
-                            'precio' => $venta->ValorFactura,
+                            'precio' => $venta->venta->ValorFactura,
                             'nombre_local' => $venta->sucursal->Sucursal ?? '',
                             'estado_envio' => 'N',
                             'rut_cliente' => $rut,
@@ -2409,7 +2409,7 @@ class FlujoController extends Controller
     {
 
         echo "Ejecutando Flujo Landking OT SIC<br>";
-        Log::info("Inicio flujo OTs Indumotora");
+        Log::info("Inicio flujo OTs Landking");
 
         $flujo = FLU_Flujos::where('Nombre', 'Landking SIC')->first();
 

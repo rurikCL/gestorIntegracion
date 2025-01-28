@@ -61,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
             ])
 
             ->databaseNotifications()
-            ->databaseNotificationsPolling('30s')
+//            ->databaseNotificationsPolling('30s')
 
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->sidebarCollapsibleOnDesktop()

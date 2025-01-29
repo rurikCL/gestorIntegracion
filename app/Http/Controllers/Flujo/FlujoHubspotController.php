@@ -724,9 +724,10 @@ class FlujoHubspotController extends Controller
         $emailsErroneos = [];
 
         $leads = MK_Leads::where('IDHubspot', '0')
-            ->where('FechaCreacion', '>', '2024-06-01 00:00:00')
+            ->where('FechaCreacion', '>', '2025-01-01 00:00:00')
             ->limit($flujo->MaxLote ?? 10)
             ->get();
+
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
 

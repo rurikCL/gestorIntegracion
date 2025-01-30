@@ -408,9 +408,9 @@ class FlujoController extends Controller
                             'fecha_facturacion' => Carbon::parse($venta->FechaFactura)->format("Ymd"),
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
 //                            'tipo_documento' => "FA",
-                            'num_documento' => $venta->NumeroFactura,
+                            'num_documento' => $venta->venta->NumeroFactura ?? '',
                             'doc_referencia' => $venta->NotaVenta,
-                            'precio' => $venta->ValorFactura,
+                            'precio' => $venta->venta->ValorFactura ?? '',
                             'nombre_local' => $venta->sucursal->Sucursal ?? '',
                             'estado_envio' => 'N',
                             'rut_cliente' => $rut,
@@ -2014,7 +2014,7 @@ class FlujoController extends Controller
                             'nombre_local' => $venta->sucursal->Sucursal,
                             'precio' => $precioFinal,
                             'tipo_documento' => $venta->TipoDocumento == 1 ? "FA" : "NC",
-                            'num_documento' => $venta->NumeroFactura,
+                            'num_documento' => $venta->venta->NumeroFactura,
                             'doc_referencia' => $venta->NotaVenta,
                             'rut_cliente' => $rut,
                             'nombre_cliente' => $venta->cliente->Nombre,
@@ -2314,7 +2314,7 @@ class FlujoController extends Controller
                 Log::info("Cantidad de ventas : " . count($ventas));
 
                 foreach ($ventas as $venta) {
-                    dump($venta);
+//                    dump($venta);
                     print PHP_EOL . "Procesando orden : " . $venta->ID . PHP_EOL;
                     Log::info("Procesando orden : " . $venta->ID);
                     $req = new Request();

@@ -301,7 +301,8 @@ class RobotApcController extends Controller
             2021,
             2022,
             2023,
-            2024
+            2024,
+            2025
         ];
 
 //        TDP_ApcStock::truncate();
@@ -377,6 +378,7 @@ class RobotApcController extends Controller
 
                                 $res = APC_Stock::updateOrCreate([
                                     'Codigo_Interno' => $row['codigo_interno'],
+                                    'Empresa' => $row['empresa'],
                                 ], [
                                     'Empresa' => $row['empresa'],
                                     'Sucursal' => $row['sucursal'],
@@ -456,6 +458,202 @@ class RobotApcController extends Controller
         Log::channel('robots')->info("Fin de proceso Stock");
 
     }
+
+
+    public function traeStockAll()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+
+        echo "Inicio de proceso";
+        Log::channel('robots')->info('Inicio de proceso stock APC');
+
+        $this->setCookie();
+
+        // Login
+        $viewstate = $this->login(2);
+        if ($viewstate) Log::channel('robots')->info('Login OK');
+
+        $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
+        ];
+
+        $periodos = [
+            2024, 2025
+        ];
+
+//        TDP_ApcStock::truncate();
+
+        foreach ($periodos as $periodo) {
+            Log::channel('robots')->info("Procesando periodo $periodo");
+
+            // nombre de informe descargado
+            $archivo = "informeStockAll" . $periodo . ".xml";
+
+            // Primer llamado
+            $options = [];
+            $filebase = Storage::get('public/viewstates/stockAllBase.json');
+            $options['form_params'] = json_decode($filebase, true);
+            $options['cookies'] = $this->cookieJar;
+            $options['form_params']['ctl00$PageContent$Fecha_CompraFromFilter'] = Carbon::createFromDate($periodo)->firstOfYear()->format('d-m-Y');
+            $options['form_params']['ctl00$PageContent$Fecha_CompraToFilter'] = Carbon::createFromDate($periodo)->lastOfYear()->format('d-m-Y');
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+
+            // Llamado descarga excel
+            $options = [];
+            $filedata = Storage::get('public/viewstates/stockAll.json');
+            $options['form_params'] = json_decode($filedata, true);
+            $options['cookies'] = $this->cookieJar;
+            $options['sink'] = storage_path('/app/public/' . $archivo);
+
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+
+            Log::channel('robots')->info('Archivo descargado');
+            echo "Archivo descargado, procesando $periodo..." . PHP_EOL;
+
+
+            Log::channel('robots')->info("Procesando /public/$archivo ");
+            $filedata = Storage::read('/public/' . $archivo);
+
+            if ($filedata) {
+//                $xml = XmlReader::fromString(Storage::read('/public/' . $archivo));
+                /*$xml = simplexml_load_string(Storage::read('/public/' . $archivo));
+
+                foreach($xml->children() as $child) {
+                    echo $child;
+                }*/
+
+                try {
+                    $xml = XmlReader::fromFile(storage_path('/app/public/' . $archivo));
+                } catch (XmlReaderException $e) {
+                    Log::channel('robots')->info($e->getMessage());
+                    Log::channel('robots')->error("No se pudo cargar el archivo XML");
+                    $xml = null;
+                }
+                $numCell = 0;
+                $numCol = 0;
+
+                if ($xml) {
+                    foreach ($xml->value('s:Row')->get() as $cell) {
+
+                        try {
+
+                            $numCol = 0;
+                            foreach ($cell['s:Cell'] as $data) {
+
+                                if ($numCell > 0) {
+                                    $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
+
+                                } else {
+                                    $headers[$numCol] = Str::slug($data['s:Data'], '_');
+                                }
+                                $numCol++;
+                            }
+
+                            if ($numCell > 0 and $dataArray[$numCell]['codigo_interno'] != '') {
+                                $row = $dataArray[$numCell];
+
+                                $res = APC_Stock::updateOrCreate([
+                                    'Codigo_Interno' => $row['codigo_interno'],
+                                    'Empresa' => $row['empresa'],
+                                ], [
+                                    'Empresa' => $row['empresa'],
+                                    'Sucursal' => $row['sucursal'],
+                                    'Folio_Venta' => ($row['folio_venta'] != '') ? $row['folio_venta'] : null,
+                                    'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
+                                    'Estado_Venta' => $row['estado_venta'] ?? null,
+                                    'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
+                                    'Tipo_Documento' => $row['tipo_documento_folio'] ?? null,
+                                    'Vendedor' => $row['vendedor'] ?? null,
+                                    'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
+                                    'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
+                                    'VIN' => $row['numero_vin'],
+                                    'Marca' => $row['marca'],
+                                    'Modelo' => $row['modelo'],
+                                    'Version' => $row['version'],
+                                    'Codigo_Version' => $row['codigo_version'],
+                                    'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
+                                    'Kilometraje' => $row['kilometraje'] ?? null,
+                                    'Codigo_Interno' => $row['codigo_interno'],
+                                    'Placa_Patente' => $row['placa_patente'],
+                                    'Condicion_Vehículo' => $row['condicion_vehiculo'],
+                                    'Color_Exterior' => $row['color_exterior'],
+                                    'Color_Interior' => $row['color_interior'],
+                                    'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
+                                    'Estado_AutoPro' => $row['estado_autopro'],
+                                    'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
+                                    'Estado_Dealer' => $row['estado_dealer'],
+                                    'Bodega' => $row['bodega'],
+                                    'Equipamiento' => $row['equipamiento'],
+                                    'Numero_Motor' => $row['numero_motor'],
+                                    'Numero_Chasis' => $row['numero_chasis'],
+                                    'Proveedor' => $row['proveedor'],
+                                    'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
+                                    'Factura_Compra' => ($row['factura_compra'] != '') ? ($row['factura_compra'] ?? 0) : null,
+                                    'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
+                                    'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
+                                    'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
+                                    'N_Propietarios' => $row['n_propietarios'] ?? null,
+                                    'Folio_Retoma' => ($row['folio_retoma'] != '') ? $row['folio_retoma'] : null,
+                                    'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
+                                    'Dias_Reservado' => $row['dias_reservado'] ?? null,
+                                    'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
+                                    'Gasto' => $row['gasto'],
+                                    'Accesorios' => $row['accesorios'],
+                                    'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
+                                    'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
+                                    'Margen' => null,
+//                                'Margen' => ($row['margen'] != '') ? intval($row['margen']) : null,
+//            'Margen_porcentaje' => ($row['margen'] != '') ? $row['margen'] : null,
+                                ]);
+                            } else {
+                                if ($numCell == 0)
+                                    Log::channel('robots')->info("Xml valido - cabeceras procesadas");
+                            }
+
+                            $numCell++;
+                        } catch (\Exception $e) {
+                            Log::channel('robots')->error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
+
+                        }
+                    }
+
+
+                }
+
+            }
+            unlink(storage_path('/app/public/' . $archivo));
+            Log::channel('robots')->info("Informe procesado");
+            echo " Informe procesado";
+
+            // Ejecucion de callback after
+            $solicitudObj = new ApiSolicitudController();
+            $res = $solicitudObj->urlCallParam("https://apps2.pompeyo.cl/api/cpd/actualizarubicacion", "POST");
+
+        }
+
+        Log::channel('robots')->info("Fin de proceso Stock");
+
+    }
+
 
     public function traeSku()
     {
@@ -1067,6 +1265,9 @@ class RobotApcController extends Controller
         }
 
     }
+
+
+
 
     function xml_is_equal(SimpleXMLElement $xml1, SimpleXMLElement $xml2, $text_strict = false) {
         // compare text content

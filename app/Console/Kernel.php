@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
             // Envio de Ventas Inchcape
             $res = $flujoControl->sendVentasInchcape();
             // Envio de Ventas Landking
-//            $res = $flujoControl->sendVentasLandking();
+            $res = $flujoControl->sendVentasLandking();
 
 
         })->name("Control de Flujos : 30 minutos")->everyThirtyMinutes();
@@ -112,7 +112,7 @@ class Kernel extends ConsoleKernel
 
             $flujoControl->sendOTsSICIndumotora();
             $flujoControl->sendOTsinchcape();
-//            $flujoControl->sendOTsSICLandking();
+            $flujoControl->sendOTsSICLandking();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');
 

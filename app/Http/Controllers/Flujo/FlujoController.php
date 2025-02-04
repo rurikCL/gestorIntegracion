@@ -2301,7 +2301,8 @@ class FlujoController extends Controller
             $ventas = VT_EstadoResultado::with("modelo", "version", "apcstock", "cliente", "vendedor", "sucursal", "venta")
                 ->Gerencia(20)
                 ->NoNotificado($flujo->ID)
-                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+//                ->where('FechaDocumento', '>=', Carbon::now()->subMonth()->format("Y-m-d 00:00:00"))
+                ->where('FechaDocumento', '>=', '2024-08-01 00:00:00')
 //                ->where('FechaDocumento', '>=', Carbon::now()->subYear()->format("Y-m-d 00:00:00"))
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();

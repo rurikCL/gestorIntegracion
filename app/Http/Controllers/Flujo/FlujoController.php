@@ -751,6 +751,7 @@ class FlujoController extends Controller
                 ->Validado()
                 ->NoNotificado($flujo->ID)
                 ->Desde(Carbon::now()->firstOfMonth()->format("Y-m-d"))
+                ->whereNull('IDExterno')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
 

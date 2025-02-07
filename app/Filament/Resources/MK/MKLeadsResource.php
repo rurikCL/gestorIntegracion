@@ -76,6 +76,17 @@ class MKLeadsResource extends Resource
                         ->columnSpanFull(),
 
                 ])->columns(2)->compact(),
+
+                Section::make('Solicitud API')
+                    ->relationship('solicitud')
+                    ->schema([
+                        Forms\Components\Textarea::make('Peticion')
+                            ->rows(15),
+                        Forms\Components\Textarea::make('PeticionHeader')
+                            ->rows(15),
+                    ])
+                    ->columns(),
+
                 Section::make('Otra informacion')->schema([
 
                     Forms\Components\TextInput::make('IDExterno')->label('ID Externo'),
@@ -119,8 +130,8 @@ class MKLeadsResource extends Resource
                         ->content(fn(MK_Leads $record): ?string => $record->cliente->Telefono ?? 'Sin Telefono'),
                     Forms\Components\Actions::make([
                         Forms\Components\Actions\Action::make('EditarCliente')
-                        ->url(fn(MK_Leads $record): ?string => MAClientesResource::getNavigationUrl() .'/' .($record->ClienteID ?? '') . '/edit')
-                        ->slideOver()
+                            ->url(fn(MK_Leads $record): ?string => MAClientesResource::getNavigationUrl() . '/' . ($record->ClienteID ?? '') . '/edit')
+                            ->slideOver()
                             ->label('Editar Cliente'),
                     ]),
 

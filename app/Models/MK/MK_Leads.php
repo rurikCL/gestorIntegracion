@@ -184,6 +184,11 @@ class MK_Leads extends Model
         return $this->hasOne(FLU_Notificaciones::class, 'ID_Ref', 'ID');
     }
 
+    public function solicitud()
+    {
+        return $this->hasOne(ApiSolicitudes::class, 'ReferenciaID');
+    }
+
     public function logs()
     {
         return $this->hasManyThrough(API_LogSolicitud::class, ApiSolicitudes::class,

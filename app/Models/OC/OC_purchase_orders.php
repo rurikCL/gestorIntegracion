@@ -3,6 +3,7 @@
 namespace App\Models\OC;
 
 use App\Models\OC_DetalleOrdenCompra;
+use App\Models\SP\SP_providers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -76,5 +77,11 @@ class OC_purchase_orders extends Model
     public function articulos()
     {
         return $this->hasMany(OC_DetalleOrdenCompra::class, 'ocPurchaseOrder_id', 'id');
+    }
+
+    public function proveedor()
+    {
+        return $this->hasOne(SP_providers::class, 'id', 'provider');
+
     }
 }

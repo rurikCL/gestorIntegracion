@@ -49,6 +49,10 @@ class OCPurchaseOrdersResource extends Resource
                         ->label('Sucursal')
                         ->relationship('sucursal', 'Sucursal')
                         ->required(),
+                    Forms\Components\Select::make('provider')
+                        ->relationship('proveedor', 'name')
+                        ->required()
+                        ->searchable(),
                     Forms\Components\Select::make('buyers_id')
                         ->label('Buyers')
                         ->relationship('comprador', 'Nombre')
@@ -107,7 +111,7 @@ class OCPurchaseOrdersResource extends Resource
                                             ->label('Impuesto'),
                                     ])
                                     ->columns(3)
-                                    ->itemLabel(fn($record)=>$record["id"])
+                                    ->itemLabel(fn($record) => $record["id"])
                                     ->grid(2),
                             ]),
                         Forms\Components\Tabs\Tab::make('Aprobadores')

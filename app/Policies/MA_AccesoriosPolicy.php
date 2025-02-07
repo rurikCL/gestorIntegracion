@@ -41,7 +41,7 @@ class MA_AccesoriosPolicy
     public function update(User $user)
     {
         //
-        return $user->isAdmin();
+        return $user->isRole(['admin', 'analista']);
 
     }
 }

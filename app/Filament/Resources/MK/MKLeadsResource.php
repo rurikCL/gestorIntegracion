@@ -82,7 +82,7 @@ class MKLeadsResource extends Resource
                     ->schema([
                         Forms\Components\Textarea::make('Peticion')
                             ->rows(15),
-                        Forms\Components\Textarea::make('PeticionHeader')
+                        Forms\Components\Textarea::make('Respuesta')
                             ->rows(15),
                     ])
                     ->columns(),

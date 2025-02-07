@@ -26,6 +26,12 @@ class MA_AccesoriosPolicy
 
     }
 
+    public function edit(User $user)
+    {
+        //
+        return $user->isRole(['admin', 'analista']);
+
+    }
     public function create(User $user)
     {
         //

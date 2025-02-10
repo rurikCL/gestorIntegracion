@@ -24,6 +24,8 @@ class Kernel extends ConsoleKernel
         // FLUJO CADA 30 Minutos  -----------------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
+            $robotControl = new RobotApcController();
+
             // Envio de Leads MG
             $res = $flujoControl->sendLeadMG();
             // Envio de Cotizaciones MG
@@ -39,6 +41,8 @@ class Kernel extends ConsoleKernel
             $res = $flujoControl->sendVentasInchcape();
             // Envio de Ventas Landking
             $res = $flujoControl->sendVentasLandking();
+
+            $res = $robotControl->traeInformeOtAcotado();
 
 
         })->name("Control de Flujos : 30 minutos")->everyThirtyMinutes();

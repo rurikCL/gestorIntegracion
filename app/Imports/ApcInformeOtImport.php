@@ -10,6 +10,7 @@ use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_Marcas;
+use App\Models\MA\MA_Sucursales;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -55,6 +56,13 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         $h = new FLU_Homologacion();
         $idFlujo = 30;
         $marca = explode(" ", $row[10]);
+        $sucursal = MA_Sucursales::where('Sucursal', 'like', $row[0])->first();
+        if($sucursal){
+            $sucursal = $sucursal->ID;
+        }else {
+            $sucursal = $h->getDato($row[0] . $row[3], $idFlujo, 'sucursal', 0);
+        }
+
 
         $result = new APC_InformeOt([
             "Sucursal" => $row[0],

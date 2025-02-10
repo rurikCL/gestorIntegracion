@@ -8,6 +8,7 @@ use App\Models\APC_RentabilidadOt;
 use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
+use App\Models\FLU\FLU_Homologacion;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -50,6 +51,8 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             $contErrores = $this->carga->RegistrosFallidos ?? 0;
             $idCarga = $this->carga->ID;
         }
+        $h = new FLU_Homologacion();
+        $idFlujo = 30;
 
         $result = new APC_InformeOt([
             "Sucursal" => $row[0],
@@ -90,6 +93,10 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             "Atributo" => $row[35],
             "Horometro" => $row[36],
             "ObservacionOt" => $row[37],
+            "SucursalID" => $h->getDato($row[0], $idFlujo, 'sucursal', ''),
+            "EstadoInterno" => $h->getDato($row[0], $idFlujo, 'estado', ''),
+            "MarcaID" => $h->getDato($row[0], $idFlujo, 'marca', ''),
+
         ]);
 
         if($result){

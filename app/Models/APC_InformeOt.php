@@ -51,6 +51,15 @@ class APC_InformeOt extends Model
         'Atributo',
         'Horometro',
         'ObservacionOt',
+        'SucursalID',
+        'EstadoInterno',
+        'MarcaID',
+        'AutoDetenido',
+        'FechaEstimada',
+        'NumeroFactura',
+        'FechaFactura',
+        'TipoComentario',
+        'Anulado',
     ];
 
 }

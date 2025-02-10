@@ -9,6 +9,7 @@ use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Homologacion;
+use App\Models\MA\MA_Marcas;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
@@ -53,6 +54,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         }
         $h = new FLU_Homologacion();
         $idFlujo = 30;
+        $marca = explode(" ", $row[10]);
 
         $result = new APC_InformeOt([
             "Sucursal" => $row[0],
@@ -93,9 +95,9 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             "Atributo" => $row[35],
             "Horometro" => $row[36],
             "ObservacionOt" => $row[37],
-            "SucursalID" => $h->getDato($row[0], $idFlujo, 'sucursal', ''),
-            "EstadoInterno" => $h->getDato($row[0], $idFlujo, 'estado', ''),
-            "MarcaID" => $h->getDato($row[0], $idFlujo, 'marca', ''),
+            "SucursalID" => $h->getDato($row[0].$row[3], $idFlujo, 'sucursal', 0),
+            "EstadoInterno" => 1,
+            "MarcaID" => MA_Marcas::where('Marca', $marca)->first()->ID ?? 0,
 
         ]);
 
@@ -120,10 +122,10 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         return 1000;
     }
 
-    public static function beforeImport(AfterImport $event)
+/*    public static function beforeImport(AfterImport $event)
     {
 
-    }
+    }*/
 
     public function startRow(): int
     {

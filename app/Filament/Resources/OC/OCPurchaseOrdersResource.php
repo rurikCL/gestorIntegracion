@@ -96,10 +96,10 @@ class OCPurchaseOrdersResource extends Resource
                                         Forms\Components\TextInput::make('description')->label('Descripcion')
                                             ->columnSpanFull(),
                                         Forms\Components\Select::make('branch_id')
-                                            ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'ID')),
+                                            ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'ID'))
+                                            ->columnSpanFull(),
                                         Forms\Components\TextInput::make('amount')->label('Monto')
                                             ->numeric()
-                                            ->columnSpanFull()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(function ($state, $set, $get) {
                                                 $set('totalPrice', $state * $get('unitPrice'));

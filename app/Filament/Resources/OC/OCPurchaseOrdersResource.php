@@ -83,22 +83,23 @@ class OCPurchaseOrdersResource extends Resource
                                     ->schema([
                                         Forms\Components\Select::make('ocCategory_id')
                                             ->relationship('categoria', 'name')
-                                            ->columnSpan(3)
+                                            ->columnSpanFull()
                                             ->label('Categoria'),
                                         Forms\Components\Select::make('ocSubCategory_id')
                                             ->relationship('subcategoria', 'name')
-                                            ->columnSpan(3)
+                                            ->columnSpanFull()
                                             ->label('Sub Categoria'),
                                         Forms\Components\Select::make('ocProduct_id')
                                             ->relationship('producto', 'name')
-                                            ->columnSpan(3)
+                                            ->columnSpanFull()
                                             ->label('Producto'),
                                         Forms\Components\TextInput::make('description')->label('Descripcion')
-                                            ->columnSpan(3),
+                                            ->columnSpanFull(),
                                         Forms\Components\Select::make('branch_id')
                                             ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'ID')),
                                         Forms\Components\TextInput::make('amount')->label('Monto')
                                             ->numeric()
+                                            ->columnSpanFull()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(function ($state, $set, $get) {
                                                 $set('totalPrice', $state * $get('unitPrice'));

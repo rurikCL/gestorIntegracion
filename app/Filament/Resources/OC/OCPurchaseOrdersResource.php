@@ -35,8 +35,7 @@ class OCPurchaseOrdersResource extends Resource
                         ->label('ID')
                         ->disabled(),
                     Forms\Components\DateTimePicker::make('created_at')
-                        ->label('Fecha Creacion')
-                        ->disabled(),
+                        ->label('Fecha Creacion'),
                     Forms\Components\Select::make('business_id')
                         ->label('Negocio')
                         ->relationship('empresa', 'Empresa')

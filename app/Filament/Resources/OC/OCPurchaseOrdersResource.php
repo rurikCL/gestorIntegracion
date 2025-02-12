@@ -96,7 +96,7 @@ class OCPurchaseOrdersResource extends Resource
                                         Forms\Components\TextInput::make('description')->label('Descripcion')
                                             ->columnSpan(3),
                                         Forms\Components\Select::make('branch_id')
-                                            ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursa', 'ID')),
+                                            ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'ID')),
                                         Forms\Components\TextInput::make('amount')->label('Monto')
                                             ->numeric()
                                             ->live(onBlur: true)

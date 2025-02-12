@@ -7,6 +7,7 @@ use App\Filament\Resources\OC\OCPurchaseOrdersResource\RelationManagers;
 use App\Models\MA\MA_Sucursales;
 use App\Models\OC\OC_purchase_orders;
 use App\Models\OC\OCPurchaseOrders;
+use App\Models\OC_DetalleOrdenCompra;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -94,6 +95,8 @@ class OCPurchaseOrdersResource extends Resource
                                             ->label('Producto'),
                                         Forms\Components\TextInput::make('description')->label('Descripcion')
                                             ->columnSpan(3),
+                                        Forms\Components\Select::make('branch_id')
+                                            ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursa', 'ID')),
                                         Forms\Components\TextInput::make('amount')->label('Monto')
                                             ->numeric()
                                             ->live(onBlur: true)

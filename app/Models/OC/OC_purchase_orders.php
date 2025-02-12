@@ -31,6 +31,7 @@ class OC_purchase_orders extends Model
         'commune',
         'contact_id',
         'pre_oc',
+        'created_at'
     ];
 
 

@@ -67,7 +67,7 @@ class FlujoGeelyController extends Controller
 
             $req['dataHeader'] = $headers;
 
-            dump($req->toArray());
+//            dump($req->toArray());
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -82,8 +82,14 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-
             dump($arrayData);
+
+            if($arrayData["data"]){
+                foreach($arrayData["data"] as $inboundLead){
+                    
+                }
+            }
+
         }
     }
 

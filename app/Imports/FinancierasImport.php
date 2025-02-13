@@ -25,12 +25,16 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
     private $carga = null;
     private $contadorRegistro = 0;
     private $contErrores = 0;
+    private $fecha_inicio = 0;
+    private $fecha_fin = 0;
 
     use Importable;
 
-    public function __construct($carga)
+    public function __construct($carga,$fecha_inicio,$fecha_fin)
     {
         $this->carga = $carga;
+        $this->fecha_inicio = $fecha_inicio;
+        $this->fecha_fin = $fecha_fin;
     }
 
     public function collection(Collection $collection)
@@ -74,12 +78,16 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
             "idcanal" => 3,
         ];*/
 
+
+        VT_CotizacionesSolicitudesCredito:: whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->delete();
+
         // Seccion de importacion --------------------------------------------------
         foreach ($collection as $record) {
 //            dd($record);
             if ($this->contadorRegistro > 0) {
 
                 $idFlujo = 24; // Carga Financieras
+
 
 
 
@@ -126,8 +134,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                         'Telefono'=> $record['telefono_cliente']      
                     ]);
 
-                    $clienteID = $clienteObj->ID;
-                    
+                    $clienteID = $clienteObj->ID;                    
                 } 
 
                 $vendedorExcel = $record['vendedorid'];
@@ -225,16 +232,14 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
             
             $RutMarca = VT_Cotizaciones::where('Rut',$rutLimpio)
                                         ->where('MarcaID',$record['idmarca'])
-                                        ->whereBetween('FechaCotizacion',[Carbon::now()->FirstOfMonth()->format('d-m-Y'),Carbon::now()->LastOfMonth()->format('d-m-Y')])->count();
+                                        ->whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->count();
                                         */ 
-
-            
-
+                                                    
             $RutMarca = VT_Cotizaciones::whereHas('cliente',function($query){
                 $query->where('Rut',$rutLimpio);
             })
             ->where('MarcaID',$record['idmarca'])
-            ->whereBetween('FechaCotizacion',[Carbon::now()->FirstOfMonth()->format('d-m-Y'),Carbon::now()->LastOfMonth()->format('d-m-Y')])->count();
+            ->whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->count();
 
             if($RutMarca){
                 $varIDSolCredito->RutMarca = 1;
@@ -252,7 +257,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
             })
             ->where('MarcaID',$record['idmarca'])
             ->where('SucursalID',$record['idsucursal'])
-            ->whereBetween('FechaCotizacion',[Carbon::now()->FirstOfMonth()->format('d-m-Y'),Carbon::now()->LastOfMonth()->format('d-m-Y')])->count();
+            ->whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->count();
 
             if($RutMarcaSucursal){
                 $varIDSolCredito->RutMarcaSucursal = 1;
@@ -270,7 +275,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
             ->where('MarcaID',$record['idmarca'])
             ->where('SucursalID',$record['idsucursal'])
             ->where('VendedorID',$record['vendedorid'])
-            ->whereBetween('FechaCotizacion',[Carbon::now()->FirstOfMonth()->format('d-m-Y'),Carbon::now()->LastOfMonth()->format('d-m-Y')])->count();
+            ->whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->count();
 
             if($RutMarcaSucursalVendedor){
                 $varIDSolCredito->RutMarcaSucursalVendedor = 1;
@@ -286,7 +291,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
             })
             ->where('MarcaID',$record['idmarca'])
             ->where('VendedorID',$record['vendedorid'])
-            ->whereBetween('FechaCotizacion',[Carbon::now()->FirstOfMonth()->format('d-m-Y'),Carbon::now()->LastOfMonth()->format('d-m-Y')])->count();
+            ->whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->count();
 
             if($RutMarcaVendedor){
                 $varIDSolCredito->RutMarcaVendedor = 1;
@@ -304,9 +309,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
             ->where('MarcaID',$record['idmarca'])
             ->where('SucursalID',$record['idsucursal'])
             ->where('VendedorID',$record['vendedorid'])
-            ->whereBetween('FechaCotizacion',[Carbon::now()->FirstOfMonth()->format('d-m-Y'),Carbon::now()->LastOfMonth()->format('d-m-Y')])->get();
-
-             
+            ->whereBetween('FechaCotizacion',[$this->$fecha_inicio,$this->$fecha_fin])->get();
 
                 foreach ($ActualizaCot as $data){
                     $data->EstadoID = $record['idestado'];
@@ -320,14 +323,11 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     $data->save();
               //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
             }
-           
-
+    
                 $registros[] = $registro;
 
             } // Fin contador registro
             $this->contadorRegistro++;
-
-
 
         } // Fin foreach
 
@@ -335,7 +335,6 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
         $errorJson = json_encode($errores);
         Storage::put(storage_path('app/public/financieras'.$this->contadorRegistro.'.json'), $json);
         Storage::put(storage_path('app/public/financierasErrors'.$this->contadorRegistro.'.json'), $errorJson);
-
 
         // paso final --------------------------------------------------
 
@@ -349,11 +348,8 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
         } else {
             $this->carga->Estado = 3;
         }
-
         
         $this->carga->save();
-
-
 
         Log::info("Fin de importacion de Solicitudes Financieras");
 

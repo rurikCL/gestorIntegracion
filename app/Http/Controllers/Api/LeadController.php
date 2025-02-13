@@ -382,6 +382,9 @@ class LeadController extends Controller
                     $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
                 } else if ($request->input('data.telefono')) {
                     $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))->first();
+                } else{
+                    Log::error("No se pudo procesar el Negocio : ". $request->input('data.lead.externalID'). " | No se encontro la informacion minima de nombre, rut o telefono");
+                    return response()->json(['status' => false, 'messages' => 'Ha ocurrido un error en la creacion de Lead'], 500);
                 }
 
                 // Si no encuentra cliente, se crea uno nuevo si es que trae rut

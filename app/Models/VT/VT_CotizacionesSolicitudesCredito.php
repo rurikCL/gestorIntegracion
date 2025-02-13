@@ -45,5 +45,17 @@ class VT_CotizacionesSolicitudesCredito extends Model
         'CanalID',
         'OrigenID',
         'SubOrigenID',
+        'RutMarca',
+        'RutMarcaSucursal',
+        'RutMarcaSucursalVendedor',
+        'RutMarcaVendedor'
     ];
+
+    public function vendedor()
+    {
+        return $this->hasOne(MA_Usuarios::class, 'ID', 'VendedorID');
+    }
+
 }
+
+

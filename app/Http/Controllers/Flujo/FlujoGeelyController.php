@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Api\ApiSolicitudes;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -48,8 +49,8 @@ class FlujoGeelyController extends Controller
                 "QueryDealerLeadInfoDTO" => [
                     "appId" => "e6387061534954323039",
                     "brandId" => "geely",
-                    "startingTime" => "",
-                    "endingTime" => "",
+                    "startingTime" => \Safe\strtotime(Carbon::now()->subMonth()->format("Y-m-d h:i:s")),
+                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s")),
                     "pageNum" => 0,
                     "pageSize" => 0
                 ]
@@ -67,7 +68,7 @@ class FlujoGeelyController extends Controller
 
             $req['dataHeader'] = $headers;
 
-//            dump($req->toArray());
+            dump($req->toArray());
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -84,9 +85,9 @@ class FlujoGeelyController extends Controller
             }
             dump($arrayData);
 
-            if($arrayData["data"]){
-                foreach($arrayData["data"] as $inboundLead){
-                    
+            if($arrayData->data){
+                foreach($arrayData->data as $inboundLead){
+
                 }
             }
 

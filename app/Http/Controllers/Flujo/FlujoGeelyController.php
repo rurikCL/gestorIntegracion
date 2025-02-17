@@ -46,14 +46,14 @@ class FlujoGeelyController extends Controller
             $req['OnDemand'] = true;
 
             $req['data'] = [
-                "QueryDealerLeadInfoDTO" => [
+//                "QueryDealerLeadInfoDTO" => [
                     "appId" => "e6387061534954323039",
                     "brandId" => "geely",
-                    "startingTime" => \Safe\strtotime(Carbon::now()->subMonth()->format("Y-m-d h:i:s")),
-                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s")),
-                    "pageNum" => 0,
-                    "pageSize" => 0
-                ]
+//                    "startingTime" => \Safe\strtotime(Carbon::now()->subMonth()->format("Y-m-d h:i:s")),
+//                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s")),
+//                    "pageNum" => 0,
+//                    "pageSize" => 0
+//                ]
             ];
 
             $headers = [];

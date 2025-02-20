@@ -85,9 +85,9 @@ class FlujoGeelyController extends Controller
             }
             dump($arrayData);
 
-            if($arrayData->data){
-                foreach($arrayData->data as $inboundLead){
-
+            if($arrayData->data->records){
+                foreach($arrayData->data->records as $record){
+                    print($record->customerEmail);
                 }
             }
 

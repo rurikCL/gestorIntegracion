@@ -1063,10 +1063,10 @@ class RobotApcController extends Controller
         ];
 
         $filename = 'informeOTAcotado.xls';
-        $filebase = Storage::get('public/viewstates/informeOtSemanalBase.json');
-        $filedata = Storage::get('public/viewstates/informeOtSemanal.json');
-//        $filebase = Storage::get('public/viewstates/informeOtBase.json');
-//        $filedata = Storage::get('public/viewstates/informeOt.json');
+//        $filebase = Storage::get('public/viewstates/informeOtSemanalBase.json');
+//        $filedata = Storage::get('public/viewstates/informeOtSemanal.json');
+        $filebase = Storage::get('public/viewstates/informeOTAllBase.json');
+        $filedata = Storage::get('public/viewstates/informeOTAll.json');
 
 
         // Primer llamado
@@ -1075,7 +1075,7 @@ class RobotApcController extends Controller
 //        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
 //        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->addDay()->format('d-m-Y');
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
 

@@ -130,8 +130,8 @@ class FlujoGeelyController extends Controller
                         $resultado = $leadObj->nuevoLead($req);
                         if ($resultado) {
                             $res = $resultado->getData();
-                            dump($res);
                             Log::info("Lead Geely creado : " . $res->ID);
+                            dd($res);
                         }
                     }
                 }

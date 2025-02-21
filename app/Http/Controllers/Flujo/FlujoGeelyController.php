@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Api\ApiSolicitudController;
+use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
 use App\Models\Api\ApiSolicitudes;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
+use App\Models\Lead;
+use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -46,14 +49,12 @@ class FlujoGeelyController extends Controller
             $req['OnDemand'] = true;
 
             $req['data'] = [
-//                "QueryDealerLeadInfoDTO" => [
-                    "appId" => "e6387061534954323039",
-                    "brandId" => "geely",
+                "appId" => "e6387061534954323039",
+                "brandId" => "geely",
 //                    "startingTime" => \Safe\strtotime(Carbon::now()->subMonth()->format("Y-m-d h:i:s")),
 //                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s")),
 //                    "pageNum" => 0,
 //                    "pageSize" => 0
-//                ]
             ];
 
             $headers = [];
@@ -61,7 +62,7 @@ class FlujoGeelyController extends Controller
             $headers['X-Gapi-Ca-Algorithm'] = 'hmac-sha256';
             $headers['X-Gapi-Ca-Access-Key'] = self::ACCESS_KEY;
             $headers['X-Gapi-Ca-Signed-Headers'] = 'X-Gapi-Ca-Timestamp';
-            $headers['Date'] = gmdate('D, d M Y H:i:s').' GMT';
+            $headers['Date'] = gmdate('D, d M Y H:i:s') . ' GMT';
             $headers['Host'] = self::HOST;
             $headers['X-Gapi-Ca-Signature'] = self::generateSignature('POST', '/lcms/router/rest/sale/lead/getLeadList', $headers, "");
 
@@ -83,11 +84,56 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-            dump($arrayData);
+//            dump($arrayData);
 
-            if($arrayData->data->records){
-                foreach($arrayData->data->records as $record){
-                    print($record->customerEmail);
+
+            if ($arrayData->data->records) {
+                $leadObj = new LeadController();
+
+                foreach ($arrayData->data->records as $record) {
+                    $id = $record->id;
+                    if (MK_Leads::where('IDExterno', $id)->exists()) {
+                        print("Lead : " . $id . " ya existe... ");
+
+                    } else {
+                        print("Lead : " . $id . " no existe... creando");
+
+                        $nombre = $record->firstName;
+                        $rut = $record->rut;
+                        $apellido = $record->lastName;
+                        $email = $record->customerEmail;
+                        $telefono = $record->customerPhone;
+                        $modelo = $record->intentionModel;
+                        $comuna = $record->cityName;
+
+                        $req = new Request();
+                        $req['data'] = [
+                            "usuarioID" => 2904, // INTEGRACION HUBSPOT
+                            "reglaVendedor" => 1,
+                            "reglaSucursal" => 1,
+                            "rut" => $rut,
+                            "nombre" => $nombre,
+                            "apellido" => $apellido,
+                            "email" => $email,
+                            "telefono" => $telefono,
+                            "lead" => [
+                                "idFlujo" => $flujo->ID,
+                                "origenID" => 2,
+                                "subOrigenID" => 63,
+                                "marca" => "GEELY",
+                                "modelo" => $modelo,
+                                "externalID" => $id,
+                            ]
+                        ];
+
+                        $resultado = null;
+                        $resultado = $leadObj->nuevoLead($req);
+                        if ($resultado) {
+                            $res = $resultado->getData();
+                            dump($res);
+                            Log::info("Lead Geely creado : " . $res->ID);
+                        }
+                    }
                 }
             }
 

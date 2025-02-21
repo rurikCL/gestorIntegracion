@@ -29,7 +29,7 @@ class FlujoGeelyController extends Controller
         echo "Ejecutando Flujo Geely <br>";
         Log::info("Inicio de flujo Geely");
 
-        $flujo = FLU_Flujos::where('Nombre', 'Geely')->first();
+        $flujo = FLU_Flujos::where('Nombre', 'Geely APIs')->first();
 
         if ($flujo->Activo) {
             $h = new FLU_Homologacion();

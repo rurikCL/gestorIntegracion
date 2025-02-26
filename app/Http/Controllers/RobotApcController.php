@@ -418,6 +418,10 @@ class RobotApcController extends Controller
         unlink(storage_path('/app/public/' . $filename));
         echo " Informe procesado";
 
+        // Ejecucion de callback after
+        $solicitudObj = new ApiSolicitudController();
+        $res = $solicitudObj->urlCallParam("https://apps1.pompeyo.cl/api/cpd/actualizarubicacion", "POST");
+
     }
 
 
@@ -607,10 +611,6 @@ class RobotApcController extends Controller
             unlink(storage_path('/app/public/' . $archivo));
             Log::channel('robots')->info("Informe procesado");
             echo " Informe procesado";
-
-            // Ejecucion de callback after
-            $solicitudObj = new ApiSolicitudController();
-            $res = $solicitudObj->urlCallParam("https://apps2.pompeyo.cl/api/cpd/actualizarubicacion", "POST");
 
         }
 

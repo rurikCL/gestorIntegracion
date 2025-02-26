@@ -90,6 +90,7 @@ class Kernel extends ConsoleKernel
 
             // Completos
             $robotControl->traeStockAnual();
+            $robotControl->traeStockUsados();
             $robotControl->traeRepuestos();
             $robotControl->traeSku();
 
@@ -101,10 +102,12 @@ class Kernel extends ConsoleKernel
 
         })->name("Control de Robot APC Nocturno")->dailyAt('03:00');
 
+
         $schedule->call(function () {
             $robotControl = new RobotApcController();
             $robotControl->traeStockAnual();
-        })->name("Control de Robot APC Stock : 2 veces al dia")->dailyAt('13:15');
+            $robotControl->traeStockUsados();
+        })->name("Control de Robot APC Stock : 1 vez al dia")->dailyAt('13:15');
         // --------------------------------
 
         // FLUJO DIARIO 2am --------------

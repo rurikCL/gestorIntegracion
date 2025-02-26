@@ -66,6 +66,7 @@ Route::get('/email', [\App\Http\Controllers\EmailController::class, 'sendEmail']
 // ROBOTS
 Route::get('/robot/apc/login', [\App\Http\Controllers\RobotApcController::class, 'login']);
 Route::get('/robot/apc/stock', [\App\Http\Controllers\RobotApcController::class, 'traeStock']);
+Route::get('/robot/apc/stockUsados', [\App\Http\Controllers\RobotApcController::class, 'traeStockUsados']);
 Route::get('/robot/apc/stockAnual', [\App\Http\Controllers\RobotApcController::class, 'traeStockAnual']);
 Route::get('/robot/apc/sku', [\App\Http\Controllers\RobotApcController::class, 'traeSku']);
 Route::get('/robot/apc/repuestos', [\App\Http\Controllers\RobotApcController::class, 'traeRepuestos']);

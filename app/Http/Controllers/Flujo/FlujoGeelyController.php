@@ -51,10 +51,10 @@ class FlujoGeelyController extends Controller
             $req['data'] = [
                 "appId" => "e6387061534954323039",
                 "brandId" => "geely",
-//                    "startingTime" => \Safe\strtotime(Carbon::now()->subMonth()->format("Y-m-d h:i:s")),
+//                    "startingTime" => \Safe\strtotime(Carbon::now()->subDay()->format("Y-m-d h:i:s")),
 //                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s")),
 //                    "pageNum" => 0,
-//                    "pageSize" => 0
+                    "pageSize" => $flujo->MaxLote
             ];
 
             $headers = [];
@@ -84,7 +84,7 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-//            dump($arrayData);
+            dump($arrayData);
 
 
             if ($arrayData->data->records) {
@@ -130,8 +130,8 @@ class FlujoGeelyController extends Controller
                         $resultado = $leadObj->nuevoLead($req);
                         if ($resultado) {
                             $res = $resultado->getData();
-                            Log::info("Lead Geely creado " );
-                            dd($res);
+                            Log::info("Lead Geely creado " . $res->LeadID );
+                            dump($res);
                         }
                     }
                 }

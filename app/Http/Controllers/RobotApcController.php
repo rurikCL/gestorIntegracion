@@ -178,7 +178,7 @@ class RobotApcController extends Controller
             $numCell = 0;
             $numCol = 0;
 
-            APC_Stock::truncate();
+//            APC_Stock::truncate();
 
             foreach ($xml->value('s:Row')->get() as $cell) {
                 try {
@@ -261,6 +261,165 @@ class RobotApcController extends Controller
         echo " Informe procesado";
 
     }
+
+    public function traeStockUsados()
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', '1024M');
+
+        echo "Inicio de proceso";
+        Log::channel('robots')->info('Inicio de proceso stock APC Usados');
+
+        $this->setCookie();
+
+        // Login
+        $viewstate = $this->login(2);
+        if ($viewstate) Log::channel('robots')->info('Login OK');
+
+        $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
+
+        $headers = [
+            'Content-Type' => 'application/x-www-form-urlencoded',
+            'Accept' => "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/png,image/svg+xml,*/*;q=0.8",
+            'Accept-Encoding' => "gzip, deflate, br, zstd",
+            'Connection' => "keep-alive",
+            'Host' => "appspsa-cl.autoprocloud.com",
+            'Origin' => "https://appspsa-cl.autoprocloud.com",
+            'Referer' => $url,
+            'Upgrade-Insecure-Requests' => "1",
+            'User-Agent' => "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            'Sec-Fetch-Dest' => "document",
+            'Sec-Fetch-Mode' => "navigate",
+            'Sec-Fetch-Site' => "same-origin",
+        ];
+
+        $filename = 'informeStock.xml';
+        $filebase = Storage::get('public/viewstates/StockUsadosBase.json');
+        $filedata = Storage::get('public/viewstates/StockUsados.json');
+
+        // Primer llamado
+        $options['form_params'] = json_decode($filebase, true);
+        $options['cookies'] = $this->cookieJar;
+        $request = new Request('POST', $url, $headers);
+        $res = $this->client->sendAsync($request, $options)->wait();
+
+        Log::channel('robots')->info("Primer llamado OK. Iniciando descarga de informe");
+
+        $options['form_params'] = json_decode($filedata, true);
+        $options['cookies'] = $this->cookieJar;
+        $options['sink'] = storage_path('/app/public/' . $filename);
+
+//        print_r($options);
+
+        if (file_exists(storage_path('/app/public/' . $filename))) {
+            Log::channel('robots')->info('Archivo existente');
+            echo "Archivo existente" . PHP_EOL;
+            $res = true;
+        } else {
+            $request = new Request('POST', $url, $headers);
+            $res = $this->client->sendAsync($request, $options)->wait();
+//            $res = $this->client->send($request, $options);
+            Log::channel('robots')->info('Archivo descargado');
+            echo "Archivo descargado" . PHP_EOL;
+        }
+
+//        if ($res) {
+        echo "Informe descargado, procesando... ";
+        Log::channel('robots')->info('Procesando Informe');
+
+        $filedata = Storage::read('/public/' . $filename);
+        if ($filedata) {
+            $xml = XmlReader::fromString(Storage::read('/public/' . $filename));
+            $numCell = 0;
+            $numCol = 0;
+
+//            APC_Stock::truncate();
+
+            foreach ($xml->value('s:Row')->get() as $cell) {
+                try {
+
+                    $numCol = 0;
+                    foreach ($cell['s:Cell'] as $data) {
+
+                        if ($numCell > 0) {
+                            $dataArray[$numCell][$headers[$numCol]] = $data['s:Data'];
+
+                        } else {
+                            $headers[$numCol] = Str::slug($data['s:Data'], '_');
+                        }
+                        $numCol++;
+                    }
+
+                    if ($numCell > 0) {
+                        $row = $dataArray[$numCell];
+                        $res = APC_Stock::updateOrCreate([
+                            'Placa_Patente' => $row['placa_patente'],
+                            'Empresa' => $row['empresa'],
+                        ], [
+                            'Empresa' => $row['empresa'],
+                            'Sucursal' => $row['sucursal'],
+                            'Folio_Venta' => $row['folio_venta'] ?? null,
+                            'Venta' => ($row['venta'] != '') ? $row['venta'] : null,
+                            'Estado_Venta' => $row['estado_venta'],
+                            'Fecha_Venta' => ($row['fecha_venta'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_venta'])->format('Y-m-d H:i:s') : null,
+                            'Tipo_Documento' => $row['tipo_documento_folio'],
+                            'Vendedor' => $row['vendedor'],
+                            'Fecha_Ingreso' => ($row['fecha_ingreso'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_ingreso'])->format('Y-m-d H:i:s') : null,
+                            'Fecha_Facturacion' => ($row['fecha_facturacion'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_facturacion'])->format('Y-m-d H:i:s') : null,
+                            'VIN' => $row['numero_vin'],
+                            'Marca' => $row['marca'],
+                            'Modelo' => $row['modelo'],
+                            'Version' => $row['version'],
+                            'Codigo_Version' => $row['codigo_version'],
+                            'Anio' => ($row['ano'] != '') ? $row['ano'] : null,
+                            'Kilometraje' => ($row['kilometraje']) ? $row['kilometraje'] : null,
+                            'Codigo_Interno' => $row['codigo_interno'],
+                            'Placa_Patente' => ($row['placa_patente']) ? $row['placa_patente'] : null,
+                            'Condicion_Vehículo' => $row['condicion_vehiculo'],
+                            'Color_Exterior' => $row['color_exterior'],
+                            'Color_Interior' => $row['color_interior'],
+                            'Precio_Venta_Total' => ($row['precio_venta_total'] != '') ? $row['precio_venta_total'] : null,
+                            'Estado_AutoPro' => ($row['estado_autopro']) ? $row['estado_autopro'] : null,
+                            'Dias_Stock' => ($row['dias_stock'] != '') ? $row['dias_stock'] : null,
+                            'Estado_Dealer' => ($row['estado_dealer']) ? $row['estado_dealer'] : null,
+                            'Bodega' => $row['bodega'],
+                            'Equipamiento' => $row['equipamiento'],
+                            'Numero_Motor' => $row['numero_motor'],
+                            'Numero_Chasis' => $row['numero_chasis'],
+                            'Proveedor' => $row['proveedor'],
+                            'Fecha_Disponibilidad' => ($row['fecha_disponibilidad'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_disponibilidad'])->format('Y-m-d H:i:s') : null,
+                            'Factura_Compra' => ($row['factura_compra'] != '') ? ($row['factura_compra'] ?? 0) : null,
+                            'Vencimiento_Documento' => ($row['vencimiento_documento'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['vencimiento_documento'])->format('Y-m-d H:i:s') : null,
+                            'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
+                            'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
+                            'N_Propietarios' => $row['n_propietarios'],
+                            'Folio_Retoma' => $row['folio_retoma'],
+                            'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
+                            'Dias_Reservado' => $row['dias_reservado'],
+                            'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,
+                            'Gasto' => $row['gasto'],
+                            'Accesorios' => $row['accesorios'],
+                            'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
+                            'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
+                            'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
+//            'Margen_porcentaje' => $row[46],
+                        ]);
+//                            Log::channel('robots')->info("Procesando " . $row['numero_vin']);
+                    }
+
+                    $numCell++;
+                } catch (\Exception $e) {
+                    Log::channel('robots')->error("Error con registro " . $row['numero_vin'] . " : " . $e->getMessage());
+
+                }
+            }
+
+        }
+        unlink(storage_path('/app/public/' . $filename));
+        echo " Informe procesado";
+
+    }
+
 
     public function traeStockAnual()
     {
@@ -995,17 +1154,23 @@ class RobotApcController extends Controller
         $filename = 'informeOT.xls';
         $filebase = Storage::get('public/viewstates/informeOtSemanalBase.json');
         $filedata = Storage::get('public/viewstates/informeOtSemanal.json');
-//        $filebase = Storage::get('public/viewstates/informeOtBase.json');
-//        $filedata = Storage::get('public/viewstates/informeOt.json');
+//        $filebase = Storage::get('public/viewstates/informeOtFullBase.json');
+//        $filedata = Storage::get('public/viewstates/informeOtFull.json');
 
+
+//        $periodos = [12, 9, 6, 3]; // cada 3 meses
+
+//        foreach ($periodos as $key => $periodo) {
 
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
         $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfYear()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
-//        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
-//        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
+//            $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()
+//                ->subMonths($periodo)->format('d-m-Y');
+//            $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()
+//                ->subMonths($periodos[$key+1] ?? 0)->format('d-m-Y');
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
 
@@ -1014,24 +1179,30 @@ class RobotApcController extends Controller
         $options['form_params'] = json_decode($filedata, true);
         $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfYear()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
-//        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
-//        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
+//            $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()
+//                ->subMonths($periodo)->format('d-m-Y');
+//            $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()
+//                ->subMonths($periodos[$key+1] ?? 0)->format('d-m-Y');
+
+        print("Procesando periodo : " . $options['form_params']['ctl00$PageContent$FechaFromFilter'] . " al " . $options['form_params']['ctl00$PageContent$FechaToFilter']);
 
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
-            $res = true;
-        } else {
-            $request = new Request('POST', $url, $headers);
-            $res = $this->client->sendAsync($request, $options)->wait();
-        }
+//            if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
+//                $res = true;
+//            } else {
+        $request = new Request('POST', $url, $headers);
+        $res = $this->client->sendAsync($request, $options)->wait();
+//            }
 
         if ($res) {
             Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
             unlink(storage_path('/app/public/' . $filename));
 
         }
+//        }
+
 
     }
 
@@ -1267,9 +1438,8 @@ class RobotApcController extends Controller
     }
 
 
-
-
-    function xml_is_equal(SimpleXMLElement $xml1, SimpleXMLElement $xml2, $text_strict = false) {
+    function xml_is_equal(SimpleXMLElement $xml1, SimpleXMLElement $xml2, $text_strict = false)
+    {
         // compare text content
         if ($text_strict) {
             if ("$xml1" != "$xml2") return "mismatched text content (strict)";
@@ -1281,7 +1451,7 @@ class RobotApcController extends Controller
         $search1 = array();
         $search2 = array();
         foreach ($xml1->attributes() as $a => $b) {
-            $search1[$a] = "$b";		// force string conversion
+            $search1[$a] = "$b";        // force string conversion
         }
         foreach ($xml2->attributes() as $a => $b) {
             $search2[$a] = "$b";
@@ -1300,7 +1470,7 @@ class RobotApcController extends Controller
         if ($ns1 != $ns2) return "mismatched namespaces";
 
         // get all namespace attributes
-        foreach ($ns1 as $ns) {			// don't need to cycle over ns2, since its identical to ns1
+        foreach ($ns1 as $ns) {            // don't need to cycle over ns2, since its identical to ns1
             $search1 = array();
             $search2 = array();
             foreach ($xml1->attributes($ns) as $a => $b) {
@@ -1326,10 +1496,10 @@ class RobotApcController extends Controller
             $search2[$b->getName()][] = $b;
         }
         // cycle over children
-        if (count($search1) != count($search2)) return "mismatched children count";		// xml2 has less or more children names (we don't have to search through xml2's children too)
+        if (count($search1) != count($search2)) return "mismatched children count";        // xml2 has less or more children names (we don't have to search through xml2's children too)
         foreach ($search1 as $child_name => $children) {
-            if (!isset($search2[$child_name])) return "xml2 does not have child $child_name";		// xml2 has none of this child
-            if (count($search1[$child_name]) != count($search2[$child_name])) return "mismatched $child_name children count";		// xml2 has less or more children
+            if (!isset($search2[$child_name])) return "xml2 does not have child $child_name";        // xml2 has none of this child
+            if (count($search1[$child_name]) != count($search2[$child_name])) return "mismatched $child_name children count";        // xml2 has less or more children
             foreach ($children as $child) {
                 // do any of search2 children match?
                 $found_match = false;
@@ -1348,7 +1518,7 @@ class RobotApcController extends Controller
         }
 
         // finally, cycle over namespaced children
-        foreach ($ns1 as $ns) {			// don't need to cycle over ns2, since its identical to ns1
+        foreach ($ns1 as $ns) {            // don't need to cycle over ns2, since its identical to ns1
             // get all children
             $search1 = array();
             $search2 = array();
@@ -1363,10 +1533,10 @@ class RobotApcController extends Controller
                 $search2[$b->getName()][] = $b;
             }
             // cycle over children
-            if (count($search1) != count($search2)) return "mismatched ns:$ns children count";		// xml2 has less or more children names (we don't have to search through xml2's children too)
+            if (count($search1) != count($search2)) return "mismatched ns:$ns children count";        // xml2 has less or more children names (we don't have to search through xml2's children too)
             foreach ($search1 as $child_name => $children) {
-                if (!isset($search2[$child_name])) return "xml2 does not have ns:$ns child $child_name";		// xml2 has none of this child
-                if (count($search1[$child_name]) != count($search2[$child_name])) return "mismatched ns:$ns $child_name children count";		// xml2 has less or more children
+                if (!isset($search2[$child_name])) return "xml2 does not have ns:$ns child $child_name";        // xml2 has none of this child
+                if (count($search1[$child_name]) != count($search2[$child_name])) return "mismatched ns:$ns $child_name children count";        // xml2 has less or more children
                 foreach ($children as $child) {
                     // do any of search2 children match?
                     $found_match = false;

@@ -47,6 +47,11 @@ class FLUCargasResource extends Resource
 //                            ->where('Role', Auth::user()->role)
                                     ->pluck('Nombre', 'ID')->toArray()
                             )->label('Flujo de carga')->required(),
+                        Forms\Components\Fieldset::make('Datos Opcionales')
+                        ->schema([
+                            Forms\Components\DatePicker::make('FechaDesde'),
+                            Forms\Components\DatePicker::make('FechaHasta'),
+                        ])
                     ])->columns(2),
 
                 Forms\Components\Section::make('Informacion de la carga')

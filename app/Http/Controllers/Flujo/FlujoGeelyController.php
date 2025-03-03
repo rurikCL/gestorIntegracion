@@ -84,7 +84,7 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-            dd($arrayData);
+            dump($arrayData) ;
 
 
             if ($arrayData->data->records) {

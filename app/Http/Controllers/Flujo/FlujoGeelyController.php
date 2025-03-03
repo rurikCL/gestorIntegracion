@@ -51,10 +51,10 @@ class FlujoGeelyController extends Controller
             $req['data'] = [
                 "appId" => "e6387061534954323039",
                 "brandId" => "geely",
-//                    "startingTime" => \Safe\strtotime(Carbon::now()->subDay()->format("Y-m-d h:i:s")),
-//                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s")),
+//                    "startingTime" => \Safe\strtotime(Carbon::now()->subDays(15)->format("Y-m-d h:i:s"),1),
+//                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s"),1),
 //                    "pageNum" => 0,
-                    "pageSize" => $flujo->MaxLote
+//                    "pageSize" => $flujo->MaxLote
             ];
 
             $headers = [];
@@ -84,7 +84,7 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-            dump($arrayData);
+            dd($arrayData);
 
 
             if ($arrayData->data->records) {

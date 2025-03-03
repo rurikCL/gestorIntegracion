@@ -193,8 +193,8 @@ class FlujoHubspotController extends Controller
                         $comentario .= ($vpp) ? ' *Tiene VPP ' : '';
 
                         // Revision de fuente ----------------------------------
-                        $origen = 8;
-                        $subOrigen = 36;
+                        $origen = 2;
+                        $subOrigen = 63;
 
                         $origenData = MA_SubOrigenes::Alias($origenProp)->first();
                         if ($origenData) {

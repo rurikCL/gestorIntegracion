@@ -241,7 +241,7 @@ class FlujoCargaController extends Controller
         try {
             if ($fileName) {
 //                VT_CotizacionesSolicitudesCredito::truncate();
-                $import = new FinancierasImport($carga);
+                $import = new FinancierasImport($carga, $data["FechaDesde"], $data["FechaHasta"]);
                 $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLSX);
             }
             $carga->fresh();

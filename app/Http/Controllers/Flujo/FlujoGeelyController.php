@@ -24,9 +24,9 @@ class FlujoGeelyController extends Controller
     const HOST = 'openapi.geely-test.com';
     const LN = "\n";
 
-    public function leadsGeely()
+    public function leadsGeely($numPage = 1)
     {
-        echo "Ejecutando Flujo Geely <br>";
+        echo "Ejecutando Flujo Geely : Paginacion $numPage <br>";
         Log::info("Inicio de flujo Geely");
 
         $flujo = FLU_Flujos::where('Nombre', 'Geely APIs')->first();
@@ -51,10 +51,130 @@ class FlujoGeelyController extends Controller
             $req['data'] = [
                 "appId" => "e6387061534954323039",
                 "brandId" => "geely",
-//                    "startingTime" => \Safe\strtotime(Carbon::now()->subDays(15)->format("Y-m-d h:i:s"),1),
-//                    "endingTime" => \Safe\strtotime(Carbon::now()->format("Y-m-d h:i:s"),1),
+                "startingTime" => Carbon::now()->subDays(7)->getTimestampMs(),
+                "endingTime" => Carbon::now()->getTimestampMs(),
+                    "pageNum" => $numPage,
+                    "pageSize" => 10
+            ];
+
+            $headers = [];
+            $headers['X-Gapi-Ca-Timestamp'] = (int)(microtime(true) * 1000);
+            $headers['X-Gapi-Ca-Algorithm'] = 'hmac-sha256';
+            $headers['X-Gapi-Ca-Access-Key'] = self::ACCESS_KEY;
+            $headers['X-Gapi-Ca-Signed-Headers'] = 'X-Gapi-Ca-Timestamp';
+            $headers['Date'] = gmdate('D, d M Y H:i:s') . ' GMT';
+            $headers['Host'] = self::HOST;
+            $headers['X-Gapi-Ca-Signature'] = self::generateSignature('POST', '/lcms/router/rest/sale/lead/getLeadList', $headers, "");
+
+
+            $req['dataHeader'] = $headers;
+
+//            dump($req->toArray());
+
+            $resp = $solicitudCon->store($req);
+            $resp = $resp->getData();
+
+            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+
+            if (substr($solicitud->Respuesta, 0, 4) == 'file') {
+                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
+                Log::info("Archivo json leads generado " . $nombre);
+
+                $arrayData = json_decode(Storage::get($nombre));
+            } else {
+                $arrayData = json_decode($solicitud->Respuesta);
+            }
+            dump($arrayData);
+
+
+            // RECURSIVIDAD por paginacion
+            if($arrayData->data->current <= $arrayData->data->pages){
+                $this->leadsGeely($numPage + 1);
+            }
+
+
+            // Recorre los registros
+            if ($arrayData->data->records) {
+                $leadObj = new LeadController();
+
+                foreach ($arrayData->data->records as $record) {
+                    $id = $record->id;
+                    if (MK_Leads::where('IDExterno', $id)->exists()) {
+                        print("Lead : " . $id . " ya existe... ");
+
+                    } else {
+                        print("Lead : " . $id . " no existe... creando");
+
+                        $nombre = $record->firstName;
+                        $rut = $record->rut;
+                        $apellido = $record->lastName;
+                        $email = $record->customerEmail;
+                        $telefono = $record->customerPhone;
+                        $modelo = $record->intentionModel;
+                        $comuna = $record->cityName;
+
+                        $req = new Request();
+                        $req['data'] = [
+                            "usuarioID" => 2904, // INTEGRACION HUBSPOT
+                            "reglaVendedor" => 0,
+                            "reglaSucursal" => 0,
+                            "rut" => $rut,
+                            "nombre" => $nombre,
+                            "apellido" => $apellido,
+                            "email" => $email,
+                            "telefono" => $telefono,
+                            "lead" => [
+                                "idFlujo" => $flujo->ID,
+                                "origenID" => 2,
+                                "subOrigenID" => 63,
+                                "marca" => "GEELY",
+                                "modelo" => $modelo,
+                                "externalID" => $id,
+                            ]
+                        ];
+
+                        $resultado = null;
+                        $resultado = $leadObj->nuevoLead($req);
+                        if ($resultado) {
+                            $res = $resultado->getData();
+                            Log::info("Lead Geely creado " . $res->LeadID);
+                            dump($res);
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+    function updateLead($lead)
+    {
+        echo "Ejecutando Actualizacion Lead Geely <br>";
+        Log::info("Actualizacion Lead Geely");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Geely APIs')->first();
+
+        if ($flujo->Activo) {
+
+            $solicitudCon = new ApiSolicitudController();
+
+            $referencia = $flujo->ID . date("ymdh");
+
+            $req = new Request();
+            $req['referencia_id'] = $referencia;
+            $req['proveedor_id'] = 16;
+            $req['api_id'] = 36;
+            $req['prioridad'] = 1;
+            $req['flujoID'] = $flujo->ID;
+            $req['OnDemand'] = true;
+
+            $req['data'] = [
+                "appId" => "e6387061534954323039",
+                "brandId" => "geely",
+                "startingTime" => Carbon::now()->subDays(7)->getTimestampMs(),
+                "endingTime" => Carbon::now()->getTimestampMs(),
 //                    "pageNum" => 0,
-//                    "pageSize" => $flujo->MaxLote
+                    "pageSize" => $flujo->MaxLote
             ];
 
             $headers = [];
@@ -84,60 +204,9 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-            dump($arrayData) ;
-
-
-            if ($arrayData->data->records) {
-                $leadObj = new LeadController();
-
-                foreach ($arrayData->data->records as $record) {
-                    $id = $record->id;
-                    if (MK_Leads::where('IDExterno', $id)->exists()) {
-                        print("Lead : " . $id . " ya existe... ");
-
-                    } else {
-                        print("Lead : " . $id . " no existe... creando");
-
-                        $nombre = $record->firstName;
-                        $rut = $record->rut;
-                        $apellido = $record->lastName;
-                        $email = $record->customerEmail;
-                        $telefono = $record->customerPhone;
-                        $modelo = $record->intentionModel;
-                        $comuna = $record->cityName;
-
-                        $req = new Request();
-                        $req['data'] = [
-                            "usuarioID" => 2904, // INTEGRACION HUBSPOT
-                            "reglaVendedor" => 1,
-                            "reglaSucursal" => 1,
-                            "rut" => $rut,
-                            "nombre" => $nombre,
-                            "apellido" => $apellido,
-                            "email" => $email,
-                            "telefono" => $telefono,
-                            "lead" => [
-                                "idFlujo" => $flujo->ID,
-                                "origenID" => 2,
-                                "subOrigenID" => 63,
-                                "marca" => "GEELY",
-                                "modelo" => $modelo,
-                                "externalID" => $id,
-                            ]
-                        ];
-
-                        $resultado = null;
-                        $resultado = $leadObj->nuevoLead($req);
-                        if ($resultado) {
-                            $res = $resultado->getData();
-                            Log::info("Lead Geely creado " . $res->LeadID );
-                            dump($res);
-                        }
-                    }
-                }
-            }
-
+            dump($arrayData);
         }
+
     }
 
     private static function generateSignature($method, $path, $headers, $queryString)

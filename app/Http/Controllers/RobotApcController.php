@@ -293,7 +293,7 @@ class RobotApcController extends Controller
             'Sec-Fetch-Site' => "same-origin",
         ];
 
-        $filename = 'informeStock.xml';
+        $filename = 'informeStockUsados.xml';
         $filebase = Storage::get('public/viewstates/StockUsadosBase.json');
         $filedata = Storage::get('public/viewstates/StockUsados.json');
 
@@ -415,7 +415,7 @@ class RobotApcController extends Controller
             }
 
         }
-        unlink(storage_path('/app/public/' . $filename));
+//        unlink(storage_path('/app/public/' . $filename));
         echo " Informe procesado";
 
         // Ejecucion de callback after

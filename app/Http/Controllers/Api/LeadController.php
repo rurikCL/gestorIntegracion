@@ -360,6 +360,13 @@ class LeadController extends Controller
                     Log::notice('Lead ya existe en BD Roma : ' . $lead->ID);
                     $procesar = false;
                 }
+            } else {
+                $lead = MK_Leads::select('ID')->where('IDExterno', $request->input('data.lead.externalID'))->first();
+                // si existe, no se crea
+                if ($lead) {
+                    Log::notice('Lead ya existe en BD Roma : ' . $lead->ID);
+                    $procesar = false;
+                }
             }
 
 

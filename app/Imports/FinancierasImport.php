@@ -80,6 +80,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
            ];*/
 
 
+        Log::info("Preparando data desde $this->fecha_inicio hasta $this->fecha_fin");
         VT_CotizacionesSolicitudesCredito::whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])
             ->delete();
 

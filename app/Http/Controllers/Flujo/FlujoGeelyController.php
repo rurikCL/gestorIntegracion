@@ -115,7 +115,7 @@ class FlujoGeelyController extends Controller
                         $modelo = $record->intentionModel;
                         $comuna = $record->cityName;
                         $sucursal = $record->followStoreCode;
-                        $origenIngreso = $record->source;
+                        $origenIngreso = $record->sourceCode;
 
                         $sucursal = $h->GetDato($sucursal,$flujo->ID,'sucursal', $sucursal);
                         $modelo = $h->GetDato($modelo,$flujo->ID,'modelo', $modelo);

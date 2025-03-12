@@ -86,7 +86,7 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-            dd($arrayData);
+            dump($arrayData);
 
 
             // RECURSIVIDAD por paginacion
@@ -124,7 +124,7 @@ class FlujoGeelyController extends Controller
                         $req = new Request();
                         $req['data'] = [
                             "usuarioID" => 2904, // INTEGRACION HUBSPOT
-                            "reglaVendedor" => 0,
+                            "reglaVendedor" => 1,
                             "reglaSucursal" => 0,
                             "rut" => $rut,
                             "nombre" => $nombre,

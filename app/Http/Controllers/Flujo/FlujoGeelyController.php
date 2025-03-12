@@ -169,7 +169,8 @@ class FlujoGeelyController extends Controller
             $solicitudCon = new ApiSolicitudController();
 
             $referencia = $flujo->ID . date("ymdh");
-            $leadObj = MK_Leads::find($idLead)->first();
+            $leadObj = MK_Leads::where('ID', $idLead)->first();
+            dump($leadObj);
 
             $req = new Request();
             $req['referencia_id'] = $referencia;

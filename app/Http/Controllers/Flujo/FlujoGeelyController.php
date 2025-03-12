@@ -18,10 +18,12 @@ use Illuminate\Support\Facades\Storage;
 
 class FlujoGeelyController extends Controller
 {
-    const ACCESS_KEY = 'e6387061534954323039';
-    const SECRET_KEY = 'a2a0c749-c27f-4c2f-a49e-9d9054cf8ab9';
-//    const HOST = 'openapi.geely-test.com';
-    const HOST = 'openapi.geely-test.com';
+//    const ACCESS_KEY = 'e6387061534954323039';
+//    const SECRET_KEY = 'a2a0c749-c27f-4c2f-a49e-9d9054cf8ab9';
+
+    const ACCESS_KEY = '299454a350524F44323039';
+    const SECRET_KEY = 'd09dff17-8045-4ae5-b773-e5efff3feafa';
+    const HOST = 'openapi.geely.com';
     const LN = "\n";
 
     public function leadsGeely($numPage = 1)
@@ -49,12 +51,13 @@ class FlujoGeelyController extends Controller
             $req['OnDemand'] = true;
 
             $req['data'] = [
-                "appId" => "e6387061534954323039",
+                "appId" => self::ACCESS_KEY,
                 "brandId" => "geely",
-                "startingTime" => Carbon::now()->subDays(7)->getTimestampMs(),
+                "startingTime" => Carbon::now()->subDays(1)->getTimestampMs(),
+//                "startingTime" => Carbon::createFromFormat("Y-m-d","2025-03-01")->getTimestampMs(),
                 "endingTime" => Carbon::now()->getTimestampMs(),
-                    "pageNum" => $numPage,
-                    "pageSize" => 10
+                "pageNum" => $numPage,
+                "pageSize" => 50
             ];
 
             $headers = [];
@@ -66,10 +69,9 @@ class FlujoGeelyController extends Controller
             $headers['Host'] = self::HOST;
             $headers['X-Gapi-Ca-Signature'] = self::generateSignature('POST', '/lcms/router/rest/sale/lead/getLeadList', $headers, "");
 
-
             $req['dataHeader'] = $headers;
 
-//            dump($req->toArray());
+            dump($req->toArray());
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -88,7 +90,7 @@ class FlujoGeelyController extends Controller
 
 
             // RECURSIVIDAD por paginacion
-            if($arrayData->data->current <= $arrayData->data->pages){
+            if ($arrayData->data->current < $arrayData->data->pages) {
                 $this->leadsGeely($numPage + 1);
             }
 
@@ -112,6 +114,12 @@ class FlujoGeelyController extends Controller
                         $telefono = $record->customerPhone;
                         $modelo = $record->intentionModel;
                         $comuna = $record->cityName;
+                        $sucursal = $record->followStoreCode;
+                        $origenIngreso = $record->source;
+
+                        $sucursal = $h->GetDato($sucursal,$flujo->ID,'sucursal', $sucursal);
+                        $modelo = $h->GetDato($modelo,$flujo->ID,'modelo', $modelo);
+                        $origenIngreso = $h->GetDato($origenIngreso,$flujo->ID,'origen', 1);
 
                         $req = new Request();
                         $req['data'] = [
@@ -126,9 +134,11 @@ class FlujoGeelyController extends Controller
                             "lead" => [
                                 "idFlujo" => $flujo->ID,
                                 "origenID" => 2,
+                                "origenIngreso" => $origenIngreso,
                                 "subOrigenID" => 63,
                                 "marca" => "GEELY",
                                 "modelo" => $modelo,
+                                "sucursalID" => $sucursal,
                                 "externalID" => $id,
                             ]
                         ];
@@ -138,16 +148,15 @@ class FlujoGeelyController extends Controller
                         if ($resultado) {
                             $res = $resultado->getData();
                             Log::info("Lead Geely creado " . $res->LeadID);
-                            dump($res);
+//                            dump($res);
                         }
                     }
                 }
             }
-
         }
     }
 
-    function updateLead($lead)
+    function updateLead($idLead)
     {
         echo "Ejecutando Actualizacion Lead Geely <br>";
         Log::info("Actualizacion Lead Geely");
@@ -159,6 +168,7 @@ class FlujoGeelyController extends Controller
             $solicitudCon = new ApiSolicitudController();
 
             $referencia = $flujo->ID . date("ymdh");
+            $leadObj = MK_Leads::find($idLead)->first();
 
             $req = new Request();
             $req['referencia_id'] = $referencia;
@@ -174,7 +184,7 @@ class FlujoGeelyController extends Controller
                 "startingTime" => Carbon::now()->subDays(7)->getTimestampMs(),
                 "endingTime" => Carbon::now()->getTimestampMs(),
 //                    "pageNum" => 0,
-                    "pageSize" => $flujo->MaxLote
+                "pageSize" => $flujo->MaxLote
             ];
 
             $headers = [];

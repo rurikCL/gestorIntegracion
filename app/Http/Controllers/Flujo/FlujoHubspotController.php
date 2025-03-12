@@ -827,7 +827,7 @@ class FlujoHubspotController extends Controller
                         'idpompeyo' => ($lead->ClienteID != 1) ? $lead->ClienteID : null,
                         'hs_marketable_status' => 2,  // 1: Marketing contact, 2: Non-marketing contact
                     ];
-                    dump($dataContacto);
+//                    dump($dataContacto);
                     $contactInput->setProperties($dataContacto);
                     $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                     $idContacto = $contact->getId();

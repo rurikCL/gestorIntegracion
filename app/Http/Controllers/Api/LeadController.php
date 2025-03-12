@@ -336,6 +336,7 @@ class LeadController extends Controller
             $modeloID = $request->input('data.lead.modeloID') ?? null;
             $modeloNombre = $request->input('data.lead.modelo') ?? null;
             $origen = $request->input('data.lead.origen') ?? null;
+            $origenIngreso = $request->input('data.lead.origenIngreso') ?? 1;
             $origenID = $request->input('data.lead.origenID') ?? 3;
             $subOrigenID = $request->input('data.lead.subOrigenID') ?? 1;
             $idFlujo = $request->input('data.lead.idFlujo') ?? 0;
@@ -694,6 +695,7 @@ class LeadController extends Controller
                 $lead->EventoCreacionID = 1;
                 $lead->UsuarioCreacionID = $usuarioID;
                 $lead->OrigenID = $origenID;
+                $lead->OrigenIngreso = $origenIngreso;
                 $lead->SubOrigenID = $subOrigenID;
                 $lead->IntegracionID = $fuente;
 

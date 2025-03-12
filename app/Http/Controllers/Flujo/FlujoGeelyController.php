@@ -86,7 +86,7 @@ class FlujoGeelyController extends Controller
             } else {
                 $arrayData = json_decode($solicitud->Respuesta);
             }
-            dump($arrayData);
+            dd($arrayData);
 
 
             // RECURSIVIDAD por paginacion

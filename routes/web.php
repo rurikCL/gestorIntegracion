@@ -79,7 +79,7 @@ Route::get('/robot/apc/rentabilidadVenta', [\App\Http\Controllers\RobotApcContro
 
 
 Route::get('/flujo/geely/leads', [\App\Http\Controllers\Flujo\FlujoGeelyController::class, 'leadsGeely']);
-Route::get('/flujo/geely/lead/{id}', [\App\Http\Controllers\Flujo\FlujoGeelyController::class, 'leadsGeely']);
+Route::get('/flujo/geely/lead/{id}', [\App\Http\Controllers\Flujo\FlujoGeelyController::class, 'updateLead']);
 
 
 Route::get('/robot/apc/comparar', [\App\Http\Controllers\RobotApcController::class, 'compare']);

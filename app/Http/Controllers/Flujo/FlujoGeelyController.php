@@ -164,6 +164,7 @@ class FlujoGeelyController extends Controller
         $flujo = FLU_Flujos::where('Nombre', 'Geely APIs')->first();
 
         if ($flujo->Activo) {
+            $h = new FLU_Homologacion();
 
             $solicitudCon = new ApiSolicitudController();
 
@@ -173,18 +174,18 @@ class FlujoGeelyController extends Controller
             $req = new Request();
             $req['referencia_id'] = $referencia;
             $req['proveedor_id'] = 16;
-            $req['api_id'] = 36;
+            $req['api_id'] = 37;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
 
             $req['data'] = [
-                "appId" => "e6387061534954323039",
+                "appId" => self::ACCESS_KEY,
                 "brandId" => "geely",
-                "startingTime" => Carbon::now()->subDays(7)->getTimestampMs(),
-                "endingTime" => Carbon::now()->getTimestampMs(),
-//                    "pageNum" => 0,
-                "pageSize" => $flujo->MaxLote
+                "updateDealerLeadInfo" => [
+                    "leadId" => $leadObj->IDExterno,
+                    "followStatus" => $h->GetDato($leadObj->EstadoID,$flujo->ID,'leadStatus', 9),
+                ]
             ];
 
             $headers = [];

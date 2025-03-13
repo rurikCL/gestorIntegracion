@@ -715,8 +715,9 @@ class LeadController extends Controller
                 $lead->SucursalID = $sucursalID; // htext
 
                 // verificacion de vendedor en caso que se envie uno especifico. (debe existir)
+                Log::info("Verificando vendedor enviado : ". $vendedorID);
+
                 if($vendedorID > 0){
-                    Log::info("Verificando vendedor enviado");
                     $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
                     if(!$vendedor) {
                         $vendedorID = 1;

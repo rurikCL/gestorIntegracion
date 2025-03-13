@@ -767,8 +767,17 @@ class LeadController extends Controller
 
                 // Logica de Reglas de Lead ---------------------------------------
 
+
                 $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
                 if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
+
+                if($vendedorID > 0){
+                    $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
+                    if(!$vendedor) {
+                        $vendedorID = null;
+                        $reglaVendedor = true;
+                    }
+                }
 
                 $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
                 if ($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);

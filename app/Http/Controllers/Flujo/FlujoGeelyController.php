@@ -170,7 +170,7 @@ class FlujoGeelyController extends Controller
 
             $referencia = $flujo->ID . date("ymdh");
             $leadObj = MK_Leads::where('ID', $idLead)->first();
-            dump($leadObj);
+//            dump($leadObj);
 
             $req = new Request();
             $req['referencia_id'] = $referencia;

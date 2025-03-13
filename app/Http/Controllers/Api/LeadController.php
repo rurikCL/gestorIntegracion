@@ -713,7 +713,16 @@ class LeadController extends Controller
 
                 $lead->CampanaId = $request->input('data.lead.campana') ?? null;
                 $lead->SucursalID = $sucursalID; // htext
+
+                // verificacion de vendedor en caso que se envie uno especifico. (debe existir)
                 $lead->VendedorID = $vendedorID > 0 ? $vendedorID : $usuarioID;
+                if($vendedorID > 0){
+                    $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
+                    if(!$vendedor) {
+                        $vendedorID = null;
+                    }
+                }
+
                 $lead->MarcaID = $marcaID ?? 1;
                 $lead->ModeloID = $modeloID ?? 1;
                 $lead->IDExterno = ($fuente == 1) ? ($request->input('data.lead.externalID') ?? null) : null;
@@ -769,15 +778,8 @@ class LeadController extends Controller
 
 
                 $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
+                if($vendedorID == null) $reglaVendedor = true;
                 if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
-
-                if($vendedorID > 0){
-                    $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
-                    if(!$vendedor) {
-                        $vendedorID = null;
-                        $reglaVendedor = true;
-                    }
-                }
 
                 $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
                 if ($reglaSucursal == true) $Log->info("Regla sucursal solicitada", $solicitudID);

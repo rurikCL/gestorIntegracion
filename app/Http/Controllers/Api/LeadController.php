@@ -725,6 +725,8 @@ class LeadController extends Controller
                     } else {
                         Log::notice("Vendedor encontrado" . $vendedor->Nombre . " " . $vendedor->Apellido);
                     }
+                } else {
+                    $vendedorID = $usuarioID;
                 }
                 $lead->VendedorID = $vendedorID;
 

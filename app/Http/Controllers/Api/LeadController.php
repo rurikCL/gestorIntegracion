@@ -718,7 +718,7 @@ class LeadController extends Controller
                 if($vendedorID > 0){
                     $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
                     if(!$vendedor) {
-                        $vendedorID = null;
+                        $vendedorID = 1;
                     }
                 }
                 $lead->VendedorID = $vendedorID;
@@ -778,7 +778,7 @@ class LeadController extends Controller
 
 
                 $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
-                if($vendedorID == null) $reglaVendedor = true;
+                if($vendedorID == 1) $reglaVendedor = true;
                 if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
 
                 $reglaSucursal = $request->input('data.reglaSucursal') ?? false;

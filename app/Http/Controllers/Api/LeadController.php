@@ -722,6 +722,7 @@ class LeadController extends Controller
                     }
                 }
                 $lead->VendedorID = $vendedorID;
+                Log::info("Asignando vendedor : " . $vendedorID);
 
                 $lead->MarcaID = $marcaID ?? 1;
                 $lead->ModeloID = $modeloID ?? 1;

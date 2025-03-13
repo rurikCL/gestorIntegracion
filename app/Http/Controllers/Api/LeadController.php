@@ -719,10 +719,12 @@ class LeadController extends Controller
                     $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
                     if(!$vendedor) {
                         $vendedorID = 1;
+                        Log::error('Vendedor enviado, no existe ' . $vendedorID);
+                    } else {
+                        Log::notice("Vendedor encontrado" . $vendedor->Nombre . " " . $vendedor->Apellido);
                     }
                 }
                 $lead->VendedorID = $vendedorID;
-                Log::info("Asignando vendedor : " . $vendedorID);
 
                 $lead->MarcaID = $marcaID ?? 1;
                 $lead->ModeloID = $modeloID ?? 1;

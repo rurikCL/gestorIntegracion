@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Http\Controllers\Flujo\FlujoController;
+use App\Http\Controllers\Flujo\FlujoGeelyController;
 use App\Http\Controllers\Flujo\FlujoHubspotController;
 use App\Http\Controllers\RobotApcController;
 use Illuminate\Console\Scheduling\Schedule;
@@ -57,8 +58,9 @@ class Kernel extends ConsoleKernel
         // FLUJO CADA 5 minutos -------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-
             $flujoNegocio = new FlujoHubspotController();
+            $flujoGeely = new FlujoGeelyController();
+
             $flujoNegocio->leadsHubspotDeals(); // flujo hubspot negocios (creacion nuevos)
 
             $flujoNegocio->actualizaLeadHubspot(); // Actualiza estado Pipeline de Deal en Hubspot
@@ -67,6 +69,9 @@ class Kernel extends ConsoleKernel
 
             // Proceso de reproceso de solicitudes pendientes (que tengan intentos pendientes)
             $flujoControl->reprocesarSolicitudes();
+
+            // Leads Incoming de Geely
+            $flujoGeely->leadsGeely();
 
         })->name("Control de Flujos : 5 minutos")->everyFiveMinutes();
 

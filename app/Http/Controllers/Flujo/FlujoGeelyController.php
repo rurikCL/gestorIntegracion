@@ -71,7 +71,7 @@ class FlujoGeelyController extends Controller
 
             $req['dataHeader'] = $headers;
 
-//            dump($req->toArray());
+            dd($req->toArray());
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -196,7 +196,7 @@ class FlujoGeelyController extends Controller
             $headers['X-Gapi-Ca-Signed-Headers'] = 'X-Gapi-Ca-Timestamp';
             $headers['Date'] = gmdate('D, d M Y H:i:s') . ' GMT';
             $headers['Host'] = self::HOST;
-            $headers['X-Gapi-Ca-Signature'] = self::generateSignature('POST', '/lcms/router/rest/sale/lead/getLeadList', $headers, "");
+            $headers['X-Gapi-Ca-Signature'] = self::generateSignature('POST', '/lcms/router/rest/sale/lead/updateLeadInfo', $headers, "");
 
 
             $req['dataHeader'] = $headers;

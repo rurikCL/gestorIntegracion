@@ -751,7 +751,7 @@ class LeadController extends Controller
                 $solicitud = ApiSolicitudes::create([
                     'FechaCreacion' => date('Y-m-d H:i:s'),
                     'EventoCreacionID' => 1,
-                    'UsuarioCreacionID' => 1,
+                    'UsuarioCreacionID' => $usuarioID,
                     'ReferenciaID' => $lead->ID,
                     'ProveedorID' => 6,
                     'ApiID' => 0,

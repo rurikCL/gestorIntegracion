@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Flujo;
 use App\Http\Controllers\Api\ApiSolicitudController;
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Logger;
 use App\Models\Api\ApiSolicitudes;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
@@ -29,7 +30,10 @@ class FlujoGeelyController extends Controller
     public function leadsGeely($numPage = 1)
     {
         echo "Ejecutando Flujo Geely : Paginacion $numPage <br>";
-        Log::info("Inicio de flujo Geely");
+
+        $Log = new Logger("Geely Leads");
+
+        $Log->info("Inicio de flujo Geely");
 
         $flujo = FLU_Flujos::where('Nombre', 'Geely APIs')->first();
 
@@ -71,7 +75,9 @@ class FlujoGeelyController extends Controller
 
             $req['dataHeader'] = $headers;
 
-            dd($req->toArray());
+            $Log->info("Cabeceras preparadas");
+
+//            dd($req->toArray());
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();

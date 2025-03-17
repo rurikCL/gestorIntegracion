@@ -377,6 +377,14 @@ class FlujoHubspotController extends Controller
             if ($leads->count()) {
                 Log::info("leads encontrados " . $leads->count());
                 foreach ($leads as $lead) {
+
+
+                    if($lead->MarcaID == 51 && $lead->ExternalID != ''){
+                        $FlujoGeely = new FlujoGeelyController();
+                        $FlujoGeely->updateLead($lead->ID);
+                    }
+
+
                     Log::info("Lead a actualizar : " . $lead->ID . " - " . $lead->IDHubspot);
 
                     $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();

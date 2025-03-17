@@ -13,9 +13,16 @@ class Logger extends Controller
     //
     private $logArray = array();
     private $mustLog = true;
+    private $proceso;
+
+    public function __construct($proceso = "")
+    {
+        $this->proceso = $proceso;
+    }
 
     public function info($message, $idSolicitud = null, array $context = array()) :bool
     {
+        $message = ($this->proceso)? $this->proceso. " :: " . $message : $message;
         if($this->mustLog) Log::info($message, $context);
 
         if($idSolicitud != null) {
@@ -34,6 +41,7 @@ class Logger extends Controller
     }
     public function notice($message, $idSolicitud = null, array $context = array()) :bool
     {
+        $message = ($this->proceso)? $this->proceso. " :: " . $message : $message;
         if($this->mustLog) Log::notice($message, $context);
 
         if($idSolicitud != null) {
@@ -53,6 +61,7 @@ class Logger extends Controller
 
     public function warning($message, $idSolicitud = null, array $context = array()) :bool
     {
+        $message = ($this->proceso)? $this->proceso. " :: " . $message : $message;
         if($this->mustLog) Log::warning($message, $context);
 
         if($idSolicitud != null) {
@@ -71,7 +80,9 @@ class Logger extends Controller
     }
     public function error($message, $idSolicitud = null, array $context = array()) :bool
     {
+        $message = ($this->proceso)? $this->proceso. " :: " . $message : $message;
         if($this->mustLog) Log::info($message, $context);
+
         if($idSolicitud != null) {
             API_LogSolicitud::create([
                 'SolicitudID' => $idSolicitud,

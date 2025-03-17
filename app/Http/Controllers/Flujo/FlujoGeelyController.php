@@ -117,9 +117,9 @@ class FlujoGeelyController extends Controller
                         $sucursal = $record->followStoreCode;
                         $origenIngreso = $record->sourceCode;
 
-                        $sucursal = $h->GetDato($sucursal,$flujo->ID,'sucursal', $sucursal);
-                        $modelo = $h->GetDato($modelo,$flujo->ID,'modelo', $modelo);
-                        $origenIngreso = $h->GetDato($origenIngreso,$flujo->ID,'origen', 1);
+                        $sucursal = $h->GetDato($sucursal, $flujo->ID, 'sucursal', $sucursal);
+                        $modelo = $h->GetDato($modelo, $flujo->ID, 'modelo', $modelo);
+                        $origenIngreso = $h->GetDato($origenIngreso, $flujo->ID, 'origen', 1);
 
                         $req = new Request();
                         $req['data'] = [
@@ -184,8 +184,11 @@ class FlujoGeelyController extends Controller
                 "appId" => self::ACCESS_KEY,
                 "brandId" => "geely",
                 "updateDealerLeadInfo" => [
-                    "leadId" => $leadObj->IDExterno,
-                    "followStatus" => $h->GetDato($leadObj->EstadoID,$flujo->ID,'leadStatus', 9),
+                    [
+                        "leadId" => $leadObj->IDExterno,
+                        "followStatus" => $h->GetDato($leadObj->EstadoID, $flujo->ID, 'leadStatus', 9),
+                    ]
+
                 ]
             ];
 

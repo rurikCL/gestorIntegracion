@@ -2,7 +2,9 @@
 
 namespace App\Models\MA;
 
+use App\Models\OC\OC_Approvers;
 use App\Models\OC\OC_Purchaseordergenerator;
+use App\Models\RC\RC_cashier_approvers;
 use App\Models\SIS\SIS_UsuariosSucursales;
 use App\Models\TK\TK_agents;
 use App\Models\User;
@@ -110,6 +112,15 @@ class MA_Usuarios extends Model
     public function generadorOrdenCompra()
     {
         return $this->hasOne(OC_Purchaseordergenerator::class, 'user_id', 'ID');
+    }
+
+    public function aprobadorOc()
+    {
+        return $this->belongsTo(OC_Approvers::class, 'user_id', 'ID');
+    }
+    public function aprobadorCaja()
+    {
+        return $this->belongsTo(RC_cashier_approvers::class, 'user_id', 'ID');
     }
 
 

@@ -7,6 +7,7 @@ use App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 use App\Models\MA\MA_Usuarios;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Enums\FiltersLayout;
@@ -129,9 +130,16 @@ class MAUsuariosResource extends Resource
     public static function getRelations(): array
     {
         return [
-            'sucursales' => RelationManagers\SucursalesRelationManager::class,
+            RelationGroup::make('Sucursales', [
+                'generadorOC' => RelationManagers\GeneradorOrdenCompraRelationManager::class,
+                'sucursales' => RelationManagers\SucursalesRelationManager::class,
+            ]),
+            RelationGroup::make('Aprobaciones', [
+                'aprobadorOc' => RelationManagers\AprobadorocRelationManager::class,
+                'aprobadorCaja' => RelationManagers\AprobadorCajaRelationManager::class,
+            ]),
             'agente' => RelationManagers\AgenteRelationManager::class,
-            'generadorOC' => RelationManagers\GeneradorOrdenCompraRelationManager::class,
+
         ];
     }
 

@@ -116,11 +116,11 @@ class MA_Usuarios extends Model
 
     public function aprobadorOc()
     {
-        return $this->belongsTo(OC_Approvers::class, 'id', 'user_id');
+        return $this->hasMany(OC_Approvers::class, 'user_id');
     }
     public function aprobadorCaja()
     {
-        return $this->belongsTo(RC_cashier_approvers::class, 'id', 'user_id');
+        return $this->hasMany(RC_cashier_approvers::class, 'user_id');
     }
 
 

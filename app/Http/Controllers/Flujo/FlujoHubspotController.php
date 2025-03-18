@@ -379,7 +379,8 @@ class FlujoHubspotController extends Controller
                 foreach ($leads as $lead) {
 
 
-                    if($lead->MarcaID == 51 && $lead->ExternalID != ''){
+                    // Actualiza leads Geely (Integracion)
+                    if($lead->MarcaID == 51 && $lead->ExternalID != '0'){
                         $FlujoGeely = new FlujoGeelyController();
                         $FlujoGeely->updateLead($lead->ID);
                     }

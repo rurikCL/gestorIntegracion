@@ -367,6 +367,8 @@ class FlujoHubspotController extends Controller
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
             $h = new FLU_Homologacion();
+            $FlujoGeely = new FlujoGeelyController();
+
 
             $leads = MK_Leads::where('LogEstado', 1)
                 ->where('FechaCreacion', '>=', '2024-04-01 00:00:00')
@@ -377,14 +379,6 @@ class FlujoHubspotController extends Controller
             if ($leads->count()) {
                 Log::info("leads encontrados " . $leads->count());
                 foreach ($leads as $lead) {
-
-
-                    // Actualiza leads Geely (Integracion)
-                    if($lead->MarcaID == 51 && $lead->ExternalID != '0'){
-                        $FlujoGeely = new FlujoGeelyController();
-                        $FlujoGeely->updateLead($lead->ID);
-                    }
-
 
                     Log::info("Lead a actualizar : " . $lead->ID . " - " . $lead->IDHubspot);
 
@@ -404,6 +398,12 @@ class FlujoHubspotController extends Controller
                                 $lead->LogEstado = 0;
                                 $lead->save();
                                 Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado . ")");
+
+                                // Actualiza leads Geely (Integracion)
+                                if($lead->MarcaID == 51 && $lead->ExternalID != '0'){
+                                    $FlujoGeely->updateLead($lead->ID);
+                                }
+
                             } else {
                                 Log::error("Hubo un problema al actualizar el estado" . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado . ")");
 

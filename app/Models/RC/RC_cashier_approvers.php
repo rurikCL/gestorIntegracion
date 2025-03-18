@@ -18,6 +18,7 @@ class RC_cashier_approvers extends Model
         'id',
         'cashier_id',
         'user_id',
+        'replacement_id',
         'level',
         'min',
         'max',
@@ -33,5 +34,10 @@ class RC_cashier_approvers extends Model
     public function usuarios()
     {
         return $this->belongsTo('App\Models\MA\MA_Usuarios', 'user_id', 'ID');
+    }
+
+    public function reemplazo()
+    {
+        return $this->belongsTo('App\Models\MA\MA_Usuarios', 'replacement_id', 'ID');
     }
 }

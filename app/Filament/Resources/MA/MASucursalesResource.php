@@ -76,7 +76,11 @@ class MASucursalesResource extends Resource
                                             Forms\Components\Select::make('user_id')
                                                 ->relationship('usuarios', 'Nombre')
                                                 ->searchable()
-                                                ->label('Aprobador')
+                                                ->label('Aprobador'),
+                                            Forms\Components\Select::make('replacement_id')
+                                                ->relationship('reemplazo', 'Nombre')
+                                                ->searchable()
+                                                ->label('Reemplazo'),
                                         ])
                                         ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                             $data['branchOffice_id'] = $get('ID');
@@ -86,7 +90,7 @@ class MASucursalesResource extends Resource
                                             return $data;
                                         })
 //                            ->maxItems(10)
-                                        ->columns(2),
+                                        ->columns(3),
                                 ]),
 
                             Forms\Components\Tabs\Tab::make("Solicitantes Solicitud de Compra")
@@ -130,9 +134,12 @@ class MASucursalesResource extends Resource
                                             Forms\Components\Select::make('user_id')
                                                 ->relationship('usuarios', 'Nombre')
                                                 ->searchable(),
-                                            Forms\Components\Toggle::make('active')
+                                            Forms\Components\Select::make('replacement_id')
+                                                ->relationship('reemplazo', 'Nombre')
+                                                ->searchable(),
+                                           /* Forms\Components\Toggle::make('active')
                                                 ->label('Activo')
-                                            ->default(true),
+                                            ->default(true),*/
 
 //                                Forms\Components\TextInput::make('min'),
 //                                Forms\Components\TextInput::make('max'),
@@ -146,7 +153,7 @@ class MASucursalesResource extends Resource
                                         })
                                         ->maxItems(10)
 //                            ->cloneable()
-                                        ->columns(2),
+                                        ->columns(3),
                                 ]),
 
                         ]),

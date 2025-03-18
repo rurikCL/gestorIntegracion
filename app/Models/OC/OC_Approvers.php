@@ -18,6 +18,7 @@ class OC_Approvers extends Model
         'branchOffice_id',
         'level',
         'user_id',
+        'replacement_id',
         'min',
         'max',
     ];
@@ -30,5 +31,10 @@ class OC_Approvers extends Model
     public function usuarios()
     {
         return $this->belongsTo(MA_Usuarios::class, 'user_id', 'ID');
+    }
+
+    public function reemplazo()
+    {
+        return $this->belongsTo('App\Models\MA\MA_Usuarios', 'replacement_id', 'ID');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 
+use App\Filament\Resources\MA\MASucursalesResource;
+use App\Models\MA\MA_Sucursales;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -19,10 +21,10 @@ class AprobadorocRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('branchOffice_id')
-                ->relationship('sucursales'),
+                    ->relationship('sucursales'),
 
                 Forms\Components\Select::make('level')
-                ->options([
+                    ->options([
                         '1' => 'Nivel 1',
                         '2' => 'Nivel 2',
                         '3' => 'Nivel 3',
@@ -49,7 +51,12 @@ class AprobadorocRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('editaSucursal')
+                    ->url(fn($record): ?string => MASucursalesResource::getNavigationUrl() . '/' . $record->branchOffice_id . '/edit')
+                ->openUrlInNewTab()
+                ->icon('heroicon-o-pencil'),
+
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

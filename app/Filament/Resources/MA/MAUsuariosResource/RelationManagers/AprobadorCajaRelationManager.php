@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\MA\MAUsuariosResource\RelationManagers;
 
+use App\Filament\Resources\MA\MASucursalesResource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -49,7 +50,12 @@ class AprobadorCajaRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('editaSucursal')
+                    ->url(fn($record): ?string => MASucursalesResource::getNavigationUrl() . '/' . $record->branch_office_id . '/edit')
+                ->openUrlInNewTab()
+                ->icon('heroicon-o-pencil'),
+
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

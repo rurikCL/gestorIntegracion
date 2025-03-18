@@ -125,8 +125,6 @@ class MA_Usuarios extends Model
 
 
 
-
-
     public function scopeSucursalAsignada($query, $sucursal_id)
     {
         return $query->whereHas('sucursales', function ($query) use ($sucursal_id) {

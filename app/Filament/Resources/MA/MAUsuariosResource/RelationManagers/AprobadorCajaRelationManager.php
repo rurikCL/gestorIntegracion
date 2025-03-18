@@ -19,7 +19,7 @@ class AprobadorCajaRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('branch_office_id')
-                    ->relationship('sucursales'),
+                    ->relationship('sucursales', 'Sucursal'),
 
                 Forms\Components\Select::make('level')
                     ->options([

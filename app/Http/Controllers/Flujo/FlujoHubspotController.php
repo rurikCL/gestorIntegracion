@@ -400,7 +400,7 @@ class FlujoHubspotController extends Controller
                                 Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado . ")");
 
                                 // Actualiza leads Geely (Integracion)
-                                if($lead->MarcaID == 51 && $lead->ExternalID != '0'){
+                                if($lead->MarcaID == 51 && $lead->IDExterno != '0'){
                                     $FlujoGeely->updateLead($lead->ID);
                                 }
 

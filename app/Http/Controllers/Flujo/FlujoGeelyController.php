@@ -179,7 +179,7 @@ class FlujoGeelyController extends Controller
 //            dump($leadObj);
 
             $req = new Request();
-            $req['referencia_id'] = $referencia;
+            $req['referencia_id'] = $idLead;
             $req['proveedor_id'] = 16;
             $req['api_id'] = 37;
             $req['prioridad'] = 1;

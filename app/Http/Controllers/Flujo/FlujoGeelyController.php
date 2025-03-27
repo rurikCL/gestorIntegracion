@@ -230,6 +230,80 @@ class FlujoGeelyController extends Controller
 
     }
 
+
+    function sendLead()
+    {
+        echo "Ejecutando Actualizacion Lead Geely <br>";
+        Log::info("Envio de Leads Geely");
+
+        $leads = MK_Leads::where('MarcaID', 51)
+            ->where('IDExterno', null)
+            ->get();
+
+        $flujo = FLU_Flujos::where('Nombre', 'Geely APIs')->first();
+
+        if ($flujo->Activo) {
+            $h = new FLU_Homologacion();
+
+            $solicitudCon = new ApiSolicitudController();
+
+            $referencia = $flujo->ID . date("ymdh");
+            $leadObj = MK_Leads::where('ID', $idLead)->first();
+//            dump($leadObj);
+
+            $req = new Request();
+            $req['referencia_id'] = $idLead;
+            $req['proveedor_id'] = 16;
+            $req['api_id'] = 37;
+            $req['prioridad'] = 1;
+            $req['flujoID'] = $flujo->ID;
+            $req['OnDemand'] = true;
+
+            $req['data'] = [
+                "appId" => self::ACCESS_KEY,
+                "brandId" => "geely",
+                "updateDealerLeadInfo" => [
+                    [
+                        "leadId" => $leadObj->IDExterno,
+                        "followStatus" => $h->GetDato($leadObj->EstadoID, $flujo->ID, 'leadStatus', 9),
+                    ]
+
+                ]
+            ];
+
+            $headers = [];
+            $headers['X-Gapi-Ca-Timestamp'] = (int)(microtime(true) * 1000);
+            $headers['X-Gapi-Ca-Algorithm'] = 'hmac-sha256';
+            $headers['X-Gapi-Ca-Access-Key'] = self::ACCESS_KEY;
+            $headers['X-Gapi-Ca-Signed-Headers'] = 'X-Gapi-Ca-Timestamp';
+            $headers['Date'] = gmdate('D, d M Y H:i:s') . ' GMT';
+            $headers['Host'] = self::HOST;
+            $headers['X-Gapi-Ca-Signature'] = self::generateSignature('POST', '/lcms/router/rest/sale/lead/updateLeadInfo', $headers, "");
+
+
+            $req['dataHeader'] = $headers;
+
+            dump($req->toArray());
+
+            $resp = $solicitudCon->store($req);
+            $resp = $resp->getData();
+
+            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+
+            if (substr($solicitud->Respuesta, 0, 4) == 'file') {
+                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
+                Log::info("Archivo json leads generado " . $nombre);
+
+                $arrayData = json_decode(Storage::get($nombre));
+            } else {
+                $arrayData = json_decode($solicitud->Respuesta);
+            }
+            dump($arrayData);
+        }
+
+    }
+
+
     private static function generateSignature($method, $path, $headers, $queryString)
     {
         $contentArray = [];

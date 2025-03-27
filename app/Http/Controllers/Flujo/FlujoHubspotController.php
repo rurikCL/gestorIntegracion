@@ -237,24 +237,29 @@ class FlujoHubspotController extends Controller
                         ];
 
                         $resultado = null;
-                        $resultado = $leadObj->nuevoLead($req);
-                        if ($resultado) {
-                            $res = $resultado->getData();
+                        if(!MK_Leads::where('IDHubspot', $idExterno)->exists()) {
 
-                            print("Nuevo Lead ");
-                            if ($res->LeadID > 0) {
-                                $lead = MK_Leads::where('ID', $res->LeadID)->first();
+                            $resultado = $leadObj->nuevoLead($req);
+                            if ($resultado) {
+                                $res = $resultado->getData();
 
-                                $newProperties->setProperties([
-                                    'idpompeyo' => $lead->ID,
-                                    'idvendedor' => $lead->VendedorID,
-                                    'nombrevendedor' => $lead->vendedor->Nombre,
-                                ]);
-                                $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+                                print("Nuevo Lead ");
+                                if ($res->LeadID > 0) {
+                                    $lead = MK_Leads::where('ID', $res->LeadID)->first();
+
+                                    $newProperties->setProperties([
+                                        'idpompeyo' => $lead->ID,
+                                        'idvendedor' => $lead->VendedorID,
+                                        'nombrevendedor' => $lead->vendedor->Nombre,
+                                    ]);
+                                    $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+                                }
+
+                            } else {
+                                print("Error al crear Lead ");
                             }
-
-                        } else {
-                            print("Error al crear Lead ");
+                        }else{
+                            Log::notice("Lead ya existe en roma : " . $idExterno);
                         }
 
                     }

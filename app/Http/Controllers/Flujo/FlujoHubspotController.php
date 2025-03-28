@@ -434,7 +434,7 @@ class FlujoHubspotController extends Controller
     public function leadsHubspot()
     {
         echo "Ejecutando Flujo Hubspot <br>";
-        Log::info("Inicio de flujo Hubspot");
+        Log::info("Inicio de flujo Hubspot (Contactos)");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
 
@@ -912,6 +912,7 @@ class FlujoHubspotController extends Controller
 
             $properties1 = [
                 'idpompeyo' => $lead->ID,
+                'id_externo' => $lead->IDExterno,
                 'record_id___contacto' => $idContacto,
                 'email' => $email,
                 'phone' => $telefono,

@@ -393,7 +393,8 @@ class FlujoHubspotController extends Controller
                     if ($estadoHomologado) {
                         $newProperties->setProperties([
                             'dealstage' => $estadoHomologado,
-                            'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID
+                            'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID,
+                            'id_externo' => $lead->IDExterno,
                         ]);
 
                         try {

@@ -59,6 +59,12 @@ class FLUMonitorResource extends Resource
                 Tables\Filters\SelectFilter::make('FlujoID')
                     ->label("Flujo")
                     ->relationship('flujo', "Nombre"),
+                Tables\Filters\SelectFilter::make('Estado')
+                    ->options([
+                        'INICIO' => 'INICIO',
+                        'TERMINADO' => 'TERMINADO',
+                        'ERROR' => 'ERROR',
+                    ]),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

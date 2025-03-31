@@ -111,7 +111,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '1024M');
-        $monitor = new MonitorFlujoController(0, "Robot Stock APC");
+        $monitor = new MonitorFlujoController(31, "Robot Stock APC");
 
 
         echo "Inicio de proceso";
@@ -267,7 +267,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         ini_set('memory_limit', '1024M');
-        $monitor = new MonitorFlujoController(0, "Robot Stock Usados APC");
+        $monitor = new MonitorFlujoController(31, "Robot Stock Usados APC");
 
         echo "Inicio de proceso";
         Log::channel('robots')->info('Inicio de proceso stock APC Usados');
@@ -435,7 +435,7 @@ class RobotApcController extends Controller
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
-        $monitor = new MonitorFlujoController(0, "Robot Stock Anual APC");
+        $monitor = new MonitorFlujoController(31, "Robot Stock Anual APC");
 
         echo "Inicio de proceso";
         Log::channel('robots')->info('Inicio de proceso stock APC');
@@ -631,7 +631,7 @@ class RobotApcController extends Controller
         ini_set('display_errors', 1);
         ini_set('display_startup_errors', 1);
         error_reporting(E_ALL);
-        $monitor = new MonitorFlujoController(0, "Robot Stock COMPLETO APC");
+        $monitor = new MonitorFlujoController(31, "Robot Stock COMPLETO APC");
 
         echo "Inicio de proceso";
         Log::channel('robots')->info('Inicio de proceso stock APC');
@@ -826,7 +826,7 @@ class RobotApcController extends Controller
 
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Reporte SKU APC");
+        $monitor = new MonitorFlujoController(31, "Robot Reporte SKU APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/stk/dms_sku_kardex/ShowDms_SKU_Inventario_ValorizadoProcesosTable.aspx';
 
@@ -892,7 +892,7 @@ class RobotApcController extends Controller
 
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Repuestos APC");
+        $monitor = new MonitorFlujoController(31, "Robot Repuestos APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/srv/dms_Calendario_Taller/ShowDms_SRV_InformeRepuestosEnProceso_TempTable.aspx';
         // Login
@@ -955,7 +955,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Movimiento Ventas APC");
+        $monitor = new MonitorFlujoController(31, "Robot Movimiento Ventas APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/stk/Dms_SKU_ConsultaMovimientoVentas/ShowDms_SKU_ConsultaMovimientoVentasTable.aspx';
 
@@ -1020,7 +1020,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Rentabilidad OT APC");
+        $monitor = new MonitorFlujoController(31, "Robot Rentabilidad OT APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/srv/Gestion/ShowDms_OT_RentabilidadFacturadasTable.aspx';
 
@@ -1086,7 +1086,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Rentabilidad SKU APC");
+        $monitor = new MonitorFlujoController(31, "Robot Rentabilidad SKU APC");
 
 
         $url = 'https://appspsa-cl.autoprocloud.com/srv/dms_ot_rentabilidad/showdms_ot_rentabilidad_skutable.aspx';
@@ -1152,7 +1152,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Informe OT APC");
+        $monitor = new MonitorFlujoController(31, "Robot Informe OT APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/srv/Gestion/ShowDms_OT_InformeOTTable.aspx';
 
@@ -1236,7 +1236,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Informe OT 2 dias APC");
+        $monitor = new MonitorFlujoController(31, "Robot Informe OT 2 dias APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/srv/Gestion/ShowDms_OT_InformeOTTable.aspx';
 
@@ -1308,7 +1308,7 @@ class RobotApcController extends Controller
     {
         set_time_limit(0);
         $this->setCookie();
-        $monitor = new MonitorFlujoController(0, "Robot Ventas APC");
+        $monitor = new MonitorFlujoController(31, "Robot Ventas APC");
 
         $url = 'https://appspsa-cl.autoprocloud.com/ftc/dms_gestion/rentabilidad_repuestos_detalle.aspx';
 

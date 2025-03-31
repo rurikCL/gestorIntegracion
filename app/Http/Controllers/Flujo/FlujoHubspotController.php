@@ -35,14 +35,12 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $monitor = new MonitorFlujoController($flujo->ID, "Leads Hubspot");
 
         if ($flujo->Activo) {
 
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
 
-            $monitor->registrarInicio();
 
             // FILTROS   -----------------------------------------------------
             $filter1 = new FilterDeal([
@@ -268,12 +266,12 @@ class FlujoHubspotController extends Controller
                     }
                 }
 
-                $monitor->registrarFin();
                 Log::info("Flujo OK");
                 return true;
 
             } catch (ApiException $e) {
                 echo "Exception when calling basic_api->get_page: ", $e->getMessage();
+                $monitor = new MonitorFlujoController($flujo->ID, "Leads Hubspot");
                 $monitor->registrarError($e->getMessage());
                 return false;
             }
@@ -371,10 +369,8 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Actualizacion Deals Hubspot (etapa / estado)");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $monitor = new MonitorFlujoController($flujo->ID,"Actualizacion Deals Hubspot");
 
         if ($flujo->Activo) {
-            $monitor->registrarInicio();
 
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
@@ -426,6 +422,7 @@ class FlujoHubspotController extends Controller
                             Log::error("Error al actualizar deal hubspot " . $lead->IDHubspot . " " . $e->getMessage());
                             $lead->LogEstado = 2;
                             $lead->save();
+                            $monitor = new MonitorFlujoController($flujo->ID,"Actualizacion Deals Hubspot");
                             $monitor->registrarError();
                         }
                     }
@@ -434,8 +431,6 @@ class FlujoHubspotController extends Controller
             } else {
                 Log::info("No hay leads para actualizar");
             }
-
-            $monitor->registrarFin();
 
         }
     }
@@ -752,7 +747,6 @@ class FlujoHubspotController extends Controller
         $token = json_decode($flujo->Opciones);
         $client = Factory::createWithAccessToken($token->token);
         $h = new FLU_Homologacion();
-        $monitor = new MonitorFlujoController($flujo->ID,"Sincronizacion Leads Roma");
 
         $emailsErroneos = [];
 
@@ -760,8 +754,6 @@ class FlujoHubspotController extends Controller
             ->where('FechaCreacion', '>', '2025-01-01 00:00:00')
             ->limit($flujo->MaxLote ?? 10)
             ->get();
-
-        $monitor->registrarInicio();
 
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
@@ -984,6 +976,5 @@ class FlujoHubspotController extends Controller
 
         }
 
-        $monitor->registrarFin();
     }
 }

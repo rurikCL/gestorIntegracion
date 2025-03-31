@@ -88,7 +88,8 @@ class FluFlujosResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
                 Tables\Columns\TextColumn::make('Nombre')
-                    ->description(fn(FLU_Flujos $record): string => $record->Descripcion),
+                    ->description(fn(FLU_Flujos $record): string => $record->Descripcion)
+                ->searchable(),
 //                Tables\Columns\TextColumn::make('Descripcion'),
                 Tables\Columns\TextColumn::make('Tipo'),
                 Tables\Columns\TextColumn::make('Trigger'),

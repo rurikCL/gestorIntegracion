@@ -877,6 +877,7 @@ class RobotApcController extends Controller
                 APC_Sku::truncate();
                 Excel::import(new ApcSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
                 unlink(storage_path('/app/public/' . $filename));
+
             }
             $monitor->registrarFin();
         } catch (\Exception $e) {

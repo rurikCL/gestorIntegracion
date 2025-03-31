@@ -65,6 +65,8 @@ class FLUMonitorResource extends Resource
                         'TERMINADO' => 'TERMINADO',
                         'ERROR' => 'ERROR',
                     ]),
+                Tables\Filters\SelectFilter::make('Accion')
+                ->options(fn() => FLU_Monitor::select('Accion')->distinct()->get()->pluck('Accion')->toArray()),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

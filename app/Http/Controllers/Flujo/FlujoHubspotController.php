@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\MonitorFlujo;
 use App\Mail\EmailsErroneos;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
@@ -34,12 +35,14 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+        $monitor = new MonitorFlujo($flujo->ID);
 
         if ($flujo->Activo) {
 
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
 
+            $monitor->registrarInicio('Leads Hubspot', 'INICIO');
 
             // FILTROS   -----------------------------------------------------
             $filter1 = new FilterDeal([
@@ -265,11 +268,13 @@ class FlujoHubspotController extends Controller
                     }
                 }
 
+                $monitor->registrarFin("Leads Hubspot");
                 Log::info("Flujo OK");
                 return true;
 
             } catch (ApiException $e) {
                 echo "Exception when calling basic_api->get_page: ", $e->getMessage();
+                $monitor->registrarFin("Leads Hubspot", "ERROR");
                 return false;
             }
 
@@ -366,8 +371,9 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Actualizacion Deals Hubspot (etapa / estado)");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-
+        $monitor = new MonitorFlujo($flujo->ID);
         if ($flujo->Activo) {
+            $monitor->registrarInicio("Actualizacion Deals Hubspot", "INICIO");
 
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
@@ -412,7 +418,6 @@ class FlujoHubspotController extends Controller
 
                             } else {
                                 Log::error("Hubo un problema al actualizar el estado" . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado . ")");
-
                             }
 
 
@@ -420,6 +425,7 @@ class FlujoHubspotController extends Controller
                             Log::error("Error al actualizar deal hubspot " . $lead->IDHubspot . " " . $e->getMessage());
                             $lead->LogEstado = 2;
                             $lead->save();
+                            $monitor->registrarFin("Actualizacion Deals Hubspot", "ERROR");
                         }
                     }
 
@@ -427,6 +433,8 @@ class FlujoHubspotController extends Controller
             } else {
                 Log::info("No hay leads para actualizar");
             }
+
+            $monitor->registrarFin("Actualizacion Deals Hubspot");
 
         }
     }

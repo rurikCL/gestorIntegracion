@@ -24,8 +24,7 @@ class MonitorFlujoController extends Controller
 
     public function registrarInicio($estado = 'INICIO')
     {
-        if ($this->id) {
-
+        if (!$this->id) {
             $monitor = new FLU_Monitor();
             $monitor->FlujoID = $this->FlujoID;
             $monitor->Accion = $this->accion;

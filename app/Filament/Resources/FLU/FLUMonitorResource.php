@@ -51,7 +51,10 @@ class FLUMonitorResource extends Resource
                 Tables\Columns\TextColumn::make('Mensaje'),
                 Tables\Columns\TextColumn::make('FechaInicio'),
                 Tables\Columns\TextColumn::make('FechaTermino'),
-                Tables\Columns\TextColumn::make('Duracion'),
+                Tables\Columns\TextColumn::make('Duracion')
+                    ->format(function ($value) {
+                    return gmdate("H:i:s", $value);
+                }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('FlujoID')

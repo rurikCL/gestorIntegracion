@@ -23,6 +23,6 @@ class FLU_Monitor extends Model
     ];
 
     public function flujo(){
-        return $this->belongsTo(FLU_Flujos::class, 'FlujoID', 'id');
+        return $this->belongsTo(FLU_Flujos::class, 'FlujoID', 'ID');
     }
 }

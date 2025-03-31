@@ -426,7 +426,7 @@ class FlujoHubspotController extends Controller
                             Log::error("Error al actualizar deal hubspot " . $lead->IDHubspot . " " . $e->getMessage());
                             $lead->LogEstado = 2;
                             $lead->save();
-                            $monitor->registrarFin("Actualizacion Deals Hubspot", "ERROR");
+                            $monitor->registrarError();
                         }
                     }
 
@@ -435,7 +435,7 @@ class FlujoHubspotController extends Controller
                 Log::info("No hay leads para actualizar");
             }
 
-            $monitor->registrarFin("Actualizacion Deals Hubspot");
+            $monitor->registrarFin();
 
         }
     }

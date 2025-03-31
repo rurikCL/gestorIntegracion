@@ -35,14 +35,14 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $monitor = new MonitorFlujo($flujo->ID);
+        $monitor = new MonitorFlujo($flujo->ID, "Leads Hubspot");
 
         if ($flujo->Activo) {
 
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
 
-            $monitor->registrarInicio('Leads Hubspot', 'INICIO');
+            $monitor->registrarInicio();
 
             // FILTROS   -----------------------------------------------------
             $filter1 = new FilterDeal([
@@ -268,13 +268,13 @@ class FlujoHubspotController extends Controller
                     }
                 }
 
-                $monitor->registrarFin("Leads Hubspot");
+                $monitor->registrarFin();
                 Log::info("Flujo OK");
                 return true;
 
             } catch (ApiException $e) {
                 echo "Exception when calling basic_api->get_page: ", $e->getMessage();
-                $monitor->registrarFin("Leads Hubspot", "ERROR");
+                $monitor->registrarError($e->getMessage());
                 return false;
             }
 
@@ -371,9 +371,10 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Actualizacion Deals Hubspot (etapa / estado)");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $monitor = new MonitorFlujo($flujo->ID);
+        $monitor = new MonitorFlujo($flujo->ID,"Actualizacion Deals Hubspot");
+
         if ($flujo->Activo) {
-            $monitor->registrarInicio("Actualizacion Deals Hubspot", "INICIO");
+            $monitor->registrarInicio();
 
             $token = json_decode($flujo->Opciones);
             $client = Factory::createWithAccessToken($token->token);
@@ -751,6 +752,7 @@ class FlujoHubspotController extends Controller
         $token = json_decode($flujo->Opciones);
         $client = Factory::createWithAccessToken($token->token);
         $h = new FLU_Homologacion();
+        $monitor = new MonitorFlujo($flujo->ID,"Sincronizacion Leads Roma");
 
         $emailsErroneos = [];
 
@@ -758,6 +760,8 @@ class FlujoHubspotController extends Controller
             ->where('FechaCreacion', '>', '2025-01-01 00:00:00')
             ->limit($flujo->MaxLote ?? 10)
             ->get();
+
+        $monitor->registrarInicio();
 
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
@@ -979,5 +983,7 @@ class FlujoHubspotController extends Controller
             }
 
         }
+
+        $monitor->registrarFin();
     }
 }

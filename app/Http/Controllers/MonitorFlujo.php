@@ -10,16 +10,19 @@ class MonitorFlujo extends Controller
 
     private $id;
     private $FlujoID;
-    public function __construct($FlujoID)
+    private $accion;
+
+    public function __construct($FlujoID, $accion = "")
     {
         $this->FlujoID = $FlujoID;
+        $this->accion = $accion;
     }
 
-    public function registrarInicio($accion, $estado = 'INICIO')
+    public function registrarInicio($estado = 'INICIO')
     {
         $monitor = new FLU_Monitor();
         $monitor->FlujoID = $this->FlujoID;
-        $monitor->Accion = $accion;
+        $monitor->Accion = $this->accion;
         $monitor->Estado = $estado;
         $monitor->FechaInicio = date("Y-m-d H:i:s");
         $monitor->save();
@@ -28,10 +31,31 @@ class MonitorFlujo extends Controller
         return $monitor->id;
     }
 
+    public function setMessage($mensaje){
+        $monitor = FLU_Monitor::where('id', $this->id)->first();
+        $monitor->Mensaje = $mensaje;
+        $monitor->save();
+    }
 
-    public function registrarFin($accion, $estado = 'TERMINADO'){
+    public function setAction($accion){
+        $monitor = FLU_Monitor::where('id', $this->id)->first();
+        $monitor->Accion = $accion;
+        $monitor->save();
+    }
+
+
+    public function registrarFin($estado = 'TERMINADO'){
         $monitor = FLU_Monitor::where('id', $this->id)->first();
         $monitor->Estado = $estado;
+        $monitor->FechaTermino = date("Y-m-d H:i:s");
+        $monitor->Duracion = strtotime($monitor->FechaTermino) - strtotime($monitor->FechaInicio);
+        $monitor->save();
+    }
+
+    public function registrarError($mensaje = "Error"){
+        $monitor = FLU_Monitor::where('id', $this->id)->first();
+        $monitor->Estado = 'ERROR';
+        $monitor->Mensaje = $mensaje;
         $monitor->FechaTermino = date("Y-m-d H:i:s");
         $monitor->Duracion = strtotime($monitor->FechaTermino) - strtotime($monitor->FechaInicio);
         $monitor->save();

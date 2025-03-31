@@ -53,6 +53,7 @@ class FLUMonitorResource extends Resource
                 Tables\Columns\TextColumn::make('FechaTermino'),
                 Tables\Columns\TextColumn::make('Duracion')->suffix(" seg"),
             ])
+            ->defaultSort('FechaInicio', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('FlujoID')
                     ->label("Flujo")

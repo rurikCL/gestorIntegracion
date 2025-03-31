@@ -51,7 +51,7 @@ class FLUMonitorResource extends Resource
                 Tables\Columns\TextColumn::make('Mensaje'),
                 Tables\Columns\TextColumn::make('FechaInicio'),
                 Tables\Columns\TextColumn::make('FechaTermino'),
-                Tables\Columns\TextColumn::make('Duracion')->suffix("seg"),
+                Tables\Columns\TextColumn::make('Duracion')->suffix(" seg"),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('FlujoID')

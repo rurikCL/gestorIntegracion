@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\MonitorError;
 use App\Models\FLU_Monitor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
-class MonitorFlujo extends Controller
+class MonitorFlujoController extends Controller
 {
 
     private $id;
@@ -59,5 +61,8 @@ class MonitorFlujo extends Controller
         $monitor->FechaTermino = date("Y-m-d H:i:s");
         $monitor->Duracion = strtotime($monitor->FechaTermino) - strtotime($monitor->FechaInicio);
         $monitor->save();
+
+        Mail::to('cristian.fuentealba@pompeyo.cl')->cc(['rodrigo.larrain@pompeyo.cl', 'rurik.neologik@gmail.com'])
+            ->send(new MonitorError($monitor));
     }
 }

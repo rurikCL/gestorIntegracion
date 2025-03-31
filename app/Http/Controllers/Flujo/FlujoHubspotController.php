@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Flujo;
 
 use App\Http\Controllers\Api\LeadController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\MonitorFlujo;
+use App\Http\Controllers\MonitorFlujoController;
 use App\Mail\EmailsErroneos;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
@@ -35,7 +35,7 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $monitor = new MonitorFlujo($flujo->ID, "Leads Hubspot");
+        $monitor = new MonitorFlujoController($flujo->ID, "Leads Hubspot");
 
         if ($flujo->Activo) {
 
@@ -371,7 +371,7 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Actualizacion Deals Hubspot (etapa / estado)");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $monitor = new MonitorFlujo($flujo->ID,"Actualizacion Deals Hubspot");
+        $monitor = new MonitorFlujoController($flujo->ID,"Actualizacion Deals Hubspot");
 
         if ($flujo->Activo) {
             $monitor->registrarInicio();
@@ -752,7 +752,7 @@ class FlujoHubspotController extends Controller
         $token = json_decode($flujo->Opciones);
         $client = Factory::createWithAccessToken($token->token);
         $h = new FLU_Homologacion();
-        $monitor = new MonitorFlujo($flujo->ID,"Sincronizacion Leads Roma");
+        $monitor = new MonitorFlujoController($flujo->ID,"Sincronizacion Leads Roma");
 
         $emailsErroneos = [];
 

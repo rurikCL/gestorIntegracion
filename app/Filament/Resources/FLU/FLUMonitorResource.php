@@ -66,7 +66,7 @@ class FLUMonitorResource extends Resource
                         'ERROR' => 'ERROR',
                     ]),
                 Tables\Filters\SelectFilter::make('Accion')
-                ->options(fn() => FLU_Monitor::select('Accion')->distinct()->get()->pluck('Accion')->toArray()),
+                ->options(fn() => FLU_Monitor::select('Accion')->distinct()->get()->pluck('Accion', 'Accion')->toArray()),
             ], layout: FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

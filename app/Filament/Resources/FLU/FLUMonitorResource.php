@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class FLUMonitorResource extends Resource
 {
     protected static ?string $model = FLU_Monitor::class;
-    protected static ?string $navigationGroup = 'Flujos';
+    protected static ?string $navigationGroup = 'Orquestador API';
     protected static ?string $modelLabel = 'Monitor de Flujo';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

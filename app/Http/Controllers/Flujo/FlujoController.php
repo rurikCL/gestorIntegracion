@@ -673,7 +673,7 @@ class FlujoController extends Controller
         Log::info("Inicio de flujo MG Leads");
 
         $flujo = FLU_Flujos::where('Nombre', 'MG')->first();
-        $idMarca = MA_Marcas::where('Nombre', 'MG')->first()->ID;
+        $idMarca = MA_Marcas::where('Marca', 'MG')->first()->ID;
 
         if ($flujo->Activo) {
             $h = new FLU_Homologacion();
@@ -843,7 +843,7 @@ class FlujoController extends Controller
         Log::info("Inicio de flujo MG Cotizaciones");
 
         $flujo = FLU_Flujos::where('Nombre', 'MG')->first();
-        $idMarca = MA_Marcas::where('Nombre', 'MG')->first()->ID;
+        $idMarca = MA_Marcas::where('Marca', 'MG')->first()->ID;
 
         if ($flujo->Activo) {
             $h = new FLU_Homologacion();

@@ -77,10 +77,7 @@ class MASucursalesResource extends Resource
                                                 ->relationship('usuarios', 'Nombre')
                                                 ->searchable()
                                                 ->label('Aprobador'),
-                                            Forms\Components\Select::make('replacement_id')
-                                                ->relationship('reemplazo', 'Nombre')
-                                                ->searchable()
-                                                ->label('Reemplazo'),
+
                                         ])
                                         ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
                                             $data['branchOffice_id'] = $get('ID');
@@ -133,9 +130,6 @@ class MASucursalesResource extends Resource
                                                 ]),
                                             Forms\Components\Select::make('user_id')
                                                 ->relationship('usuarios', 'Nombre')
-                                                ->searchable(),
-                                            Forms\Components\Select::make('replacement_id')
-                                                ->relationship('reemplazo', 'Nombre')
                                                 ->searchable(),
                                            /* Forms\Components\Toggle::make('active')
                                                 ->label('Activo')

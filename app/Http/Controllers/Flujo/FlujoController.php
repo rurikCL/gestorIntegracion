@@ -673,6 +673,7 @@ class FlujoController extends Controller
         Log::info("Inicio de flujo MG Leads");
 
         $flujo = FLU_Flujos::where('Nombre', 'MG')->first();
+        $idMarca = MA_Marcas::where('Nombre', 'MG')->first()->ID;
 
         if ($flujo->Activo) {
             $h = new FLU_Homologacion();
@@ -747,10 +748,10 @@ class FlujoController extends Controller
             $solicitudCon = new ApiSolicitudController();
 
             $leads = MK_Leads::with('marca', 'modelo', 'version', 'estadoLead', 'cliente')
-                ->porMarca($flujo->Nombre)
-                ->Validado()
+                ->where('MarcaID', $idMarca)
+//                ->Validado()
                 ->NoNotificado($flujo->ID)
-                ->Desde(Carbon::now()->firstOfMonth()->format("Y-m-d"))
+                ->Desde(Carbon::now()->subDays(1)->format("Y-m-d"))
                 ->whereNull('IDExterno')
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();
@@ -842,6 +843,7 @@ class FlujoController extends Controller
         Log::info("Inicio de flujo MG Cotizaciones");
 
         $flujo = FLU_Flujos::where('Nombre', 'MG')->first();
+        $idMarca = MA_Marcas::where('Nombre', 'MG')->first()->ID;
 
         if ($flujo->Activo) {
             $h = new FLU_Homologacion();
@@ -916,10 +918,10 @@ class FlujoController extends Controller
             $solicitudCon = new ApiSolicitudController();
 
             $cotizaciones = VT_Cotizaciones::with('marca', 'modelo', 'version', 'estado', 'cliente')
-                ->porMarca($flujo->Nombre)
-                ->Validado()
+                ->where('MarcaID', $idMarca)
+//                ->Validado()
                 ->NoNotificado($flujo->ID)
-                ->Desde(Carbon::now()->firstOfMonth()->format('Y-m-d'))
+                ->Desde(Carbon::now()->subDays(1)->format('Y-m-d'))
                 ->where('EstadoID', 1)
                 ->limit($flujo->MaxLote ?? 5)
                 ->get();

@@ -3,7 +3,6 @@
 namespace App\Filament\Exports\MA;
 
 use App\Models\MA\MA_Modelos;
-use App\Models\MA\MAModelos;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;

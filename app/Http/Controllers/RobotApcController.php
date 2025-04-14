@@ -395,7 +395,7 @@ class RobotApcController extends Controller
                             'Fecha_Compra' => ($row['fecha_compra'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_compra'])->format('Y-m-d H:i:s') : null,
                             'Fecha_Vencto_Rev_tec' => ($row['fecha_vencto_revision_tecnica'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_vencto_revision_tecnica'])->format('Y-m-d H:i:s') : null,
                             'N_Propietarios' => $row['n_propietarios'],
-                            'Folio_Retoma' => $row['folio_retoma'],
+                            'Folio_Retoma' => is_numeric($row['folio_retoma']) ? $row['folio_retoma'] : null,
                             'Fecha_Retoma' => ($row['fecha_retoma'] != '') ? Carbon::createFromFormat("d-m-Y H:i:s", $row['fecha_retoma'])->format('Y-m-d H:i:s') : null,
                             'Dias_Reservado' => $row['dias_reservado'],
                             'Precio_Compra_Neto' => ($row['precio_compra_neto'] != '') ? $row['precio_compra_neto'] : null,

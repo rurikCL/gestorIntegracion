@@ -275,7 +275,7 @@ class RobotApcController extends Controller
         $this->setCookie();
 
         // Login
-        $viewstate = $this->login(2);
+        $viewstate = $this->login(2, 224);
         if ($viewstate) Log::channel('robots')->info('Login OK');
 
         $url = 'https://appspsa-cl.autoprocloud.com/vcl/Gestion/ShowDms_ConsultaStockTable.aspx';
@@ -1370,7 +1370,7 @@ class RobotApcController extends Controller
 
     }
 
-    public function login($modulo)
+    public function login($modulo, $empresa = 205)
     {
 
         // login al sistema, genera las cookies con codigo de usuario
@@ -1396,7 +1396,7 @@ class RobotApcController extends Controller
         $url = 'https://provider.autoprocloud.com/MC/home/mcHome.aspx/LogIn';
 
         $body = '{
-          "businessID": "205",
+          "businessID": "'.$empresa.'",
           "BranchID": "672",
           "ModuleID": "' . $modulo . '",
           "username": "rodrigo.larrain@pompeyo.cl"

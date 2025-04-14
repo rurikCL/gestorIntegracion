@@ -335,8 +335,6 @@ class RobotApcController extends Controller
             $numCell = 0;
             $numCol = 0;
 
-//            APC_Stock::truncate();
-
             foreach ($xml->value('s:Row')->get() as $cell) {
                 try {
 
@@ -417,7 +415,7 @@ class RobotApcController extends Controller
             }
 
         }
-//        unlink(storage_path('/app/public/' . $filename));
+        unlink(storage_path('/app/public/' . $filename));
         echo " Informe procesado";
         $monitor->registrarFin();
 

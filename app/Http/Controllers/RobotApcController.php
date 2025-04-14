@@ -403,7 +403,7 @@ class RobotApcController extends Controller
                             'Accesorios' => $row['accesorios'],
                             'Total_Costo' => ($row['total_costo'] != '') ? $row['total_costo'] : null,
                             'Precio_Lista' => ($row['precio_lista'] != '') ? $row['precio_lista'] : null,
-                            'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
+//                            'Margen' => ($row['margen'] != '') ? $row['margen'] : null,
 //            'Margen_porcentaje' => $row[46],
                         ]);
 //                            Log::channel('robots')->info("Procesando " . $row['numero_vin']);

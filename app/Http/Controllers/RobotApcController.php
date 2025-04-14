@@ -1288,7 +1288,7 @@ class RobotApcController extends Controller
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);

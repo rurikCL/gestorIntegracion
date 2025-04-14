@@ -65,8 +65,9 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
 
 
         $fechaIngreso = Carbon::parse(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[1]));
-        $tramo = intval((Carbon::now()->diffInDays($fechaIngreso) ?? 1) / 30);
-        echo $fechaIngreso. " : ". (Carbon::now()->diffInDays($fechaIngreso) ?? 1) . " = ". (intval((Carbon::now()->diffInDays($fechaIngreso) ?? 1) / 30)). "<br>";
+        $tramo = intval((Carbon::now()->diffInDays($fechaIngreso) ?? 1) / 30) + 1;
+
+        echo $fechaIngreso. " : ". (Carbon::now()->diffInDays($fechaIngreso) ?? 1) . " = ". (intval((Carbon::now()->diffInDays($fechaIngreso) ?? 1) / 30) + 1) . "<br>";
 
         $result = new APC_InformeOt([
             "Sucursal" => $row[0],

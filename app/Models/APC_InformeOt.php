@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use mysql_xdevapi\Table;
@@ -61,5 +63,13 @@ class APC_InformeOt extends Model
         'TipoComentario',
         'Anulado',
     ];
+
+
+    public function scopeActualizaTramos($query)
+    {
+        $query->update([
+            'Tramo' => intval((Carbon::now()->diffInDays($this->FechaIngreso) ?? 1) / 30) + 1
+        ]);
+    }
 
 }

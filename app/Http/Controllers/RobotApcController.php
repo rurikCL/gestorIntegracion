@@ -417,6 +417,7 @@ class RobotApcController extends Controller
         }
         unlink(storage_path('/app/public/' . $filename));
         echo " Informe procesado";
+        Log::channel('robots')->info("Informe procesado");
         $monitor->registrarFin();
 
         // Ejecucion de callback after

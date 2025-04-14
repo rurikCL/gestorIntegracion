@@ -1282,7 +1282,7 @@ class RobotApcController extends Controller
         $options['form_params'] = json_decode($filedata, true);
 //        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
 //        $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(1)->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$FechaFromFilter'] = Carbon::now()->subDays(2)->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$FechaToFilter'] = Carbon::now()->format('d-m-Y');
 
         $options['cookies'] = $this->cookieJar;

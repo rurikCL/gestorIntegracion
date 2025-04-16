@@ -68,7 +68,7 @@ class APC_InformeOt extends Model
     public function scopeUpdateTramo($query)
     {
         return $query->update([
-            'group' => DB::raw('FLOOR(DATEDIFF(CURRENT_DATE, FechaIngreso) / 30) + 1')
+            'Tramo' => DB::raw('FLOOR(DATEDIFF(CURRENT_DATE, FechaIngreso) / 30) + 1')
         ]);
     }
 }

@@ -57,8 +57,8 @@ class FlujoGeelyController extends Controller
             $req['data'] = [
                 "appId" => self::ACCESS_KEY,
                 "brandId" => "geely",
-                "startingTime" => Carbon::now()->subMinutes(30)->getTimestampMs(),
-//                "startingTime" => Carbon::createFromFormat("Y-m-d","2025-03-01")->getTimestampMs(),
+//                "startingTime" => Carbon::now()->subMinutes(30)->getTimestampMs(),
+                "startingTime" => Carbon::createFromFormat("Y-m-d","2025-03-01")->getTimestampMs(),
                 "endingTime" => Carbon::now()->getTimestampMs(),
                 "pageNum" => $numPage,
                 "pageSize" => 50

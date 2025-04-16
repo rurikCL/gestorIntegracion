@@ -118,6 +118,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         if($result){
             $this->contadorRegistro++;
         }
+
         return $result;
 
     }

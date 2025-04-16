@@ -9,6 +9,7 @@ use App\Imports\ApcRentabilidadVentasImport;
 use App\Imports\ApcRepuestosImport;
 use App\Imports\ApcSkuImport;
 use App\Imports\ApcStockImport;
+use App\Models\APC_InformeOt;
 use App\Models\APC_MovimientoVentas;
 use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
@@ -1223,6 +1224,11 @@ class RobotApcController extends Controller
 
         if ($res) {
             Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+
+            // Actualiza el tramo de los registros
+            APC_InformeOt::UpdateTramo();
+
+            // Elimina el archivo descargado
             unlink(storage_path('/app/public/' . $filename));
 
         }
@@ -1297,6 +1303,11 @@ class RobotApcController extends Controller
 
         if ($res) {
             Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+
+            // Actualiza el tramo de los registros
+            APC_InformeOt::UpdateTramo();
+
+            // Elimina el archivo descargado
             unlink(storage_path('/app/public/' . $filename));
 
         }

@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use mysql_xdevapi\Table;
 
 class APC_InformeOt extends Model
@@ -64,12 +65,10 @@ class APC_InformeOt extends Model
         'Anulado',
     ];
 
-
-    public function scopeActualizaTramos($query)
+    public function scopeUpdateTramo($query)
     {
-        $query->update([
-            'Tramo' => intval((Carbon::now()->diffInDays($this->FechaIngreso) ?? 1) / 30) + 1
+        return $query->update([
+            'group' => DB::raw('FLOOR(DATEDIFF(CURRENT_DATE, FechaIngreso) / 30) + 1')
         ]);
     }
-
 }

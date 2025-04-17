@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
+use mysql_xdevapi\Exception;
 use Saloon\XmlWrangler\Exceptions\XmlReaderException;
 use Saloon\XmlWrangler\XmlReader;
 use SimpleXMLElement;
@@ -1302,14 +1303,19 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-            Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            try{
+                Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
 
-            // Actualiza el tramo de los registros
-            APC_InformeOt::UpdateTramo();
+                // Actualiza el tramo de los registros
+                APC_InformeOt::UpdateTramo();
 
-            // Elimina el archivo descargado
-            unlink(storage_path('/app/public/' . $filename));
-
+                // Elimina el archivo descargado
+                unlink(storage_path('/app/public/' . $filename));
+            }catch (Exception $e){
+                Log::error($e);
+                $monitor->registrarError();
+                unlink(storage_path('/app/public/' . $filename));
+            }
         }
         $monitor->registrarFin();
 

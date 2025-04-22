@@ -66,4 +66,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/log/evento', [Logger::class, 'logEvento']);
 
+    Route::post('/action', [\App\Http\Controllers\Api\RomaController::class, 'index']);
+
 });

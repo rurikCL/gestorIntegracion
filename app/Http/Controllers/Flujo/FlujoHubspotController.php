@@ -424,6 +424,7 @@ class FlujoHubspotController extends Controller
                             $lead->save();
                             $monitor = new MonitorFlujoController($flujo->ID,"Actualizacion Deals Hubspot");
                             $monitor->registrarError($e->getMessage());
+                            continue;
                         }
                     }
 

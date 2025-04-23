@@ -20,7 +20,7 @@ class RCCashesResource extends Resource
     protected static ?string $model = RC_cashes::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Caja Chica';
+    protected static ?string $navigationGroup = 'Contabilidad';
     protected static ?string $modelLabel = 'Solicitud Caja Chica';
     protected static ?string $navigationLabel = 'Solicitudes Caja Chica';
     protected static ?string $pluralLabel = 'Solicitudes Caja Chica';

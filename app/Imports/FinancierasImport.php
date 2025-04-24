@@ -138,7 +138,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
 
                 }
 
-                $vendedorExcel = $record['vendedorid'];
+                $vendedorExcel = $record['idvendedor'];
                 $sucursalExcel = $record['idsucursal'];
 
 
@@ -275,7 +275,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                 })
                     ->where('MarcaID', $record['idmarca'])
                     ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['vendedorid'])
+                    ->where('VendedorID', $record['idvendedor'])
                     ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
 
                 if ($RutMarcaSucursalVendedor > 0) {
@@ -290,7 +290,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                 })
                     ->where('MarcaID', $record['idmarca'])
                     ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['vendedorid'])
+                    ->where('VendedorID', $record['idvendedor'])
                     ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->get();
                 if ($ActualizaCot) {
                     $varIDSolCredito->RutMarcaSucursal = 1;// ??
@@ -304,7 +304,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                 })
                     ->where('MarcaID', $record['idmarca'])
                     ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['vendedorid'])
+                    ->where('VendedorID', $record['idvendedor'])
                     ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
                 if ($RutMarcaSucursalVendedor) {
                     $varIDSolCredito->RutMarcaSucursalVendedor = 1;
@@ -317,7 +317,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     $query->where('Rut', $rutLimpio);
                 })
                     ->where('MarcaID', $record['idmarca'])
-                    ->where('VendedorID', $record['vendedorid'])
+                    ->where('VendedorID', $record['idvendedor'])
                     ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
                 if ($RutMarcaVendedor) {
                     $varIDSolCredito->RutMarcaVendedor = 1;
@@ -335,7 +335,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                 })
                     ->where('MarcaID', $record['idmarca'])
                     ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['vendedorid'])
+                    ->where('VendedorID', $record['idvendedor'])
                     ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->get();
 
                 foreach ($ActualizaCot as $data) {

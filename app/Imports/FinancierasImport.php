@@ -225,7 +225,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     'MarcaID' => $record['idmarca'],
                     'ModeloID' => $record['idmodelo'],
 
-                    'VendedorID' => $record['vendedorid'], // agregar vendedor en excel (nuevo cruce)
+                    'VendedorID' => $record['idvendedor'], // agregar vendedor en excel (nuevo cruce)
                     'ClienteID' => $clienteID,
 
                     'Cargado' => 0,

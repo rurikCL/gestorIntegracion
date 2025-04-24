@@ -11,6 +11,7 @@ use App\Models\SIS\SIS_UsuariosSucursales;
 use App\Models\VT\VT_CotizacionesSolicitudesCredito;
 use App\Models\VT\VT_Cotizaciones;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -238,120 +239,129 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
 
                 ];
 
-                $varIDSolCredito = VT_CotizacionesSolicitudesCredito::create($registro);
-                $varIDSolCredito->fresh();
-//                dd($varIDSolCredito);
+                try {
+                    $varIDSolCredito = VT_CotizacionesSolicitudesCredito::create($registro);
+                    $varIDSolCredito->fresh();
+
+                    $CountSucursal = SIS_UsuariosSucursales::where('Activo', 1)->where('UsuarioID', $vendedorExcel)->where('SucursalID', $sucursalExcel)->count();
+                    if ($CountSucursal > 0) {
+                        $varIDSolCredito->VendedorEnSucursal = 1;
+                    } else {
+                        $varIDSolCredito->VendedorEnSucursal = 0;
+                    }
 
 
-                $CountSucursal = SIS_UsuariosSucursales::where('Activo', 1)->where('UsuarioID', $vendedorExcel)->where('SucursalID', $sucursalExcel)->count();
-                if ($CountSucursal > 0) {
-                    $varIDSolCredito->VendedorEnSucursal = 1;
-                } else {
-                    $varIDSolCredito->VendedorEnSucursal = 0;
+                    $RutMarca = VT_Cotizaciones::where('ClienteID', $clienteID)
+                        ->where('MarcaID', $record['idmarca'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
+                    if ($RutMarca > 0) {
+                        $varIDSolCredito->RutMarca = 1;
+                    } else {
+                        $varIDSolCredito->RutMarca = 0;
+                    }
+
+                    $RutMarcaSucursal = VT_Cotizaciones::where('ClienteID', $clienteID)
+                        ->where('MarcaID', $record['idmarca'])
+                        ->where('SucursalID', $record['idsucursal'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
+                    if ($RutMarcaSucursal > 0) {
+                        $varIDSolCredito->RutMarcaSucursal = 1;
+                    } else {
+                        $varIDSolCredito->RutMarcaSucursal = 0;
+                    }
+
+                    $RutMarcaSucursalVendedor = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
+                        $query->where('Rut', $rutLimpio);
+                    })
+                        ->where('MarcaID', $record['idmarca'])
+                        ->where('SucursalID', $record['idsucursal'])
+                        ->where('VendedorID', $record['idvendedor'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
+
+                    if ($RutMarcaSucursalVendedor > 0) {
+                        $varIDSolCredito->VendedorEnSucursal = 1;
+                    } else {
+                        $varIDSolCredito->VendedorEnSucursal = 0;
+                    }
+
+                    // --- ActualizaCot
+                    $ActualizaCot = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
+                        $query->where('Rut', $rutLimpio);
+                    })
+                        ->where('MarcaID', $record['idmarca'])
+                        ->where('SucursalID', $record['idsucursal'])
+                        ->where('VendedorID', $record['idvendedor'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->get();
+                    if ($ActualizaCot) {
+                        $varIDSolCredito->RutMarcaSucursal = 1;// ??
+                    } else {
+                        $varIDSolCredito->RutMarcaSucursal = 0;
+                    }
+
+
+                    $RutMarcaSucursalVendedor = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
+                        $query->where('Rut', $rutLimpio);
+                    })
+                        ->where('MarcaID', $record['idmarca'])
+                        ->where('SucursalID', $record['idsucursal'])
+                        ->where('VendedorID', $record['idvendedor'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
+                    if ($RutMarcaSucursalVendedor) {
+                        $varIDSolCredito->RutMarcaSucursalVendedor = 1;
+                        //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
+                    } else {
+                        $varIDSolCredito->RutMarcaSucursalVendedor = 0;
+                    }
+
+                    $RutMarcaVendedor = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
+                        $query->where('Rut', $rutLimpio);
+                    })
+                        ->where('MarcaID', $record['idmarca'])
+                        ->where('VendedorID', $record['idvendedor'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
+                    if ($RutMarcaVendedor) {
+                        $varIDSolCredito->RutMarcaVendedor = 1;
+                        //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
+                    } else {
+                        $varIDSolCredito->RutMarcaVendedor = 0;
+                    }
+
+                    // GUARDA los cambios
+                    $varIDSolCredito->save();
+
+
+                    $ActualizaCot = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
+                        $query->where('Rut', $rutLimpio);
+                    })
+                        ->where('MarcaID', $record['idmarca'])
+                        ->where('SucursalID', $record['idsucursal'])
+                        ->where('VendedorID', $record['idvendedor'])
+                        ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->get();
+
+                    foreach ($ActualizaCot as $data) {
+                        $data->EstadoID = $record['idestado'];
+                        $data->CotExterna = 1;
+                        $data->SolicitudCredito = 1;
+                        $data->FechaActualizacion = Carbon::now();
+                        $data->EventoActualizacionID = 126;
+                        $data->UsuarioActualizacionID = 791;
+                        $data->Bandera = 'A';
+
+                        Log::info("Actualizando Cotizacion : " . $data->ID);
+
+                        $data->save();
+                        //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
+                    }
+
+                } catch (Exception $e) {
+                    Log::error("Error en linea : " . $this->contadorRegistro . " " . $e->getMessage());
+                    $errores[] = [
+                        "message" => "Error al guardar registro",
+                        "record" => $registro,
+                        "error" => $e->getMessage()
+                    ];
                 }
 
-
-                $RutMarca = VT_Cotizaciones::where('ClienteID', $clienteID)
-                    ->where('MarcaID', $record['idmarca'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
-                if ($RutMarca > 0) {
-                    $varIDSolCredito->RutMarca = 1;
-                } else {
-                    $varIDSolCredito->RutMarca = 0;
-                }
-
-                $RutMarcaSucursal = VT_Cotizaciones::where('ClienteID', $clienteID)
-                    ->where('MarcaID', $record['idmarca'])
-                    ->where('SucursalID', $record['idsucursal'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
-                if ($RutMarcaSucursal > 0) {
-                    $varIDSolCredito->RutMarcaSucursal = 1;
-                } else {
-                    $varIDSolCredito->RutMarcaSucursal = 0;
-                }
-
-                $RutMarcaSucursalVendedor = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
-                    $query->where('Rut', $rutLimpio);
-                })
-                    ->where('MarcaID', $record['idmarca'])
-                    ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['idvendedor'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
-
-                if ($RutMarcaSucursalVendedor > 0) {
-                    $varIDSolCredito->VendedorEnSucursal = 1;
-                } else {
-                    $varIDSolCredito->VendedorEnSucursal = 0;
-                }
-
-                // --- ActualizaCot
-                $ActualizaCot = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
-                    $query->where('Rut', $rutLimpio);
-                })
-                    ->where('MarcaID', $record['idmarca'])
-                    ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['idvendedor'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->get();
-                if ($ActualizaCot) {
-                    $varIDSolCredito->RutMarcaSucursal = 1;// ??
-                } else {
-                    $varIDSolCredito->RutMarcaSucursal = 0;
-                }
-
-
-                $RutMarcaSucursalVendedor = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
-                    $query->where('Rut', $rutLimpio);
-                })
-                    ->where('MarcaID', $record['idmarca'])
-                    ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['idvendedor'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
-                if ($RutMarcaSucursalVendedor) {
-                    $varIDSolCredito->RutMarcaSucursalVendedor = 1;
-                    //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
-                } else {
-                    $varIDSolCredito->RutMarcaSucursalVendedor = 0;
-                }
-
-                $RutMarcaVendedor = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
-                    $query->where('Rut', $rutLimpio);
-                })
-                    ->where('MarcaID', $record['idmarca'])
-                    ->where('VendedorID', $record['idvendedor'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->count();
-                if ($RutMarcaVendedor) {
-                    $varIDSolCredito->RutMarcaVendedor = 1;
-                    //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
-                } else {
-                    $varIDSolCredito->RutMarcaVendedor = 0;
-                }
-
-                // GUARDA los cambios
-                $varIDSolCredito->save();
-
-
-                $ActualizaCot = VT_Cotizaciones::whereHas('cliente', function ($query) use ($rutLimpio) {
-                    $query->where('Rut', $rutLimpio);
-                })
-                    ->where('MarcaID', $record['idmarca'])
-                    ->where('SucursalID', $record['idsucursal'])
-                    ->where('VendedorID', $record['idvendedor'])
-                    ->whereBetween('FechaCotizacion', [$this->fecha_inicio, $this->fecha_fin])->get();
-
-                foreach ($ActualizaCot as $data) {
-                    $data->EstadoID = $record['idestado'];
-                    $data->CotExterna = 1;
-                    $data->SolicitudCredito = 1;
-                    $data->FechaActualizacion = Carbon::now();
-                    $data->EventoActualizacionID = 126;
-                    $data->UsuarioActualizacionID = 791;
-                    $data->Bandera = 'A';
-
-                    Log::info("Actualizando Cotizacion : " . $data->ID);
-
-                    $data->save();
-                    //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);
-                }
 
 
                 //  VT_CotizacionesSolicitudesCredito::where('RutCliente',$RutMarca(0)->Rut)->where('MarcaID',$RutMarca(0)->MarcaID)->update(['RutMarca'=>1]);

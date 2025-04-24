@@ -257,7 +257,7 @@ class FlujoCargaController extends Controller
 
         } catch (\Exception $e) {
             Log::error("Error al importar financieras : " . $e->getMessage());
-            $carga->Estado = 1;
+            $carga->Estado = 3;
             $carga->save();
         }
 

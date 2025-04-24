@@ -20,9 +20,11 @@ use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithConditionalSheets;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 
-class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRow
+class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRow, WithMultipleSheets
 {
     private $carga = null;
     private $contadorRegistro = 0;
@@ -409,5 +411,12 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
     function batchSize(): int
     {
         return 1000;
+    }
+
+    public function sheets(): array
+    {
+        return [
+            0 => $this,
+        ];
     }
 }

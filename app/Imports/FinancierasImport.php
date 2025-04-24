@@ -360,6 +360,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                         "record" => $registro,
                         "error" => $e->getMessage()
                     ];
+                    continue;
                 }
 
 

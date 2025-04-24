@@ -234,7 +234,7 @@ class FinancierasImport implements ToCollection, WithBatchInserts, WithHeadingRo
                     'OrigenID' => $origenid,
                     'SubOrigenID' => $suborigenid,
 
-                    'Concat' => $rutLimpio . $record['idsucursal'] . $record['vendedorid'] . $record['idmodelo'],
+                    'Concat' => $rutLimpio . $record['idsucursal'] . $record['idvendedor'] . $record['idmodelo'],
 
                 ];
 

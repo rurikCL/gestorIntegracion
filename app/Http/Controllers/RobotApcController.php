@@ -873,7 +873,7 @@ class RobotApcController extends Controller
             $res = $this->client->sendAsync($request, $options)->wait();
         }
 
-        try{
+        try {
             if ($res) {
                 APC_Sku::truncate();
                 Excel::import(new ApcSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
@@ -1268,8 +1268,6 @@ class RobotApcController extends Controller
         ];
 
         $filename = 'informeOTAcotado.xls';
-        // elimina el archivo anterior... al ser acotado, no es necesario mantenerlo
-        unlink(storage_path('/app/public/' . $filename));
 
 //        $filebase = Storage::get('public/viewstates/informeOtSemanalBase.json');
 //        $filedata = Storage::get('public/viewstates/informeOtSemanal.json');
@@ -1299,14 +1297,16 @@ class RobotApcController extends Controller
         $options['sink'] = storage_path('/app/public/' . $filename);
 
         if (file_exists(storage_path('/app/public/' . $filename))) {
-            $res = true;
-        } else {
-            $request = new Request('POST', $url, $headers);
-            $res = $this->client->sendAsync($request, $options)->wait();
+            // elimina el archivo anterior... al ser acotado, no es necesario mantenerlo
+            unlink(storage_path('/app/public/' . $filename));
         }
 
+        $request = new Request('POST', $url, $headers);
+        $res = $this->client->sendAsync($request, $options)->wait();
+
+
         if ($res) {
-            try{
+            try {
                 Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
 
                 // Actualiza el tramo de los registros
@@ -1314,7 +1314,7 @@ class RobotApcController extends Controller
 
                 // Elimina el archivo descargado
                 unlink(storage_path('/app/public/' . $filename));
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 Log::error($e);
                 $monitor->registrarError();
                 unlink(storage_path('/app/public/' . $filename));
@@ -1415,7 +1415,7 @@ class RobotApcController extends Controller
         $url = 'https://provider.autoprocloud.com/MC/home/mcHome.aspx/LogIn';
 
         $body = '{
-          "businessID": "'.$empresa.'",
+          "businessID": "' . $empresa . '",
           "BranchID": "672",
           "ModuleID": "' . $modulo . '",
           "username": "rodrigo.larrain@pompeyo.cl"

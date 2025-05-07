@@ -11,15 +11,21 @@ use App\Imports\ApcSkuImport;
 use App\Imports\ApcStockImport;
 use App\Models\APC_InformeOt;
 use App\Models\APC_MovimientoVentas;
+use App\Models\APC_RentabilidadOt;
+use App\Models\APC_RentabilidadSku;
 use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
+use App\Models\Api\ApiSolicitudes;
+use App\Models\FLU\FLU_Flujos;
+use App\Models\FLU\FLU_Notificaciones;
 use App\Models\MA\MA_Sucursales;
 use App\Models\TDP_ApcStock;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -1082,6 +1088,151 @@ class RobotApcController extends Controller
         }
         $monitor->registrarFin();
 
+    }
+
+    public function traeRentabilidadOTDMS()
+    {
+        echo "Ejecutando Flujo Rentabilidad OT APC <br>";
+        Log::info("Inicio flujo Rentabilidad OT APC");
+
+        $flujo = FLU_Flujos::where('Nombre', 'APC DMS')->first();
+
+        if ($flujo->Activo) {
+            echo ". . . <br>";
+
+            $solicitudCon = new ApiSolicitudController();
+
+            $referencia = $flujo->ID . date("ymdh");
+
+            $req = new Request();
+            $req['referencia_id'] = $referencia;
+            $req['proveedor_id'] = 11;
+            $req['api_id'] = 38;
+            $req['prioridad'] = 1;
+            $req['flujoID'] = $flujo->ID;
+            $req['OnDemand'] = true;
+            $req['data'] = 'From=' . Carbon::now()->subDays(5)->format('Y-m-d');
+
+            $resp = $solicitudCon->store($req);
+            $resp = $resp->getData();
+
+            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+
+            if (substr($solicitud->Respuesta, 0, 4) == 'file') {
+                $nombre = substr($solicitud->Respuesta, 5, strlen($solicitud->Respuesta));
+                Log::info("Archivo json Rentabilidad generado " . $nombre);
+
+                $arrayData = json_decode(Storage::get($nombre), true);
+            } else {
+                $arrayData = json_decode($solicitud->Respuesta, true);
+            }
+
+
+            $registros = 0;
+            $registrosErroneos = 0;
+//            Log::info("Datos a procesar : " . count($arrayData));
+            if ($arrayData) {
+                APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->subDay()->format('Y-m-d'))->delete();
+                echo "Datos a procesar : " . count($arrayData) . "<br>";
+            }
+            foreach ($arrayData as $data) {
+
+                try {
+                    $dataInsert = [
+                        'Sucursal' => $data["Sucursal"],
+                        'FechaFacturacion' => $data["Fecha Facturación"],
+                        'TipoDocumento' => $data["Tipo Documento"],
+                        'TipoTrabajoOT' => $data["Tipo Trabajo OT"],
+                        'Folio' => $data["Folio"],
+                        'FolioOT' => $data["Folio OT"],
+                        'FechaOT' => $data["Fecha OT"],
+                        'OTTipo' => $data["OT Tipo"],
+                        'OTSeccion' => $data["OT Seccion"],
+                        'ClienteOT' => $data["Cliente OT"],
+                        'ClienteRut' => $data["Cliente Rut"],
+                        'ClienteDireccion' => $data["Cliente Direccion"],
+                        'ClienteComuna' => $data["Cliente Comuna"],
+                        'ClienteCiudad' => $data["Cliente Ciudad"],
+                        'ClienteTelefonos' => $data["Cliente Telefonos"],
+                        'ClienteEmail' => $data["Cliente Email"],
+                        'TipoCargoServicio' => $data["Tipo Cargo Servicio"],
+                        'VentaMO' => $data["Venta Mano de Obra"],
+                        'CostoMO' => $data["Costo Mano de Obra"],
+                        'MargenMO' => $data["Margen Mano de Obra"],
+                        'MargenMOPorcentaje' => $data["% "],
+                        'TotalInsumos' => $data["Total Insumos"],
+                        'TotalSeguro' => $data["Total Seguro"],
+                        'VentaCarroceria' => $data["Venta Carrocería"],
+                        'CostoCarroceria' => $data["Costo Carrocería"],
+                        'MargenCarroceria' => $data["Margen Carrocería"],
+                        'MargenCarroceriaPorcentaje' => $data["Margen Carrocería %"],
+                        'VentaServicioTerceros' => $data["Venta Servicio Terceros"],
+                        'CostoServicioTerceros' => $data["Costo Servicio Terceros"],
+                        'MargenServicioTerceros' => $data["Margen Servicio Terceros"],
+                        'MargenTercerosPorcentaje' => $data["Margen Terceros %"],
+                        'VentaRepuestos' => $data["Venta Repuestos"],
+                        'CostoRepuestos' => $data["Costo Repuestos"],
+                        'MargenRepuestos' => $data["Margen Repuestos"],
+                        'MargenRepuestosPorcentaje' => ($data["%  "] < 0) ? $data["%  "] : 0,
+                        'TotalMaterialML' => $data["Total Material ML"],
+                        'CostoMaterialML' => $data["Costo Material ML"],
+                        'MargenMaterialML' => $data["Margen Material ML"],
+                        'MargenMaterialPje' => $data["Margen Material Pje"],
+                        'VentaLubricantes' => $data["Venta Lubricantes"],
+                        'CostoLubricantes' => $data["Costo Lubricantes"],
+                        'MargenLubricantes' => $data["Margen Lubricantes"],
+                        'MargenLubricantesPorcentaje' => $data["%   "],
+                        'TotalDeducible' => $data["Total Deducible"],
+                        'TotalVenta' => $data["Total Venta"],
+                        'TotalCosto' => $data["Total Costo"],
+                        'TotalMargen' => $data["Total Margen"],
+                        'TotalMargenPorcentaje' => ($data["%    "] <0) ? $data["%    "] : 0,
+                        'TotalNetoFacturado' => $data["Total Neto Facturado"],
+                        'Descuestos' => $data["Descuestos"],
+                        'ClienteNombre2' => $data["Cliente Nombre"],
+                        'ClienteRut2' => $data["Cliente Rut "],
+                        'ClienteDireccion2' => $data["Cliente Direccion "],
+                        'ClienteComuna2' => $data["Cliente Comuna "],
+                        'ClienteCiudad2' => $data["Cliente Ciudad "],
+                        'ClienteTelefonos2' => $data["Cliente Telefonos "],
+                        'ClienteEmail2' => $data["Cliente Email "],
+                        'Marca' => $data["Marca"],
+                        'Modelo' => $data["Modelo"],
+                        'NumeroVIN' => $data["Numero VIN"],
+                        'Chasis' => $data["Chasis"],
+                        'Patente' => $data["Patente"],
+                        'Kilometraje' => $data["Kilometraje"],
+                        'Mecanico' => $data["Mecanico"],
+                        'Recepcionista' => $data["Recepcionista"],
+                        'FolioGarantia' => ($data["Folio Garantia"] != '') ? $data["Folio Garantia"] : 0,
+                        'TipoMantención' => $data["Tipo Mantención"],
+                    ];
+
+                    APC_RentabilidadOt::create($dataInsert);
+
+                } catch (QueryException $e) {
+                    Log::error($e->getMessage());
+                    $registrosErroneos++;
+                    $errores[$registros+1] = $e->getMessage();
+                }
+                $registros++;
+
+            }
+
+
+            Log::info("Vehiculos procesados");
+
+            FLU_Notificaciones::Notificar($referencia, $flujo->ID);
+
+            echo("<br>" . ($resp->message ?? ''));
+            if($registrosErroneos) {
+                echo "<br>" .$registrosErroneos . " registros Erroneos";
+                dump($errores);
+            }
+            echo $registros . " registros guardados";
+
+
+        }
     }
 
     public function traeRentabilidadSku()

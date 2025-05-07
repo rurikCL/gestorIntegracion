@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class APC_RentabilidadOt extends Model
 {
-    protected $table = 'APC_MovimientoVentas';
+    protected $table = 'APC_RentabilidadOt';
     protected $primaryKey = 'id';
     public $timestamps = true;
     protected $fillable = [

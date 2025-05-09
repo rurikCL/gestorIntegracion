@@ -18,6 +18,7 @@ use App\Models\APC_Sku;
 use App\Models\APC_Stock;
 use App\Models\Api\ApiSolicitudes;
 use App\Models\FLU\FLU_Flujos;
+use App\Models\FLU\FLU_Homologacion;
 use App\Models\FLU\FLU_Notificaciones;
 use App\Models\MA\MA_Sucursales;
 use App\Models\TDP_ApcStock;
@@ -1096,6 +1097,8 @@ class RobotApcController extends Controller
         Log::info("Inicio flujo Rentabilidad OT APC");
 
         $flujo = FLU_Flujos::where('Nombre', 'APC DMS')->first();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
 
         if ($flujo->Activo) {
             echo ". . . <br>";
@@ -1136,6 +1139,9 @@ class RobotApcController extends Controller
                 echo "Datos a procesar : " . count($arrayData) . "<br>";
             }
             foreach ($arrayData as $data) {
+
+                $gerencia = $h->get('gerencia',$data["Sucursal"]);
+                $sucursal = $h->get('sucursal',$data["Sucursal"]);
 
                 try {
                     $dataInsert = [
@@ -1208,7 +1214,8 @@ class RobotApcController extends Controller
                         'TipoMantención' => $data["Tipo Mantención"],
                     ];
 
-                    APC_RentabilidadOt::create($dataInsert);
+                    $registro = APC_RentabilidadOt::create($dataInsert);
+                    $registro->Gerencia = $gerencia;
 
                 } catch (QueryException $e) {
                     Log::error($e->getMessage());

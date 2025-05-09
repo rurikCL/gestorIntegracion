@@ -16,6 +16,8 @@ class FLU_Homologacion extends Model
     protected $primaryKey = 'ID';
     public $timestamps = true;
 
+    private $idFlujo;
+
     public $fillable = [
         'FechaCreacion',
         'EventoCreacionID',
@@ -31,17 +33,46 @@ class FLU_Homologacion extends Model
         'Activo'
     ];
 
+    public function setFlujo($flujo)
+    {
+        $this->idFlujo = $flujo;
+    }
+    public function getFlujo()
+    {
+        return $this->idFlujo;
+    }
+
+
+    // RELACIONES ---------
     public function flujo()
     {
         return $this->belongsTo(FLU_Flujos::class, 'FlujoID', 'ID');
     }
 
-    public function scopeGetDato($query, $ID, $IDflujo, $codigo, $default='')
+
+    // SCOPES ----------------
+
+    public function scopeGet($query, $codigoHomologacion, $identificador, $default='')
+    {
+        $dato = $query->where('FlujoID', $this->idFlujo)
+            ->where('Activo', 1)
+            ->where('ValorIdentificador', $identificador)
+            ->where('CodHomologacion', $codigoHomologacion)
+            ->where('ValorRespuesta','<>','')
+            ->first();
+
+        if ($dato) {
+            return $dato->ValorRespuesta;
+        } else {
+            return $default;
+        }
+    }
+    public function scopeGetDato($query, $identificador, $IDflujo, $codigoHomologacion, $default='')
     {
         $dato = $query->where('FlujoID', $IDflujo)
             ->where('Activo', 1)
-            ->where('ValorIdentificador', $ID)
-            ->where('CodHomologacion', $codigo)
+            ->where('ValorIdentificador', $identificador)
+            ->where('CodHomologacion', $codigoHomologacion)
             ->where('ValorRespuesta','<>','')
             ->first();
 

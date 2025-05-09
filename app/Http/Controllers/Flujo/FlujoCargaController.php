@@ -13,6 +13,7 @@ use App\Imports\FinancierasImport;
 use App\Imports\MK_LeadsImport;
 use App\Imports\SalvinsImport;
 use App\Imports\SantanderImport;
+use App\Models\APC_InformeOt;
 use App\Models\APC_RentabilidadOt;
 use App\Models\APC_Stock;
 use App\Models\FLU\FLU_Cargas;
@@ -279,8 +280,12 @@ class FlujoCargaController extends Controller
 
         try {
             if ($fileName) {
-                $import = new ApcInformeOtImport($carga);
-                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
+//                $import = new ApcInformeOtImport($carga);
+//                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
+                Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $fileName), null, \Maatwebsite\Excel\Excel::XLS);
+
+                // Actualiza el tramo de los registros
+                APC_InformeOt::UpdateTramo();
             }
             $carga->fresh();
 //            $carga->RegistrosFallidos = count($import->failures() ?? []);

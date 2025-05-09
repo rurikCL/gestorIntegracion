@@ -286,7 +286,7 @@ class FlujoCargaController extends Controller
 //                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
                 $res = Excel::import($import, storage_path('/app/public/' . $fileName), null, \Maatwebsite\Excel\Excel::XLS);
 
-                dump($res->get());
+                dump($res);
                 if ($res) {
                     // Actualiza el tramo de los registros
                     APC_InformeOt::UpdateTramo();

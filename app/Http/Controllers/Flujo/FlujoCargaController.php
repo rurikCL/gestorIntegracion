@@ -292,7 +292,7 @@ class FlujoCargaController extends Controller
 
                     // paso final --------------------------------------------------
                     $carga->Estado = 2;
-                    $carga->RegistrosCargados = $import->getRegistrosCargados();
+//                    $carga->RegistrosCargados = $import->getRegistrosCargados();
                     $carga->RegistrosFallidos = $import->getRegistrosFallidos();
                     $carga->save();
                 } else {

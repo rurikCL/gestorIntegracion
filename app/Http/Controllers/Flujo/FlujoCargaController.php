@@ -285,7 +285,6 @@ class FlujoCargaController extends Controller
                 $import = new ApcInformeOtImport($carga);
 //                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
                 $res = Excel::import($import, storage_path('/app/public/' . $fileName), null, \Maatwebsite\Excel\Excel::XLS);
-                dump($res->toArray());
                 dump($import->toArray());
 
                 if ($res) {

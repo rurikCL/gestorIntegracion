@@ -133,10 +133,16 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         return 1000;
     }
 
-/*    public static function beforeImport(AfterImport $event)
+    public function afterImport(AfterImport $event)
     {
-
-    }*/
+        dump($event);
+        if ($this->carga) {
+            $this->carga->RegistrosCargados = $this->contadorRegistro;
+            $this->carga->RegistrosFallidos = $this->contErrores;
+            $this->carga->Estado = 'Procesado';
+            $this->carga->save();
+        }
+    }
 
     public function startRow(): int
     {

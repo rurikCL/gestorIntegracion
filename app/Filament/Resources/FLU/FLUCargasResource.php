@@ -34,11 +34,6 @@ class FLUCargasResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Archivo')
                     ->schema([
-                        Forms\Components\FileUpload::make('File')
-                            ->preserveFilenames()
-                            ->enableDownload()
-                            ->required()
-                            ->hintHelp('El formato del archivo debe ser CSV'),
                         Forms\Components\Select::make('ID_Flujo')
 //                            ->relationship('flujo', 'Nombre')
                             ->options(
@@ -47,6 +42,13 @@ class FLUCargasResource extends Resource
 //                            ->where('Role', Auth::user()->role)
                                     ->pluck('Nombre', 'ID')->toArray()
                             )->label('Flujo de carga')->required(),
+
+                        Forms\Components\FileUpload::make('File')
+                            ->preserveFilenames()
+                            ->enableDownload()
+                            ->required()
+                            ->hintHelp('El formato del archivo debe ser CSV'),
+
                         Forms\Components\Fieldset::make('Datos Opcionales')
                         ->schema([
                             Forms\Components\DatePicker::make('FechaDesde'),

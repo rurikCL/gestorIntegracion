@@ -115,7 +115,6 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             "Tramo" => $tramo,
 
         ]);
-        Log::info($result);
 
         if($result){
             $this->contadorRegistro++;
@@ -147,5 +146,10 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
     public function startRow(): int
     {
         return 2;
+    }
+
+    public function getRegistrosCargados()
+    {
+        return $this->contadorRegistro;
     }
 }

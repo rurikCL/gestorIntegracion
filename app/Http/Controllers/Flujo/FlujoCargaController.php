@@ -138,6 +138,7 @@ class FlujoCargaController extends Controller
         return $resultado;
 
     }
+
     public static function importSantanderDrive($data): array
     {
         $resultado = [];
@@ -195,6 +196,7 @@ class FlujoCargaController extends Controller
 //        Log::info("Resultado : " . print_r($resultado, true));
         return $resultado;
     }
+
     public static function importStock($data)
     {
         set_time_limit(0);
@@ -280,12 +282,21 @@ class FlujoCargaController extends Controller
 
         try {
             if ($fileName) {
-//                $import = new ApcInformeOtImport($carga);
+                $import = new ApcInformeOtImport($carga);
 //                $import->import("/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
-                Excel::import(new ApcInformeOtImport(), storage_path('/app/public/' . $fileName), null, \Maatwebsite\Excel\Excel::XLS);
+                $res = Excel::import($import, storage_path('/app/public/' . $fileName), null, \Maatwebsite\Excel\Excel::XLS);
 
-                // Actualiza el tramo de los registros
-                APC_InformeOt::UpdateTramo();
+                if ($res) {
+                    // Actualiza el tramo de los registros
+                    APC_InformeOt::UpdateTramo();
+
+                    // paso final --------------------------------------------------
+                    $contFinal = $import->getRegistrosCargados();
+                    $carga->Estado = 2;
+                    $carga->RegistrosCargados = $contFinal;
+                    $carga->save();
+
+                }
             }
             $carga->fresh();
 //            $carga->RegistrosFallidos = count($import->failures() ?? []);

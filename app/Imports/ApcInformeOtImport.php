@@ -12,6 +12,7 @@ use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Sucursales;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
@@ -114,6 +115,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             "Tramo" => $tramo,
 
         ]);
+        Log::info($result);
 
         if($result){
             $this->contadorRegistro++;

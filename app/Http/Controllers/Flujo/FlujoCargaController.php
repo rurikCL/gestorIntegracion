@@ -291,12 +291,15 @@ class FlujoCargaController extends Controller
                     APC_InformeOt::UpdateTramo();
 
                     // paso final --------------------------------------------------
-                    $contFinal = $import->getRegistrosCargados();
                     $carga->Estado = 2;
-                    $carga->RegistrosCargados = $contFinal;
+                    $carga->RegistrosCargados = $import->getRegistrosCargados();
+                    $carga->RegistrosFallidos = $import->getRegistrosFallidos();
                     $carga->save();
-
+                } else {
+                    $carga->Estado = 3;
+                    $carga->save();
                 }
+
             }
             $carga->fresh();
 //            $carga->RegistrosFallidos = count($import->failures() ?? []);

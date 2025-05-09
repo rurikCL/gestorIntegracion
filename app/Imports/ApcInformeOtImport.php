@@ -121,7 +121,6 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
         }
 
         return $result;
-
     }
 
 
@@ -151,5 +150,10 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
     public function getRegistrosCargados()
     {
         return $this->contadorRegistro;
+    }
+
+    public function getRegistrosFallidos()
+    {
+        return $this->contErrores;
     }
 }

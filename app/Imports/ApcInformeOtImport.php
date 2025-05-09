@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\RegistersEventListeners;
+use Maatwebsite\Excel\Concerns\RemembersRowNumber;
 use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -30,6 +31,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
 
     use RegistersEventListeners;
     use Importable, SkipsFailures;
+    use RemembersRowNumber;
 
     /**
      * @param array $row
@@ -135,9 +137,9 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
 
     public function afterImport(AfterImport $event)
     {
-        dump($event);
+
         if ($this->carga) {
-            $this->carga->RegistrosCargados = $this->contadorRegistro;
+            $this->carga->RegistrosCargados = $this->rowNumber;
             $this->carga->RegistrosFallidos = $this->contErrores;
             $this->carga->Estado = 'Procesado';
             $this->carga->save();

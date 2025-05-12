@@ -28,7 +28,7 @@ use GuzzleHttp\Cookie\FileCookieJar;
 use Illuminate\Database\QueryException;
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;

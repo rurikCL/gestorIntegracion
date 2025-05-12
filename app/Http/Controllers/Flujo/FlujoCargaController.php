@@ -210,7 +210,7 @@ class FlujoCargaController extends Controller
 
         if ($fileName) {
 //            APC_Stock::truncate();
-            Excel::import(new ApcStockImport($carga), "/public/" . $fileName);
+            Excel::import(new ApcStockImport($carga), "/public/" . $fileName, null, \Maatwebsite\Excel\Excel::XLS);
 
             $carga->Estado = 2;
             $carga->save();

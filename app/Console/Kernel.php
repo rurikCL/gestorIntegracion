@@ -43,7 +43,7 @@ class Kernel extends ConsoleKernel
             // Envio de Ventas Landking
             $res = $flujoControl->sendVentasLandking();
 
-//            $res = $robotControl->traeInformeOtAcotado();
+            $res = $robotControl->traeInformeOtAcotado();
 
 
         })->name("Control de Flujos : 30 minutos")->everyThirtyMinutes();

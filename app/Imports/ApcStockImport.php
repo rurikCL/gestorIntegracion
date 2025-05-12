@@ -43,7 +43,6 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
     public function model(array $row)
     {
 
-
         return new APC_Stock([
             'Empresa' => $row['empresa'],
             'Sucursal' => $row['sucursal'],

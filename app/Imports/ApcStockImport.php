@@ -93,6 +93,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
             'Margen' => $row['margen'],
 //            'Margen_porcentaje' => $row[46],
         ]);
+
     }
 
     public function chunkSize(): int
@@ -109,7 +110,7 @@ class ApcStockImport implements ToModel, WithHeadingRow,WithChunkReading, WithBa
     {
         // Handle the failures how you'd like.
 
-//        Log::notice(print_r($failures, true));
+        Log::notice(print_r($failures, true));
 
         return true;
 

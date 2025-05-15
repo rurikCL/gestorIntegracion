@@ -1142,7 +1142,7 @@ class RobotApcController extends Controller
             foreach ($arrayData as $data) {
 
                 $gerencia = $h->get('gerencia',$data["Sucursal"]);
-                $sucursal = $h->get('sucursal',$data["Sucursal"]);
+                $sucursal = $h->get('sucursal',$data["Sucursal"].$data["OT Seccion"],  $data["Sucursal"]);
 
                 try {
                     $dataInsert = [

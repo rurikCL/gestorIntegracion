@@ -45,6 +45,7 @@ return new class extends Migration
             $table->integer('Margen2')->nullable()->unsigned();
             $table->integer('MetaComercial')->nullable()->unsigned();
             $table->integer('MetaComercialPorcentaje')->nullable()->unsigned();
+            $table->bigInteger('SucursalID')->nullable()->unsigned();
 
         });
     }

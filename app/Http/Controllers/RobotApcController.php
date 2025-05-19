@@ -1108,7 +1108,7 @@ class RobotApcController extends Controller
 
             $referencia = $flujo->ID . date("ymdh");
 
-            $req = new Request();
+            $req = new \Illuminate\Http\Request();
             $req['referencia_id'] = $referencia;
             $req['proveedor_id'] = 11;
             $req['api_id'] = 38;

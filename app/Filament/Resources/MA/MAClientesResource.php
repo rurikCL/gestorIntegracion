@@ -31,9 +31,9 @@ class MAClientesResource extends Resource
                 Forms\Components\Section::make('')
                     ->schema([
                         Forms\Components\TextInput::make('Nombre')->required(),
-                        Forms\Components\TextInput::make('SegundoNombre')->required(),
+                        Forms\Components\TextInput::make('SegundoNombre'),
                         Forms\Components\TextInput::make('Apellido')->required(),
-                        Forms\Components\TextInput::make('SegundoApellido')->required(),
+                        Forms\Components\TextInput::make('SegundoApellido'),
                         Forms\Components\TextInput::make('Rut'),
                         Forms\Components\TextInput::make('Email')->email(),
                         Forms\Components\TextInput::make('Telefono')->numeric(),

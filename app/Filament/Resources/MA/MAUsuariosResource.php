@@ -82,6 +82,9 @@ class MAUsuariosResource extends Resource
                     ->label('Foto'),*/
 
                 Tables\Columns\TextColumn::make('Nombre')->searchable(),
+                Tables\Columns\TextColumn::make('SegundoNombre')->searchable(),
+                Tables\Columns\TextColumn::make('Apellido')->searchable(),
+                Tables\Columns\TextColumn::make('SegundoApellido')->searchable(),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),
 //                Tables\Columns\TextColumn::make('Celular')->icon('heroicon-o-phone'),

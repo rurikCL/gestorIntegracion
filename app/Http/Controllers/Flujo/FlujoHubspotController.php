@@ -93,7 +93,7 @@ class FlujoHubspotController extends Controller
                     $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
 
                     if ($lead) {
-                        print("Lead encontrado : " . $lead->ID . "<br>");
+                        print("Lead encontrado: " . $lead->ID . "<br>");
                         Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
 
                         $newProperties->setProperties([
@@ -273,6 +273,8 @@ class FlujoHubspotController extends Controller
             }
 
         }
+
+        return true;
     }
 
     public function limpiarLeads()
@@ -334,7 +336,7 @@ class FlujoHubspotController extends Controller
                     $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
 
                     if ($lead) {
-                        print("Lead encontrado : " . $lead->ID . "<br>");
+                        print("Lead encontrado: " . $lead->ID . "<br>");
                         Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
                         $lead->FechaCreacion = $item->getProperties()['createdate'];
 
@@ -357,6 +359,7 @@ class FlujoHubspotController extends Controller
             }
 
         }
+        return true;
     }
 
     public function actualizaLeadHubspot()
@@ -479,7 +482,7 @@ class FlujoHubspotController extends Controller
                     $newProperties = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInput();
 
                     if ($lead) {
-                        print("Lead encontrado : " . $lead->ID . "<br>");
+                        print("Lead encontrado: " . $lead->ID . "<br>");
                         Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
 
                         $newProperties->setProperties([
@@ -603,7 +606,7 @@ class FlujoHubspotController extends Controller
         }
     }
 
-    // esta funcion es para obtener la informacion de un contacto en hubspot
+    // esta funcion es para obtener la información de un contacto en hubspot
     public function getContactInfo($id, $token)
     {
 
@@ -788,7 +791,7 @@ class FlujoHubspotController extends Controller
             }
             $idContacto = 0;
 
-            print_r("revisando lead : " . $lead->ID . "<br>");
+            print_r("revisando lead: " . $lead->ID . "<br>");
             print_r("revisando cliente : " . $rut . " ($rutFormateado) | " . $email . "<br>");
 
 

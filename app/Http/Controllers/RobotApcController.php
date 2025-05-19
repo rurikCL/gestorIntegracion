@@ -309,6 +309,12 @@ class RobotApcController extends Controller
         $filebase = Storage::get('public/viewstates/StockUsadosBase.json');
         $filedata = Storage::get('public/viewstates/StockUsados.json');
 
+        if (file_exists(storage_path('/app/public/' . $filename))) {
+            // Elimina el archivo anterior... al ser acotado, no es necesario mantenerlo
+            unlink(storage_path('/app/public/' . $filename));
+        }
+
+
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
@@ -425,7 +431,6 @@ class RobotApcController extends Controller
             }
 
         }
-        unlink(storage_path('/app/public/' . $filename));
         echo " Informe procesado";
         Log::channel('robots')->info("Informe procesado");
         $monitor->registrarFin();

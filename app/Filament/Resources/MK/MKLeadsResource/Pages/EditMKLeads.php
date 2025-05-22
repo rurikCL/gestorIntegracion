@@ -16,4 +16,14 @@ class EditMKLeads extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(){
+        $this->record->refresh();
+        if($this->record->wasChanged('Email')){
+            $this->record->update([
+                'LandBotID' => 0,
+            ]);
+        }
+        return true;
+    }
 }

@@ -110,6 +110,10 @@ class APC_RentabilidadOt extends Model
         'Margen2',
         'MetaComercial',
         'MetaComercialPorcentaje',
+        'SucursalID',
+        'CategorizacionSucursal',
+        'SucursalesAV',
+        'CalculoIngresoInsumos',
     ];
 
 }

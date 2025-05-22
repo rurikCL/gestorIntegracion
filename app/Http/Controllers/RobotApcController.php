@@ -1145,7 +1145,9 @@ class RobotApcController extends Controller
                 APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->subDay()->format('Y-m-d'))->delete();
                 echo "Datos a procesar : " . count($arrayData) . "<br>";
             }
+            $conteo = 1;
             foreach ($arrayData as $data) {
+                $conteo++;
 
                 $gerencia = $h->getD('gerencia',$data["Sucursal"]);
                 $sucursal = $h->getD('sucursal',$data["Sucursal"].$data["OT Seccion"],  $data["Sucursal"]);
@@ -1489,6 +1491,9 @@ class RobotApcController extends Controller
                 }
                 $registros++;
 
+                if ($conteo == 25) {
+                    break;
+                }
             }
 
 

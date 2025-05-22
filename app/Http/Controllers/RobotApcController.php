@@ -309,6 +309,12 @@ class RobotApcController extends Controller
         $filebase = Storage::get('public/viewstates/StockUsadosBase.json');
         $filedata = Storage::get('public/viewstates/StockUsados.json');
 
+        if (file_exists(storage_path('/app/public/' . $filename))) {
+            // Elimina el archivo anterior... al ser acotado, no es necesario mantenerlo
+            unlink(storage_path('/app/public/' . $filename));
+        }
+
+
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
@@ -425,7 +431,6 @@ class RobotApcController extends Controller
             }
 
         }
-        unlink(storage_path('/app/public/' . $filename));
         echo " Informe procesado";
         Log::channel('robots')->info("Informe procesado");
         $monitor->registrarFin();
@@ -475,8 +480,8 @@ class RobotApcController extends Controller
         $periodos = [
 //            2020,
 //            2021,
-            2022,
-            2023,
+//            2022,
+//            2023,
             2024,
             2025
         ];
@@ -1109,7 +1114,7 @@ class RobotApcController extends Controller
 
             $referencia = $flujo->ID . date("ymdh");
 
-            $req = new Request();
+            $req = new \Illuminate\Http\Request();
             $req['referencia_id'] = $referencia;
             $req['proveedor_id'] = 11;
             $req['api_id'] = 38;

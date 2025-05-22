@@ -10,6 +10,7 @@ use App\Imports\AutoredTransactionImport;
 use App\Imports\CotizacionesForumImport;
 use App\Imports\CotizacionesNissanImport;
 use App\Imports\FinancierasImport;
+use App\Imports\MaClientesImport;
 use App\Imports\MK_LeadsImport;
 use App\Imports\SalvinsImport;
 use App\Imports\SantanderImport;
@@ -290,6 +291,51 @@ class FlujoCargaController extends Controller
                     // Actualiza el tramo de los registros
                     APC_InformeOt::UpdateTramo();
 
+                    // paso final --------------------------------------------------
+                    $carga->Estado = 2;
+//                    $carga->RegistrosCargados = $import->getRegistrosCargados();
+                    $carga->RegistrosFallidos = $import->getRegistrosFallidos();
+                    $carga->save();
+                } else {
+                    $carga->Estado = 3;
+                    $carga->save();
+                }
+
+            }
+            $carga->fresh();
+//            $carga->RegistrosFallidos = count($import->failures() ?? []);
+//            $carga->save();
+
+            $resultado = [
+                "errores" => $carga->RegistrosFallidos,
+                "registros" => $carga->RegistrosCargados
+            ];
+
+            Log::info("Resultado : " . print_r($resultado, true));
+
+        } catch (\Exception $e) {
+            Log::error("Error al importar financieras : " . $e->getMessage());
+            $carga->Estado = 1;
+            $carga->save();
+        }
+
+        return $resultado;
+    }
+
+    public static function importClientes($data){
+        set_time_limit(0);
+        ini_set('memory_limit', '2048M');
+
+        $fileName = str_replace('"', '', $data["File"]);
+        $carga = FLU_Cargas::where('FechaCarga', $data["FechaCarga"])
+            ->where('ID_Flujo', $data["ID_Flujo"])->first();
+
+        try {
+            if ($fileName) {
+                $import = new MaClientesImport($carga);
+                $res = Excel::import($import, storage_path('/app/public/' . $fileName), null, \Maatwebsite\Excel\Excel::CSV);
+
+                if ($res) {
                     // paso final --------------------------------------------------
                     $carga->Estado = 2;
 //                    $carga->RegistrosCargados = $import->getRegistrosCargados();

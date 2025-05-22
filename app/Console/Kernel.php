@@ -43,10 +43,14 @@ class Kernel extends ConsoleKernel
             // Envio de Ventas Landking
             $res = $flujoControl->sendVentasLandking();
 
-            $res = $robotControl->traeInformeOtAcotado();
-
-
         })->name("Control de Flujos : 30 minutos")->everyThirtyMinutes();
+
+
+        $schedule->call(function () {
+            $robotControl = new RobotApcController();
+            $robotControl->traeInformeOtAcotado();
+
+        })->cron('*/30 6-20 * * *')->name("Control de Flujos : 30 minutos (cron) entre las 6 y 20 horas");
 
 
         // FLUJO CADA 4 Horas

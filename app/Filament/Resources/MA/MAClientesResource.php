@@ -31,6 +31,9 @@ class MAClientesResource extends Resource
                 Forms\Components\Section::make('')
                     ->schema([
                         Forms\Components\TextInput::make('Nombre')->required(),
+                        Forms\Components\TextInput::make('SegundoNombre'),
+                        Forms\Components\TextInput::make('Apellido')->required(),
+                        Forms\Components\TextInput::make('SegundoApellido'),
                         Forms\Components\TextInput::make('Rut'),
                         Forms\Components\TextInput::make('Email')->email(),
                         Forms\Components\TextInput::make('Telefono')->numeric(),
@@ -60,7 +63,7 @@ class MAClientesResource extends Resource
             })*/
             ->columns([
                 Tables\Columns\TextColumn::make('ID'),
-                Tables\Columns\TextColumn::make('Nombre')->searchable()
+                Tables\Columns\TextColumn::make('NombreCompleto')->searchable()
                     ->description(fn(MA_Clientes $record) => $record->Direccion),
                 Tables\Columns\TextColumn::make('Rut')->searchable(),
                 Tables\Columns\TextColumn::make('Email')->searchable(),

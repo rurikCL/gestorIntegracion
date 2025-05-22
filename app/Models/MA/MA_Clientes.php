@@ -96,6 +96,13 @@ class MA_Clientes extends Model
         return DB::select("select IF('".$this->Rut."' REGEXP('^[0-9]{8,9}[0-9kK]{1}$'), IF(validate_rut('".$this->Rut."'), 'Si', 'No'), 'No') as RutValido")[0]->RutValido;
     }
 
+    public function NombreCompleto() : Attribute
+    {
+        return Attribute::make(
+            get: fn($value, $attributes) => $attributes['Nombre'] . ' ' . $attributes['SegundoNombre'] . ' ' . $attributes['Apellido'] . ' ' . $attributes['SegundoApellido'],
+        );
+    }
+
 
     public function region()
     {

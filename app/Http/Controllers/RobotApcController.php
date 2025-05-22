@@ -1260,7 +1260,7 @@ class RobotApcController extends Controller
                 }else if($sucursal ==  'OPEL CAMINO MELIPILLA' ) {
                         $sucursalCorregida = 'PEUGEOT CAMINO MELIPILLA';
                 }else{
-                        $sucursalCorregida == $sucursal;
+                        $sucursalCorregida = $sucursal;
                 }
 
 

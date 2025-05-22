@@ -52,7 +52,7 @@ class FLU_Homologacion extends Model
 
     // SCOPES ----------------
 
-    public function scopeGet($query, $codigoHomologacion, $identificador, $default='')
+    public function scopeGetD($query, $codigoHomologacion, $identificador, $default='')
     {
         $dato = $query->where('FlujoID', $this->idFlujo)
             ->where('Activo', 1)

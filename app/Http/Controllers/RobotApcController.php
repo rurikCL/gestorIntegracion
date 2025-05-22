@@ -1149,11 +1149,11 @@ class RobotApcController extends Controller
 
                 dump($data);
 
-                $gerencia = $h->get('gerencia',$data["Sucursal"]);
-                $sucursal = $h->get('sucursal',$data["Sucursal"].$data["OT Seccion"],  $data["Sucursal"]);
+                $gerencia = $h->getD('gerencia',$data["Sucursal"]);
+                $sucursal = $h->getD('sucursal',$data["Sucursal"].$data["OT Seccion"],  $data["Sucursal"]);
 
                 // tipoOT--> CodHomologacion , data--> valor identificador , devuelve respuesta
-                $tipoOT = $h->get('tipoOT',$data["OT Tipo"]);
+                $tipoOT = $h->getD('tipoOT',$data["OT Tipo"]);
 
                 // setea TipoCargoServicio
                 $TipoCargo = $data["Tipo Cargo Servicio"];

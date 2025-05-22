@@ -1497,6 +1497,12 @@ class RobotApcController extends Controller
             }
 
 
+            // TODO: PROCESO DE CALCULO DE CANTIDAD DE OT
+
+
+
+            // ------------------
+
             Log::info("Vehiculos procesados");
 
             FLU_Notificaciones::Notificar($referencia, $flujo->ID);

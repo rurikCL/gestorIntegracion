@@ -21,9 +21,8 @@ class EditMAClientes extends EditRecord
     protected function afterSave()
     {
         if ($this->record->wasChanged('Email')) {
-            $this->record->update([
-                'Correccion' => 0,
-            ]);
+            $this->record->Correccion = 0;
+            $this->record->save();
 
             Notification::make()
                 ->title('Cliente corregido')

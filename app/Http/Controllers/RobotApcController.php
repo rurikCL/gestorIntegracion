@@ -1147,8 +1147,6 @@ class RobotApcController extends Controller
             }
             foreach ($arrayData as $data) {
 
-                dump($data);
-
                 $gerencia = $h->getD('gerencia',$data["Sucursal"]);
                 $sucursal = $h->getD('sucursal',$data["Sucursal"].$data["OT Seccion"],  $data["Sucursal"]);
 

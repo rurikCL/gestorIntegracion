@@ -132,14 +132,13 @@ class MAUsuariosResource extends Resource
         return [
             RelationGroup::make('Sucursales', [
                 'sucursales' => RelationManagers\SucursalesRelationManager::class,
-                'generadorOC' => RelationManagers\GeneradorOrdenCompraRelationManager::class,
             ]),
             RelationGroup::make('Aprobaciones', [
                 'aprobadorOc' => RelationManagers\AprobadorocRelationManager::class,
                 'aprobadorCaja' => RelationManagers\AprobadorCajaRelationManager::class,
             ]),
             'agente' => RelationManagers\AgenteRelationManager::class,
-
+            'generadorOC' => RelationManagers\GeneradorOrdenCompraRelationManager::class,
         ];
     }
 

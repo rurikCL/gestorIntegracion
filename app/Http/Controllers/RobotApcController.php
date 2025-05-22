@@ -1473,8 +1473,8 @@ class RobotApcController extends Controller
                         'CalculoMargenTotal'=>$margenTotal,
                         'CalculoIngresoInsumos'=>$ingresoInsumos,
 
-                        'CalculoCostoOtros'=>$costoOtros,
-                        'Margen2'=>$margen2,
+//                        'CalculoCostoOtros'=>$costoOtros,
+//                        'Margen2'=>$margen2,
 
 
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\MK\MKLeadsResource\Pages;
 
 use App\Filament\Resources\MK\MKLeadsResource;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -18,12 +19,17 @@ class EditMKLeads extends EditRecord
     }
 
     protected function afterSave(){
-        $this->record->refresh();
-        if($this->record->wasChanged('Email')){
-            $this->record->update([
-                'LandBotID' => 0,
-            ]);
+        if ($this->record->wasChanged('Email')) {
+            $this->record->LandBotID = 0;
+            $this->record->save();
+
+            Notification::make()
+                ->title('Cliente corregido')
+                ->info()
+                ->send();
         }
+
+
         return true;
     }
 }

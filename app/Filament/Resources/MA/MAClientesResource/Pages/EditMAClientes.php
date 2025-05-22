@@ -18,7 +18,6 @@ class EditMAClientes extends EditRecord
     }
 
     protected function afterSave(){
-        $this->record->refresh();
         if($this->record->wasChanged('Email')){
             $this->record->update([
                 'Correccion' => 0,

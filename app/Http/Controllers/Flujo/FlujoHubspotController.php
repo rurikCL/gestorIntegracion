@@ -234,7 +234,7 @@ class FlujoHubspotController extends Controller
                         ];
 
                         $resultado = null;
-                        if(!MK_Leads::where('IDHubspot', $idExterno)->exists()) {
+                        if (!MK_Leads::where('IDHubspot', $idExterno)->exists()) {
 
                             $resultado = $leadObj->nuevoLead($req);
                             if ($resultado) {
@@ -255,7 +255,7 @@ class FlujoHubspotController extends Controller
                             } else {
                                 print("Error al crear Lead ");
                             }
-                        }else{
+                        } else {
                             Log::notice("Lead ya existe en roma : " . $idExterno);
                         }
 
@@ -402,13 +402,13 @@ class FlujoHubspotController extends Controller
                         try {
                             $res = $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
 
-                            if($res){
+                            if ($res) {
                                 $lead->LogEstado = 0;
                                 $lead->save();
                                 Log::info("Estado Lead " . $lead->ID . " actualizado : " . $estadoHomologado . " (" . $lead->estadoLead->Estado . ")");
 
                                 // Actualiza leads Geely (Integracion)
-                                if($lead->MarcaID == 51 && $lead->IDExterno != '0'){
+                                if ($lead->MarcaID == 51 && $lead->IDExterno != '0') {
                                     $FlujoGeely->updateLead($lead->ID);
                                 }
 
@@ -421,7 +421,7 @@ class FlujoHubspotController extends Controller
                             Log::error("Error al actualizar deal hubspot " . $lead->IDHubspot . " " . $e->getMessage());
                             $lead->LogEstado = 2;
                             $lead->save();
-                            $monitor = new MonitorFlujoController($flujo->ID,"Actualizacion Deals Hubspot");
+                            $monitor = new MonitorFlujoController($flujo->ID, "Actualizacion Deals Hubspot");
                             $monitor->registrarError($e->getMessage());
                             continue;
                         }
@@ -564,7 +564,7 @@ class FlujoHubspotController extends Controller
                             ]
                         ];
 
-                        if(!MK_Leads::where('IDHubspot', $idExterno)->exists()){
+                        if (!MK_Leads::where('IDHubspot', $idExterno)->exists()) {
                             $resultado = $leadObj->nuevoLead($req);
                             if ($resultado) {
                                 $res = $resultado->getData();
@@ -584,12 +584,10 @@ class FlujoHubspotController extends Controller
                             } else {
                                 print("Error al crear Lead ");
                             }
-                        }else{
+                        } else {
                             $resultado = false;
                             Log::notice("El Lead ya existe en Roma");
                         }
-
-
 
 
                     }
@@ -750,11 +748,11 @@ class FlujoHubspotController extends Controller
 
         $emailsErroneos = [];
 
-        $leads = MK_Leads::where('IDHubspot', '0')
+        $leads = MK_Leads::whereHas('cliente', function ($query){
+            return $query->where('Correccion', 0);
+        })
+            ->where('IDHubspot', '0')
             ->where('LandBotID', 0)
-            ->whereHas('clientes', function ($query) use ($flujo) {
-                $query->where('Correccion', 0);
-            })
             ->where('FechaCreacion', '>', '2025-01-01 00:00:00')
             ->limit($flujo->MaxLote ?? 10)
             ->get();
@@ -762,27 +760,26 @@ class FlujoHubspotController extends Controller
         foreach ($leads as $lead) {
             Log::info('Sincronizando Lead : ' . $lead->ID);
 
-            if($lead->cliente){
-                if($lead->ClienteID > 1){
+            if ($lead->cliente) {
+                if ($lead->ClienteID > 1) {
                     $email = $lead->cliente->Email;
                     $nombre = $lead->cliente->Nombre;
                     $apellido = $lead->cliente->Apellido;
                     $telefono = $lead->cliente->Telefono;
-                    $rut = ltrim(trim($lead->cliente->Rut),"0");
-                }
-                else {
+                    $rut = ltrim(trim($lead->cliente->Rut), "0");
+                } else {
                     $email = $lead->Email;
                     $nombre = $lead->Nombre;
                     $apellido = $lead->Apellido;
                     $telefono = $lead->Telefono;
-                    $rut = ltrim(trim($lead->Rut),"0");
+                    $rut = ltrim(trim($lead->Rut), "0");
                 }
             } else {
                 $email = $lead->Email;
                 $nombre = $lead->Nombre;
                 $apellido = $lead->Apellido;
                 $telefono = $lead->Telefono;
-                $rut = ltrim(trim($lead->Rut),"0");
+                $rut = ltrim(trim($lead->Rut), "0");
             }
 
 

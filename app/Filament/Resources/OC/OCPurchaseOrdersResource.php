@@ -98,20 +98,28 @@ class OCPurchaseOrdersResource extends Resource
                                         Forms\Components\Select::make('branch_id')
                                             ->options(fn() => MA_Sucursales::where('Activa', 1)->pluck('Sucursal', 'ID'))
                                             ->columnSpanFull(),
+
                                         Forms\Components\TextInput::make('amount')->label('Monto')
                                             ->numeric()
                                             ->live(onBlur: true)
                                             ->afterStateUpdated(function ($state, $set, $get) {
                                                 $set('totalPrice', $state * $get('unitPrice'));
+                                                $set('taxAmount', $get('totalPrice') * 0.19); // Assuming 19% tax
                                             }),
                                         Forms\Components\TextInput::make('unitPrice')
                                             ->label('Precio')
-                                            ->reactive(),
+                                            ->live(onBlur: true)
+                                            ->afterStateUpdated(function ($state, $set, $get) {
+                                                $set('totalPrice', $state * $get('amount'));
+                                                $set('taxAmount', $get('totalPrice') * 0.19); // Assuming 19% tax
+                                            }),
                                         Forms\Components\TextInput::make('totalPrice')
                                             ->label('Total')
+                                            ->readonly()
                                             ->reactive(),
                                         Forms\Components\TextInput::make('taxAmount')
-                                            ->label('Impuesto'),
+                                            ->label('Impuesto')
+                                            ->readOnly(),
                                     ])
                                     ->columns(3)
                                     ->itemLabel(fn($record) => $record["id"])

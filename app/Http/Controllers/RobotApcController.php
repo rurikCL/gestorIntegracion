@@ -1503,19 +1503,25 @@ class RobotApcController extends Controller
                 $conteo++;
 
             
-            $cantidadFolio = APC_RentabilidadOt::where ('FolioOT',$data["Folio OT"])->count();
-            APC_RentabilidadOt::update([
-                'OtReal'=> round((100/$cantidadFolio)/100,1)
-            ])
-            ->where('FolioOT',$data["Folio OT"]);
+            // Obtener la cantidad de registros con el mismo Folio OT
+            $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])->count();
 
+            // Actualizar el campo OtReal para esos registros
+            APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])
+                ->update([
+                    'OtReal' => round((100 / $cantidadFolio) / 100, 1)
+                ]);
 
-            $cantidadPatente = APC_RentabilidadOt::where ('NumeroVIN',$data["Numero VIN"])->count();
-            APC_RentabilidadOt::update([
-                'Patentes'=> round((100/$cantidadPatente)/100,1)  
-                ])
-            ->where('NumeroVIN',$data["Numero VIN"])
-            ->where('OTSeccion', '<>','Meson');
+            // Obtener la cantidad de registros con el mismo VIN
+            $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])->count();
+
+            // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
+            APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])
+                ->whereNotNull('NumeroVIN')
+                ->where('OTSeccion', '<>', 'Meson')
+                ->update([
+                    'Patentes' => round((100 / $cantidadPatente) / 100, 1)
+    ]);
 
 
              }

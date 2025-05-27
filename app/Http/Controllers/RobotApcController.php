@@ -26,6 +26,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\FileCookieJar;
 use Illuminate\Database\QueryException;
+
 //use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Psr7\Request;
@@ -1151,11 +1152,11 @@ class RobotApcController extends Controller
             foreach ($arrayData as $data) {
                 $conteo++;
 
-                $gerencia = $h->getD('gerencia',$data["Sucursal"]);
-                $sucursal = $h->getD('sucursal',$data["Sucursal"].$data["OT Seccion"],  $data["Sucursal"]);
+                $gerencia = $h->getD('gerencia', $data["Sucursal"]);
+                $sucursal = $h->getD('sucursal', $data["Sucursal"] . $data["OT Seccion"], $data["Sucursal"]);
 
                 // tipoOT--> CodHomologacion , data--> valor identificador , devuelve respuesta
-                $tipoOT = $h->getD('tipoOT',$data["OT Tipo"]);
+                $tipoOT = $h->getD('tipoOT', $data["OT Tipo"]);
 
                 // setea TipoCargoServicio
                 $TipoCargo = $data["Tipo Cargo Servicio"];
@@ -1163,228 +1164,226 @@ class RobotApcController extends Controller
                 if ($TipoCargo == 'CLIENTE') {
                     $TipoCargoPagador = 'CLIENTES';
 
-                }else if($TipoCargo ==  'INTERNO' ) {
-                        $TipoCargoPagador = 'MI';
+                } else if ($TipoCargo == 'INTERNO') {
+                    $TipoCargoPagador = 'MI';
 
-                }else if($TipoCargo ==  'MANTENCIÓN PRE PAGADA' ) {
-                        $TipoCargoPagador = 'MPP';
+                } else if ($TipoCargo == 'MANTENCIÓN PRE PAGADA') {
+                    $TipoCargoPagador = 'MPP';
 
-                }else if($TipoCargo ==  'DEDUCIBLE' ) {
-                        $TipoCargoPagador = 'DEDUCIBLE';
+                } else if ($TipoCargo == 'DEDUCIBLE') {
+                    $TipoCargoPagador = 'DEDUCIBLE';
 
-                }else if($TipoCargo ==  'CIA. SEGUROS' ) {
-                        $TipoCargoPagador = 'CIA SEGUROS';
+                } else if ($TipoCargo == 'CIA. SEGUROS') {
+                    $TipoCargoPagador = 'CIA SEGUROS';
 
-                }else if($TipoCargo ==  'MARCA' ) {
-                        $TipoCargoPagador = 'MARCA';
+                } else if ($TipoCargo == 'MARCA') {
+                    $TipoCargoPagador = 'MARCA';
 
-                }else if($TipoCargo ==  'ADICIONAL CIA. SEGURO' ) {
-                        $TipoCargoPagador = 'ADICIONAL CIA SEGUROS';
+                } else if ($TipoCargo == 'ADICIONAL CIA. SEGURO') {
+                    $TipoCargoPagador = 'ADICIONAL CIA SEGUROS';
 
-                }else if($TipoCargo ==  'MANTENCIÓN INCLUIDA' ) {
-                        $TipoCargoPagador = 'MI';
+                } else if ($TipoCargo == 'MANTENCIÓN INCLUIDA') {
+                    $TipoCargoPagador = 'MI';
 
-                }else if($TipoCargo ==  'GARANTIA FABRICA SUBARU' ) {
-                        $TipoCargoPagador = 'MARCA';
+                } else if ($TipoCargo == 'GARANTIA FABRICA SUBARU') {
+                    $TipoCargoPagador = 'MARCA';
 
-                }else if($TipoCargo ==  'OPTI' ) {
-                        $TipoCargoPagador = 'CLIENTES';
+                } else if ($TipoCargo == 'OPTI') {
+                    $TipoCargoPagador = 'CLIENTES';
 
-                }else if($TipoCargo ==  'ADICIONAL CIA. DE SEGURO 2' ) {
-                        $TipoCargoPagador = 'ADICIONAL CIA SEGUROS';
+                } else if ($TipoCargo == 'ADICIONAL CIA. DE SEGURO 2') {
+                    $TipoCargoPagador = 'ADICIONAL CIA SEGUROS';
 
-                }else if($TipoCargo ==  'ADICIONAL CIA. DE SEGURO 3' ) {
-                        $TipoCargoPagador = 'ADICIONAL CIA SEGUROS';
+                } else if ($TipoCargo == 'ADICIONAL CIA. DE SEGURO 3') {
+                    $TipoCargoPagador = 'ADICIONAL CIA SEGUROS';
 
-                }else if($TipoCargo ==  'OTRO CARGO' ) {
-                        $TipoCargoPagador = 'OTRO CARGO';
+                } else if ($TipoCargo == 'OTRO CARGO') {
+                    $TipoCargoPagador = 'OTRO CARGO';
 
-                }else if($TipoCargo ==  'INTERNO VENTA NUEVO PEUGEOT' ) {
-                        $TipoCargoPagador = 'MI';
+                } else if ($TipoCargo == 'INTERNO VENTA NUEVO PEUGEOT') {
+                    $TipoCargoPagador = 'MI';
 
-                }else if($TipoCargo ==  'INTERNO VENTAS' ) {
-                        $TipoCargoPagador = 'MI';
+                } else if ($TipoCargo == 'INTERNO VENTAS') {
+                    $TipoCargoPagador = 'MI';
 
-                }else{
+                } else {
                     $TipoCargoPagador = 'SIN REGISTRO';
                 }
 
                 // setea marca pompeyo
                 $marca = $data["Marca"];
 
-                if($marca == 'KIA MOTORS') {
+                if ($marca == 'KIA MOTORS') {
                     $marcaPompeyo = 'KIA MOTORS';
 
-                }else if($marca ==  'MG' ) {
-                        $marcaPompeyo = 'MG';
+                } else if ($marca == 'MG') {
+                    $marcaPompeyo = 'MG';
 
-                }else if($marca ==  'NISSAN' ) {
-                     $marcaPompeyo = 'NISSAN';
+                } else if ($marca == 'NISSAN') {
+                    $marcaPompeyo = 'NISSAN';
 
-                }else if($marca ==  'OPEL' ) {
-                     $marcaPompeyo = 'OPEL';
+                } else if ($marca == 'OPEL') {
+                    $marcaPompeyo = 'OPEL';
 
-                }else if($marca ==  'PEUGEOT' ) {
-                     $marcaPompeyo = 'PEUGEOT';
+                } else if ($marca == 'PEUGEOT') {
+                    $marcaPompeyo = 'PEUGEOT';
 
-                }else if($marca ==  'DFSK' ) {
-                     $marcaPompeyo = 'DFSK';
+                } else if ($marca == 'DFSK') {
+                    $marcaPompeyo = 'DFSK';
 
-                }else if($marca ==  'GEELY' ) {
-                     $marcaPompeyo = 'GEELY';
+                } else if ($marca == 'GEELY') {
+                    $marcaPompeyo = 'GEELY';
 
-                }else if($marca ==  'CITROEN' ) {
-                     $marcaPompeyo = 'CITROEN';
+                } else if ($marca == 'CITROEN') {
+                    $marcaPompeyo = 'CITROEN';
 
-                }else if($marca ==  'SUBARU' ) {
-                     $marcaPompeyo = 'SUBARU';
+                } else if ($marca == 'SUBARU') {
+                    $marcaPompeyo = 'SUBARU';
 
-                }else{
+                } else {
                     $marcaPompeyo = 'Otras Marcas';
                 }
 
 
                 // setea sucursalCorregida
                 $sucursal = $data["Sucursal"];
-                $OTSeccion =  $data["OT Seccion"];
+                $OTSeccion = $data["OT Seccion"];
 
-                if($sucursal == 'NISSAN MALL QUILIN') {
+                if ($sucursal == 'NISSAN MALL QUILIN') {
                     $sucursalCorregida = 'SERVICIO QUILIN';
 
-                }else if($sucursal ==  'MG QUILIN' ) {
-                        $sucursalCorregida = 'SERVICIO QUILIN';
+                } else if ($sucursal == 'MG QUILIN') {
+                    $sucursalCorregida = 'SERVICIO QUILIN';
 
-                }else if($sucursal ==  'SERVICIO REDCUBE' ) {
-                    if ($sucursal ==  'SERVICIO REDCUBE' && $OTSeccion == 'Carroceria'){
+                } else if ($sucursal == 'SERVICIO REDCUBE') {
+                    if ($sucursal == 'SERVICIO REDCUBE' && $OTSeccion == 'Carroceria') {
                         $sucursalCorregida = 'SERVICIO REDCUBE DYP';
-                    }else{
+                    } else {
                         $sucursalCorregida = 'SERVICIO REDCUBE';
                     }
 
-                }else if($sucursal ==  'OPEL CAMINO MELIPILLA' ) {
-                        $sucursalCorregida = 'PEUGEOT CAMINO MELIPILLA';
-                }else{
-                        $sucursalCorregida = $sucursal;
+                } else if ($sucursal == 'OPEL CAMINO MELIPILLA') {
+                    $sucursalCorregida = 'PEUGEOT CAMINO MELIPILLA';
+                } else {
+                    $sucursalCorregida = $sucursal;
                 }
 
 
-                if($sucursalCorregida == 'DYP MACUL') {
+                if ($sucursalCorregida == 'DYP MACUL') {
                     $sucursalAv = 'MAC';
 
-                }else if($sucursalCorregida ==  'NISSAN BILBAO' ) {
-                        $sucursalAv = 'BIL';
+                } else if ($sucursalCorregida == 'NISSAN BILBAO') {
+                    $sucursalAv = 'BIL';
 
-                }else if($sucursalCorregida ==  'NISSAN IRARRAZAVAL'){
-                        $sucursalAv = 'MAT';
+                } else if ($sucursalCorregida == 'NISSAN IRARRAZAVAL') {
+                    $sucursalAv = 'MAT';
 
-                }else if($sucursalCorregida ==  'NISSAN MALL QUILIN'){
-                        $sucursalAv = 'N QUI';
+                } else if ($sucursalCorregida == 'NISSAN MALL QUILIN') {
+                    $sucursalAv = 'N QUI';
 
-                }else if($sucursalCorregida ==  'OPEL IRARRAZAVAL'){
-                        $sucursalAv = 'OPEL IRA';
+                } else if ($sucursalCorregida == 'OPEL IRARRAZAVAL') {
+                    $sucursalAv = 'OPEL IRA';
 
-                }else if($sucursalCorregida ==  'SERVICIO OESTE'){
-                        $sucursalAv = 'OES';
+                } else if ($sucursalCorregida == 'SERVICIO OESTE') {
+                    $sucursalAv = 'OES';
 
-                }else if($sucursalCorregida ==  'SERVICIO REDCUBE DYP'){
-                        $sucursalAv = 'RED DYP';
+                } else if ($sucursalCorregida == 'SERVICIO REDCUBE DYP') {
+                    $sucursalAv = 'RED DYP';
 
-                }else if($sucursalCorregida ==  'SERVICIO REDCUBE'){
-                        $sucursalAv = 'RED';
+                } else if ($sucursalCorregida == 'SERVICIO REDCUBE') {
+                    $sucursalAv = 'RED';
 
-                }else if($sucursalCorregida ==  'SERVICIO TOBALABA'){
-                        $sucursalAv = 'TOB';
+                } else if ($sucursalCorregida == 'SERVICIO TOBALABA') {
+                    $sucursalAv = 'TOB';
 
-                }else if($sucursalCorregida ==  'SERVICIO ZURICH'){
-                        $sucursalAv = 'ZUR';
+                } else if ($sucursalCorregida == 'SERVICIO ZURICH') {
+                    $sucursalAv = 'ZUR';
 
-                }else if($sucursalCorregida ==  'NISSAN GRAN AVENIDA'){
-                        $sucursalAv = 'GAV';
+                } else if ($sucursalCorregida == 'NISSAN GRAN AVENIDA') {
+                    $sucursalAv = 'GAV';
 
-                }else if($sucursalCorregida ==  'PEUGEOT CAMINO MELIPILLA'){
-                        $sucursalAv = 'PCM';
+                } else if ($sucursalCorregida == 'PEUGEOT CAMINO MELIPILLA') {
+                    $sucursalAv = 'PCM';
 
-                }else if($sucursalCorregida ==  'OPEL CAMINO MELIPILLA'){
-                        $sucursalAv = 'OCM';
+                } else if ($sucursalCorregida == 'OPEL CAMINO MELIPILLA') {
+                    $sucursalAv = 'OCM';
 
-                }else if($sucursalCorregida ==  'SERVICIO MOVICENTER'){
-                        $sucursalAv = 'MOV';
+                } else if ($sucursalCorregida == 'SERVICIO MOVICENTER') {
+                    $sucursalAv = 'MOV';
 
-                }else if($sucursalCorregida ==  'MG QUILIN'){
-                        $sucursalAv = 'MG QUI';
+                } else if ($sucursalCorregida == 'MG QUILIN') {
+                    $sucursalAv = 'MG QUI';
 
-                }else if($sucursalCorregida ==  'MG IRARRAZAVAL'){
-                        $sucursalAv = 'MG IRA';
+                } else if ($sucursalCorregida == 'MG IRARRAZAVAL') {
+                    $sucursalAv = 'MG IRA';
 
-                }else if($sucursalCorregida ==  'NISSAN VIRTUAL'){
-                        $sucursalAv = 'VIR';
+                } else if ($sucursalCorregida == 'NISSAN VIRTUAL') {
+                    $sucursalAv = 'VIR';
 
-                }else if($sucursalCorregida ==  'MG MOVICENTER'){
-                        $sucursalAv = 'MG MOV';
+                } else if ($sucursalCorregida == 'MG MOVICENTER') {
+                    $sucursalAv = 'MG MOV';
 
-                }else if($sucursalCorregida ==  'DYP VISTA HERMOSA'){
-                        $sucursalAv = 'VH DYP';
+                } else if ($sucursalCorregida == 'DYP VISTA HERMOSA') {
+                    $sucursalAv = 'VH DYP';
 
-                }else if($sucursalCorregida ==  'SERVICIO MELIPILLA'){
-                        $sucursalAv = 'SM';
+                } else if ($sucursalCorregida == 'SERVICIO MELIPILLA') {
+                    $sucursalAv = 'SM';
 
-                }else if($sucursalCorregida ==  'MAYORISTA VISTA HERMOSA'){
+                } else if ($sucursalCorregida == 'MAYORISTA VISTA HERMOSA') {
                     $sucursalAv = 'VH M';
 
-                }else if($sucursalCorregida ==  'SERVICIO QUILIN'){
+                } else if ($sucursalCorregida == 'SERVICIO QUILIN') {
                     $sucursalAv = 'QUI';
 
-                }else{
+                } else {
                     $sucursalAv = 'OTRO';
                 }
 
 
                 $VentaMO = $data["Venta Mano de Obra"];
                 $VentaCarroceria = $data["Venta Carrocería"];
-                $ingresoMO = round($VentaMO+$VentaCarroceria,0);
+                $ingresoMO = round($VentaMO + $VentaCarroceria, 0);
 
                 $VentaRepuestos = $data["Venta Repuestos"];
                 $VentaLubricantes = $data["Venta Lubricantes"];
                 $TotalMaterialML = $data["Total Material ML"];
-                $ingresoRepuestos = round($VentaRepuestos+$VentaLubricantes+$TotalMaterialML,0);
+                $ingresoRepuestos = round($VentaRepuestos + $VentaLubricantes + $TotalMaterialML, 0);
 
                 $TotalDeducible = $data["Total Deducible"];
                 $VentaServicioTerceros = $data["Venta Servicio Terceros"];
-                $ingresoTerDedu = round($TotalDeducible+$VentaServicioTerceros,0);
+                $ingresoTerDedu = round($TotalDeducible + $VentaServicioTerceros, 0);
 
-                $ingresoTotal = round($ingresoMO+$ingresoRepuestos+$ingresoTerDedu,0);
+                $ingresoTotal = round($ingresoMO + $ingresoRepuestos + $ingresoTerDedu, 0);
 
                 $CostoManoObra = $data["Costo Mano de Obra"];
                 $CostoCarroceria = $data["Costo Carrocería"];
-                $costoMO = round($CostoManoObra+$CostoCarroceria,0);
+                $costoMO = round($CostoManoObra + $CostoCarroceria, 0);
 
 
                 $CostoRepuestos = $data["Costo Repuestos"];
                 $CostoLubricantes = $data["Costo Lubricantes"];
                 $CostoMaterialML = $data["Costo Material ML"];
-                $costoRepuestos2 = round($CostoRepuestos+$CostoLubricantes+$CostoMaterialML,0);
+                $costoRepuestos2 = round($CostoRepuestos + $CostoLubricantes + $CostoMaterialML, 0);
 
                 $CostoServicioTerceros = $data["Costo Servicio Terceros"];
                 $costoTerDedu = $CostoServicioTerceros;
 
-                $costoTotal = round($costoMO+ $costoRepuestos2+$costoTerDedu,0);
+                $costoTotal = round($costoMO + $costoRepuestos2 + $costoTerDedu, 0);
 
-                $margenMo = round($ingresoMO+$costoMO,0);
+                $margenMo = round($ingresoMO + $costoMO, 0);
 
-                $margenRepuestos=round($ingresoRepuestos+$costoRepuestos2,0);
+                $margenRepuestos = round($ingresoRepuestos + $costoRepuestos2, 0);
 
-                $margenTerDedu= round($ingresoTerDedu+ $costoTerDedu,0);
+                $margenTerDedu = round($ingresoTerDedu + $costoTerDedu, 0);
 
-                $margenTotal= round($margenMo+$margenRepuestos+$margenTerDedu,0);
+                $margenTotal = round($margenMo + $margenRepuestos + $margenTerDedu, 0);
 
                 $TotalInsumos = $data["Total Insumos"];
                 $ingresoInsumos = $TotalInsumos;
 
 
-            //    $costoOtros;
-              //  $margen2;
-
-
+                //    $costoOtros;
+                //  $margen2;
 
 
                 try {
@@ -1436,7 +1435,7 @@ class RobotApcController extends Controller
                         'TotalVenta' => $data["Total Venta"],
                         'TotalCosto' => $data["Total Costo"],
                         'TotalMargen' => $data["Total Margen"],
-                        'TotalMargenPorcentaje' => ($data["%    "] <0) ? $data["%    "] : 0,
+                        'TotalMargenPorcentaje' => ($data["%    "] < 0) ? $data["%    "] : 0,
                         'TotalNetoFacturado' => $data["Total Neto Facturado"],
                         'Descuestos' => $data["Descuestos"],
                         'ClienteNombre2' => $data["Cliente Nombre"],
@@ -1457,28 +1456,26 @@ class RobotApcController extends Controller
                         'FolioGarantia' => ($data["Folio Garantia"] != '') ? $data["Folio Garantia"] : 0,
                         'TipoMantención' => $data["Tipo Mantención"],
                         'MarcaPompeyo' => $marcaPompeyo,
-                        'TipoOtCorregida'=>$tipoOT,
-                        'Pagado'=>$TipoCargoPagador,
-                        'CategorizacionSucursal'=>$sucursalCorregida,
-                        'SucursalesAV'=>$sucursalAv,
-                        'CalculoIngresoMO' =>$ingresoMO,
-                        'CalculoIngresoRepuestos' =>$ingresoRepuestos,
-                        'CalculoIngresoTerDedu'=>$ingresoTerDedu,
-                        'CalculoIngresoTotal'=>$ingresoTotal,
-                        'CalculoCostoMO'=>$costoMO,
-                        'CalculoCostoRepuestos2'=>$costoRepuestos2,
-                        'CalculoCostoTerDedu'=>$costoTerDedu,
-                        'CalculoCostoTotal'=>$costoTotal,
-                        'CalculoMargenMo'=>$margenMo,
-                        'CalculoMargenRepuestos'=>$margenRepuestos,
-                        'CalculoMargenTerDedu'=>$margenTerDedu,
-                        'CalculoMargenTotal'=>$margenTotal,
-                        'CalculoIngresoInsumos'=>$ingresoInsumos,
+                        'TipoOtCorregida' => $tipoOT,
+                        'Pagado' => $TipoCargoPagador,
+                        'CategorizacionSucursal' => $sucursalCorregida,
+                        'SucursalesAV' => $sucursalAv,
+                        'CalculoIngresoMO' => $ingresoMO,
+                        'CalculoIngresoRepuestos' => $ingresoRepuestos,
+                        'CalculoIngresoTerDedu' => $ingresoTerDedu,
+                        'CalculoIngresoTotal' => $ingresoTotal,
+                        'CalculoCostoMO' => $costoMO,
+                        'CalculoCostoRepuestos2' => $costoRepuestos2,
+                        'CalculoCostoTerDedu' => $costoTerDedu,
+                        'CalculoCostoTotal' => $costoTotal,
+                        'CalculoMargenMo' => $margenMo,
+                        'CalculoMargenRepuestos' => $margenRepuestos,
+                        'CalculoMargenTerDedu' => $margenTerDedu,
+                        'CalculoMargenTotal' => $margenTotal,
+                        'CalculoIngresoInsumos' => $ingresoInsumos,
 
 //                        'CalculoCostoOtros'=>$costoOtros,
 //                        'Margen2'=>$margen2,
-
-
 
 
                     ];
@@ -1489,7 +1486,7 @@ class RobotApcController extends Controller
                 } catch (QueryException $e) {
                     Log::error($e->getMessage());
                     $registrosErroneos++;
-                    $errores[$registros+1] = $e->getMessage();
+                    $errores[$registros + 1] = $e->getMessage();
                 }
                 $registros++;
 
@@ -1501,32 +1498,37 @@ class RobotApcController extends Controller
 
             // TODO: PROCESO DE CALCULO DE CANTIDAD DE OT
 
-             foreach ($arrayData as $data) {
+            foreach ($arrayData as $data) {
                 $conteo++;
 
 
-            // Obtener la cantidad de registros con el mismo Folio OT
-            $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])->count();
+                // Obtener la cantidad de registros con el mismo Folio OT
+                $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])->count();
 
-            // Actualizar el campo OtReal para esos registros
-            APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])
-                ->update([
-                    'OtReal' => round((100 / $cantidadFolio) / 100, 1)
-                ]);
-
-            // Obtener la cantidad de registros con el mismo VIN
-            $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])->count();
-
-            // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
-            APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])
-                ->whereNotNull('NumeroVIN')
-                ->where('OTSeccion', '<>', 'Meson')
-                ->update([
-                    'Patentes' => round((100 / $cantidadPatente) / 100, 1)
-    ]);
+                // Actualizar el campo OtReal para esos registros
+                if ($cantidadFolio) {
+                    APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])
+                        ->update([
+                            'OtReal' => round((100 / $cantidadFolio) / 100, 1)
+                        ]);
+                }
 
 
-             }
+                // Obtener la cantidad de registros con el mismo VIN
+                $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])->count();
+
+                // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
+                if ($cantidadPatente) {
+                    APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])
+                        ->whereNotNull('NumeroVIN')
+                        ->where('OTSeccion', '<>', 'Meson')
+                        ->update([
+                            'Patentes' => round((100 / $cantidadPatente) / 100, 1)
+                        ]);
+                }
+
+
+            }
 
 
             // ------------------
@@ -1536,8 +1538,8 @@ class RobotApcController extends Controller
             FLU_Notificaciones::Notificar($referencia, $flujo->ID);
 
             echo("<br>" . ($resp->message ?? ''));
-            if($registrosErroneos) {
-                echo "<br>" .$registrosErroneos . " registros Erroneos";
+            if ($registrosErroneos) {
+                echo "<br>" . $registrosErroneos . " registros Erroneos";
                 dump($errores);
             }
             echo $registros . " registros guardados";

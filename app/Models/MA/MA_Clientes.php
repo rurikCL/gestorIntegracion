@@ -20,8 +20,6 @@ use Termwind\Components\Raw;
 
 class MA_Clientes extends Model
 {
-    use HasFactory;
-
     protected $table = 'MA_Clientes';
     protected $connection = 'mysql-pompeyo';
 
@@ -155,6 +153,10 @@ class MA_Clientes extends Model
     public function comentarios(){
         return $this->hasMany(VT_VentasComentarios::class, 'ClienteID', 'ID');
 
+    }
+
+    public function clienteLog(){
+        return $this->hasMany(MA_ClientesLog::class, 'ClienteID', 'ID');
     }
 
     public function validacion($query)

@@ -1100,6 +1100,8 @@ class RobotApcController extends Controller
     // aqui Informe OT - Carga PostVenta
     public function traeRentabilidadOTDMS()
     {
+        set_time_limit(0);
+
         echo "Ejecutando Flujo Rentabilidad OT APC <br>";
         Log::info("Inicio flujo Rentabilidad OT APC");
 
@@ -1502,7 +1504,7 @@ class RobotApcController extends Controller
              foreach ($arrayData as $data) {
                 $conteo++;
 
-            
+
             // Obtener la cantidad de registros con el mismo Folio OT
             $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])->count();
 

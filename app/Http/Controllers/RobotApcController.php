@@ -1499,6 +1499,26 @@ class RobotApcController extends Controller
 
             // TODO: PROCESO DE CALCULO DE CANTIDAD DE OT
 
+             foreach ($arrayData as $data) {
+                $conteo++;
+
+            
+            $cantidadFolio = APC_RentabilidadOt::where ('FolioOT',$data["Folio OT"])->count();
+            APC_RentabilidadOt::update([
+                'OtReal'=> round((100/$cantidadFolio)/100,1)
+            ])
+            ->where('FolioOT',$data["Folio OT"]);
+
+
+            $cantidadPatente = APC_RentabilidadOt::where ('NumeroVIN',$data["Numero VIN"])->count();
+            APC_RentabilidadOt::update([
+                'Patentes'=> round((100/$cantidadPatente)/100,1)  
+                ])
+            ->where('NumeroVIN',$data["Numero VIN"])
+            ->where('OTSeccion', '<>','Meson');
+
+
+             }
 
 
             // ------------------

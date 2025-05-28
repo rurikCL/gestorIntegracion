@@ -1546,8 +1546,6 @@ class RobotApcController extends Controller
                     $cantidadPatente = 0;
                 }
 
-
-
                 //actualiza campo Costo Insumos
                 if ($data->OTSeccion == 'Carroceria'){
                     $costoInsumos = -2000 * $cantidadFolio;
@@ -1556,71 +1554,43 @@ class RobotApcController extends Controller
 
                 }else if ($data->OTSeccion == 'Mecanica'){
                     $costoInsumos = -2300* $cantidadFolio;
-
-                    APC_RentabilidadOt::where('OTSeccion',$data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoInsumos' => $costoInsumos
-                    ]);
+                    $data->CalculoCostoInsumos = $costoInsumos;
+                    $data->save();
 
                 }else{
                     $costoInsumos =0;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoInsumos' => $costoInsumos
-                    ]);
+                    $data->CalculoCostoInsumos = $costoInsumos;
+                    $data->save();
                 }
 
 
                 //actualiza campo Costo Logistico
                 if ($data->OTSeccion == 'Carroceria'){
-                    $costoLogistico = -1300* $cantidadFolio;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoLogistica' => $costoLogistico
-                    ]);
-
+                    $costoLogistico = -1300 * $cantidadFolio;
+                    $data->CalculoCostoLogistica = $costoLogistico;
+                    $data->save();
+                  
                 }else if ($data->OTSeccion == 'Mecanica'){
-                    $costoLogistico = -700* $cantidadFolio;
-
-                    APC_RentabilidadOt::where('OTSeccion',$data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoLogistica' => $costoLogistico
-                    ]);
+                    $costoLogistico = -700 * $cantidadFolio;
+                    $data->CalculoCostoLogistica = $costoLogistico;
+                    $data->save();
 
                 }else{
                     $costoLogistico =0;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoLogistica' => $costoLogistico
-                    ]);
+                    $data->CalculoCostoLogistica = $costoLogistico;
+                    $data->save();
                 }
 
                  //actualiza campo Costo Pintura
                 if ($data->OTSeccion == 'Carroceria'){
-                    $costoPintura = 26000*$cantidadFolio;
+                    $costoPintura = 26000 * $cantidadFolio;
+                    $data->CalculoCostoPintura = $costoPintura;
+                    $data->save();
 
-                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoPintura' => $costoPintura
-                    ]);
                 }else{
                     $costoPintura = 0;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoPintura' => $costoPintura
-                    ]);
-
+                    $data->CalculoCostoPintura = $costoPintura;
+                    $data->save();
                 }
 
                 $data->refresh();

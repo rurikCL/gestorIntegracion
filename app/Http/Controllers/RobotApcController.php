@@ -1161,7 +1161,7 @@ class RobotApcController extends Controller
 
 
                 $sucursalID = $h->getD('id_sucursal', $data["Sucursal"]);
-                $tipoMantencionID = $h->getD('id_tipomantencion', $data["Tipo Mantención"]);
+                $tipoMantencionID = $h->getD('id_tipomantencion', $data["Tipo Mantención"], 0);
 
 
 

@@ -1591,12 +1591,13 @@ class RobotApcController extends Controller
                 $data->CalculoCostoPintura = $costoPintura;
 
                 $data->save();
-
                 $data->refresh();
 
-                $TotalOtrosCostos = $data->CalculoCostoInsumos + $data->CalculoCostoLogistica + $data->costoPintura;
+                $TotalOtrosCostos =  $data->CalculoCostoLogistica + $data->CalculoCostoInsumos + $data->costoPintura;
 
                 $data->CalculoCostoOtros = $TotalOtrosCostos;
+                $data->save();
+                $data->refresh();
                 $data->NC = $data->CalculoOtsTotal;
                 $data->NCP = $data->Patentes;
                 $data->Margen2 = $data->CalculoMargenTotal + $data->CalculoCostoOtros;

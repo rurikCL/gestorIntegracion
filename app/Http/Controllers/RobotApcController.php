@@ -1501,7 +1501,6 @@ class RobotApcController extends Controller
             foreach ($arrayData as $data) {
                 $conteo++;
 
-
                 // Obtener la cantidad de registros con el mismo Folio OT
                 $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])->count();
 
@@ -1509,10 +1508,12 @@ class RobotApcController extends Controller
                 if ($cantidadFolio) {
                     APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])
                         ->update([
-                            'OtReal' => round((100 / $cantidadFolio) / 100, 1)
+                            'OtReal' => round((100 / $cantidadFolio) / 100, 1),
+                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)                            
                         ]);
+                }else {
+                    $cantidadFolio=0;
                 }
-
 
                 // Obtener la cantidad de registros con el mismo VIN
                 $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])->count();
@@ -1525,11 +1526,194 @@ class RobotApcController extends Controller
                         ->update([
                             'Patentes' => round((100 / $cantidadPatente) / 100, 1)
                         ]);
+                }else {
+                    $cantidadPatente=0;
                 }
+
+                //actualiza campo Costo Logistico
+                if ($data["OT Seccion"] == 'Carroceria'){
+                    $costoLogistico = -1300* $cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data["OT Seccion"] )
+                    ->update([
+                        'CalculoCostoLogistica' => $costoLogistico
+                                                                  
+                    ]);
+
+                }else if ($data["OT Seccion"] == 'Mecanica'){
+                    $costoLogistico = -700* $cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion',$data["OT Seccion"] )
+                    ->update([
+                        'CalculoCostoLogistica' => $costoLogistico                 
+                    ]);
+
+                }else{
+                    $costoLogistico =0;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data["OT Seccion"] )
+                    ->update([
+                        'CalculoCostoLogistica' => $costoLogistico                               
+                    ]);
+
+                }
+
+
+                
+
+            
+
 
 
             }
 
+
+        
+
+            $dataMes=APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'));
+
+
+            foreach ($dataMes as $data) {
+
+                  // Obtener la cantidad de registros con el mismo Folio OT
+                $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
+                ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
+
+                // Actualizar el campo OtReal para esos registros
+                if ($cantidadFolio) {
+                    APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
+                        ->update([
+                            'OtReal' => round((100 / $cantidadFolio) / 100, 1),
+                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)                            
+                        ]);
+                }else {
+                    $cantidadFolio=0;
+                }
+
+                 // Obtener la cantidad de registros con el mismo VIN
+                $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)
+                 ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count(); 
+
+                // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
+                if ($cantidadPatente) {
+                    APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)
+                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))                        
+                        ->where('OTSeccion', '<>', 'Meson')
+                        ->update([
+                            'Patentes' => round((100 / $cantidadPatente) / 100, 1)
+                        ]);
+                }else {
+                    $cantidadPatente=0;
+                }
+
+
+                
+                //actualiza campo Costo Insumos
+                if ($data->OTSeccion == 'Carroceria'){
+                    $costoInsumos = -2000* $cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoInsumos' => $costoInsumos
+                                                                  
+                    ]);
+
+                }else if ($data->OTSeccion == 'Mecanica'){
+                    $costoInsumos = -2300* $cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion',$data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoInsumos' => $costoInsumos                 
+                    ]);
+
+                }else{
+                    $costoInsumos =0;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoInsumos' => $costoInsumos                               
+                    ]);
+                }
+
+
+                //actualiza campo Costo Logistico
+                if ($data->OTSeccion == 'Carroceria'){
+                    $costoLogistico = -1300* $cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoLogistica' => $costoLogistico                                                                  
+                    ]);
+
+                }else if ($data->OTSeccion == 'Mecanica'){
+                    $costoLogistico = -700* $cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion',$data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoLogistica' => $costoLogistico                 
+                    ]);
+
+                }else{
+                    $costoLogistico =0;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoLogistica' => $costoLogistico                               
+                    ]);
+                }
+
+                 //actualiza campo Costo Pintura
+                if ($data->OTSeccion == 'Carroceria'){
+                    $costoPintura = 26000*$cantidadFolio;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoPintura' => $costoPintura                               
+                    ]);
+                }else{
+                    $costoPintura = 0;
+
+                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->update([
+                        'CalculoCostoPintura' => $costoPintura                               
+                    ]);
+
+                }
+
+                $data->refresh();
+
+                $TotalOtrosCostos= $data->CalculoCostoInsumos +   $data->CalculoCostoLogistica +   $data->costoPintura ;
+
+                $data->CalculoCostoOtros = $TotalOtrosCostos;
+                $data->save();
+                $data->refresh();
+
+
+                $data->NC = $data->CalculoOtsTotal;
+                $data->save();
+                $data->refresh();
+                   
+                $data->NCP = $data->Patentes;
+                $data->save();
+                $data->refresh();
+
+
+                $data->Margen2 = $data->CalculoMargenTotal + $data->CalculoCostoOtros;
+                $data->save();
+                $data->refresh();
+
+
+
+            }
 
             // ------------------
 

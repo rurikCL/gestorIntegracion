@@ -1523,14 +1523,13 @@ class RobotApcController extends Controller
                     APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
                         ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                         ->update([
-                            'OtReal' => ((100 / $cantidadFolio) / 100),
-                            'CalculoOtsTotal' => ((100 / $cantidadFolio) / 100)
+                            'OtReal' => round((100 / $cantidadFolio) / 100,1),
+                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100,1)
                         ]);
                 } else {
                     $cantidadFolio = 0;
                 }
-
-                dump($cantidadFolio);
+                
 
                 // Obtener la cantidad de registros con el mismo VIN
                 $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)

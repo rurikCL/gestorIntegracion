@@ -1710,7 +1710,9 @@ class RobotApcController extends Controller
                 $data->save();          
                 
                 
-              //call CC_OptimanUpdateFechas(1242,1,1);
+              //
+              // 
+              DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
 
             }
 

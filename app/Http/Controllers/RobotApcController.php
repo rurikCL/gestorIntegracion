@@ -1549,12 +1549,12 @@ class RobotApcController extends Controller
 
                 //actualiza campo Costo Insumos
                 if ($data->OTSeccion == 'Carroceria') {
-                    $costoInsumos = -20000 * $cantidadFolio;
+                    $costoInsumos = -20000 * $data->OtReal;
                     $data->CalculoCostoInsumos = $costoInsumos;
                     $data->save();
 
                 } else if ($data->OTSeccion == 'Mecanica') {
-                    $costoInsumos = -2300 * $cantidadFolio;
+                    $costoInsumos = -2300 * $data->OtReal;
                     $data->CalculoCostoInsumos = $costoInsumos;
                     $data->save();
 
@@ -1567,11 +1567,11 @@ class RobotApcController extends Controller
 
                 //actualiza campo Costo Logistico
                 if ($data->OTSeccion == 'Carroceria') {
-                    $costoLogistico = -1300 * $cantidadFolio;
+                    $costoLogistico = -1300 * $data->OtReal;
 
 
                 } else if ($data->OTSeccion == 'Mecanica') {
-                    $costoLogistico = -700 * $cantidadFolio;
+                    $costoLogistico = -700 * $data->OtReal;
 
                 } else {
                     $costoLogistico = 0;
@@ -1579,7 +1579,7 @@ class RobotApcController extends Controller
 
                 //actualiza campo Costo Pintura
                 if ($data->OTSeccion == 'Carroceria') {
-                    $costoPintura = 26000 * $cantidadFolio;
+                    $costoPintura = 26000 * $data->OtReal;
                 } else {
                     $costoPintura = 0;
                 }

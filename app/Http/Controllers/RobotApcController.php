@@ -1490,9 +1490,9 @@ class RobotApcController extends Controller
                 }
                 $registros++;
 
-                if ($conteo == 25) {
+/*                if ($conteo == 25) {
                     break;
-                }
+                }*/
             }
 
 
@@ -1509,7 +1509,7 @@ class RobotApcController extends Controller
                     APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])
                         ->update([
                             'OtReal' => round((100 / $cantidadFolio) / 100, 1),
-                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)                            
+                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)
                         ]);
                 }else {
                     $cantidadFolio=0;
@@ -1537,7 +1537,7 @@ class RobotApcController extends Controller
                     APC_RentabilidadOt::where('OTSeccion', $data["OT Seccion"] )
                     ->update([
                         'CalculoCostoLogistica' => $costoLogistico
-                                                                  
+
                     ]);
 
                 }else if ($data["OT Seccion"] == 'Mecanica'){
@@ -1545,7 +1545,7 @@ class RobotApcController extends Controller
 
                     APC_RentabilidadOt::where('OTSeccion',$data["OT Seccion"] )
                     ->update([
-                        'CalculoCostoLogistica' => $costoLogistico                 
+                        'CalculoCostoLogistica' => $costoLogistico
                     ]);
 
                 }else{
@@ -1553,22 +1553,22 @@ class RobotApcController extends Controller
 
                     APC_RentabilidadOt::where('OTSeccion', $data["OT Seccion"] )
                     ->update([
-                        'CalculoCostoLogistica' => $costoLogistico                               
+                        'CalculoCostoLogistica' => $costoLogistico
                     ]);
 
                 }
 
 
-                
 
-            
+
+
 
 
 
             }
 
 
-        
+
 
             $dataMes=APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'));
 
@@ -1585,7 +1585,7 @@ class RobotApcController extends Controller
                     ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                         ->update([
                             'OtReal' => round((100 / $cantidadFolio) / 100, 1),
-                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)                            
+                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)
                         ]);
                 }else {
                     $cantidadFolio=0;
@@ -1593,12 +1593,12 @@ class RobotApcController extends Controller
 
                  // Obtener la cantidad de registros con el mismo VIN
                 $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)
-                 ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count(); 
+                 ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
 
                 // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
                 if ($cantidadPatente) {
                     APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)
-                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))                        
+                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                         ->where('OTSeccion', '<>', 'Meson')
                         ->update([
                             'Patentes' => round((100 / $cantidadPatente) / 100, 1)
@@ -1608,34 +1608,34 @@ class RobotApcController extends Controller
                 }
 
 
-                
+
                 //actualiza campo Costo Insumos
                 if ($data->OTSeccion == 'Carroceria'){
                     $costoInsumos = -2000* $cantidadFolio;
 
                     APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
                         'CalculoCostoInsumos' => $costoInsumos
-                                                                  
+
                     ]);
 
                 }else if ($data->OTSeccion == 'Mecanica'){
                     $costoInsumos = -2300* $cantidadFolio;
 
                     APC_RentabilidadOt::where('OTSeccion',$data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoInsumos' => $costoInsumos                 
+                        'CalculoCostoInsumos' => $costoInsumos
                     ]);
 
                 }else{
                     $costoInsumos =0;
 
                     APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoInsumos' => $costoInsumos                               
+                        'CalculoCostoInsumos' => $costoInsumos
                     ]);
                 }
 
@@ -1645,27 +1645,27 @@ class RobotApcController extends Controller
                     $costoLogistico = -1300* $cantidadFolio;
 
                     APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoLogistica' => $costoLogistico                                                                  
+                        'CalculoCostoLogistica' => $costoLogistico
                     ]);
 
                 }else if ($data->OTSeccion == 'Mecanica'){
                     $costoLogistico = -700* $cantidadFolio;
 
                     APC_RentabilidadOt::where('OTSeccion',$data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoLogistica' => $costoLogistico                 
+                        'CalculoCostoLogistica' => $costoLogistico
                     ]);
 
                 }else{
                     $costoLogistico =0;
 
                     APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoLogistica' => $costoLogistico                               
+                        'CalculoCostoLogistica' => $costoLogistico
                     ]);
                 }
 
@@ -1674,17 +1674,17 @@ class RobotApcController extends Controller
                     $costoPintura = 26000*$cantidadFolio;
 
                     APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoPintura' => $costoPintura                               
+                        'CalculoCostoPintura' => $costoPintura
                     ]);
                 }else{
                     $costoPintura = 0;
 
                     APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))     
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                     ->update([
-                        'CalculoCostoPintura' => $costoPintura                               
+                        'CalculoCostoPintura' => $costoPintura
                     ]);
 
                 }
@@ -1701,7 +1701,7 @@ class RobotApcController extends Controller
                 $data->NC = $data->CalculoOtsTotal;
                 $data->save();
                 $data->refresh();
-                   
+
                 $data->NCP = $data->Patentes;
                 $data->save();
                 $data->refresh();

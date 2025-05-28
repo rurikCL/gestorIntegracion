@@ -1581,7 +1581,7 @@ class RobotApcController extends Controller
 
                 //actualiza campo Costo Pintura
                 if ($data->OTSeccion == 'Carroceria') {
-                    $costoPintura = 26000 * $data->OtReal;
+                    $costoPintura = -26000 * $data->OtReal;
                 } else {
                     $costoPintura = 0;
                 }

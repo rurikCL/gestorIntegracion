@@ -1158,6 +1158,12 @@ class RobotApcController extends Controller
                 // tipoOT--> CodHomologacion , data--> valor identificador , devuelve respuesta
                 $tipoOT = $h->getD('tipoOT', $data["OT Tipo"]);
 
+
+                $sucursalID = $h->getD('id_sucursal', $data["Sucursal"]);
+                $tipoMantencionID = $h->getD('id_tipomantencion', $data["Tipo Mantención"]);
+
+                
+
                 // setea TipoCargoServicio
                 $TipoCargo = $data["Tipo Cargo Servicio"];
 
@@ -1382,6 +1388,8 @@ class RobotApcController extends Controller
                 $ingresoInsumos = $TotalInsumos;
 
 
+            
+
                 //    $costoOtros;
                 //  $margen2;
 
@@ -1454,7 +1462,7 @@ class RobotApcController extends Controller
                         'Mecanico' => $data["Mecanico"],
                         'Recepcionista' => $data["Recepcionista"],
                         'FolioGarantia' => ($data["Folio Garantia"] != '') ? $data["Folio Garantia"] : 0,
-                        'TipoMantención' => $data["Tipo Mantención"],
+                        'TipoMantencion' => $data["Tipo Mantención"],
                         'MarcaPompeyo' => $marcaPompeyo,
                         'TipoOtCorregida' => $tipoOT,
                         'Pagado' => $TipoCargoPagador,
@@ -1473,7 +1481,9 @@ class RobotApcController extends Controller
                         'CalculoMargenTerDedu' => $margenTerDedu,
                         'CalculoMargenTotal' => $margenTotal,
                         'CalculoIngresoInsumos' => $ingresoInsumos,
-
+                        'SucursalID' => $sucursalID,   
+                        'TipoMantencionID' => $tipoMantencionID,   
+                        
 //                        'CalculoCostoOtros'=>$costoOtros,
 //                        'Margen2'=>$margen2,
 
@@ -1694,24 +1704,11 @@ class RobotApcController extends Controller
                 $TotalOtrosCostos= $data->CalculoCostoInsumos +   $data->CalculoCostoLogistica +   $data->costoPintura ;
 
                 $data->CalculoCostoOtros = $TotalOtrosCostos;
-                $data->save();
-                $data->refresh();
-
-
                 $data->NC = $data->CalculoOtsTotal;
-                $data->save();
-                $data->refresh();
-                   
                 $data->NCP = $data->Patentes;
-                $data->save();
-                $data->refresh();
-
 
                 $data->Margen2 = $data->CalculoMargenTotal + $data->CalculoCostoOtros;
-                $data->save();
-                $data->refresh();
-
-
+                $data->save();               
 
             }
 

@@ -77,7 +77,7 @@ class APC_RentabilidadOt extends Model
         'Mecanico',
         'Recepcionista',
         'FolioGarantia',
-        'TipoMantención',
+        'TipoMantencion',
         'Gerencia',
         'MarcaPompeyo',
         'SucursalPompeyo',
@@ -114,6 +114,7 @@ class APC_RentabilidadOt extends Model
         'CategorizacionSucursal',
         'SucursalesAV',
         'CalculoIngresoInsumos',
+         'TipoMantencionID',
     ];
 
 }

@@ -28,6 +28,7 @@ use GuzzleHttp\Cookie\FileCookieJar;
 use Illuminate\Database\QueryException;
 
 //use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Storage;
@@ -1162,7 +1163,7 @@ class RobotApcController extends Controller
                 $sucursalID = $h->getD('id_sucursal', $data["Sucursal"]);
                 $tipoMantencionID = $h->getD('id_tipomantencion', $data["Tipo Mantención"]);
 
-                
+
 
                 // setea TipoCargoServicio
                 $TipoCargo = $data["Tipo Cargo Servicio"];
@@ -1388,7 +1389,7 @@ class RobotApcController extends Controller
                 $ingresoInsumos = $TotalInsumos;
 
 
-            
+
 
                 //    $costoOtros;
                 //  $margen2;
@@ -1481,9 +1482,9 @@ class RobotApcController extends Controller
                         'CalculoMargenTerDedu' => $margenTerDedu,
                         'CalculoMargenTotal' => $margenTotal,
                         'CalculoIngresoInsumos' => $ingresoInsumos,
-                        'SucursalID' => $sucursalID,   
-                        'TipoMantencionID' => $tipoMantencionID,   
-                        
+                        'SucursalID' => $sucursalID,
+                        'TipoMantencionID' => $tipoMantencionID,
+
 //                        'CalculoCostoOtros'=>$costoOtros,
 //                        'Margen2'=>$margen2,
 
@@ -1707,11 +1708,11 @@ class RobotApcController extends Controller
                 $data->NC = $data->CalculoOtsTotal;
                 $data->NCP = $data->Patentes;
                 $data->Margen2 = $data->CalculoMargenTotal + $data->CalculoCostoOtros;
-                $data->save();          
-                
-                
+                $data->save();
+
+
               //
-              // 
+              //
               DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
 
             }

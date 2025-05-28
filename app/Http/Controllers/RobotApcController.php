@@ -1705,16 +1705,12 @@ class RobotApcController extends Controller
 
                 $data->CalculoCostoOtros = $TotalOtrosCostos;
                 $data->NC = $data->CalculoOtsTotal;
-<<<<<<< HEAD
-=======
-                $data->save();
-                $data->refresh();
-
->>>>>>> ad1539b5005e359d890cdd469d47a9bdab7d9f21
                 $data->NCP = $data->Patentes;
-
                 $data->Margen2 = $data->CalculoMargenTotal + $data->CalculoCostoOtros;
-                $data->save();               
+                $data->save();          
+                
+                
+              //call CC_OptimanUpdateFechas(1242,1,1);
 
             }
 

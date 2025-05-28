@@ -1125,7 +1125,7 @@ class RobotApcController extends Controller
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
-            $req['data'] = 'From=' . Carbon::now()->subDay()->format('Y-m-d');
+            $req['data'] = 'From=' . Carbon::now()->firstOfMonth()->format('Y-m-d');
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -1529,7 +1529,7 @@ class RobotApcController extends Controller
                 } else {
                     $cantidadFolio = 0;
                 }
-                
+
 
                 // Obtener la cantidad de registros con el mismo VIN
                 $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)
@@ -1590,12 +1590,12 @@ class RobotApcController extends Controller
                 $data->CalculoCostoLogistica = $costoLogistico;
                 $data->CalculoCostoPintura = $costoPintura;
 
-                
+
 
                 $TotalOtrosCostos =  $costoLogistico + $costoPintura + $costoInsumos;
 
                 $data->CalculoCostoOtros = $TotalOtrosCostos;
-                 
+
                 $data->NC = $data->CalculoOtsTotal;
                 $data->NCP = $data->Patentes;
                 $data->Margen2 = $data->CalculoMargenTotal + $data->CalculoCostoOtros;
@@ -1604,10 +1604,10 @@ class RobotApcController extends Controller
 
                 //
                 //
-             //   $resultado = DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
               //  dump($resultado);
 
             }
+            //   $resultado = DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
 
             // ------------------
 

@@ -1509,79 +1509,7 @@ class RobotApcController extends Controller
 
             // TODO: PROCESO DE CALCULO DE CANTIDAD DE OT
 
-            foreach ($arrayData as $data) {
-                $conteo++;
-
-                // Obtener la cantidad de registros con el mismo Folio OT
-                $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])->count();
-
-                // Actualizar el campo OtReal para esos registros
-                if ($cantidadFolio) {
-                    APC_RentabilidadOt::where('FolioOT', $data["Folio OT"])
-                        ->update([
-                            'OtReal' => round((100 / $cantidadFolio) / 100, 1),
-                            'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)
-                        ]);
-                }else {
-                    $cantidadFolio=0;
-                }
-
-                // Obtener la cantidad de registros con el mismo VIN
-                $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])->count();
-
-                // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
-                if ($cantidadPatente) {
-                    APC_RentabilidadOt::where('NumeroVIN', $data["Numero VIN"])
-                        ->whereNotNull('NumeroVIN')
-                        ->where('OTSeccion', '<>', 'Meson')
-                        ->update([
-                            'Patentes' => round((100 / $cantidadPatente) / 100, 1)
-                        ]);
-                }else {
-                    $cantidadPatente=0;
-                }
-
-                //actualiza campo Costo Logistico
-                if ($data["OT Seccion"] == 'Carroceria'){
-                    $costoLogistico = -1300* $cantidadFolio;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data["OT Seccion"] )
-                    ->update([
-                        'CalculoCostoLogistica' => $costoLogistico
-
-                    ]);
-
-                }else if ($data["OT Seccion"] == 'Mecanica'){
-                    $costoLogistico = -700* $cantidadFolio;
-
-                    APC_RentabilidadOt::where('OTSeccion',$data["OT Seccion"] )
-                    ->update([
-                        'CalculoCostoLogistica' => $costoLogistico
-                    ]);
-
-                }else{
-                    $costoLogistico =0;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data["OT Seccion"] )
-                    ->update([
-                        'CalculoCostoLogistica' => $costoLogistico
-                    ]);
-
-                }
-
-
-
-
-
-
-
-
-            }
-
-
-
-
-            $dataMes=APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'));
+            $dataMes = APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'));
 
 
             foreach ($dataMes as $data) {
@@ -1599,7 +1527,7 @@ class RobotApcController extends Controller
                             'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)
                         ]);
                 }else {
-                    $cantidadFolio=0;
+                    $cantidadFolio = 0;
                 }
 
                  // Obtener la cantidad de registros con el mismo VIN
@@ -1615,21 +1543,16 @@ class RobotApcController extends Controller
                             'Patentes' => round((100 / $cantidadPatente) / 100, 1)
                         ]);
                 }else {
-                    $cantidadPatente=0;
+                    $cantidadPatente = 0;
                 }
 
 
 
                 //actualiza campo Costo Insumos
                 if ($data->OTSeccion == 'Carroceria'){
-                    $costoInsumos = -2000* $cantidadFolio;
-
-                    APC_RentabilidadOt::where('OTSeccion', $data->OTSeccion )
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                    ->update([
-                        'CalculoCostoInsumos' => $costoInsumos
-
-                    ]);
+                    $costoInsumos = -2000 * $cantidadFolio;
+                    $data->CalculoCostoInsumos = $costoInsumos;
+                    $data->save();
 
                 }else if ($data->OTSeccion == 'Mecanica'){
                     $costoInsumos = -2300* $cantidadFolio;

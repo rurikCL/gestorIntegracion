@@ -1514,25 +1514,25 @@ class RobotApcController extends Controller
 
             foreach ($dataMes as $data) {
 
-                  // Obtener la cantidad de registros con el mismo Folio OT
+                // Obtener la cantidad de registros con el mismo Folio OT
                 $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
-                ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
 
                 // Actualizar el campo OtReal para esos registros
                 if ($cantidadFolio) {
                     APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
+                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                         ->update([
                             'OtReal' => round((100 / $cantidadFolio) / 100, 1),
                             'CalculoOtsTotal' => round((100 / $cantidadFolio) / 100, 1)
                         ]);
-                }else {
+                } else {
                     $cantidadFolio = 0;
                 }
 
-                 // Obtener la cantidad de registros con el mismo VIN
+                // Obtener la cantidad de registros con el mismo VIN
                 $cantidadPatente = APC_RentabilidadOt::where('NumeroVIN', $data->NumeroVIN)
-                 ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
 
                 // Actualizar el campo Patentes para esos registros (excepto si OTSeccion es 'Meson')
                 if ($cantidadPatente) {
@@ -1542,60 +1542,56 @@ class RobotApcController extends Controller
                         ->update([
                             'Patentes' => round((100 / $cantidadPatente) / 100, 1)
                         ]);
-                }else {
+                } else {
                     $cantidadPatente = 0;
                 }
 
                 //actualiza campo Costo Insumos
-                if ($data->OTSeccion == 'Carroceria'){
+                if ($data->OTSeccion == 'Carroceria') {
                     $costoInsumos = -2000 * $cantidadFolio;
                     $data->CalculoCostoInsumos = $costoInsumos;
                     $data->save();
 
-                }else if ($data->OTSeccion == 'Mecanica'){
-                    $costoInsumos = -2300* $cantidadFolio;
+                } else if ($data->OTSeccion == 'Mecanica') {
+                    $costoInsumos = -2300 * $cantidadFolio;
                     $data->CalculoCostoInsumos = $costoInsumos;
                     $data->save();
 
-                }else{
-                    $costoInsumos =0;
+                } else {
+                    $costoInsumos = 0;
                     $data->CalculoCostoInsumos = $costoInsumos;
                     $data->save();
                 }
 
 
                 //actualiza campo Costo Logistico
-                if ($data->OTSeccion == 'Carroceria'){
+                if ($data->OTSeccion == 'Carroceria') {
                     $costoLogistico = -1300 * $cantidadFolio;
-                    $data->CalculoCostoLogistica = $costoLogistico;
-                    $data->save();
-                  
-                }else if ($data->OTSeccion == 'Mecanica'){
+
+
+                } else if ($data->OTSeccion == 'Mecanica') {
                     $costoLogistico = -700 * $cantidadFolio;
-                    $data->CalculoCostoLogistica = $costoLogistico;
-                    $data->save();
 
-                }else{
-                    $costoLogistico =0;
-                    $data->CalculoCostoLogistica = $costoLogistico;
-                    $data->save();
+                } else {
+                    $costoLogistico = 0;
                 }
 
-                 //actualiza campo Costo Pintura
-                if ($data->OTSeccion == 'Carroceria'){
+                //actualiza campo Costo Pintura
+                if ($data->OTSeccion == 'Carroceria') {
                     $costoPintura = 26000 * $cantidadFolio;
-                    $data->CalculoCostoPintura = $costoPintura;
-                    $data->save();
-
-                }else{
+                } else {
                     $costoPintura = 0;
-                    $data->CalculoCostoPintura = $costoPintura;
-                    $data->save();
                 }
+
+
+                $data->CalculoCostoLogistica = $costoLogistico;
+                $data->CalculoCostoPintura = $costoPintura;
+
+                $data->save();
 
                 $data->refresh();
 
-                $TotalOtrosCostos= $data->CalculoCostoInsumos +   $data->CalculoCostoLogistica +   $data->costoPintura ;
+                $TotalOtrosCostos = $data->CalculoCostoInsumos + $data->CalculoCostoLogistica + $data->costoPintura;
 
                 $data->CalculoCostoOtros = $TotalOtrosCostos;
                 $data->NC = $data->CalculoOtsTotal;
@@ -1604,9 +1600,10 @@ class RobotApcController extends Controller
                 $data->save();
 
 
-              //
-              //
-              DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
+                //
+                //
+                $resultado = DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
+                dump($resultado);
 
             }
 

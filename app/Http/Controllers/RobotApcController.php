@@ -1547,6 +1547,8 @@ class RobotApcController extends Controller
                     $cantidadPatente = 0;
                 }
 
+                 $data->refresh();
+
                 //actualiza campo Costo Insumos
                 if ($data->OTSeccion == 'Carroceria') {
                     $costoInsumos = -20000 * $data->OtReal;

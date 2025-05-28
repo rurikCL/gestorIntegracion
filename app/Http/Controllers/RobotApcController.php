@@ -1370,10 +1370,10 @@ class RobotApcController extends Controller
                 $CostoRepuestos = $data["Costo Repuestos"];
                 $CostoLubricantes = $data["Costo Lubricantes"];
                 $CostoMaterialML = $data["Costo Material ML"];
-                $costoRepuestos2 = round($CostoRepuestos + $CostoLubricantes + $CostoMaterialML, 0);
+                $costoRepuestos2 = round($CostoRepuestos + $CostoLubricantes + $CostoMaterialML, 0)*-1;
 
                 $CostoServicioTerceros = $data["Costo Servicio Terceros"];
-                $costoTerDedu = $CostoServicioTerceros;
+                $costoTerDedu = $CostoServicioTerceros * -1;
 
                 $costoTotal = round($costoMO + $costoRepuestos2 + $costoTerDedu, 0);
 

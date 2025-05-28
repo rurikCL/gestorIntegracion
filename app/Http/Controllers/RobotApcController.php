@@ -1549,7 +1549,7 @@ class RobotApcController extends Controller
 
                 //actualiza campo Costo Insumos
                 if ($data->OTSeccion == 'Carroceria') {
-                    $costoInsumos = -2000 * $cantidadFolio;
+                    $costoInsumos = -20000 * $cantidadFolio;
                     $data->CalculoCostoInsumos = $costoInsumos;
                     $data->save();
 

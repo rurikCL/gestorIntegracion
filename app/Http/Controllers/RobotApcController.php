@@ -1509,7 +1509,7 @@ class RobotApcController extends Controller
 
             // TODO: PROCESO DE CALCULO DE CANTIDAD DE OT
 
-            $dataMes = APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'));
+            $dataMes = APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->get();
 
 
             foreach ($dataMes as $data) {

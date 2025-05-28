@@ -1603,8 +1603,8 @@ class RobotApcController extends Controller
 
                 //
                 //
-                $resultado = DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
-                dump($resultado);
+             //   $resultado = DB::statement('CALL CC_OptimanUpdateFechas(1242,1,1)');
+              //  dump($resultado);
 
             }
 

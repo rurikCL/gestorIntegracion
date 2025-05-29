@@ -105,7 +105,7 @@ class Kernel extends ConsoleKernel
 
             // Acumulativos
             $robotControl->traeMovimientosVentas();
-            $robotControl->traeRentabilidadVenta();
+            $robotControl->traeRentabilidadMeson();
             $robotControl->traeRentabilidadSku();
             $robotControl->traeInformeOt();
 

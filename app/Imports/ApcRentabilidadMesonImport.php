@@ -3,7 +3,7 @@
 namespace App\Imports;
 
 use App\Models\APC_MovimientoVentas;
-use App\Models\APC_RentabilidadVenta;
+use App\Models\APC_RentabilidadMeson;
 use App\Models\APC_Repuestos;
 use App\Models\APC_Sku;
 use App\Models\APC_Stock;
@@ -12,7 +12,7 @@ use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ApcRentabilidadVentasImport implements ToModel, WithHeadingRow, WithBatchInserts
+class ApcRentabilidadMesonImport implements ToModel, WithHeadingRow, WithBatchInserts
 {
     /**
     * @param array $row
@@ -22,7 +22,7 @@ class ApcRentabilidadVentasImport implements ToModel, WithHeadingRow, WithBatchI
     public function model(array $row)
     {
 //        dd($row);
-        return new APC_RentabilidadVenta([
+        return new APC_RentabilidadMeson([
             "Sucursal" => $row["sucursal"],
             "FechaFacturacion" => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row["fecha_facturacion"]),
             "TipoDocumento" => $row["tipo_documento"],

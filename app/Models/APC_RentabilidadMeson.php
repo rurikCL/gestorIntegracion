@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class APC_RentabilidadVenta extends Model
+class APC_RentabilidadMeson extends Model
 {
 
-    protected $table = 'APC_RentabilidadVenta';
+    protected $table = 'APC_RentabilidadMeson';
     protected $primaryKey = 'id';
     public $timestamps = true;
 

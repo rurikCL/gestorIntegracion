@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\ApiSolicitudController;
 use App\Imports\ApcInformeOtImport;
 use App\Imports\ApcMovimientoVentasImport;
 use App\Imports\ApcRentabilidadSkuImport;
-use App\Imports\ApcRentabilidadVentasImport;
+use App\Imports\ApcRentabilidadMesonImport;
 use App\Imports\ApcRepuestosImport;
 use App\Imports\ApcSkuImport;
 use App\Imports\ApcStockImport;
@@ -1529,7 +1529,7 @@ class RobotApcController extends Controller
                 // Actualizar el campo OtReal para esos registros
                 if ($cantidadFolio) {
                     APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
-                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))                                               
+                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
                         ->update([
                             'OtReal' => (100 / $cantidadFolio) / 100,
                             'CalculoOtsTotal' => (100 / $cantidadFolio) / 100
@@ -1666,7 +1666,6 @@ class RobotApcController extends Controller
         $filename = 'rentabilidadSku.xls';
         $filebase = Storage::get('public/viewstates/rentabilidadSkuBase.json');
         $filedata = Storage::get('public/viewstates/rentabilidadSku.json');
-
 
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
@@ -1874,7 +1873,7 @@ class RobotApcController extends Controller
 
     }
 
-    public function traeRentabilidadVenta()
+    public function traeRentabilidadMeson()
     {
         set_time_limit(0);
         $this->setCookie();
@@ -1903,23 +1902,23 @@ class RobotApcController extends Controller
         ];
 
         $filename = 'rentabilidadVenta.xls';
-        $filebase = Storage::get('public/viewstates/rentabilidadVentaBase.json');
-        $filedata = Storage::get('public/viewstates/rentabilidadVenta.json');
+        $filebase = Storage::get('public/viewstates/rentabilidadMesonBase.json');
+        $filedata = Storage::get('public/viewstates/rentabilidadMeson.json');
 
 
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
 
 
         // Excel
         $options['form_params'] = json_decode($filedata, true);
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
@@ -1931,7 +1930,7 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-            Excel::import(new ApcRentabilidadVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            Excel::import(new ApcRentabilidadMesonImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
             unlink(storage_path('/app/public/' . $filename));
 
         }

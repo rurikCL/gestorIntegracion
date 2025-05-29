@@ -19,6 +19,7 @@ class MACargosPerfilResource extends Resource
     protected static ?string $model = MA_CargosPerfil::class;
 
     //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationGroup = 'Personas';
     protected static ?string $navigationLabel = 'Cargos / Perfiles';
     protected static ?string $modelLabel = 'CargosPerfil';

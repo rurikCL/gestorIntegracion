@@ -20,6 +20,7 @@ class MACargosResource extends Resource
     protected static ?string $model = MA_Cargos::class;
 
     //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationGroup = 'Personas';
     protected static ?string $navigationLabel = 'Cargos';
     protected static ?string $modelLabel = 'Cargos';

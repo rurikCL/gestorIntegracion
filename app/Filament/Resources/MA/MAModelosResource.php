@@ -18,7 +18,8 @@ class MAModelosResource extends Resource
 {
     protected static ?string $model = MA_Modelos::class;
 
-    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Modelo';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Modelo';
     protected static ?string $navigationLabel = 'Modelos / Versiones';
     protected static ?string $pluralLabel = 'Modelos';
     protected static ?string $navigationGroup = 'Administracion';

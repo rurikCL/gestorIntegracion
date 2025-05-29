@@ -21,7 +21,8 @@ class OCPurchaseOrdersResource extends Resource
 {
     protected static ?string $model = OC_purchase_orders::class;
 
-    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Ordenes de Compra';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Ordenes de Compra';
     protected static ?string $modelLabel = 'Orden de Compra';
     protected static ?string $navigationLabel = 'Ordenes de Compra';
     protected static ?string $pluralLabel = 'Ordenes de Compra';

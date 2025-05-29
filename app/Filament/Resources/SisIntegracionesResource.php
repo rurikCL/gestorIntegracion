@@ -17,7 +17,8 @@ class SisIntegracionesResource extends Resource
 {
     protected static ?string $model = SisIntegraciones::class;
 
-    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Orquestador API';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Orquestador API';
     protected static ?string $modelLabel = 'Integraciones';
 
     public static function form(Form $form): Form

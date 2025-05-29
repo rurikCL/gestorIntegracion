@@ -18,7 +18,8 @@ class SISSolicitudesArbolAprobacionesResource extends Resource
 {
     protected static ?string $model = SIS_SolicitudesArbolAprobaciones::class;
 
-    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Arbol de Aprobaciones';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Arbol de Aprobaciones';
     protected static ?string $navigationGroup = 'Administracion';
 
     // desactivado

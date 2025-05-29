@@ -20,7 +20,8 @@ class TKAgentesResource extends Resource
 {
     protected static ?string $model = TK_Agentes::class;
 
-    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Ticketera';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Ticketera';
     protected static ?string $modelLabel = 'Agente';
     protected static ?string $navigationLabel = 'Agentes / Usuarios';
 

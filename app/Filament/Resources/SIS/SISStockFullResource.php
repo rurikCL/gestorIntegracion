@@ -19,7 +19,8 @@ class SISStockFullResource extends Resource
 //    protected static ?string $model = SIS_StockFull::class;
     protected static ?string $model = APC_Stock::class;
 
-    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Stock APC';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = 'Stock APC';
     protected static ?string $pluralLabel = 'Stock APC';
     protected static ?string $navigationGroup = 'Administracion';
 

@@ -15,8 +15,7 @@ class FluFlujosResource extends Resource
 {
     protected static ?string $model = FLU_Flujos::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Flujos';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Flujos';
 
     protected static ?string $modelLabel = 'Flujos';
 

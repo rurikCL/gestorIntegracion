@@ -22,8 +22,7 @@ class MAAccesoriosResource extends Resource
 {
     protected static ?string $model = MA_Accesorios::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Accesorio';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Accesorio';
     protected static ?string $pluralLabel = 'Accesorios';
     protected static ?string $navigationGroup = 'Elementos Financiados';
 

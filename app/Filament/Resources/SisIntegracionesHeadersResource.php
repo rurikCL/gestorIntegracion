@@ -17,8 +17,7 @@ class SisIntegracionesHeadersResource extends Resource
 {
     protected static ?string $model = SisIntegracionesHeaders::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Integracion Roma';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Integracion Roma';
 
 
     public static function form(Form $form): Form

@@ -19,8 +19,7 @@ class TKSubCategoriesResource extends Resource
 {
     protected static ?string $model = TK_sub_categories::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Ticketera';
     protected static ?string $navigationLabel = 'Sub Categorias ';
     protected static ?string $modelLabel = 'SubCategoria';

@@ -19,8 +19,7 @@ class SPOCOrderRequestsResource extends Resource
 {
     protected static ?string $model = SP_oc_order_requests::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Ordenes de Compra';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Ordenes de Compra';
     protected static ?string $modelLabel = 'Solicitudes de compra';
 
     public static function form(Form $form): Form

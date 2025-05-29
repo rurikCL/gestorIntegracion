@@ -18,8 +18,7 @@ class VTVentasGastosVehiculoResource extends Resource
 {
     protected static ?string $model = VT_VentasGastosVehiculo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $modelLabel = 'Gastos Vehiculos';
     protected static ?string $navigationGroup = 'Administracion';
 

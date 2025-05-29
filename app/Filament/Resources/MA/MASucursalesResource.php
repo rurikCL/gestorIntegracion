@@ -19,8 +19,7 @@ class MASucursalesResource extends Resource
 {
     protected static ?string $model = MA_Sucursales::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Administracion';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $modelLabel = 'Sucursales';
 
     public static function form(Form $form): Form

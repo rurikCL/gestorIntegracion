@@ -18,8 +18,7 @@ class TDPFacebookSucursalesResource extends Resource
 {
     protected static ?string $model = TDP_FacebookSucursales::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Sucursales Facebook';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Sucursales Facebook';
     protected static ?string $navigationGroup = 'Marketing';
 
 

@@ -16,8 +16,7 @@ class ApiProveedoresResource extends Resource
 {
     protected static ?string $model = ApiProveedores::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Orquestador API';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Orquestador API';
     protected static ?string $navigationLabel = 'APIs / Endpoints';
     protected static ?string $pluralLabel = 'APIs';
     protected static ?string $modelLabel = 'API';

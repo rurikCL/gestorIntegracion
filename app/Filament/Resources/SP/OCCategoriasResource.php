@@ -18,8 +18,7 @@ class OCCategoriasResource extends Resource
 {
     protected static ?string $model = SP_oc_categories::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Ordenes de Compra';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Ordenes de Compra';
     protected static ?string $modelLabel = 'Categorias';
 
 

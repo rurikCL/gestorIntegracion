@@ -25,8 +25,7 @@ class RevisionClientesResource extends Resource
 {
     protected static ?string $model = MA_Clientes::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Administracion';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $modelLabel = 'Clientes Duplicados';
 
     public static function form(Form $form): Form

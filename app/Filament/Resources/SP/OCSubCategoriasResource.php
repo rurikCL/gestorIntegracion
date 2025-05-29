@@ -20,8 +20,7 @@ class OCSubCategoriasResource extends Resource
 {
     protected static ?string $model = SP_oc_sub_categories::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Ordenes de Compra';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Ordenes de Compra';
     protected static ?string $modelLabel = 'Sub Categorias';
 
 

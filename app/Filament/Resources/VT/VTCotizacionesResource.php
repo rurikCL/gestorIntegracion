@@ -18,8 +18,7 @@ class VTCotizacionesResource extends Resource
 {
     protected static ?string $model = VT_Cotizaciones::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $modelLabel = 'Cotizaciones';
     protected static ?string $navigationGroup = 'Administracion';
     public static function form(Form $form): Form

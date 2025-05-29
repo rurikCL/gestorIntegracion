@@ -22,8 +22,7 @@ class VTSalvinResource extends Resource
 {
     protected static ?string $model = VT_Salvin::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Salvin';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Salvin';
     protected static ?string $navigationGroup = 'Administracion';
 
 

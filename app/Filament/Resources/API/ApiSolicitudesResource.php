@@ -30,8 +30,7 @@ class ApiSolicitudesResource extends Resource
 {
     protected static ?string $model = ApiSolicitudes::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Orquestador API';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Orquestador API';
 
     protected static ?string $navigationLabel = 'Monitor trabajos';
 

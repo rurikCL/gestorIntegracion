@@ -20,8 +20,7 @@ class VTAccesoriosMantenedorResource extends Resource
 {
     protected static ?string $model = VT_ElementosFinanciadosSubTipos::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Mantenedor Accesorios';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Mantenedor Accesorios';
     protected static ?string $navigationGroup = 'Elementos Financiados';
 
     public static function canAccess(): bool

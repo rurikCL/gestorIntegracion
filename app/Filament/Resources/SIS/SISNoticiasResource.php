@@ -18,8 +18,7 @@ class SISNoticiasResource extends Resource
 {
     protected static ?string $model = SIS_Noticias::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Noticias';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Noticias';
     protected static ?string $navigationGroup = 'Administracion';
 
     public static function form(Form $form): Form

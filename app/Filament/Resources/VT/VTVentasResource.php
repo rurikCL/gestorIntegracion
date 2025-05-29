@@ -16,8 +16,7 @@ class VTVentasResource extends Resource
 {
     protected static ?string $model = VT_Ventas::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $modelLabel = 'Ventas';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $modelLabel = 'Ventas';
     protected static ?string $navigationGroup = 'Administracion';
 
 

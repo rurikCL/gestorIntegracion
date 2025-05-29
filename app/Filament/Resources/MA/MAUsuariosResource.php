@@ -20,8 +20,7 @@ class MAUsuariosResource extends Resource
 {
     protected static ?string $model = MA_Usuarios::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Personas';
+    //protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';    protected static ?string $navigationGroup = 'Personas';
     protected static ?string $navigationLabel = 'Usuarios Roma';
     protected static ?string $label = 'Usuario Roma';
     protected static ?string $pluralLabel = 'Usuarios Roma';

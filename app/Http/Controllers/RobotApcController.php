@@ -1523,13 +1523,13 @@ class RobotApcController extends Controller
 
                 // Obtener la cantidad de registros con el mismo Folio OT
                 $cantidadFolio = APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
-                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->count();
+                    ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
+                    ->where('TipoDocumento', '<>', 'Nota de Crédito Electrónica')->count();
 
                 // Actualizar el campo OtReal para esos registros
                 if ($cantidadFolio) {
                     APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
-                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
-                        ->where('TipoDocumento', '<>', 'Nota de Crédito Electrónica')                       
+                        ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))                                               
                         ->update([
                             'OtReal' => (100 / $cantidadFolio) / 100,
                             'CalculoOtsTotal' => (100 / $cantidadFolio) / 100

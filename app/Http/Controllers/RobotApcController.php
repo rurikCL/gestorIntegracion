@@ -1364,7 +1364,7 @@ class RobotApcController extends Controller
 
                 $CostoManoObra = $data["Costo Mano de Obra"];
                 $CostoCarroceria = $data["Costo Carrocería"];
-                $costoMO = round($CostoManoObra + $CostoCarroceria, 0);
+                $costoMO = round($CostoManoObra + $CostoCarroceria, 0) *-1;
 
 
                 $CostoRepuestos = $data["Costo Repuestos"];

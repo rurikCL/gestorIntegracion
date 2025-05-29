@@ -1684,7 +1684,7 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-            Excel::import(new ApcMovimientoVentasImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            Excel::import(new ApcSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
             unlink(storage_path('/app/public/' . $filename));
 
         }

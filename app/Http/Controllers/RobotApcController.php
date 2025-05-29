@@ -1528,6 +1528,7 @@ class RobotApcController extends Controller
                 if ($cantidadFolio) {
                     APC_RentabilidadOt::where('FolioOT', $data->FolioOT)
                         ->where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))
+                        ->where('TipoDocumento', '<>', 'Nota de Crédito Electrónica')                       
                         ->update([
                             'OtReal' => (100 / $cantidadFolio) / 100,
                             'CalculoOtsTotal' => (100 / $cantidadFolio) / 100

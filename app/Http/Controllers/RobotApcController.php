@@ -1365,7 +1365,7 @@ class RobotApcController extends Controller
 
                 $CostoManoObra = $data["Costo Mano de Obra"];
                 $CostoCarroceria = $data["Costo Carrocería"];
-                $costoMO = round($CostoManoObra + $CostoCarroceria, 0);
+                $costoMO = round($CostoManoObra + $CostoCarroceria, 0) *-1;
 
 
                 $CostoRepuestos = $data["Costo Repuestos"];
@@ -1418,21 +1418,25 @@ class RobotApcController extends Controller
                         'VentaMO' => $data["Venta Mano de Obra"],
                         'CostoMO' => $data["Costo Mano de Obra"],
                         'MargenMO' => $data["Margen Mano de Obra"],
-                        'MargenMOPorcentaje' => $data["% "],
+                        //'MargenMOPorcentaje' => $data["% "],
+                        'MargenMOPorcentaje' => 0,
                         'TotalInsumos' => $data["Total Insumos"],
                         'TotalSeguro' => $data["Total Seguro"],
                         'VentaCarroceria' => $data["Venta Carrocería"],
                         'CostoCarroceria' => $data["Costo Carrocería"],
                         'MargenCarroceria' => $data["Margen Carrocería"],
-                        'MargenCarroceriaPorcentaje' => $data["Margen Carrocería %"],
+                        //'MargenCarroceriaPorcentaje' => $data["Margen Carrocería %"],
+                        'MargenCarroceriaPorcentaje' => 0,
                         'VentaServicioTerceros' => $data["Venta Servicio Terceros"],
                         'CostoServicioTerceros' => $data["Costo Servicio Terceros"],
                         'MargenServicioTerceros' => $data["Margen Servicio Terceros"],
-                        'MargenTercerosPorcentaje' => $data["Margen Terceros %"],
+                        //'MargenTercerosPorcentaje' => $data["Margen Terceros %"],
+                        'MargenTercerosPorcentaje' => 0,
                         'VentaRepuestos' => $data["Venta Repuestos"],
                         'CostoRepuestos' => $data["Costo Repuestos"],
                         'MargenRepuestos' => $data["Margen Repuestos"],
-                        'MargenRepuestosPorcentaje' => ($data["%  "] > 0) ? $data["%  "] : 0,
+                        //'MargenRepuestosPorcentaje' => ($data["%  "] > 0) ? $data["%  "] : 0,
+                        'MargenRepuestosPorcentaje' => 0,
                         'TotalMaterialML' => $data["Total Material ML"],
                         'CostoMaterialML' => $data["Costo Material ML"],
                         'MargenMaterialML' => $data["Margen Material ML"],
@@ -1440,12 +1444,14 @@ class RobotApcController extends Controller
                         'VentaLubricantes' => $data["Venta Lubricantes"],
                         'CostoLubricantes' => $data["Costo Lubricantes"],
                         'MargenLubricantes' => $data["Margen Lubricantes"],
-                        'MargenLubricantesPorcentaje' => $data["%   "],
+                        //'MargenLubricantesPorcentaje' => $data["%   "],
+                        'MargenLubricantesPorcentaje' => 0,
                         'TotalDeducible' => $data["Total Deducible"],
                         'TotalVenta' => $data["Total Venta"],
                         'TotalCosto' => $data["Total Costo"],
                         'TotalMargen' => $data["Total Margen"],
-                        'TotalMargenPorcentaje' => ($data["%    "] > 0) ? $data["%    "] : 0,
+                        //'TotalMargenPorcentaje' => ($data["%    "] > 0) ? $data["%    "] : 0,
+                        'TotalMargenPorcentaje' =>  0,
                         'TotalNetoFacturado' => $data["Total Neto Facturado"],
                         'Descuestos' => $data["Descuestos"],
                         'ClienteNombre2' => $data["Cliente Nombre"],

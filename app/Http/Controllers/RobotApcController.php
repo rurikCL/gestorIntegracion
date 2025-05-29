@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Api\ApiSolicitudController;
 use App\Imports\ApcInformeOtImport;
 use App\Imports\ApcMovimientoVentasImport;
+use App\Imports\ApcRentabilidadSkuImport;
 use App\Imports\ApcRentabilidadVentasImport;
 use App\Imports\ApcRepuestosImport;
 use App\Imports\ApcSkuImport;
@@ -1663,20 +1664,20 @@ class RobotApcController extends Controller
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
 
 
         // Excel
         $options['form_params'] = json_decode($filedata, true);
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter'] = Carbon::now()->firstOfMonth()->format('d-m-Y');
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);
 
-        if (file_exists(storage_path('/app/public/' . $filename . "__"))) {
+        if (file_exists(storage_path('/app/public/' . $filename))) {
             $res = true;
         } else {
             $request = new Request('POST', $url, $headers);
@@ -1684,7 +1685,7 @@ class RobotApcController extends Controller
         }
 
         if ($res) {
-            Excel::import(new ApcSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
+            Excel::import(new ApcRentabilidadSkuImport(), storage_path('/app/public/' . $filename), null, \Maatwebsite\Excel\Excel::XLS);
             unlink(storage_path('/app/public/' . $filename));
 
         }

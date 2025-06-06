@@ -1670,7 +1670,7 @@ class RobotApcController extends Controller
         // Primer llamado
         $options['form_params'] = json_decode($filebase, true);
         $options['cookies'] = $this->cookieJar;
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subMonth()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
         $request = new Request('POST', $url, $headers);
         $res = $this->client->sendAsync($request, $options)->wait();
@@ -1678,7 +1678,7 @@ class RobotApcController extends Controller
 
         // Excel
         $options['form_params'] = json_decode($filedata, true);
-        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subDay()->format('d-m-Y');
+        $options['form_params']['ctl00$PageContent$Fecha_FacturacionFromFilter1'] = Carbon::now()->subMonth()->format('d-m-Y');
         $options['form_params']['ctl00$PageContent$Fecha_FacturacionToFilter1'] = Carbon::now()->lastOfMonth()->format('d-m-Y');
         $options['cookies'] = $this->cookieJar;
         $options['sink'] = storage_path('/app/public/' . $filename);

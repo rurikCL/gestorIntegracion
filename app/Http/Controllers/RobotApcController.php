@@ -1640,7 +1640,6 @@ class RobotApcController extends Controller
         $this->setCookie();
         $monitor = new MonitorFlujoController(31, "Robot Rentabilidad SKU APC");
 
-
         $url = 'https://appspsa-cl.autoprocloud.com/srv/dms_ot_rentabilidad/showdms_ot_rentabilidad_skutable.aspx';
 
         // Login

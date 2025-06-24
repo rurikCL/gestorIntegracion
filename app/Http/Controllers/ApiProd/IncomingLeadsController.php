@@ -146,31 +146,31 @@ class IncomingLeadsController extends Controller
 // Creacion del CLIENTE (CONTACT)  -------------------------------------------
 
         // Busca cliente por email
-        $filter = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+        $filter1 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+        $filter2 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
 
         if ($rut != '') {
-            $filter->setOperator('EQ')
+            $filter1->setOperator('EQ')
                 ->setPropertyName('rut')
                 ->setValue($rutFormateado);
             Log::info("Buscando por Rut : " . $rutFormateado);
-        } else if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $filter->setOperator('EQ')
+        }
+        if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $filter2->setOperator('EQ')
                 ->setPropertyName('email')
                 ->setValue($email);
             Log::info("Buscando por Email : " . $email);
-        } else {
-            $filter->setOperator('EQ')
-                ->setPropertyName('phone')
-                ->setValue($telefono);
-            Log::info("Buscando por Telefono : " . $telefono);
         }
 
 
+
         $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
-        $filterGroup->setFilters([$filter]);
+        $filterGroup->setFilters([$filter1]);
+        $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+        $filterGroup2->setFilters([$filter2]);
 
         $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
-        $searchRequest->setFilterGroups([$filterGroup]);
+        $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
 
         $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
 
@@ -180,7 +180,7 @@ class IncomingLeadsController extends Controller
             foreach ($contacto as $item) {
                 $data = $item->jsonSerialize();
                 $idContacto = $data->id;
-                print_r("contacto encontrado : " . $data->id);
+                Log::info("contacto encontrado : " . $data->id);
                 break;
             }
 
@@ -210,7 +210,7 @@ class IncomingLeadsController extends Controller
                 $posibleID = '';
 
                 if (preg_match($regex, $respuesta, $posibleID)) {
-                    print_r("Contacto existente: " . $posibleID[1]);
+                    Log::error("Contacto existente: " . $posibleID[1]);
                     $idContacto = $posibleID[1];
                 }
 
@@ -233,8 +233,7 @@ class IncomingLeadsController extends Controller
 
         $h->setFlujo($idFlujoHomologacion);
 
-        $estadoHomologado = "appointmentscheduled"; // Estado homologado para Hubspot
-
+        // ASOSIACION DE CONTACTO A NEGOCIO
         $associationSpec1 = new AssociationSpec([
             'association_category' => 'HUBSPOT_DEFINED',
             'association_type_id' => 3
@@ -246,6 +245,10 @@ class IncomingLeadsController extends Controller
             'types' => [$associationSpec1],
             'to' => $to1
         ]);
+        Log::info("Asociacion de contacto creada: " . $idContacto);
+
+
+        // OBTENCION DE DATOS DEL VEHICULO
 
         $marcaNombre = $request->input('data.vehiculo.marca', null);
         $marcaIDExterno = $request->input('data.vehiculo.marcaExternalID', null);
@@ -265,8 +268,11 @@ class IncomingLeadsController extends Controller
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
         $bonoMarca = $request->input('data.vehiculo.bonoMarca', null);
         $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
+        $vpp = ($request->input('data.vpp.tieneVpp', false) == true)? 1 : 2;
+        $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 1 : 2;
 
 
+        //DEFINIENDO PROPIEDADES DEL NEGOCIO
         $properties1 = [
             'id_externo' => $IDExterno,
             'record_id___contacto' => $idContacto,
@@ -276,31 +282,24 @@ class IncomingLeadsController extends Controller
             'firstname' => $nombre,
             'lastname' => $apellido,
             'dealname' => $nombre . ' ' . $apellido . ' - ' . $marcaNombre . ' ' . $modeloNombre, // + marca + modelo
-            'idvendedor' => null,
             'sucursal' => $sucursalNombre,
             'sucursal_roma' => $sucursalIDExterno,
             'origen_roma' => 2, //origen Marca
             'suborigen_roma' => 63, //suborigen Marca
             'canal_roma' => 2, //canal Digital
-            'modelo' => $modeloNombre,
-            'modelo_roma' => $modeloHomologadoID ?? null,
-            'marca' => $marcaNombre,
-            'marca_roma' => $marcaHomologadaID ?? null,
-            'version' => $versionNombre,
-            'version_roma' => $versionHomologadoID ?? null,
-            'dealstage' => $estadoHomologado,
+            'modelo_roma' => $modeloHomologadoID ?? $modeloNombre,
+            'marca_roma' => $marcaHomologadaID ?? $marcaNombre,
+            'version_roma' => $versionHomologadoID ?? $versionNombre,
+            'dealstage' => 'appointmentscheduled',
             'createdate' => Carbon::now()->format('Y-m-d'),
             'tipo_vehiculo' => 'Nuevo',
             'precio_vehiculo' => $precioVehiculo,
             'bono_marca' => $bonoMarca,
             'bono_financiamiento' => $bonoFinanciamiento,
-            'vpp' => $request->input('data.vpp.tieneVpp', null),
-            'financiamiento' => $request->input('data.financiamiento.conFinanciamiento', null),
+            'vpp' => $vpp,
+            'financiamiento' => $financiamiento,
             'preparado' => 0
-
         ];
-//            print_r($properties1);
-//            dd($properties1);
 
         try {
             $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
@@ -314,12 +313,22 @@ class IncomingLeadsController extends Controller
 
             Log::info('Lead Hubspot creado : ' . $idNegocio);
 
-            return response()->json(['message' => 'Lead creado exitosamente', 'idNegocio' => $idNegocio], 201);
+            return response()->json([
+                'error' => false,
+                'message' => 'Lead creado exitosamente',
+                'data' => [
+                    'idNegocio' => $idNegocio
+                ]
+            ], 201);
 
 
         } catch (\Exception $e) {
             echo "Exception when calling basic_api->create: ", $e->getMessage();
-            return response()->json(['message' => 'Error al crear el lead', 'error' => $e->getMessage()], 500);
+            return response()->json([
+                'message' => 'Error al crear el lead',
+                'error' => $e->getMessage(),
+                'data' => []
+            ], 500);
         }
 
     }

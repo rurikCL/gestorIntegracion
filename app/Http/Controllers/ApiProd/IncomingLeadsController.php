@@ -198,7 +198,7 @@ class IncomingLeadsController extends Controller
 
         if ($rut) {
             $dv = substr($rut, -1);
-            $rut = str_replace(".", "", substr($rut, 0, length($rut) - 1));
+            $rut = str_replace(".", "", str_replace("-","",substr($rut, 0, length($rut) - 1)));
             $rutFormateado = $rut . "-" . $dv;
         } else {
             $rutFormateado = null;
@@ -379,13 +379,16 @@ class IncomingLeadsController extends Controller
             $idNegocio = $apiResponse->getId();
             print_r("<br>Negocio Creado : " . $idNegocio . "<br>");
 
-            $Log->info('Lead ' . $lead->ID . ' sincronizado con exito');
+            $Log->info('Lead Hubspot creado : ' . $idNegocio );
+
+            return response()->json(['message' => 'Lead creado exitosamente', 'idNegocio' => $idNegocio], 201);
+
 
         } catch (\Exception $e) {
             echo "Exception when calling basic_api->create: ", $e->getMessage();
+            return response()->json(['message' => 'Error al crear el lead', 'error' => $e->getMessage()], 500);
         }
 
-        return response()->json(['message' => 'Lead creado exitosamente', 'idNegocio' => $idNegocio], 201);
     }
 
 }

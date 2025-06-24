@@ -63,6 +63,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/santander/calculadora', [FinancierasController::class, 'calculadoraSantander']);
     Route::post('/santander/solicitud', [FinancierasController::class, 'creditoSantander']);
 
+    Route::post('/lead/income', [\App\Http\Controllers\ApiProd\IncomingLeadsController::class, 'leadHubspot']);
+    Route::get('/homologacion/get', [\App\Http\Controllers\ApiProd\HomologacionController::class, 'getHomologacion']);
+    Route::post('/homologacion/set', [\App\Http\Controllers\ApiProd\HomologacionController::class, 'createHomologacion']);
 
 
     Route::post('/venta/update', [\App\Http\Controllers\ApiProd\NegocioController::class, 'update']);

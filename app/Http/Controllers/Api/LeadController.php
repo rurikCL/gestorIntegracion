@@ -354,7 +354,7 @@ class LeadController extends Controller
             $procesar = true;
 
             // Si es Hubspot
-            if($fuente == 2){
+            if ($fuente == 2) {
                 $lead = MK_Leads::select('ID')->where('IDHubspot', $request->input('data.lead.externalID'))->first();
                 // si existe, no se crea
                 if ($lead) {
@@ -371,7 +371,7 @@ class LeadController extends Controller
             }
 
 
-            if($procesar === true) {
+            if ($procesar === true) {
                 // RUT ---------------------
                 if ($request->input('data.rut')) {
                     $rut = substr($request->input('data.rut'), 0, 15);
@@ -390,8 +390,8 @@ class LeadController extends Controller
                     $cliente = $objCliente->where('Email', $request->input('data.email'))->first();
                 } else if ($request->input('data.telefono')) {
                     $cliente = $objCliente->where('Telefono', $request->input('data.telefono'))->first();
-                } else{
-                    Log::error("No se pudo procesar el Negocio : ". $request->input('data.lead.externalID'). " | No se encontro la informacion minima de nombre, rut o telefono");
+                } else {
+                    Log::error("No se pudo procesar el Negocio : " . $request->input('data.lead.externalID') . " | No se encontro la informacion minima de nombre, rut o telefono");
                     return response()->json(['status' => false, 'messages' => 'Ha ocurrido un error en la creacion de Lead'], 500);
                 }
 
@@ -637,7 +637,7 @@ class LeadController extends Controller
                 // Homologacion Origen
                 if ($origen != null) {
                     $alias = MA_SubOrigenes::where('Alias', $origen)->first();
-                    if($alias){
+                    if ($alias) {
                         $origenID = $alias->OrigenID;
                         $subOrigenID = $alias->ID;
                     } else {
@@ -716,11 +716,11 @@ class LeadController extends Controller
 
                 // verificacion de vendedor en caso que se envie uno especifico. (debe existir)
 
-                if($vendedorID > 1){
-                    Log::info("Verificando vendedor enviado : ". $vendedorID);
+                if ($vendedorID > 1) {
+                    Log::info("Verificando vendedor enviado : " . $vendedorID);
 
                     $vendedor = MA_Usuarios::where('ID', $vendedorID)->first();
-                    if(!$vendedor) {
+                    if (!$vendedor) {
                         $vendedorID = 1;
                         Log::error('Vendedor enviado, no existe ' . $vendedorID);
                     } else {
@@ -786,7 +786,7 @@ class LeadController extends Controller
 
 
                 $reglaVendedor = $request->input('data.reglaVendedor') ?? true;
-                if($vendedorID == 1) $reglaVendedor = true;
+                if ($vendedorID == 1) $reglaVendedor = true;
                 if ($reglaVendedor == true) $Log->info("Regla vendedor solicitada", $solicitudID);
 
                 $reglaSucursal = $request->input('data.reglaSucursal') ?? false;
@@ -922,6 +922,49 @@ class LeadController extends Controller
 
 
         return true;
+    }
+
+
+    public function leadHubspot(Request $request)
+    {
+        // Este metodo es para recibir Leads desde Hubspot, y crear un Lead en Roma
+        // Se recibe el ID de Hubspot, y se crea un Lead en Roma con los datos del cliente
+        // Se debe validar que el Lead no exista en Roma, si existe, no se crea
+        // Si no existe, se crea un Lead con los datos del cliente y se guarda en Roma
+
+        $Log = new Logger();
+        $Log->info("Inicio creacion LEAD desde Hubspot");
+
+        try {
+            $lead = MK_Leads::where('IDHubspot', $request->input('data.lead.externalID'))->first();
+            if ($lead) {
+                $Log->info("Lead ya existe en BD Roma : " . $lead->ID);
+                return response()->json(['status' => false, 'messages' => 'Lead ya existe'], 200);
+            }
+
+            DB::transaction(function () use ($request) {
+
+                $client = new MA_Clientes();
+                $client->FechaCreacion = date('Y-m-d H:i:s');
+                $client->EventoCreacionID = 1;
+                $client->UsuarioCreacionID = 1204; // Usuario de Integracion
+
+                $client->Nombre = $request->input('data.nombre');
+                $client->SegundoNombre = $request->input('data.segundoNombre') ?? '';
+                if (!$client->SegundoNombre) {
+                    $client->SegundoNombre = '';
+                }
+            });
+        } catch (\Exception $e) {
+            $Log->error("Error al crear Lead desde Hubspot: " . $e->getMessage());
+            return response()->json(['status' => false, 'messages' => 'Ha ocurrido un error en la creacion de Lead'], 500);
+        }
+
+        return response()->json([
+            'status' => true,
+            'messages' => 'Lead creado correctamente desde Hubspot',
+            'LeadID' => $lead->ID ?? null,
+        ]);
     }
 
 }

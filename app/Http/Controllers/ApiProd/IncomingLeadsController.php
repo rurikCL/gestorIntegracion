@@ -296,8 +296,8 @@ class IncomingLeadsController extends Controller
             'precio_vehiculo' => $precioVehiculo,
             'bono_marca' => $bonoMarca,
             'bono_financiamiento' => $bonoFinanciamiento,
-            'vpp' => $vpp,
-            'financiamiento' => $financiamiento,
+//            'vpp' => $vpp,
+//            'financiamiento' => $financiamiento,
             'preparado' => 0
         ];
 

@@ -117,71 +117,9 @@ class IncomingLeadsController extends Controller
     }
 
 
-    /**
-     * Regla de asignacion de Lead, con regla de Lead
-     * @param $lead
-     * @param bool $reglaVendedor
-     * @param bool $reglaSucursal
-     * @param null $solicitudID
-     * @param int $gerencia
-     * @return bool
-     */
-
-    public static function reglaLead($lead, $reglaVendedor = false, $reglaSucursal = false, $solicitudID = null, $gerencia = 1)
-    {
-        // Logica de asignacion de Lead, con regla de Lead
-        $Log = new Logger();
-
-        $origen = $lead->OrigenID;
-        $sucursalID = $lead->SucursalID;
-        /*if($sucursalID){
-            $Log->info("Buscando gerencia sucursal (SELECT GerenciaID FROM MA_Sucursales WHERE ID = $sucursalID)", $solicitudID);
-            $gerenciaID = MA_Sucursales::where('ID', $sucursalID)->first()->GerenciaID;
-        } else {
-            $gerenciaID = $gerencia;
-        }*/
-
-        $gerenciaID = $gerencia;
-
-        if ($reglaSucursal) {
-
-            $Log->info("Buscando regla sucursal (SELECT FUNC_MK_ReglasLeadsGetSucursal ($gerenciaID, $origen) as sucursalID", $solicitudID);
-            $sucursal = DB::select("SELECT FUNC_MK_ReglasLeadsGetSucursal (?, ?) as sucursalID", array($gerenciaID, $origen));
-
-            if ($sucursal && $sucursal[0]->sucursalID != null && $sucursal[0]->sucursalID > 0) {
-                $sucursalObj = MA_Sucursales::where('ID', $sucursal[0]->sucursalID)->first();
-                $Log->info("Asignando sucursal a Lead : " . $sucursal[0]->sucursalID . " " . $sucursalObj->Sucursal, $solicitudID);
-
-                $lead->SucursalID = $sucursal[0]->sucursalID;
-                $sucursalID = $sucursal[0]->sucursalID; // Se actualiza sucursalID para asignacion de vendedor
-                $lead->save();
-            }
-        }
-
-        if ($reglaVendedor) {
-
-            $Log->info("Buscando regla vendedor (SELECT FUNC_MK_ReglasLeadsGetVendedor ($sucursalID, $origen) as vendedorID", $solicitudID);
-            $vendedor = DB::select("SELECT FUNC_MK_ReglasLeadsGetVendedor (?, ?) as vendedorID", array($sucursalID, $origen));
-
-            if ($vendedor && $vendedor[0]->vendedorID != null && $vendedor[0]->vendedorID > 0) {
-                $vendedorObj = MA_Usuarios::where('ID', $vendedor[0]->vendedorID)->first();
-                $Log->info("Asignando vendedor a Lead : " . $vendedor[0]->vendedorID . " " . $vendedorObj->Nombre, $solicitudID);
-
-                $lead->VendedorID = $vendedor[0]->vendedorID;
-                $lead->save();
-            }
-
-        }
-
-
-        return true;
-    }
-
-
     public function leadHubspot(Request $request)
     {
-        $Log = new Logger();
-        $Log->info("Recibiendo Lead Externo");
+        Log::info("Recibiendo Lead Externo");
 
         $flujoHubspot = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujoHubspot->Opciones);
@@ -194,16 +132,16 @@ class IncomingLeadsController extends Controller
         $nombre = $request->input('data.datosCliente.nombre', '');
         $apellido = $request->input('data.datosCliente.apellido', '');
 
-        $Log->info("Datos Clientes recibidos: Rut: $rut, Email: $email, Telefono: $telefono, Nombre: $nombre, Apellido: $apellido");
-
         if ($rut) {
             $dv = substr($rut, -1);
-            $rut = str_replace(".", "", str_replace("-","",substr($rut, 0, length($rut) - 1)));
+            $rut = str_replace(".", "", str_replace("-", "", substr($rut, 0, length($rut) - 1)));
             $rutFormateado = $rut . "-" . $dv;
         } else {
             $rutFormateado = null;
         }
         $idContacto = 0;
+
+        Log::info("Datos Clientes recibidos: Rut: $rutFormateado, Email: $email, Telefono: $telefono, Nombre: $nombre, Apellido: $apellido");
 
 // Creacion del CLIENTE (CONTACT)  -------------------------------------------
 
@@ -214,17 +152,17 @@ class IncomingLeadsController extends Controller
             $filter->setOperator('EQ')
                 ->setPropertyName('rut')
                 ->setValue($rutFormateado);
-            $Log->info("Buscando por Rut : " . $rutFormateado);
+            Log::info("Buscando por Rut : " . $rutFormateado);
         } else if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $filter->setOperator('EQ')
                 ->setPropertyName('email')
                 ->setValue($email);
-            $Log->info("Buscando por Email : " . $email);
+            Log::info("Buscando por Email : " . $email);
         } else {
             $filter->setOperator('EQ')
                 ->setPropertyName('phone')
                 ->setValue($telefono);
-            $Log->info("Buscando por Telefono : " . $telefono);
+            Log::info("Buscando por Telefono : " . $telefono);
         }
 
 
@@ -236,9 +174,7 @@ class IncomingLeadsController extends Controller
 
         $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
 
-//            print_r("Datos contacto : $email, $nombre, $apellido, $telefono, $rut");
         $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-//            print_r($contacto);
 
         if ($contacto) {
             foreach ($contacto as $item) {
@@ -249,10 +185,8 @@ class IncomingLeadsController extends Controller
             }
 
         } else {
-            print_r("Contacto no encontrado");
-        }
+            Log::info("Contacto no encontrado");
 
-        if ($idContacto == 0) {
             try {
                 $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
                 $dataContacto = [
@@ -267,11 +201,11 @@ class IncomingLeadsController extends Controller
                 $contactInput->setProperties($dataContacto);
                 $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                 $idContacto = $contact->getId();
-                print_r("Contacto creado : " . $idContacto);
+                Log::info("Contacto creado : " . $idContacto);
 
             } catch (\Exception $e) {
                 $respuesta = $e->getMessage();
-                echo $respuesta;
+
                 $regex = "/Existing ID: (\d*)\"/m";
                 $posibleID = '';
 
@@ -282,7 +216,7 @@ class IncomingLeadsController extends Controller
 
                 $regex = "/Property values were not valid/m";
                 if (preg_match($regex, $respuesta)) {
-                    $Log->error("Error al crear contacto: " . $respuesta, $request->all());
+                    Log::error("Error al crear contacto: " . $respuesta, $request->all());
                 }
             }
 
@@ -315,17 +249,17 @@ class IncomingLeadsController extends Controller
 
         $marcaNombre = $request->input('data.vehiculo.marca', null);
         $marcaIDExterno = $request->input('data.vehiculo.marcaExternalID', null);
-        if($marcaIDExterno){
+        if ($marcaIDExterno) {
             $marcaHomologadaID = $h->getD('marca', $marcaIDExterno, 0);
         }
         $modeloNombre = $request->input('data.vehiculo.modelo', null);
         $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
-        if($modeloIDExterno){
+        if ($modeloIDExterno) {
             $modeloHomologadoID = $h->getD('modelo', $modeloIDExterno, 0);
         }
         $versionNombre = $request->input('data.vehiculo.version', null);
         $versionIDExterno = $request->input('data.vehiculo.versionExternalID', null);
-        if($versionIDExterno){
+        if ($versionIDExterno) {
             $versionHomologadoID = $h->getD('version', $versionIDExterno, 0);
         }
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
@@ -377,9 +311,8 @@ class IncomingLeadsController extends Controller
 
             $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
             $idNegocio = $apiResponse->getId();
-            print_r("<br>Negocio Creado : " . $idNegocio . "<br>");
 
-            $Log->info('Lead Hubspot creado : ' . $idNegocio );
+            Log::info('Lead Hubspot creado : ' . $idNegocio);
 
             return response()->json(['message' => 'Lead creado exitosamente', 'idNegocio' => $idNegocio], 201);
 

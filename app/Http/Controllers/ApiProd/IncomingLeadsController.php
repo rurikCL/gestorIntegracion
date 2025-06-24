@@ -354,7 +354,7 @@ class IncomingLeadsController extends Controller
             'version' => $versionNombre,
             'version_roma' => $versionHomologadoID ?? null,
             'dealstage' => $estadoHomologado,
-            'createdate' => Carbon::parse($lead->FechaCreacion)->format('Y-m-d'),
+            'createdate' => Carbon::now()->format('Y-m-d'),
             'tipo_vehiculo' => 'Nuevo',
             'precio_vehiculo' => $precioVehiculo,
             'bono_marca' => $bonoMarca,

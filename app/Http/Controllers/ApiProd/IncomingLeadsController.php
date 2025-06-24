@@ -181,7 +181,7 @@ class IncomingLeadsController extends Controller
     public function leadHubspot(Request $request)
     {
         $Log = new Logger();
-        $Log->info("Recibiendo Lead Externo", $request->all());
+        $Log->info("Recibiendo Lead Externo");
 
         $flujoHubspot = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujoHubspot->Opciones);
@@ -194,6 +194,7 @@ class IncomingLeadsController extends Controller
         $nombre = $request->input('data.datosCliente.nombre', '');
         $apellido = $request->input('data.datosCliente.apellido', '');
 
+        $Log->info("Datos Clientes recibidos: Rut: $rut, Email: $email, Telefono: $telefono, Nombre: $nombre, Apellido: $apellido");
 
         if ($rut) {
             $dv = substr($rut, -1);
@@ -361,6 +362,7 @@ class IncomingLeadsController extends Controller
             'bono_financiamiento' => $bonoFinanciamiento,
             'vpp' => $request->input('data.vpp.tieneVpp', null),
             'financiamiento' => $request->input('data.financiamiento.conFinanciamiento', null),
+            'preparado' => 0
 
         ];
 //            print_r($properties1);

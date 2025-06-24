@@ -183,8 +183,8 @@ class IncomingLeadsController extends Controller
         $Log = new Logger();
         $Log->info("Recibiendo Lead Externo", $request->all());
 
-        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
-        $token = json_decode($flujo->Opciones);
+        $flujoHubspot = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+        $token = json_decode($flujoHubspot->Opciones);
         $client = Factory::createWithAccessToken($token->token);
         $h = new FLU_Homologacion();
 
@@ -342,8 +342,8 @@ class IncomingLeadsController extends Controller
             'lastname' => $apellido,
             'dealname' => $nombre . ' ' . $apellido . ' - ' . $marcaNombre . ' ' . $modeloNombre, // + marca + modelo
             'idvendedor' => null,
-            'nombrevendedor' => $lead->vendedor->Nombre ?? null,
-            'sucursal' => $lead->sucursal->Sucursal ?? null,
+            'sucursal' => $sucursalNombre,
+            'sucursal_roma' => $sucursalIDExterno,
             'origen_roma' => 2, //origen Marca
             'suborigen_roma' => 63, //suborigen Marca
             'canal_roma' => 2, //canal Digital

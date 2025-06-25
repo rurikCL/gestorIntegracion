@@ -73,8 +73,10 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id'),
-                Tables\Columns\TextColumn::make('name')->label('Nombre'),
-                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('name')->label('Nombre')
+                ->searchable(),
+                Tables\Columns\TextColumn::make('email')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('management.Gerencia')->label('Gerencia'),
                 Tables\Columns\ToggleColumn::make('state')->label('Estado')
                     ->disabled(!Auth::user()->isAdmin())

@@ -69,6 +69,8 @@ class MAModelosResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('ID'),
+
                 Tables\Columns\TextColumn::make('Modelo')
                     ->searchable()
                     ->sortable(),

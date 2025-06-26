@@ -45,6 +45,7 @@ class VersionesRelationManager extends RelationManager
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('ID'),
                 Tables\Columns\TextColumn::make('Version')
                     ->searchable()
                     ->sortable(),

@@ -268,8 +268,9 @@ class IncomingLeadsController extends Controller
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
         $bonoMarca = $request->input('data.vehiculo.bonoMarca', null);
         $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
-        $vpp = ($request->input('data.vpp.tieneVpp', false) == true)? 1 : 2;
-        $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 1 : 2;
+        $vpp = ($request->input('data.vpp.tieneVpp', false) == true)? 'SI' : 'NO';
+        $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 'SI' : 'NO';
+//        $testDrive = ($request->input('data.testDrive.tieneTestDrive', false) == true) ? 'SI' : 'NO';
 
 
         //DEFINIENDO PROPIEDADES DEL NEGOCIO
@@ -296,9 +297,10 @@ class IncomingLeadsController extends Controller
             'precio_vehiculo' => $precioVehiculo,
             'bono_marca' => $bonoMarca,
             'bono_financiamiento' => $bonoFinanciamiento,
-//            'vpp' => $vpp,
-//            'financiamiento' => $financiamiento,
-            'preparado' => 0
+            'vpp' => $vpp,
+            'financiamiento' => $financiamiento,
+            'preparado' => 0,
+            'visible' => 0,
         ];
 
         try {

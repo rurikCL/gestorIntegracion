@@ -24,6 +24,7 @@ use App\Models\MA\MA_SubOrigenes;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
+use App\Models\MK\MK_LeadsEstados;
 use App\Models\SIS\SIS_Agendamientos;
 use App\Models\TDP\TDP_FacebookSucursales;
 use App\Models\TDP\TDP_WebPompeyoSucursales;
@@ -341,6 +342,9 @@ class LeadController extends Controller
             $subOrigenID = $request->input('data.lead.subOrigenID') ?? 1;
             $idFlujo = $request->input('data.lead.idFlujo') ?? 0;
             $fuente = $request->input('data.fuente') ?? 1;
+            $idExterno = $request->input('data.lead.externalID') ?? null;
+            $idHubspot = $request->input('data.lead.idHubspot') ?? null;
+            $visible = $request->input('data.lead.visible') ?? 1; // 1 = visible, 0 = no visible
             $lead = null;
 
             $financiamiento = $request->input('data.lead.financiamiento') ?? 2;
@@ -688,6 +692,17 @@ class LeadController extends Controller
 
                 $fechaCreacion = $fechaCreacion->format('Y-m-d H:i:s');
 
+                if($request->input('data.lead.estado') != "") {
+                    $estadoID = MK_LeadsEstados::where('Estado', $request->input('data.lead.estado'))->first();
+                    if ($estadoID) {
+                        $estadoID = $estadoID->ID;
+                    } else {
+                        $estadoID = 1; // Estado Activo
+                    }
+                } else {
+                    $estadoID = 1; // Estado Activo
+                }
+
 
                 $lead = new MK_Leads();
                 $lead->FechaCreacion = $fechaCreacion;
@@ -710,6 +725,7 @@ class LeadController extends Controller
                 $lead->FechaNacimiento = $request->input('data.fechaNacimiento') ?? null;
                 $lead->Direccion = $request->input('data.direccion') ?? '';
                 $lead->ComunaID = 1;
+                $lead->EstadoID = $estadoID; // Estado Activo
 
                 $lead->CampanaId = $request->input('data.lead.campana') ?? null;
                 $lead->SucursalID = $sucursalID; // htext
@@ -733,12 +749,13 @@ class LeadController extends Controller
 
                 $lead->MarcaID = $marcaID ?? 1;
                 $lead->ModeloID = $modeloID ?? 1;
-                $lead->IDExterno = ($fuente == 1) ? ($request->input('data.lead.externalID') ?? null) : null;
-                $lead->IDHubspot = ($fuente == 2) ? $request->input('data.lead.externalID') : 0;  // si la fuente es hubspot, guardamos ID
+                $lead->IDExterno = $IDExterno;
+                $lead->IDHubspot = $idHubspot;
                 $lead->Comentario = $comentario ?? null;
                 $lead->Financiamiento = $financiamiento;
                 $lead->LinkInteres = $linkInteres;
                 $lead->OrigenIngreso = 1; // canal API
+                $lead->Visible = $visible; // 1 = visible, 0 = no visible
 
                 $lead->save();
                 $returnMessage = "Lead creado correctamente";

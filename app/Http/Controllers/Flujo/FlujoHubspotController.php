@@ -35,6 +35,8 @@ class FlujoHubspotController extends Controller
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
 
         if ($flujo->Activo) {
 
@@ -71,7 +73,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','financiamiento', 'test_car', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'dealstage'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -142,7 +144,13 @@ class FlujoHubspotController extends Controller
                         $idVendedor = $data->properties['idvendedor'] ?? 1;
 
                         $origenProp = $data->properties['origen'] ?? '';
-                        $idExterno = $data->id ?? '';
+                        $idHubspot = $data->id ?? '';
+                        $idExterno = $data->properties['id_externo'] ?? '';
+
+                        $estado = $data->properties['dealstage'] ?? 'PENDIENTE';
+                        $estadoHomologado = $h->getR('estado', $estado, 'PENDIENTE');
+
+                        $visible = $data->properties['visible'] ?? 1;
 
                         $vpp = $data->properties['vpp'] ?? 0;
                         if ($vpp === 'SI') {
@@ -226,15 +234,18 @@ class FlujoHubspotController extends Controller
                                 "modelo" => $modelo,
                                 "comentario" => $comentario,
                                 "externalID" => $idExterno,
+                                "idHubspot" => $idHubspot,
                                 "financiamiento" => $financiamiento,
                                 "link" => $linkConversacion,
                                 "agenda" => $agendaVisita,
                                 "vendedorID" => $idVendedor,
+                                "visible" => $visible,
+                                "estado" => $estadoHomologado,
                             ]
                         ];
 
                         $resultado = null;
-                        if (!MK_Leads::where('IDHubspot', $idExterno)->exists()) {
+                        if (!MK_Leads::where('IDHubspot', $idHubspot)->exists()) {
 
                             $resultado = $leadObj->nuevoLead($req);
                             if ($resultado) {

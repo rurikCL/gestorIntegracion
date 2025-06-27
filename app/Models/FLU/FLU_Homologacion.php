@@ -67,6 +67,21 @@ class FLU_Homologacion extends Model
             return $default;
         }
     }
+
+    public function scopeGetR($query, $codigoHomologacion, $valorRespuesta, $default='')
+    {
+        $dato = $query->where('FlujoID', $this->idFlujo)
+            ->where('Activo', 1)
+            ->where('ValorRespuesta', $valorRespuesta)
+            ->where('CodHomologacion', $codigoHomologacion)
+            ->first();
+
+        if ($dato) {
+            return $dato->ValorIdentificador;
+        } else {
+            return $default;
+        }
+    }
     public function scopeGetDato($query, $identificador, $IDflujo, $codigoHomologacion, $default='')
     {
         $dato = $query->where('FlujoID', $IDflujo)

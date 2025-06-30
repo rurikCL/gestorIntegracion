@@ -76,6 +76,7 @@ class FlujoKiaController extends Controller
 
                 if($lead->VendedorID){
                     $rutVendedor = $lead->vendedor->Rut;
+                    $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
                     $sucursalVendedor = $lead->vendedor->SucursalID;
                     $vendedorActivo = $this->revisaRutVendedor($rutVendedor);
 

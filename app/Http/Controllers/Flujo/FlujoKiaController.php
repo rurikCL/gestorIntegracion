@@ -87,7 +87,7 @@ class FlujoKiaController extends Controller
                             ->where('PerfilID', 3)
                             ->first();
                         if($jefe){
-                            $rutVendedor = $jefe->Rut;
+                            $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
                         } else {
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }

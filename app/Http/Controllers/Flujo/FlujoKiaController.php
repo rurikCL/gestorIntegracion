@@ -96,6 +96,7 @@ class FlujoKiaController extends Controller
 
                 $estadoHomologado = $h->getD('estado', $lead->EstadoID,'100000001');
                 $subEstadoHomologado = $h->getD('subestado', $lead->EstadoID,'100000009');
+                $sucursalHomologada = $h->getR('sucursal', $lead->SucursalID);
 
                 $req['data'] = [
                     'DatosEntrada' => [
@@ -104,7 +105,7 @@ class FlujoKiaController extends Controller
                         'ValorNuevoEstado' => $estadoHomologado,
                         'ValorNuevoSubEstado' => $subEstadoHomologado,
 //                        'FechaProxContacto' => '',
-//                        'concesionario' => 1143,
+                        'concesionario' => $sucursalHomologada,
                         'Vendedor' => $rutVendedor ?? '',
                     ]
                 ];

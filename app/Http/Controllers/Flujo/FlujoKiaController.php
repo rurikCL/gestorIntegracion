@@ -62,7 +62,10 @@ class FlujoKiaController extends Controller
         $solicitudCon = new ApiSolicitudController();
 
         try {
-            $lead = MK_Leads::where('IDExterno', $leadId)->first();
+            $lead = MK_Leads::where('IDExterno', $leadId)
+                ->where('MarcaID',2)
+                ->first();
+
             if($lead){
                 $req = new Request();
                 $req['referencia_id'] = $lead->ID;

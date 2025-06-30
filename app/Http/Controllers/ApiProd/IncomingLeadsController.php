@@ -301,6 +301,7 @@ class IncomingLeadsController extends Controller
             'financiamiento' => $financiamiento,
             'preparado' => 0,
             'visible' => 0,
+            'actualiza_estado' => 1
         ];
 
         try {

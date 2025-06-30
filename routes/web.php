@@ -86,5 +86,8 @@ Route::get('/flujo/geely/lead/{id}', [\App\Http\Controllers\Flujo\FlujoGeelyCont
 
 Route::get('/robot/apc/comparar', [\App\Http\Controllers\RobotApcController::class, 'compare']);
 
+Route::get('/flujo/kia/revisaRut/{rut}', [\App\Http\Controllers\Flujo\FlujoKiaController::class, 'revisaRutVendedor']);
+
+
 
 require __DIR__.'/auth.php';

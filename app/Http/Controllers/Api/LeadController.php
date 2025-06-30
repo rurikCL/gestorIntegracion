@@ -346,6 +346,7 @@ class LeadController extends Controller
             $idHubspot = $request->input('data.lead.idHubspot') ?? null;
             $visible = $request->input('data.lead.visible') ?? 1; // 1 = visible, 0 = no visible
             $lead = null;
+            $actualizaEstado = $request->input('data.lead.actualizaEstado') ?? 0; // 1 = si, 0 = no
 
             $financiamiento = $request->input('data.lead.financiamiento') ?? 2;
             if ($financiamiento == 'SI') {
@@ -726,6 +727,7 @@ class LeadController extends Controller
                 $lead->Direccion = $request->input('data.direccion') ?? '';
                 $lead->ComunaID = 1;
                 $lead->EstadoID = $estadoID; // Estado Activo
+                $lead->LogEstado = $actualizaEstado;
 
                 $lead->CampanaId = $request->input('data.lead.campana') ?? null;
                 $lead->SucursalID = $sucursalID; // htext

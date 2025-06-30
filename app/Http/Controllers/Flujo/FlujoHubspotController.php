@@ -73,7 +73,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp','financiamiento', 'test_car', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'dealstage'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_car', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'dealstage, actualiza_estado'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -149,6 +149,7 @@ class FlujoHubspotController extends Controller
 
                         $estado = $data->properties['dealstage'] ?? 'PENDIENTE';
                         $estadoHomologado = $h->getR('estado', $estado, 'PENDIENTE');
+                        $actualizaEstado = $data->properties['actualiza_estado'] ?? 0;
 
                         $visible = $data->properties['visible'] ?? 1;
 
@@ -241,6 +242,7 @@ class FlujoHubspotController extends Controller
                                 "vendedorID" => $idVendedor,
                                 "visible" => $visible,
                                 "estado" => $estadoHomologado,
+                                "actualizaEstado" => $actualizaEstado,
                             ]
                         ];
 
@@ -387,6 +389,8 @@ class FlujoHubspotController extends Controller
             $h = new FLU_Homologacion();
             $FlujoGeely = new FlujoGeelyController();
 
+            $flujoKia = new FlujoKiaController();
+
 
             $leads = MK_Leads::where('LogEstado', 1)
                 ->where('FechaCreacion', '>=', '2024-04-01 00:00:00')
@@ -438,6 +442,20 @@ class FlujoHubspotController extends Controller
                         }
                     }
 
+
+                    // SECCION DE INTEGRACION KIA
+                    if ($lead->MarcaID == 2) {
+                        if ($lead->IDExterno != '0') {
+                            if ($flujoKia->cambiaFase($lead->IDExterno)) {
+                                Log::info("Fase de Lead KIA actualizado : " . $lead->IDExterno);
+                            } else {
+                                Log::error("Error al actualizar fase de Lead KIA " . $lead->IDExterno);
+                            }
+
+                        }
+                    }
+                    // -----
+
                 }
             } else {
                 Log::info("No hay leads para actualizar");
@@ -476,7 +494,7 @@ class FlujoHubspotController extends Controller
                 ->setLimit($flujo->MaxLote)
                 ->setAfter('0');
 
-            $searchRequest->setProperties(['firstname,lastname,phone,email,rut, marca,modelo,hs_analytics_source_data_1,compra_con_financiamiento,reglasucursal,reglavendedor,canal,vpp,financiamiento,sucursal,idpompeyo,origen']);
+            $searchRequest->setProperties(['firstname,lastname,phone,email,rut, marca,modelo,hs_analytics_source_data_1,compra_con_financiamiento,reglasucursal,reglavendedor,canal,vpp,financiamiento,sucursal,idpompeyo,origen,actualiza_estado']);
 
             try {
                 $apiResponse = $client->crm()->contacts()
@@ -759,7 +777,7 @@ class FlujoHubspotController extends Controller
 
         $emailsErroneos = [];
 
-        $leads = MK_Leads::whereHas('cliente', function ($query){
+        $leads = MK_Leads::whereHas('cliente', function ($query) {
             return $query->where('Correccion', 0);
         })
             ->where('IDHubspot', '0')

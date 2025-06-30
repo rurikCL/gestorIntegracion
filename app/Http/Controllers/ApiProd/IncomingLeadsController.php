@@ -289,6 +289,7 @@ class IncomingLeadsController extends Controller
             'suborigen_roma' => 63, //suborigen Marca
             'canal_roma' => 2, //canal Digital
             'modelo_roma' => $modeloHomologadoID ?? $modeloNombre,
+            "marca" => "KIA",
             'marca_roma' => $marcaHomologadaID ?? $marcaNombre,
             'version_roma' => $versionHomologadoID ?? $versionNombre,
             'dealstage' => 'appointmentscheduled',

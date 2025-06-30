@@ -10,6 +10,7 @@ use App\Models\Api\ApiSolicitudes;
 use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\Lead;
+use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -51,13 +52,18 @@ class FlujoKiaController extends Controller
 
     public function cambiaFase($leadId)
     {
+
+        Log::info("Cambia Fase KIA: " . $leadId);
+
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
+
+        $solicitudCon = new ApiSolicitudController();
 
         try {
             $lead = MK_Leads::where('IDExterno', $leadId)->first();
             if($lead){
-                $faseHomologada = FLU_Homologacion::where('Referencia', $lead->Fase)->first();
-
                 $req = new Request();
                 $req['referencia_id'] = $lead->ID;
                 $req['proveedor_id'] = 9;
@@ -67,24 +73,44 @@ class FlujoKiaController extends Controller
 
                 if($lead->VendedorID){
                     $rutVendedor = $lead->vendedor->Rut;
+                    $sucursalVendedor = $lead->vendedor->SucursalID;
                     $vendedorActivo = $this->revisaRutVendedor($rutVendedor);
+
                     if(!$vendedorActivo){
                         // buscar Jefe de sucursal y asignar ese rut
-//                        $rutVendedor = $lead->sucursal->jefeSucursal->Rut ?? '';
+                        $jefe = MA_Usuarios::where('SucursalID', $sucursalVendedor)
+                            ->where('CargoID', 2) // Jefe de sucursal
+                            ->where('PerfilID', 3)
+                            ->first();
+                        if($jefe){
+                            $rutVendedor = $jefe->Rut;
+                        } else {
+                            Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
+                        }
                     }
                 }
+
+                $estadoHomologado = $h->getD('estado', $lead->EstadoID,'100000001');
+                $subEstadoHomologado = $h->getD('subestado', $lead->EstadoID,'100000009');
 
                 $req['data'] = [
                     'DatosEntrada' => [
                         'Accion' => 'ACTUALIZACIOND DE ESTADO POMPEYO',
                         'IdOportunidad' => $lead->IDExterno,
-                        'ValorNuevoEstado' => 100000001,
-                        'ValorNuevoSubEstado' => 100000009,
+                        'ValorNuevoEstado' => $estadoHomologado,
+                        'ValorNuevoSubEstado' => $subEstadoHomologado,
 //                        'FechaProxContacto' => '',
 //                        'concesionario' => 1143,
                         'Vendedor' => $rutVendedor ?? '',
                     ]
                 ];
+                dump($req);
+
+                $resp = $solicitudCon->store($req);
+                $resp = $resp->getData();
+                $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+                $respuesta = json_decode($solicitud->Respuesta);
+                dump($respuesta);
 
                 return response()->json(['status'=>'OK','message' => 'Fase actualizada correctamente'], 200);
             }

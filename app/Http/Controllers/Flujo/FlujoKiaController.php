@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use function Psl\Type\int;
 
 
 class FlujoKiaController extends Controller
@@ -135,12 +136,11 @@ class FlujoKiaController extends Controller
 
 
                     'IdOportunidad' => $lead->IDExterno,
-                    'ValorNuevoEstado' => $estadoHomologado,
-                    'ValorNuevoSubEstado' => $subEstadoHomologado,
+                    'ValorNuevoEstado' => int($estadoHomologado),
+                    'ValorNuevoSubEstado' => int($subEstadoHomologado),
                     'Vendedor' => $rutVendedor, // RUT del vendedor
                     'RutSession' => '1234567-8',
-                    'concesionario' => $sucursalHomologada
-
+                    'concesionario' => int($sucursalHomologada)
                 ];
                 dump($req);
 

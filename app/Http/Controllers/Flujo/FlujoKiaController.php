@@ -126,7 +126,7 @@ class FlujoKiaController extends Controller
                     'IdOportunidad' => $lead->IDExterno,
                     'ValorNuevoEstado' => $estadoHomologado,
                     'ValorNuevoSubEstado' => $subEstadoHomologado,
-                    'Vendedor' => $rutVendedor, // RUT del vendedor
+                    'Vendedor' => '1234567-8', // RUT del vendedor
                     'RutSession' => '1234567-8',
                     'concesionario' => $sucursalHomologada
                 ];

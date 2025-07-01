@@ -95,6 +95,7 @@ class FlujoKiaController extends Controller
                 $req['api_id'] = 43;
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
+                $req['onDemand'] = true;
 
                 $req['data'] = [
                     'RUT' => $rutVendedor,
@@ -104,7 +105,7 @@ class FlujoKiaController extends Controller
 
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
-dump($resp);
+                dump($resp);
                 // ------
 
 
@@ -130,7 +131,7 @@ dump($resp);
                         'ValorNuevoSubEstado' => $subEstadoHomologado,
 //                        'FechaProxContacto' => '',
                         'concesionario' => $sucursalHomologada,
-                        'Vendedor' => $rutVendedor ?? '',
+                        'Vendedor' => '1234567-8', // RUT SISTEMICO KIA
                     ]
                 ];
                 dump($req);

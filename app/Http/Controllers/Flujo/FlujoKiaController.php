@@ -16,7 +16,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use function Psl\Type\int;
 
 
 class FlujoKiaController extends Controller
@@ -119,28 +118,17 @@ class FlujoKiaController extends Controller
                 $req['flujoID'] = $flujo->ID;
 
 
-                $estadoHomologado = $h->getD('estado', $lead->EstadoID, '100000001');
-                $subEstadoHomologado = $h->getD('subestado', $lead->EstadoID, '100000009');
-                $sucursalHomologada = $h->getR('sucursal', $lead->SucursalID);
+                $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
+                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000009));
+                $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
 
                 $req['data'] = [
-                    /*                    'DatosEntrada' => [
-                                            'Accion' => 'ACTUALIZACIOND DE ESTADO POMPEYO',
-                                            'IdOportunidad' => $lead->IDExterno,
-                                            'ValorNuevoEstado' => $estadoHomologado,
-                                            'ValorNuevoSubEstado' => $subEstadoHomologado,
-                    //                        'FechaProxContacto' => '',
-                                            'concesionario' => $sucursalHomologada,
-                                            'Vendedor' => '1234567-8', // RUT SISTEMICO KIA
-                                        ]*/
-
-
                     'IdOportunidad' => $lead->IDExterno,
-                    'ValorNuevoEstado' => int($estadoHomologado),
-                    'ValorNuevoSubEstado' => int($subEstadoHomologado),
+                    'ValorNuevoEstado' => $estadoHomologado,
+                    'ValorNuevoSubEstado' => $subEstadoHomologado,
                     'Vendedor' => $rutVendedor, // RUT del vendedor
                     'RutSession' => '1234567-8',
-                    'concesionario' => int($sucursalHomologada)
+                    'concesionario' => $sucursalHomologada
                 ];
                 dump($req);
 

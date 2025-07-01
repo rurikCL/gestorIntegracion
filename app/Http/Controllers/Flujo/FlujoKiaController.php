@@ -63,24 +63,24 @@ class FlujoKiaController extends Controller
 
         try {
             $lead = MK_Leads::where('IDExterno', $leadId)
-                ->where('MarcaID',2)
+                ->where('MarcaID', 2)
                 ->first();
 
-            if($lead){
+            if ($lead) {
 
-                if($lead->VendedorID){
+                if ($lead->VendedorID) {
                     $rutVendedor = $lead->vendedor->Rut;
                     $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
                     $sucursalVendedor = $lead->vendedor->SucursalID;
                     $vendedorActivo = $this->revisaRutVendedor($rutVendedor);
 
-                    if(!$vendedorActivo){
+                    if (!$vendedorActivo) {
                         // buscar Jefe de sucursal y asignar ese rut
                         $jefe = MA_Usuarios::where('SucursalID', $sucursalVendedor)
                             ->where('CargoID', 2) // Jefe de sucursal
                             ->where('PerfilID', 3)
                             ->first();
-                        if($jefe){
+                        if ($jefe) {
                             $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
                         } else {
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
@@ -109,7 +109,6 @@ class FlujoKiaController extends Controller
                 // ------
 
 
-
                 // CAMBIO DE FASE
                 $req = new Request();
                 $req['referencia_id'] = $lead->ID;
@@ -119,29 +118,29 @@ class FlujoKiaController extends Controller
                 $req['flujoID'] = $flujo->ID;
 
 
-                $estadoHomologado = $h->getD('estado', $lead->EstadoID,'100000001');
-                $subEstadoHomologado = $h->getD('subestado', $lead->EstadoID,'100000009');
+                $estadoHomologado = $h->getD('estado', $lead->EstadoID, '100000001');
+                $subEstadoHomologado = $h->getD('subestado', $lead->EstadoID, '100000009');
                 $sucursalHomologada = $h->getR('sucursal', $lead->SucursalID);
 
                 $req['data'] = [
-/*                    'DatosEntrada' => [
-                        'Accion' => 'ACTUALIZACIOND DE ESTADO POMPEYO',
-                        'IdOportunidad' => $lead->IDExterno,
-                        'ValorNuevoEstado' => $estadoHomologado,
-                        'ValorNuevoSubEstado' => $subEstadoHomologado,
-//                        'FechaProxContacto' => '',
-                        'concesionario' => $sucursalHomologada,
-                        'Vendedor' => '1234567-8', // RUT SISTEMICO KIA
-                    ]*/
+                    /*                    'DatosEntrada' => [
+                                            'Accion' => 'ACTUALIZACIOND DE ESTADO POMPEYO',
+                                            'IdOportunidad' => $lead->IDExterno,
+                                            'ValorNuevoEstado' => $estadoHomologado,
+                                            'ValorNuevoSubEstado' => $subEstadoHomologado,
+                    //                        'FechaProxContacto' => '',
+                                            'concesionario' => $sucursalHomologada,
+                                            'Vendedor' => '1234567-8', // RUT SISTEMICO KIA
+                                        ]*/
 
-                    [
-                        'IdOportunidad' => $lead->IDExterno,
-                        'ValorNuevoEstado' => $estadoHomologado,
-                        'ValorNuevoSubEstado' => $subEstadoHomologado,
-                        'Vendedor' => $rutVendedor, // RUT del vendedor
-                        'RutSession' => '1234567-8',
-                        'concesionario' => $sucursalHomologada
-                    ]
+
+                    'IdOportunidad' => $lead->IDExterno,
+                    'ValorNuevoEstado' => $estadoHomologado,
+                    'ValorNuevoSubEstado' => $subEstadoHomologado,
+                    'Vendedor' => $rutVendedor, // RUT del vendedor
+                    'RutSession' => '1234567-8',
+                    'concesionario' => $sucursalHomologada
+
                 ];
                 dump($req);
 
@@ -151,15 +150,15 @@ class FlujoKiaController extends Controller
                 $respuesta = json_decode($solicitud->Respuesta);
                 dump($respuesta);
 
-                return response()->json(['status'=>'OK','message' => 'Fase actualizada correctamente'], 200);
+                return response()->json(['status' => 'OK', 'message' => 'Fase actualizada correctamente'], 200);
             }
 
-            return response()->json(['status'=>'ERROR','error' => 'Lead no encontrado'], 404);
+            return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
 
 
         } catch (\Exception $e) {
             Log::error('Error cambiando fase del lead: ' . $e->getMessage());
-            return response()->json(['status'=>'ERROR','error' => 'Internal Server Error'], 500);
+            return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
 
     }
@@ -190,8 +189,8 @@ class FlujoKiaController extends Controller
             $resp = $resp->getData();
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $respuesta = json_decode($solicitud->Respuesta);
-            if($respuesta){
-               return $respuesta['active'] ?? false;
+            if ($respuesta) {
+                return $respuesta['active'] ?? false;
             }
 
             return false;
@@ -202,6 +201,7 @@ class FlujoKiaController extends Controller
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
+
     public function getFases()
     {
 
@@ -226,8 +226,8 @@ class FlujoKiaController extends Controller
             $resp = $resp->getData();
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $respuesta = json_decode($solicitud->Respuesta);
-            if($respuesta){
-               return $respuesta['active'] ?? false;
+            if ($respuesta) {
+                return $respuesta['active'] ?? false;
             }
 
             return false;

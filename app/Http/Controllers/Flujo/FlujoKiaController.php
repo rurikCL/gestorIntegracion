@@ -124,7 +124,7 @@ class FlujoKiaController extends Controller
                 $sucursalHomologada = $h->getR('sucursal', $lead->SucursalID);
 
                 $req['data'] = [
-                    'DatosEntrada' => [
+/*                    'DatosEntrada' => [
                         'Accion' => 'ACTUALIZACIOND DE ESTADO POMPEYO',
                         'IdOportunidad' => $lead->IDExterno,
                         'ValorNuevoEstado' => $estadoHomologado,
@@ -132,6 +132,15 @@ class FlujoKiaController extends Controller
 //                        'FechaProxContacto' => '',
                         'concesionario' => $sucursalHomologada,
                         'Vendedor' => '1234567-8', // RUT SISTEMICO KIA
+                    ]*/
+
+                    [
+                        'IdOportunidad' => $lead->IDExterno,
+                        'ValorNuevoEstado' => $estadoHomologado,
+                        'ValorNuevoSubEstado' => $subEstadoHomologado,
+                        'Vendedor' => '".$rutVendedor."', // RUT del vendedor
+                        'RutSession' => '1234567-8',
+                        'concesionario' => $sucursalHomologada
                     ]
                 ];
                 dump($req);

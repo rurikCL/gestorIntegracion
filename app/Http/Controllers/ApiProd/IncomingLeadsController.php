@@ -227,8 +227,6 @@ class IncomingLeadsController extends Controller
 
         $IDExterno = $request->input('data.lead.externalID', null);
         $idFlujoHomologacion = $request->input('data.lead.idFlujo', null);
-        $sucursalNombre = $request->input('data.lead.sucursal', null);
-        $sucursalIDExterno = $request->input('data.lead.sucursalExternalID', null);
         $comentario = $request->input('data.lead.comentario', null);
 
         $h->setFlujo($idFlujoHomologacion);
@@ -248,23 +246,32 @@ class IncomingLeadsController extends Controller
         Log::info("Asociacion de contacto creada: " . $idContacto);
 
 
+        $sucursalNombre = $request->input('data.lead.sucursal', null);
+        $sucursalIDExterno = $request->input('data.lead.sucursalExternalID', null);
+        if ($sucursalIDExterno) {
+            $sucursalHomologada = $h->getD('sucursal', $sucursalIDExterno, $sucursalNombre);
+        }
+
         // OBTENCION DE DATOS DEL VEHICULO
 
         $marcaNombre = $request->input('data.vehiculo.marca', null);
         $marcaIDExterno = $request->input('data.vehiculo.marcaExternalID', null);
         if ($marcaIDExterno) {
-            $marcaHomologadaID = $h->getD('marca', $marcaIDExterno, 0);
+            $marcaHomologada = $h->getD('marca', $marcaIDExterno, $marcaNombre);
         }
+
         $modeloNombre = $request->input('data.vehiculo.modelo', null);
         $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
         if ($modeloIDExterno) {
-            $modeloHomologadoID = $h->getD('modelo', $modeloIDExterno, 0);
+            $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);
         }
+
         $versionNombre = $request->input('data.vehiculo.version', null);
         $versionIDExterno = $request->input('data.vehiculo.versionExternalID', null);
         if ($versionIDExterno) {
-            $versionHomologadoID = $h->getD('version', $versionIDExterno, 0);
+            $versionHomologado = $h->getD('version', $versionIDExterno, $versionNombre);
         }
+
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
         $bonoMarca = $request->input('data.vehiculo.bonoMarca', null);
         $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
@@ -284,14 +291,16 @@ class IncomingLeadsController extends Controller
             'lastname' => $apellido,
             'dealname' => $nombre . ' ' . $apellido . ' - ' . $marcaNombre . ' ' . $modeloNombre, // + marca + modelo
             'sucursal' => $sucursalNombre,
-            'sucursal_roma' => $sucursalIDExterno,
+            'sucursal_roma' => $sucursalHomologada,
             'origen_roma' => 2, //origen Marca
             'suborigen_roma' => 63, //suborigen Marca
             'canal_roma' => 2, //canal Digital
-            'modelo_roma' => $modeloHomologadoID ?? $modeloNombre,
-            "marca" => "KIA",
-            'marca_roma' => $marcaHomologadaID ?? $marcaNombre,
-            'version_roma' => $versionHomologadoID ?? $versionNombre,
+            'modelo' => $modeloNombre,
+            'modelo_roma' => $modeloHomologado,
+            "marca" => $marcaNombre,
+            'marca_roma' => $marcaHomologada,
+            'version' => $versionNombre,
+            'version_roma' => $versionHomologado,
             'dealstage' => 'appointmentscheduled',
             'createdate' => Carbon::now()->format('Y-m-d'),
             'tipo_vehiculo' => 'Nuevo',

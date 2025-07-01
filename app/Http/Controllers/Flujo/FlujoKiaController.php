@@ -67,12 +67,6 @@ class FlujoKiaController extends Controller
                 ->first();
 
             if($lead){
-                $req = new Request();
-                $req['referencia_id'] = $lead->ID;
-                $req['proveedor_id'] = 9;
-                $req['api_id'] = 41;
-                $req['prioridad'] = 1;
-                $req['flujoID'] = $flujo->ID;
 
                 if($lead->VendedorID){
                     $rutVendedor = $lead->vendedor->Rut;
@@ -93,6 +87,36 @@ class FlujoKiaController extends Controller
                         }
                     }
                 }
+
+                // ASIGNACION VENDEDOR
+                $req = new Request();
+                $req['referencia_id'] = $rutVendedor;
+                $req['proveedor_id'] = 9;
+                $req['api_id'] = 43;
+                $req['prioridad'] = 1;
+                $req['flujoID'] = $flujo->ID;
+
+                $req['data'] = [
+                    'RUT' => $rutVendedor,
+                    "OppID" => $lead->IDExterno,
+                    "FromMongoDB" => false,
+                ];
+
+                $resp = $solicitudCon->store($req);
+                $resp = $resp->getData();
+dump($resp);
+                // ------
+
+
+
+                // CAMBIO DE FASE
+                $req = new Request();
+                $req['referencia_id'] = $lead->ID;
+                $req['proveedor_id'] = 9;
+                $req['api_id'] = 41;
+                $req['prioridad'] = 1;
+                $req['flujoID'] = $flujo->ID;
+
 
                 $estadoHomologado = $h->getD('estado', $lead->EstadoID,'100000001');
                 $subEstadoHomologado = $h->getD('subestado', $lead->EstadoID,'100000009');

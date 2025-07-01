@@ -89,7 +89,7 @@ class FlujoKiaController extends Controller
                 }
 
                 // ASIGNACION VENDEDOR
-                $req = new Request();
+                /*$req = new Request();
                 $req['referencia_id'] = $rutVendedor;
                 $req['proveedor_id'] = 9;
                 $req['api_id'] = 43;
@@ -106,7 +106,7 @@ class FlujoKiaController extends Controller
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
                 dump($resp);
-                // ------
+                // ------*/
 
 
                 // CAMBIO DE FASE

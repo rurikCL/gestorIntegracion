@@ -72,7 +72,7 @@ class FlujoKiaController extends Controller
                     $rutVendedor = $lead->vendedor->Rut;
                     $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
                     $sucursalVendedor = $lead->vendedor->SucursalID;
-                    $vendedorActivo = $this->revisaRutVendedor($rutVendedor);
+                    $vendedorActivo = $this->revisaRutVendedor($rutVendedor, $sucursalVendedor);
 
                     if (!$vendedorActivo) {
                         // buscar Jefe de sucursal y asignar ese rut
@@ -119,7 +119,7 @@ class FlujoKiaController extends Controller
 
 
                 $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
-                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000009));
+                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
                 $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
 
                 $req['data'] = [
@@ -151,13 +151,15 @@ class FlujoKiaController extends Controller
 
     }
 
-    public function revisaRutVendedor($rut)
+    public function revisaRutVendedor($rut, $sucursalID)
     {
 
         print("Revisando rut: " . $rut);
 
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
         $solicitudCon = new ApiSolicitudController();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
 
         try {
             $req = new Request();
@@ -171,6 +173,7 @@ class FlujoKiaController extends Controller
             $req['data'] = [
                 'rut' => $rut,
                 'dealerId' => '63345c480d4fd017470c4efc',
+                'sucursalExternalID' => $h->getR('sucursal', $sucursalID ), // ID SUCURSAL HOMOLOGADO
             ];
 
             $resp = $solicitudCon->store($req);

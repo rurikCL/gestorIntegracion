@@ -343,6 +343,7 @@ class LeadController extends Controller
             $idFlujo = $request->input('data.lead.idFlujo') ?? 0;
             $fuente = $request->input('data.fuente') ?? 1;
             $idExterno = $request->input('data.lead.externalID') ?? null;
+            $idExternoSecundario = $request->input('data.lead.externalIDSecundario') ?? null;
             $idHubspot = $request->input('data.lead.idHubspot') ?? null;
             $visible = $request->input('data.lead.visible') ?? 1; // 1 = visible, 0 = no visible
             $lead = null;
@@ -661,8 +662,7 @@ class LeadController extends Controller
                 $linkInteres = $request->input('data.lead.link') ?? null;
 
                 // Verificacion de existencia de Lead
-                $IDExterno = $request->input('data.lead.externalID');
-                $lead = MK_Leads::where('IDExterno', $IDExterno)
+                $lead = MK_Leads::where('IDExterno', $idExterno)
                     ->where('OrigenID', $origenID)
                     ->where('ModeloID', $modeloID)
                     ->where('FechaCreacion', '>', date('Y-m-d H:i:s', strtotime('-1 day')))
@@ -751,7 +751,8 @@ class LeadController extends Controller
 
                 $lead->MarcaID = $marcaID ?? 1;
                 $lead->ModeloID = $modeloID ?? 1;
-                $lead->IDExterno = $IDExterno;
+                $lead->IDExterno = $idExterno;
+                $lead->IDExternoSecundario = $idExternoSecundario;
                 $lead->IDHubspot = $idHubspot;
                 $lead->Comentario = $comentario ?? null;
                 $lead->Financiamiento = $financiamiento;

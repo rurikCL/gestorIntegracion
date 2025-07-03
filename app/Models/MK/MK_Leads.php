@@ -52,6 +52,7 @@ class MK_Leads extends Model
         'CampanaID',
         'IntegracionID',
         'IDExterno',
+        'IDExternoSecundario',
         'IDHubspot',
         'ConcatID',
         'Asignado',

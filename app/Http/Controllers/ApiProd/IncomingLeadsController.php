@@ -226,6 +226,7 @@ class IncomingLeadsController extends Controller
         // Creacion del NEGOCIO (DEAL)  -------------------------------------------
 
         $IDExterno = $request->input('data.lead.externalID', null);
+        $IDExternoSecundario = $request->input('data.lead.IdCotizacion', null);
         $idFlujoHomologacion = $request->input('data.lead.idFlujo', null);
         $comentario = $request->input('data.lead.comentario', null);
 
@@ -277,12 +278,13 @@ class IncomingLeadsController extends Controller
         $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
         $vpp = ($request->input('data.vpp.tieneVpp', false) == true)? 'SI' : 'NO';
         $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 'SI' : 'NO';
-//        $testDrive = ($request->input('data.testDrive.tieneTestDrive', false) == true) ? 'SI' : 'NO';
+        $testDrive = ($request->input('data.testDrive.tieneTestDrive', false) == true) ? 'SI' : 'NO';
 
 
         //DEFINIENDO PROPIEDADES DEL NEGOCIO
         $properties1 = [
             'id_externo' => $IDExterno,
+            'id_externo_secundario' => $IDExternoSecundario,
             'record_id___contacto' => $idContacto,
             'email' => $email,
             'phone' => $telefono,
@@ -309,9 +311,11 @@ class IncomingLeadsController extends Controller
             'bono_financiamiento' => $bonoFinanciamiento,
             'vpp' => $vpp,
             'financiamiento' => $financiamiento,
+            'test_drive' => $testDrive,
             'preparado' => 0,
             'visible' => 0,
-            'actualiza_estado' => 1
+            'actualiza_estado' => 1,
+            'comentario' => $comentario,
         ];
 
         try {

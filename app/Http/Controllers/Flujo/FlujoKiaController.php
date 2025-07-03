@@ -68,6 +68,10 @@ class FlujoKiaController extends Controller
 
             if ($lead) {
 
+                $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
+                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
+                $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
+
                 if ($lead->VendedorID) {
                     $rutVendedor = $lead->vendedor->Rut;
                     $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
@@ -82,32 +86,12 @@ class FlujoKiaController extends Controller
                             ->first();
                         if ($jefe) {
                             $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
+                            $subEstadoHomologado = $h->getD('subestadojefe', $lead->EstadoID, 100000008);
                         } else {
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }
                     }
                 }
-
-                // ASIGNACION VENDEDOR
-                /*$req = new Request();
-                $req['referencia_id'] = $rutVendedor;
-                $req['proveedor_id'] = 9;
-                $req['api_id'] = 43;
-                $req['prioridad'] = 1;
-                $req['flujoID'] = $flujo->ID;
-                $req['onDemand'] = true;
-
-                $req['data'] = [
-                    'RUT' => $rutVendedor,
-                    "OppID" => $lead->IDExterno,
-                    "FromMongoDB" => false,
-                ];
-
-                $resp = $solicitudCon->store($req);
-                $resp = $resp->getData();
-                dump($resp);
-                // ------*/
-
 
                 // CAMBIO DE FASE
                 $req = new Request();
@@ -116,11 +100,7 @@ class FlujoKiaController extends Controller
                 $req['api_id'] = 41;
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
-
-
-                $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
-                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
-                $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
+                $req['OnDemand'] = true;
 
                 $req['data'] = [
                     'IdOportunidad' => $lead->IDExterno,
@@ -168,7 +148,7 @@ class FlujoKiaController extends Controller
             $req['api_id'] = 42;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['onDemand'] = true;
+            $req['OnDemand'] = true;
 
             $req['data'] = [
                 'rut' => $rut,

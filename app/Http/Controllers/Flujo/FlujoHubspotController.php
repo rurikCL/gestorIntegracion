@@ -73,7 +73,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_car', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'dealstage, actualiza_estado'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_drive', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo','id_externo_secundario', 'dealstage, actualiza_estado'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -146,6 +146,7 @@ class FlujoHubspotController extends Controller
                         $origenProp = $data->properties['origen'] ?? '';
                         $idHubspot = $data->id ?? '';
                         $idExterno = $data->properties['id_externo'] ?? '';
+                        $idExternoSecundario = $data->properties['id_externo_secundario'] ?? '';
 
                         $estado = $data->properties['dealstage'] ?? 'PENDIENTE';
                         $estadoHomologado = $h->getR('estado', $estado, 'PENDIENTE');
@@ -235,6 +236,7 @@ class FlujoHubspotController extends Controller
                                 "modelo" => $modelo,
                                 "comentario" => $comentario,
                                 "externalID" => $idExterno,
+                                "externalIDSecundario" => $idExternoSecundario,
                                 "idHubspot" => $idHubspot,
                                 "financiamiento" => $financiamiento,
                                 "link" => $linkConversacion,
@@ -446,7 +448,9 @@ class FlujoHubspotController extends Controller
                     // SECCION DE INTEGRACION KIA
                     try{
                         if ($lead->MarcaID == 2) {
-                            if ($lead->IDExterno != '0' && $lead->IDExterno != '' && $lead->Visible == 0) {
+                            if ($lead->IDExterno != '0' && $lead->IDExterno != ''
+                                && $lead->IDExternoSecundario != '0' && $lead->IDExternoSecundario != '')
+                            {
                                 if ($flujoKia->cambiaFase($lead->IDExterno)) {
                                     Log::info("Fase de Lead KIA actualizado : " . $lead->IDExterno);
                                 } else {

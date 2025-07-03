@@ -90,6 +90,13 @@ class FlujoKiaController extends Controller
                         } else {
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }
+                    } else {
+                        if($vendedorActivo["cargo"] == 'JEFE DE LOCAL'){
+                            $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
+                        } else {
+                            $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
+
+                        }
                     }
                 }
 
@@ -158,10 +165,25 @@ class FlujoKiaController extends Controller
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $respuesta = json_decode($solicitud->Respuesta);
             if ($respuesta) {
-                return $respuesta->active ?? false;
+                if($respuesta->active === true) {
+                    Log::info("Vendedor activo: " . $rut);
+                    return [
+                        'status' => 'Activo',
+                        'cargo' => $respuesta->position ?? null,
+                    ];
+                } else {
+                    Log::info("Vendedor inactivo: " . $rut);
+                    return [
+                        'status' => 'Inactivo',
+                        'cargo' => null,
+                    ];
+                }
             }
 
-            return false;
+            return [
+                'status' => 'Inactivo',
+                'cargo' => null,
+            ];
 
         } catch (\Exception $e) {
             echo "<br>Error: " . $e->getMessage();

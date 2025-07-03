@@ -349,7 +349,25 @@ class IncomingLeadsController extends Controller
         }
 
     }
+    public function cambiarVisibilidad(Request $request)
+    {
+        $idLead = $request->input('idLead', null);
+        $idCotizacion = $request->input('idCotizacion', null);
+        $visible = $request->input('visible', 0);
 
+        $lead = FLU_Flujos::where('IDExterno', $idLead)
+            ->where('IDExternoSecundario', $idCotizacion)
+            ->first();
+
+        if($lead){
+            $lead->Visible = $visible; // Cambia la visibilidad
+            $lead->save();
+
+            return response()->json(['status' => 'OK', 'message' => 'Visibilidad cambiada correctamente'], 200);
+        } else {
+            return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
+        }
+    }
 }
 
 

@@ -355,7 +355,7 @@ class IncomingLeadsController extends Controller
         $idCotizacion = $request->input('idCotizacion', null);
         $visible = $request->input('visible', 0);
 
-        $lead = FLU_Flujos::where('IDExterno', $idLead)
+        $lead = MK_Leads::where('IDExterno', $idLead)
             ->where('IDExternoSecundario', $idCotizacion)
             ->first();
 

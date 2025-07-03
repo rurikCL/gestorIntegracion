@@ -131,7 +131,7 @@ class FlujoKiaController extends Controller
 
     }
 
-    public function revisaRutVendedor($rut, $sucursalID)
+    public function revisaRutVendedor($rut, $sucursalID=1)
     {
 
         print("Revisando rut: " . $rut);
@@ -161,7 +161,7 @@ class FlujoKiaController extends Controller
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $respuesta = json_decode($solicitud->Respuesta);
             if ($respuesta) {
-                return $respuesta['active'] ?? false;
+                return $respuesta->active ?? false;
             }
 
             return false;

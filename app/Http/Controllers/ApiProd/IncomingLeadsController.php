@@ -250,7 +250,7 @@ class IncomingLeadsController extends Controller
         $sucursalNombre = $request->input('data.lead.sucursal', null);
         $sucursalIDExterno = $request->input('data.lead.sucursalExternalID', null);
         if ($sucursalIDExterno) {
-            $sucursalHomologada = $h->getD('sucursal', $sucursalIDExterno, $sucursalNombre);
+            $sucursalHomologada = $h->getD('sucursal', $sucursalIDExterno);
         }
 
         // OBTENCION DE DATOS DEL VEHICULO

@@ -295,7 +295,7 @@ class IncomingLeadsController extends Controller
             'dealname' => $nombre . ' ' . $apellido . ' - ' . $marcaNombre . ' ' . $modeloNombre, // + marca + modelo
             'sucursal' => $sucursalNombre,
             'sucursal_roma' => $sucursalHomologada,
-            'regla_sucursal' => 0,
+            'reglasucursal' => 0,
             'origen_roma' => 2, //origen Marca
             'suborigen_roma' => 63, //suborigen Marca
             'canal_roma' => 2, //canal Digital

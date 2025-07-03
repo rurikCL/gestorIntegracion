@@ -91,7 +91,7 @@ class FlujoKiaController extends Controller
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }
                     } else {
-                        if($vendedorActivo["cargo"] == 'JEFE DE LOCAL'){
+                        if($vendedorActivo["cargo"] == 'JEFE DE LOCAL' || $vendedorActivo["cargo"] == 'JEFE DE MARCA'){
                             $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
                         } else {
                             $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));

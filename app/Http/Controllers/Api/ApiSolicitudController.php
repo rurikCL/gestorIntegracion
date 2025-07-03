@@ -73,6 +73,16 @@ class ApiSolicitudController extends Controller
             // resuelve inmediatamente la solicitud
             $resp = $this->resolverSolicitud($solicitud);
 
+            if($resp['status'] == 'ERROR') {
+                Log::error('Error al resolver solicitud ID: ' . $solicitud->id . ' - ' . $resp['message']);
+                return response()->json([
+                    'message' => $resp['message'],
+                    'success' => false,
+                    'status' => $resp['status'],
+                    'id' => $solicitud->id
+                ], 500);
+            }
+
             return response()->json([
                 'message' => $resp["message"],
                 'success' => true,

@@ -86,7 +86,7 @@ class FlujoKiaController extends Controller
                             ->first();
                         if ($jefe) {
                             $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
-                            $subEstadoHomologado = $h->getD('subestadojefe', $lead->EstadoID, 100000008);
+                            $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
                         } else {
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }
@@ -110,13 +110,10 @@ class FlujoKiaController extends Controller
                     'RutSession' => '1234567-8',
                     'concesionario' => $sucursalHomologada
                 ];
-                dump($req);
 
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
-                $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
-                $respuesta = json_decode($solicitud->Respuesta);
-                dump($respuesta);
+                dump($resp);
 
                 return response()->json(['status' => 'OK', 'message' => 'Fase actualizada correctamente'], 200);
             }

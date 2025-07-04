@@ -90,6 +90,7 @@ class MKLeadsResource extends Resource
                 Section::make('Otra informacion')->schema([
 
                     Forms\Components\TextInput::make('IDExterno')->label('ID Externo'),
+                    Forms\Components\TextInput::make('IDExternoSecundario')->label('ID Externo Secundario'),
                     Forms\Components\TextInput::make('IDHubspot')->label('ID Hubspot'),
                     Forms\Components\TextInput::make('ConcatID')->label('ID Concat'),
 
@@ -101,6 +102,7 @@ class MKLeadsResource extends Resource
                     Forms\Components\TextInput::make('CotizacionID')->label('ID Cotizacion'),
                     Forms\Components\TextInput::make('FechaReAsignado'),
 
+                    Forms\Components\Toggle::make('LogEstado'),
                     Forms\Components\Toggle::make('Financiamiento'),
                     Forms\Components\Toggle::make('Asignado'),
                     Forms\Components\Toggle::make('Llamado'),
@@ -109,7 +111,6 @@ class MKLeadsResource extends Resource
                     Forms\Components\Toggle::make('Vendido'),
                     Forms\Components\Toggle::make('Contesta'),
                     Forms\Components\Toggle::make('Contactado'),
-                    Forms\Components\Toggle::make('LogEstado'),
                 ])->columns(3)->collapsible()
 
             ])->columnSpan(2),
@@ -216,7 +217,11 @@ class MKLeadsResource extends Resource
 //                        Tables\Columns\TextColumn::make('version.Version')->searchable(),
                 Tables\Columns\TextColumn::make('IDHubspot')
                     ->label('ID Hubspot')
-//                        ->copyable()->copyMessage('Lead ID copiado al portapapeles')->copyMessageDuration(1500)
+                    ->copyable()->copyMessage('Lead ID copiado al portapapeles')->copyMessageDuration(1500)
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('IDExterno')
+                    ->label('ID Externo')
+                    ->copyable()->copyMessage('Lead ID copiado al portapapeles')->copyMessageDuration(1500)
                     ->searchable(),
             ])->defaultSort('ID', 'desc')
             ->filters([

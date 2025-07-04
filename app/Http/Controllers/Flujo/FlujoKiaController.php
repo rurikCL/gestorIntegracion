@@ -78,7 +78,7 @@ class FlujoKiaController extends Controller
                     $sucursalVendedor = $lead->vendedor->SucursalID;
                     $vendedorActivo = $this->revisaRutVendedor($rutVendedor, $sucursalVendedor);
 
-                    if (!$vendedorActivo) {
+                    if ($vendedorActivo['status'] == 'Inactivo') {
                         // buscar Jefe de sucursal y asignar ese rut
                         $jefe = MA_Usuarios::where('SucursalID', $sucursalVendedor)
                             ->where('CargoID', 2) // Jefe de sucursal
@@ -95,7 +95,6 @@ class FlujoKiaController extends Controller
                             $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
                         } else {
                             $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
-
                         }
                     }
                 }

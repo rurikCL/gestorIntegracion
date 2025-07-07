@@ -355,6 +355,7 @@ class FlujoHubspotController extends Controller
 
                         $update = MK_Leads::where('ID', $idPompeyo)->update([
                             'EstadoID' => $estado->ID,
+                            'Visible' => 1
                         ]);
 
                         if ($update) {

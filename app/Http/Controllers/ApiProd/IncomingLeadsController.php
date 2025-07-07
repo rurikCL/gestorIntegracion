@@ -262,7 +262,7 @@ class IncomingLeadsController extends Controller
         }
 
         $modeloNombre = $request->input('data.vehiculo.modelo', null);
-        $modeloNombre = str_replace("NUEVO", "", $modeloNombre);
+        $modeloNombre = str_replace("NUEVO ", "", $modeloNombre);
         $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
         if ($modeloIDExterno) {
             $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);

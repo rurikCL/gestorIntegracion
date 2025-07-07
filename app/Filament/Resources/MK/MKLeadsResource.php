@@ -103,6 +103,7 @@ class MKLeadsResource extends Resource
                     Forms\Components\TextInput::make('FechaReAsignado'),
 
                     Forms\Components\Toggle::make('LogEstado'),
+                    Forms\Components\Toggle::make('Visible'),
                     Forms\Components\Toggle::make('Financiamiento'),
                     Forms\Components\Toggle::make('Asignado'),
                     Forms\Components\Toggle::make('Llamado'),

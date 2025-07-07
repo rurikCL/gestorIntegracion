@@ -91,7 +91,7 @@ class FlujoKiaController extends Controller
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }
                     } else {
-                        if($vendedorActivo["cargo"] == 'JEFE DE LOCAL' || $vendedorActivo["cargo"] == 'JEFE DE MARCA'){
+                        if ($vendedorActivo["cargo"] == 'JEFE DE LOCAL' || $vendedorActivo["cargo"] == 'JEFE DE MARCA') {
                             $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
                         } else {
                             $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
@@ -134,7 +134,7 @@ class FlujoKiaController extends Controller
 
     }
 
-    public function revisaRutVendedor($rut, $sucursalID=1)
+    public function revisaRutVendedor($rut, $sucursalID = 1)
     {
 
         print("Revisando rut: " . $rut);
@@ -156,7 +156,7 @@ class FlujoKiaController extends Controller
             $req['data'] = [
                 'rut' => $rut,
                 'dealerId' => '63345c480d4fd017470c4efc',
-                'sucursalExternalID' => $h->getR('sucursal', $sucursalID ), // ID SUCURSAL HOMOLOGADO
+                'sucursalExternalID' => $h->getR('sucursal', $sucursalID), // ID SUCURSAL HOMOLOGADO
             ];
 
             $resp = $solicitudCon->store($req);
@@ -164,7 +164,7 @@ class FlujoKiaController extends Controller
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $respuesta = json_decode($solicitud->Respuesta);
             if ($respuesta) {
-                if($respuesta->active === true) {
+                if ($respuesta->active === true) {
                     Log::info("Vendedor activo: " . $rut);
                     return [
                         'status' => 'Activo',
@@ -225,6 +225,51 @@ class FlujoKiaController extends Controller
             echo "<br>Error: " . $e->getMessage();
             Log::error('Error fetching vendedor: ' . $e->getMessage());
             return response()->json(['error' => 'Internal Server Error'], 500);
+        }
+    }
+
+    public function rechazaLead($idCotizacion)
+    {
+
+        $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
+        $solicitudCon = new ApiSolicitudController();
+
+
+        try {
+            $lead = MK_Leads::where('IDExternoSecundario', $idCotizacion)
+                ->where('MarcaID', 2)
+                ->first();
+
+            if ($lead) {
+
+                $req = new Request();
+                $req['referencia_id'] = $lead->ID;
+                $req['proveedor_id'] = 9;
+                $req['api_id'] = 44;
+                $req['prioridad'] = 1;
+                $req['flujoID'] = $flujo->ID;
+                $req['OnDemand'] = true;
+
+                $req['data'] = [
+                    "QuoteId" => $idCotizacion,
+                    "state" => 3,
+                    "status" => 6
+                ];
+
+                $resp = $solicitudCon->store($req);
+                $resp = $resp->getData();
+                dump($resp);
+
+                return response()->json(['status' => 'OK', 'message' => 'Lead rechazado correctamente'], 200);
+            }
+
+            return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
+
+        } catch (\Exception $e) {
+            Log::error('Error rechazando lead: ' . $e->getMessage());
+            return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
     }
 

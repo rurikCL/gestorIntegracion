@@ -11,6 +11,7 @@ use App\Models\FLU\FLU_Homologacion;
 use App\Models\MA\MA_Clientes;
 use App\Models\MA\MA_SubOrigenes;
 use App\Models\MK\MK_Leads;
+use App\Models\MK\MK_LeadsEstados;
 use Carbon\Carbon;
 use HubSpot\Client\Crm\Contacts\ApiException;
 use HubSpot\Client\Crm\Contacts\Model\Filter;
@@ -73,7 +74,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_drive', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo','id_externo_secundario', 'dealstage, actualiza_estado'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_drive', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage, actualiza_estado'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -292,6 +293,88 @@ class FlujoHubspotController extends Controller
         return true;
     }
 
+    public function leadsHubspotRechazados()
+    {
+        echo "Ejecutando Flujo Hubspot Negocios <br>";
+        Log::info("Inicio de flujo Hubspot");
+
+        $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
+
+        if ($flujo->Activo) {
+
+            $token = json_decode($flujo->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+
+
+            // FILTROS   -----------------------------------------------------
+            $filter1 = new FilterDeal([
+                'property_name' => 'idpompeyo',
+                'operator' => 'HAS_PROPERTY'
+            ]);
+
+            $filter2 = new FilterDeal([
+                'property_name' => 'actualiza_estado',
+                'operator' => 'EQ',
+                'value' => '1'
+            ]);
+            $filter3 = new FilterDeal([
+                'property_name' => 'dealstage',
+                'operator' => 'EQ',
+                'value' => '130360335'
+            ]);
+
+            $filterGroup1 = new FilterGroup([
+                'filters' => [$filter1, $filter2]
+            ]);
+            // --------------------------------------------------------------
+
+            $publicObjectSearchRequest = new PublicObjectSearchRequest([
+                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage, actualiza_estado, marca'],
+                'filter_groups' => [$filterGroup1],
+                'limit' => $flujo->MaxLote,
+            ]);
+
+            try {
+
+                $apiResponse = $client->crm()->deals()->searchApi()
+                    ->doSearch($publicObjectSearchRequest)
+                    ->getResults();
+
+                foreach ($apiResponse as $item) {
+                    $data = $item->jsonSerialize();
+                    $estadoLeadHubspot = $data->properties['dealstage'];
+                    $estadoHomologado = $h->getR('estado', $estadoLeadHubspot);
+                    $estado = MK_LeadsEstados::where('Estado', $estadoHomologado)->first();
+
+                    $idPompeyo = $data->properties['idpompeyo'];
+
+                    if($estado) {
+
+                        $update = MK_Leads::where('ID', $idPompeyo)->update([
+                            'EstadoID' => $estadoHomologado,
+//                        'LogEstado' => 1
+                        ]);
+
+                        if($update){
+                            Log::info("Lead actualizado: " . $idPompeyo . " - Estado: " . $estadoHomologado);
+                        }
+
+                        if($data->properties['marca'] == "KIA") {
+                            $flujoKia = new FlujoKiaController();
+                            $res = $flujoKia->rechazaLead($data->properties['id_externo_secundario']);
+                        }
+                    }
+
+                }
+            } catch (\Exception $e) {
+                Log::error("Ha ocurrido un error al rechazar lead hubspot: " . $e->getMessage());
+            }
+        }
+    }
+
+
     public function limpiarLeads()
     {
         echo "Ejecutando Flujo Hubspot Limpieza <br>";
@@ -446,11 +529,10 @@ class FlujoHubspotController extends Controller
 
 
                     // SECCION DE INTEGRACION KIA
-                    try{
+                    try {
                         if ($lead->MarcaID == 2) {
                             if ($lead->IDExterno != '0' && $lead->IDExterno != ''
-                                && $lead->IDExternoSecundario != '0' && $lead->IDExternoSecundario != '')
-                            {
+                                && $lead->IDExternoSecundario != '0' && $lead->IDExternoSecundario != '') {
                                 if ($flujoKia->cambiaFase($lead->IDExterno)) {
                                     Log::info("Fase de Lead KIA actualizado : " . $lead->IDExterno);
                                 } else {
@@ -459,7 +541,7 @@ class FlujoHubspotController extends Controller
 
                             }
                         }
-                    }catch (\Exception $e){
+                    } catch (\Exception $e) {
                         Log::error("Error al actualizar fase de Lead KIA " . $lead->IDExterno . " " . $e->getMessage());
                     }
 

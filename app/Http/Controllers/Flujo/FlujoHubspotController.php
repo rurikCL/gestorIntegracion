@@ -295,7 +295,7 @@ class FlujoHubspotController extends Controller
 
     public function leadsHubspotRechazados()
     {
-        echo "Ejecutando Flujo Hubspot Negocios <br>";
+        echo "Ejecutando Flujo Hubspot Negocios Rechazados <br>";
         Log::info("Inicio de flujo Hubspot");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();

@@ -81,7 +81,8 @@ class MK_Leads extends Model
         'Direccion',
         'TIpoJuridicoID',
         'OrigenIngreso',
-        'FechaCreacionHorasHab'
+        'FechaCreacionHorasHab',
+        'Visible'
     ];
 
     public function cliente()

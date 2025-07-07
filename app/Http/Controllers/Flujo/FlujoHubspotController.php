@@ -349,12 +349,12 @@ class FlujoHubspotController extends Controller
                     $estado = MK_LeadsEstados::where('Estado', $estadoHomologado)->first();
 
                     $idPompeyo = $data->properties['idpompeyo'];
+                    $lead = MK_Leads::find($idPompeyo);
 
                     if ($estado) {
 
                         $update = MK_Leads::where('ID', $idPompeyo)->update([
-                            'EstadoID' => $estadoHomologado,
-//                        'LogEstado' => 1
+                            'EstadoID' => $estado->ID,
                         ]);
 
                         if ($update) {

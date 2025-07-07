@@ -368,7 +368,7 @@ class FlujoHubspotController extends Controller
                             Log::info("Lead actualizado: " . $idPompeyo . " - Estado: " . $estadoHomologado);
                         }
 
-                        if ($data->properties['marca'] == "KIA") {
+                        if ($data->properties['marca'] == "KIA" && $data->properties['id_externo_secundario']) {
                             $flujoKia = new FlujoKiaController();
                             $res = $flujoKia->rechazaLead($data->properties['id_externo_secundario']);
                         }

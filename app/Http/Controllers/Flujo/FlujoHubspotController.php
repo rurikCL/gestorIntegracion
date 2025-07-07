@@ -74,7 +74,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_drive', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage, actualiza_estado'],
+                'properties' => ['idpompeyo', 'record_id___contacto', 'comentario', 'email', 'financiamiento', 'marca', 'modelo', 'nombre', 'origen', 'phone', 'rut', 'sucursal', 'reglasucursal', 'reglavendedor', 'usados', 'vpp', 'financiamiento', 'test_drive', 'link_conversacion', 'agenda_visita', 'firstname', 'lastname', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage', 'actualiza_estado'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -564,8 +564,6 @@ class FlujoHubspotController extends Controller
                                     Log::error("Error al actualizar fase de Lead KIA " . $lead->IDExterno);
                                 }
 
-                            } else {
-                                Log::info('No es un lead Mysales ' . $lead->IDExterno . ' - ' . $lead->IDExternoSecundario);
                             }
                         }
                     } catch (\Exception $e) {

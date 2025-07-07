@@ -331,7 +331,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage, actualiza_estado, marca'],
+                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage', 'actualiza_estado', 'marca'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);

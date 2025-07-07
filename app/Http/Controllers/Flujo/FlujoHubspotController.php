@@ -331,7 +331,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage', 'actualiza_estado', 'marca', 'idvendedor'],
+                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage', 'actualiza_estado', 'marca', 'idvendedor','comentario'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -346,6 +346,8 @@ class FlujoHubspotController extends Controller
                     $data = $item->jsonSerialize();
                     $estadoLeadHubspot = $data->properties['dealstage'];
                     $idVendedor = $data->properties['idvendedor'] ?? 1;
+                    $comentario = $data->properties['comentario'];
+                    $visible = $data->properties['visible'] ?? 1;
                     $estadoHomologado = $h->getR('estado', $estadoLeadHubspot);
                     $estado = MK_LeadsEstados::where('Estado', $estadoHomologado)->first();
 
@@ -357,8 +359,9 @@ class FlujoHubspotController extends Controller
                         $update = MK_Leads::where('ID', $idPompeyo)
                             ->update([
                                 'EstadoID' => $estado->ID,
-                                'Visible' => 1,
+                                'Visible' => $visible,
                                 'ClienteID' => $idVendedor,
+                                'Comentario' => $comentario,
                             ]);
 
                         if ($update) {

@@ -236,7 +236,6 @@ class FlujoKiaController extends Controller
         $h->setFlujo($flujo->ID);
         $solicitudCon = new ApiSolicitudController();
 
-
         try {
             $lead = MK_Leads::where('IDExternoSecundario', $idCotizacion)
                 ->where('MarcaID', 2)

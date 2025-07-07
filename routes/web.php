@@ -88,6 +88,7 @@ Route::get('/robot/apc/comparar', [\App\Http\Controllers\RobotApcController::cla
 
 Route::get('/flujo/kia/revisaRut/{rut}', [\App\Http\Controllers\Flujo\FlujoKiaController::class, 'revisaRutVendedor']);
 Route::get('/flujo/kia/cambiaFase/{leadId}', [\App\Http\Controllers\Flujo\FlujoKiaController::class, 'cambiaFase']);
+Route::get('/flujo/kia/rechazos', [\App\Http\Controllers\Flujo\FlujoHubspotController::class, 'leadsHubspotRechazados']);
 
 
 

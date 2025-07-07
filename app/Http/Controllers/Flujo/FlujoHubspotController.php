@@ -350,21 +350,29 @@ class FlujoHubspotController extends Controller
 
                     $idPompeyo = $data->properties['idpompeyo'];
 
-                    if($estado) {
+                    if ($estado) {
 
                         $update = MK_Leads::where('ID', $idPompeyo)->update([
                             'EstadoID' => $estadoHomologado,
 //                        'LogEstado' => 1
                         ]);
 
-                        if($update){
+                        if ($update) {
                             Log::info("Lead actualizado: " . $idPompeyo . " - Estado: " . $estadoHomologado);
                         }
 
-                        if($data->properties['marca'] == "KIA") {
+                        if ($data->properties['marca'] == "KIA") {
                             $flujoKia = new FlujoKiaController();
                             $res = $flujoKia->rechazaLead($data->properties['id_externo_secundario']);
                         }
+
+                        // ACTUALIZA FLAG HUBSPOT
+                        $newProperties = new \HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInput();
+                        $newProperties->setProperties([
+                            'actualiza_estado' => 0,
+                        ]);
+                        $res = $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
+                        // ---
                     }
 
                 }

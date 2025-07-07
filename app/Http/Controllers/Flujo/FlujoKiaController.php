@@ -298,7 +298,7 @@ class FlujoKiaController extends Controller
             $req['OnDemand'] = true;
 
 
-            $modelo = $h->getR('modelo', $lead->MarcaID);
+            $modelo = $h->getR('modelo', $lead->ModeloID);
             $sucursal = $h->getR('sucursal', $lead->SucursalID);
             $marca = $h->getR('marca', $lead->MarcaID, 101430);
             $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);

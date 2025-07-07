@@ -316,7 +316,7 @@ class IncomingLeadsController extends Controller
             'test_drive' => $testDrive,
             'preparado' => 0,
             'visible' => 0,
-            'actualiza_estado' => 1,
+            'actualiza_estado' => 0,
             'comentario' => $comentario,
         ];
 

@@ -357,7 +357,7 @@ class IncomingLeadsController extends Controller
         $idLead = $request->input('idLead', null);
         $idCotizacion = $request->input('idCotizacion', null);
         $visible = $request->input('visible', 0);
-        $rutVendedor = $request->input('rutVendedor', null);
+        $rutVendedor = str_replace("-", "",$request->input('rutVendedor', null));
 
         $lead = MK_Leads::where('IDExterno', $idLead)
 //            ->where('IDExternoSecundario', $idCotizacion)
@@ -366,7 +366,11 @@ class IncomingLeadsController extends Controller
         if ($lead) {
             if ($rutVendedor) {
                 $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
-                $lead->VendedorID = $vendedor->ID;
+                if(!$vendedor) {
+                    return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
+                }else {
+                    $lead->VendedorID = $vendedor->ID;
+                }
             }
 
             $lead->Visible = $visible; // Cambia la visibilidad

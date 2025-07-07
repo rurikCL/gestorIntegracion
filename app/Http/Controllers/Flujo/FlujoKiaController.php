@@ -273,4 +273,87 @@ class FlujoKiaController extends Controller
     }
 
 
+    public function crearOportunidad($data, MK_Leads $lead)
+    {
+        // Implementar la lógica para crear una oportunidad
+        // Recibir datos del lead y crear una nueva oportunidad en el sistema
+        // Retornar respuesta adecuada
+
+        $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
+        $h = new FLU_Homologacion();
+        $h->setFlujo($flujo->ID);
+        $solicitudCon = new ApiSolicitudController();
+
+
+        try {
+
+            $req = new Request();
+            $req['referencia_id'] = $data['externalIDSecundario'] ?? $data['externalID']; // ID externo del lead
+            $req['proveedor_id'] = 9;
+            $req['api_id'] = 39; // ID de la API para crear oportunidades
+            $req['prioridad'] = 1;
+            $req['flujoID'] = $flujo->ID;
+            $req['OnDemand'] = true;
+
+
+            $modelo = $h->getR('modelo', $lead->MarcaID);
+            $sucursal = $h->getR('sucursal', $lead->SucursalID);
+            $marca = $h->getR('marca', $lead->MarcaID, 101430);
+            $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
+
+            $req['data'] = [
+                'FechaCreacion' => Carbon::now()->format('Y-m-d h:i:s'),
+                'Marca' => $marca,
+                'FormaPago' => 0,
+                'Origen' => $origen,
+                'RutEjecutivo' => substr($lead->vendedor->Rut, 0, strlen($lead->vendedor->Rut) - 1) . '-' . substr($lead->vendedor->Rut, -1), // RUT del vendedor
+                'Rut' => substr($lead->cliente->Rut, 0, strlen($lead->cliente->Rut) - 1) . '-' . substr($lead->cliente->Rut, -1), // Asegurarse de que el RUT tenga el formato correcto
+                'Nombres' => $data['nombre'],
+                'Apellidos' => $data['apellido'],
+                'IdConcesionario' => $sucursal,
+                'Concesionario' => '',
+                'CodTelefonoParticular' => '',
+                'TelefonoParticular' => '',
+                'CodTelefonoCelular' => '',
+                'TelefonoCelular' => $data['telefono'],
+                'CodTelefonoEmpresa' => '',
+                'Telefonoempresa' => '',
+                'CorreoElectronico' => $data['email'],
+                'Comentario' => '',
+                'RecibirCorreos' => 1,
+                'Sexo' => '',
+                'ContactoPreferente' => 'Whatsapp',
+                'VPP' => [
+                    'ConVPP' => $data['vpp'] ?? false,
+                ],
+                'VehiculoCotizado' => [
+                    'IdMarca' => $marca,
+                    'Marca' => '',
+                    'IdModelo' => $modelo,
+                    'Modelo' => '',
+                    'IdVersion' => '',
+                    'Version' => '',
+                    'Descripcion' => null,
+                    'Precio' => '0',
+                    'Unidad' => 1
+                ],
+                'Finaciamiento' => [
+                    'siNo' => $data['financiamiento'] ?? false,
+                ]
+            ];
+
+
+            $resp = $solicitudCon->store($req);
+            $resp = $resp->getData();
+            dump($resp);
+
+        } catch (\Exception $e) {
+            Log::error('Error creando oportunidad: ' . $e->getMessage());
+            return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
+        }
+
+        return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente'], 200);
+    }
+
+
 }

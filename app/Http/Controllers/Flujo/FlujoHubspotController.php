@@ -230,6 +230,7 @@ class FlujoHubspotController extends Controller
                             "fuente" => 2, // hubspot
                             "lead" => [
                                 "idFlujo" => $flujo->ID,
+                                "origenNombre" => $origenProp,
                                 "origenID" => $origen,
                                 "subOrigenID" => $subOrigen,
                                 "sucursal" => $sucursal,
@@ -240,6 +241,7 @@ class FlujoHubspotController extends Controller
                                 "externalIDSecundario" => $idExternoSecundario,
                                 "idHubspot" => $idHubspot,
                                 "financiamiento" => $financiamiento,
+                                "vpp" => $vpp,
                                 "link" => $linkConversacion,
                                 "agenda" => $agendaVisita,
                                 "vendedorID" => $idVendedor,
@@ -259,6 +261,11 @@ class FlujoHubspotController extends Controller
                                 print("Nuevo Lead ");
                                 if ($res->LeadID > 0) {
                                     $lead = MK_Leads::where('ID', $res->LeadID)->first();
+
+                                    if($marca == "KIA" && $idExternoSecundario != '0' && $idExternoSecundario != '') {
+                                        $flujoKia = new FlujoKiaController();
+                                        $res = $flujoKia->crearOportunidad($req['data'], $lead);
+                                    }
 
                                     $newProperties->setProperties([
                                         'idpompeyo' => $lead->ID,

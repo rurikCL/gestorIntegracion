@@ -279,6 +279,8 @@ class FlujoKiaController extends Controller
         // Recibir datos del lead y crear una nueva oportunidad en el sistema
         // Retornar respuesta adecuada
 
+        Log::info("Creando Oportunidad: " . $data);
+
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
         $h = new FLU_Homologacion();
         $h->setFlujo($flujo->ID);

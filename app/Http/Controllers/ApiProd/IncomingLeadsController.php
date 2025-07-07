@@ -163,7 +163,6 @@ class IncomingLeadsController extends Controller
         }
 
 
-
         $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
         $filterGroup->setFilters([$filter1]);
         $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
@@ -263,6 +262,7 @@ class IncomingLeadsController extends Controller
         }
 
         $modeloNombre = $request->input('data.vehiculo.modelo', null);
+        $modeloNombre = str_replace("NUEVO", "", $modeloNombre);
         $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
         if ($modeloIDExterno) {
             $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);
@@ -277,7 +277,7 @@ class IncomingLeadsController extends Controller
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
         $bonoMarca = $request->input('data.vehiculo.bonoMarca', null);
         $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
-        $vpp = ($request->input('data.vpp.tieneVpp', false) == true)? 'SI' : 'NO';
+        $vpp = ($request->input('data.vpp.tieneVpp', false) == true) ? 'SI' : 'NO';
         $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 'SI' : 'NO';
         $testDrive = ($request->input('data.testDrive.tieneTestDrive', false) == true) ? 'SI' : 'NO';
 
@@ -351,6 +351,7 @@ class IncomingLeadsController extends Controller
         }
 
     }
+
     public function cambiarVisibilidad(Request $request)
     {
         $idLead = $request->input('idLead', null);
@@ -362,8 +363,8 @@ class IncomingLeadsController extends Controller
             ->where('IDExternoSecundario', $idCotizacion)
             ->first();
 
-        if($lead){
-            if($rutVendedor){
+        if ($lead) {
+            if ($rutVendedor) {
                 $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
                 $lead->VendedorID = $vendedor->ID;
             }

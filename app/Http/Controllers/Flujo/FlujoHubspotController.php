@@ -564,7 +564,7 @@ class FlujoHubspotController extends Controller
                                 }
 
                             } else {
-                                Log::info('No es un lead Mysales');
+                                Log::info('No es un lead Mysales ' . $lead->IDExterno . ' - ' . $lead->IDExternoSecundario);
                             }
                         }
                     } catch (\Exception $e) {

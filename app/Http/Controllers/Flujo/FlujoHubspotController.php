@@ -503,7 +503,6 @@ class FlujoHubspotController extends Controller
 
             $flujoKia = new FlujoKiaController();
 
-
             $leads = MK_Leads::where('LogEstado', 1)
                 ->where('FechaCreacion', '>=', '2024-04-01 00:00:00')
                 ->where('IDHubspot', '>', 0)
@@ -567,6 +566,8 @@ class FlujoHubspotController extends Controller
                                     Log::error("Error al actualizar fase de Lead KIA " . $lead->IDExterno);
                                 }
 
+                            } else {
+                                Log::info('No es un lead Mysales');
                             }
                         }
                     } catch (\Exception $e) {

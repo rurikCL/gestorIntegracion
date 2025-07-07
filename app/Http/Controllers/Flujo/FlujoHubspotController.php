@@ -268,6 +268,8 @@ class FlujoHubspotController extends Controller
                                         $flujoKia = new FlujoKiaController();
                                         $res = $flujoKia->crearOportunidad($req['data'], $lead);
                                         Log::info("Nuevo Lead ", $res);
+                                    }else{
+                                        Log::info("No es lead KIA");
                                     }
 
                                     $newProperties->setProperties([

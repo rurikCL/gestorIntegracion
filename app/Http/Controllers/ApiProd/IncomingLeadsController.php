@@ -360,7 +360,7 @@ class IncomingLeadsController extends Controller
         $rutVendedor = $request->input('rutVendedor', null);
 
         $lead = MK_Leads::where('IDExterno', $idLead)
-            ->where('IDExternoSecundario', $idCotizacion)
+//            ->where('IDExternoSecundario', $idCotizacion)
             ->first();
 
         if ($lead) {

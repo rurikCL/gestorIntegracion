@@ -346,16 +346,14 @@ class FlujoKiaController extends Controller
 
 
             $resp = $solicitudCon->store($req);
-            $resp = $resp->getData();
-            dump($resp);
-            return response()->json(['status' => 'OK', 'message' => 'Lead rechazado correctamente'], 200);
+//            $resp = $resp->getData();
+            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente'], 200);
 
         } catch (\Exception $e) {
             Log::error('Error creando oportunidad: ' . $e->getMessage());
             return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
 
-        return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente'], 200);
     }
 
 

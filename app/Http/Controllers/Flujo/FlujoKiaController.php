@@ -290,7 +290,7 @@ class FlujoKiaController extends Controller
         try {
 
             $req = new Request();
-            $req['referencia_id'] = $data['externalIDSecundario'] ?? $data['externalID']; // ID externo del lead
+            $req['referencia_id'] = $data['lead']['externalIDSecundario'] ?? $data['lead']['externalID']; // ID externo del lead
             $req['proveedor_id'] = 9;
             $req['api_id'] = 39; // ID de la API para crear oportunidades
             $req['prioridad'] = 1;
@@ -326,7 +326,7 @@ class FlujoKiaController extends Controller
                 'Sexo' => '',
                 'ContactoPreferente' => 'Whatsapp',
                 'VPP' => [
-                    'ConVPP' => $data['vpp'] ?? false,
+                    'ConVPP' => $data['lead']['vpp'] ?? false,
                 ],
                 'VehiculoCotizado' => [
                     'IdMarca' => $marca,
@@ -340,7 +340,7 @@ class FlujoKiaController extends Controller
                     'Unidad' => 1
                 ],
                 'Finaciamiento' => [
-                    'siNo' => $data['financiamiento'] ?? false,
+                    'siNo' => $data['lead']['financiamiento'] ?? false,
                 ]
             ];
 

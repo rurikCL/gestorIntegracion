@@ -262,7 +262,7 @@ class FlujoHubspotController extends Controller
                                 if ($res->LeadID > 0) {
                                     $lead = MK_Leads::where('ID', $res->LeadID)->first();
 
-                                    if($marca == "KIA" && $idExternoSecundario != '0' && $idExternoSecundario != '') {
+                                    if ($marca == "KIA" && $idExternoSecundario != '0' && $idExternoSecundario != '') {
                                         $flujoKia = new FlujoKiaController();
                                         $res = $flujoKia->crearOportunidad($req['data'], $lead);
                                     }
@@ -338,7 +338,7 @@ class FlujoHubspotController extends Controller
             // --------------------------------------------------------------
 
             $publicObjectSearchRequest = new PublicObjectSearchRequest([
-                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage', 'actualiza_estado', 'marca', 'idvendedor','comentario'],
+                'properties' => ['idpompeyo', 'idvendedor', 'visible', 'id_externo', 'id_externo_secundario', 'dealstage', 'actualiza_estado', 'marca', 'idvendedor', 'comentario'],
                 'filter_groups' => [$filterGroup1],
                 'limit' => $flujo->MaxLote,
             ]);
@@ -555,6 +555,7 @@ class FlujoHubspotController extends Controller
                         if ($lead->MarcaID == 2) {
                             if ($lead->IDExterno != '0' && $lead->IDExterno != ''
                                 && $lead->IDExternoSecundario != '0' && $lead->IDExternoSecundario != '') {
+
                                 if ($flujoKia->cambiaFase($lead->IDExterno)) {
                                     Log::info("Fase de Lead KIA actualizado : " . $lead->IDExterno);
                                 } else {

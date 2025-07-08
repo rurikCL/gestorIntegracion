@@ -266,7 +266,7 @@ class FlujoHubspotController extends Controller
                                     if ($marca == "KIA" && $idExterno == '' && $idExternoSecundario == '') {
                                         $flujoKia = new FlujoKiaController();
                                         $res = $flujoKia->crearOportunidad($req['data'], $lead);
-                                        $idExterno = $res["ID"] ?? 1;
+                                        $idExterno = $res->ID ?? 1;
                                     }
 
                                     $newProperties->setProperties([

@@ -334,6 +334,7 @@ class IncomingLeadsController extends Controller
                 $properties1['reglavendedor'] = 0; // si es regla de vendedor, asignar 1
                 $properties1['actualiza_estado'] = 0;
                 $properties1['visible'] = 1;
+                $properties1['preparado'] = 1;
             }
         }
 

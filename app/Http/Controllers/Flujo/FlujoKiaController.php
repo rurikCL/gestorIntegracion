@@ -119,7 +119,7 @@ class FlujoKiaController extends Controller
 
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
-                dump($resp);
+//                dump($resp);
 
                 return response()->json(['status' => 'OK', 'message' => 'Fase actualizada correctamente'], 200);
             }
@@ -259,7 +259,7 @@ class FlujoKiaController extends Controller
 
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
-                dump($resp);
+//                dump($resp);
 
                 return response()->json(['status' => 'OK', 'message' => 'Lead rechazado correctamente'], 200);
             }

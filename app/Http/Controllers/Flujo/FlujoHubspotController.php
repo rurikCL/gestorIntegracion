@@ -336,7 +336,7 @@ class FlujoHubspotController extends Controller
             ]);
 
             $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1, $filter2, $filter3]
+                'filters' => [$filter1, $filter2]
             ]);
             // --------------------------------------------------------------
 

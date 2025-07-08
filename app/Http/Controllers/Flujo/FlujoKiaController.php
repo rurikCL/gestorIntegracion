@@ -305,7 +305,6 @@ class FlujoKiaController extends Controller
             ];
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
-            dump($resp);
             $idExterno = $resp->id ?? 1;
 
 

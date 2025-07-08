@@ -267,8 +267,10 @@ class FlujoHubspotController extends Controller
                                         if ($origenProp == 'RELIF' || $origenProp == 'Landing') {
                                             $flujoKia = new FlujoKiaController();
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
+                                            Log::info("Oportunidad KIA creada : " . print_r($res, true));
+                                            dump($res);
+
                                             if ($res['status'] == 'OK') {
-                                                Log::info("Oportunidad KIA creada : " . print_r($res, true));
                                                 $idExterno = $res['ID'];
                                                 $idExternoSecundario = $res['IDQuote'];
                                             } else {

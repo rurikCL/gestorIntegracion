@@ -306,6 +306,7 @@ class FlujoKiaController extends Controller
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
             dump($resp);
+            $idExterno = $resp->id ?? 1;
 
 
             $req = new Request();
@@ -360,7 +361,7 @@ class FlujoKiaController extends Controller
 
             $resp = $solicitudCon->store($req);
 //            $resp = $resp->getData();
-            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente'], 200);
+            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID'=>$idExterno], 200);
 
         } catch (\Exception $e) {
             Log::error('Error creando oportunidad: ' . $e->getMessage());

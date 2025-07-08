@@ -305,7 +305,7 @@ class FlujoKiaController extends Controller
             ];
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
-            $idExterno = $resp->id ?? 1;
+            $idVersion = $resp->id ?? 1;
 
 
             $req = new Request();
@@ -359,7 +359,12 @@ class FlujoKiaController extends Controller
 
 
             $resp = $solicitudCon->store($req);
-//            $resp = $resp->getData();
+            $resp = $resp->getData();
+
+            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+
+            $idExterno = $resp->id ?? 1;
+
             return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID'=>$idExterno], 200);
 
         } catch (\Exception $e) {

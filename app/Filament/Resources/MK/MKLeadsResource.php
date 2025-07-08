@@ -224,7 +224,7 @@ class MKLeadsResource extends Resource
                     ->label('ID Externo')
                     ->copyable()->copyMessage('Lead ID copiado al portapapeles')->copyMessageDuration(1500)
                     ->searchable(),
-                Tables\Columns\BooleanColumn::make('Visible')
+                Tables\Columns\ToggleColumn::make('Visible')
             ])->defaultSort('ID', 'desc')
             ->filters([
                 Tables\Filters\Filter::make('Fecha')

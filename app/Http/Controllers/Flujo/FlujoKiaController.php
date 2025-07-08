@@ -291,9 +291,9 @@ class FlujoKiaController extends Controller
             $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
 
             $req = new Request();
-            $req['referencia_id'] = $data['lead']['externalIDSecundario'] ?? $data['lead']['externalID']; // ID externo del lead
+            $req['referencia_id'] = $lead->ID // ID externo del lead
             $req['proveedor_id'] = 9;
-            $req['api_id'] = 45; // ID de la API para crear oportunidades
+            $req['api_id'] = 45; // ID de la API para revisar version
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
@@ -310,7 +310,7 @@ class FlujoKiaController extends Controller
 
 
             $req = new Request();
-            $req['referencia_id'] = $data['lead']['externalIDSecundario'] ?? $data['lead']['externalID']; // ID externo del lead
+            $req['referencia_id'] = $lead->ID; // ID externo del lead
             $req['proveedor_id'] = 9;
             $req['api_id'] = 39; // ID de la API para crear oportunidades
             $req['prioridad'] = 1;

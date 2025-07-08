@@ -207,7 +207,7 @@ class FlujoKiaController extends Controller
             $req['onDemand'] = true;
 
             $req['data'] = [
-                'rut' => $rut,
+                'rut' => '12345678-9', // RUT de ejemplo, puede ser cualquier valor
                 'dealerId' => '63345c480d4fd017470c4efc',
             ];
 
@@ -276,7 +276,7 @@ class FlujoKiaController extends Controller
     public function crearOportunidad($data, MK_Leads $lead)
     {
 
-        Log::info("Enviando Oportunidad KIA: " . $lead->IDExternoSecundario);
+        Log::info("Enviando Oportunidad KIA: " . $lead->ID . " ". $lead->cliente->Nombre. " " . $lead->cliente->Rut);
 
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
         $h = new FLU_Homologacion();
@@ -291,7 +291,7 @@ class FlujoKiaController extends Controller
             $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
 
             $req = new Request();
-            $req['referencia_id'] = $lead->ID // ID externo del lead
+            $req['referencia_id'] = $lead->ID; // ID externo del lead
             $req['proveedor_id'] = 9;
             $req['api_id'] = 45; // ID de la API para revisar version
             $req['prioridad'] = 1;

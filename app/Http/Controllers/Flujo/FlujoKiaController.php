@@ -289,6 +289,29 @@ class FlujoKiaController extends Controller
 
         try {
 
+            $modelo = $h->getR('modelo', $lead->ModeloID);
+            $sucursal = $h->getR('sucursal', $lead->SucursalID);
+            $marca = $h->getR('marca', $lead->MarcaID, 101430);
+            $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
+
+            $req = new Request();
+            $req['referencia_id'] = $data['lead']['externalIDSecundario'] ?? $data['lead']['externalID']; // ID externo del lead
+            $req['proveedor_id'] = 9;
+            $req['api_id'] = 45; // ID de la API para crear oportunidades
+            $req['prioridad'] = 1;
+            $req['flujoID'] = $flujo->ID;
+            $req['OnDemand'] = true;
+            $req['data'] = [
+                'model' => $modelo,
+                'showWeb' => true,
+                'showStock' => true,
+                'active' => true
+            ];
+            $resp = $solicitudCon->store($req);
+            $resp = $resp->getData();
+            dump($resp);
+
+
             $req = new Request();
             $req['referencia_id'] = $data['lead']['externalIDSecundario'] ?? $data['lead']['externalID']; // ID externo del lead
             $req['proveedor_id'] = 9;
@@ -296,12 +319,6 @@ class FlujoKiaController extends Controller
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
-
-
-            $modelo = $h->getR('modelo', $lead->ModeloID);
-            $sucursal = $h->getR('sucursal', $lead->SucursalID);
-            $marca = $h->getR('marca', $lead->MarcaID, 101430);
-            $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
 
             $req['data'] = [
                 'FechaCreacion' => Carbon::now()->format('Y-m-d h:i:s'),

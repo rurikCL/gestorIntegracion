@@ -357,6 +357,7 @@ class IncomingLeadsController extends Controller
         $idLead = $request->input('idLead', null);
 //        $idCotizacion = $request->input('idCotizacion', null);
         $visible = $request->input('visible', 0);
+        $fracasado = $request->input('fracasado', 0);
         $rutVendedor = str_replace("-", "",$request->input('rutVendedor', null));
 
         if ($rutVendedor) {
@@ -372,6 +373,8 @@ class IncomingLeadsController extends Controller
             ->update([
                 'Visible' => $visible,
                 'VendedorID' => $vendedorID ?? 1, // Asigna el ID del vendedor si existe
+                'EstadoID' => $fracasado ? 8 : 1, // 1: Pendiente, 8: Fracasado
+                'LogEstado' => $fracasado ? 1 : 0, // si esta fracasado, notificar a hubspot
             ]);
 
         if ($lead) {

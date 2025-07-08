@@ -215,7 +215,6 @@ class FlujoHubspotController extends Controller
 
                         // --------------------------------------------------------
 
-
                         $leadObj = new LeadController();
                         $req = new Request();
                         $req['data'] = [

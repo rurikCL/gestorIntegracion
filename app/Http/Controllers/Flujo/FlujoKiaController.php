@@ -290,6 +290,7 @@ class FlujoKiaController extends Controller
             $marca = $h->getR('marca', $lead->MarcaID, 101430);
             $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
 
+            // busca la versión del modelo activa ----
             $req = new Request();
             $req['referencia_id'] = $lead->ID; // ID externo del lead
             $req['proveedor_id'] = 9;
@@ -307,9 +308,14 @@ class FlujoKiaController extends Controller
             $resp = $resp->getData();
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $dataVersion = json_decode($solicitud->Respuesta);
-            $idVersion = $dataVersion->version ?? 1;
+            if($dataVersion->status !== 'OK') {
+                Log::error('Error obteniendo versión del modelo: ' . $dataVersion->message);
+                $idVersion = 1;
+            } else {
+                $idVersion = $dataVersion->version;
+            }
 
-
+            // Crea la oportunidad -------
             $req = new Request();
             $req['referencia_id'] = $lead->ID; // ID externo del lead
             $req['proveedor_id'] = 9;
@@ -364,8 +370,9 @@ class FlujoKiaController extends Controller
             $resp = $resp->getData();
 
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+            $dataResponse = json_decode($solicitud->Respuesta);
 
-            $idExterno = $resp->id ?? 1;
+            $idExterno = $dataResponse->id ?? 1;
 
             return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID'=>$idExterno], 200);
 

@@ -267,7 +267,8 @@ class FlujoHubspotController extends Controller
                                         if ($origenProp == 'RELIF' || $origenProp == 'Landing') {
                                             $flujoKia = new FlujoKiaController();
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
-                                            $idExterno = $res->ID ?? 1;
+                                            $idExterno = $res->ID;
+                                            $idExternoSecundario = $res->IDQuote;
                                         }
                                     }
 
@@ -276,8 +277,9 @@ class FlujoHubspotController extends Controller
                                         'idvendedor' => $lead->VendedorID,
                                         'nombrevendedor' => $lead->vendedor->Nombre,
                                         'id_externo' => $idExterno,
+                                        'id_externo_secundario' => $idExternoSecundario,
                                     ]);
-                                    $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
+                                    $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
                                 }
 
                             } else {

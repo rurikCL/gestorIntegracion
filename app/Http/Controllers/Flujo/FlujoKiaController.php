@@ -312,7 +312,7 @@ class FlujoKiaController extends Controller
                 Log::error('Error obteniendo versión del modelo: ' . $dataVersion->message);
                 $idVersion = 1;
             } else {
-                $idVersion = $dataVersion->version;
+                $idVersion = $dataVersion->data->codeSAP;
             }
 
             // Crea la oportunidad -------
@@ -365,16 +365,16 @@ class FlujoKiaController extends Controller
                 ]
             ];
 
-
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
 
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $dataResponse = json_decode($solicitud->Respuesta);
 
-            $idExterno = $dataResponse->id ?? 1;
+            $idExterno = $dataResponse->oportunidades[0]->opportunityId ?? 1;
+            $idExternoSecundario = $dataResponse->oportunidades[0]->quoteId ?? 1;
 
-            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID'=>$idExterno], 200);
+            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID'=>$idExterno, 'IDQuote' => $idExternoSecundario], 200);
 
         } catch (\Exception $e) {
             Log::error('Error creando oportunidad: ' . $e->getMessage());

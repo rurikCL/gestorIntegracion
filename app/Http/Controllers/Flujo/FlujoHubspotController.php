@@ -263,7 +263,7 @@ class FlujoHubspotController extends Controller
                                     $lead = MK_Leads::where('ID', $res->LeadID)->first();
 
                                     if ($marca == "KIA" && $idExterno == '' && $idExternoSecundario == '') {
-                                        if ($origen == 'RELIF' || $origen == 'LANDING') {
+                                        if ($origen == 'RELIF' || $origen == 'Landing') {
                                             $flujoKia = new FlujoKiaController();
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
                                             $idExterno = $res->ID ?? 1;

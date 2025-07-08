@@ -298,14 +298,16 @@ class FlujoKiaController extends Controller
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
             $req['data'] = [
-                'model' => $modelo,
+                'codeSAP' => $modelo,
                 'showWeb' => true,
                 'showStock' => true,
                 'active' => true
             ];
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
-            $idVersion = $resp->id ?? 1;
+            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+            $dataVersion = json_decode($solicitud->Respuesta);
+            $idVersion = $dataVersion->version ?? 1;
 
 
             $req = new Request();
@@ -346,7 +348,7 @@ class FlujoKiaController extends Controller
                     'Marca' => '',
                     'IdModelo' => $modelo,
                     'Modelo' => '',
-                    'IdVersion' => '',
+                    'IdVersion' => $idVersion,
                     'Version' => '',
                     'Descripcion' => null,
                     'Precio' => '0',

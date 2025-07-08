@@ -264,7 +264,7 @@ class FlujoHubspotController extends Controller
                                     $lead = MK_Leads::where('ID', $res->LeadID)->first();
 
                                     if ($marca == "KIA" && $idExterno == '' && $idExternoSecundario == '') {
-                                        if($origen == 'RELIF' || $origen == 'LANDING'){
+                                        if ($origen == 'RELIF' || $origen == 'LANDING') {
                                             $flujoKia = new FlujoKiaController();
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
                                             $idExterno = $res->ID ?? 1;
@@ -307,8 +307,7 @@ class FlujoHubspotController extends Controller
 
     public function leadsHubspotRechazados()
     {
-        echo "Ejecutando Flujo Hubspot Negocios Rechazados <br>";
-        Log::info("Inicio de flujo Hubspot");
+        Log::info("Ejecutando Flujo Hubspot Negocios Rechazados");
 
         $flujo = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $h = new FLU_Homologacion();
@@ -338,7 +337,7 @@ class FlujoHubspotController extends Controller
             ]);
 
             $filterGroup1 = new FilterGroup([
-                'filters' => [$filter1, $filter2]
+                'filters' => [$filter1, $filter2, $filter3]
             ]);
             // --------------------------------------------------------------
 
@@ -367,14 +366,14 @@ class FlujoHubspotController extends Controller
                     $lead = MK_Leads::find($idPompeyo);
 
                     if ($estado) {
-
+                        $dataUpdate = [
+                            'EstadoID' => $estado->ID,
+                            'Visible' => $visible,
+                            'ClienteID' => $idVendedor,
+                            'Comentario' => $comentario,
+                        ];
                         $update = MK_Leads::where('ID', $idPompeyo)
-                            ->update([
-                                'EstadoID' => $estado->ID,
-                                'Visible' => $visible,
-                                'ClienteID' => $idVendedor,
-                                'Comentario' => $comentario,
-                            ]);
+                            ->update($data);
 
                         if ($update) {
                             Log::info("Lead actualizado: " . $idPompeyo . " - Estado: " . $estadoHomologado);

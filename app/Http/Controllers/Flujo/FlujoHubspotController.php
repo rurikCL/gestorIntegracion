@@ -268,11 +268,12 @@ class FlujoHubspotController extends Controller
                                             $flujoKia = new FlujoKiaController();
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
                                             Log::info("Oportunidad KIA creada : " . print_r($res, true));
+                                            $res = $res->getData();
                                             dump($res);
 
-                                            if ($res['status'] == 'OK') {
-                                                $idExterno = $res['ID'];
-                                                $idExternoSecundario = $res['IDQuote'];
+                                            if ($res->status == 'OK') {
+                                                $idExterno = $res->ID;
+                                                $idExternoSecundario = $res->IDQuote;
                                             } else {
                                                 Log::error("Error al crear Oportunidad KIA");
                                             }

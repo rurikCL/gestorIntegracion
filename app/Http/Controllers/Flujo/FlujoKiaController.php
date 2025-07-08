@@ -299,7 +299,7 @@ class FlujoKiaController extends Controller
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
             $req['data'] = [
-                'codeSAP' => $modelo,
+                'codeSAPModel' => $modelo,
                 'showWeb' => true,
                 'showStock' => true,
                 'active' => true

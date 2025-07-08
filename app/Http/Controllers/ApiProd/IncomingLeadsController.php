@@ -228,6 +228,9 @@ class IncomingLeadsController extends Controller
         $IDExternoSecundario = $request->input('data.lead.IdCotizacion', null);
         $idFlujoHomologacion = $request->input('data.lead.idFlujo', null);
         $comentario = $request->input('data.lead.comentario', null);
+        $rutVendedor = $request->input('data.lead.rutVendedor', null);
+        $actualizaEstado = 1;
+        $vendedorID = 1; // Vendedor por defecto
 
         $h->setFlujo($idFlujoHomologacion);
 
@@ -316,9 +319,24 @@ class IncomingLeadsController extends Controller
             'test_drive' => $testDrive,
             'preparado' => 0,
             'visible' => 0,
-            'actualiza_estado' => 1,
+            'actualiza_estado' => $actualizaEstado,
             'comentario' => $comentario,
         ];
+
+        // ASIGNACION DE VENDEDOR
+        if($rutVendedor){
+            $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
+            if(!$vendedor) {
+                Log::error("Vendedor no encontrado: " . $rutVendedor);
+            }else {
+                $properties1['idvendedor'] = $vendedor->ID;
+                $properties1['nombrevendedor'] = $vendedor->Nombre . ' ' . $vendedor->Apellido;
+                $properties1['reglavendedor'] = 0; // si es regla de vendedor, asignar 1
+                $properties1['actualiza_estado'] = 0;
+                $properties1['visible'] = 1;
+            }
+        }
+
 
         try {
             $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([

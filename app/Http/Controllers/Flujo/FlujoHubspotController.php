@@ -272,6 +272,7 @@ class FlujoHubspotController extends Controller
                                             dump($res);
 
                                             if ($res->status == 'OK') {
+
                                                 $idExterno = $res->ID;
                                                 $idExternoSecundario = $res->IDQuote;
                                             } else {

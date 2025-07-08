@@ -228,7 +228,7 @@ class IncomingLeadsController extends Controller
         $IDExternoSecundario = $request->input('data.lead.IdCotizacion', null);
         $idFlujoHomologacion = $request->input('data.lead.idFlujo', null);
         $comentario = $request->input('data.lead.comentario', null);
-        $rutVendedor = $request->input('data.lead.rutVendedor', null);
+        $rutVendedor = str_replace("-","",$request->input('data.lead.rutVendedor', null));
         $actualizaEstado = 1;
         $vendedorID = 1; // Vendedor por defecto
 

@@ -355,27 +355,26 @@ class IncomingLeadsController extends Controller
     public function cambiarVisibilidad(Request $request)
     {
         $idLead = $request->input('idLead', null);
-        $idCotizacion = $request->input('idCotizacion', null);
+//        $idCotizacion = $request->input('idCotizacion', null);
         $visible = $request->input('visible', 0);
         $rutVendedor = str_replace("-", "",$request->input('rutVendedor', null));
 
+        if ($rutVendedor) {
+            $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
+            if(!$vendedor) {
+                return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
+            }else {
+                $vendedorID = $vendedor->ID;
+            }
+        }
+
         $lead = MK_Leads::where('IDExterno', $idLead)
-//            ->where('IDExternoSecundario', $idCotizacion)
-            ->first();
+            ->update([
+                'Visible' => $visible,
+                'VendedorID' => $vendedorID ?? 1, // Asigna el ID del vendedor si existe
+            ]);
 
         if ($lead) {
-            if ($rutVendedor) {
-                $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
-                if(!$vendedor) {
-                    return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
-                }else {
-                    $lead->VendedorID = $vendedor->ID;
-                }
-            }
-
-            $lead->Visible = $visible; // Cambia la visibilidad
-            $lead->save();
-
             return response()->json(['status' => 'OK', 'message' => 'Visibilidad cambiada correctamente'], 200);
         } else {
             return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);

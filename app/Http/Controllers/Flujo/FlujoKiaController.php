@@ -275,9 +275,6 @@ class FlujoKiaController extends Controller
 
     public function crearOportunidad($data, MK_Leads $lead)
     {
-        // Implementar la lógica para crear una oportunidad
-        // Recibir datos del lead y crear una nueva oportunidad en el sistema
-        // Retornar respuesta adecuada
 
         Log::info("Enviando Oportunidad KIA: " . $lead->IDExternoSecundario);
 
@@ -285,7 +282,6 @@ class FlujoKiaController extends Controller
         $h = new FLU_Homologacion();
         $h->setFlujo($flujo->ID);
         $solicitudCon = new ApiSolicitudController();
-
 
         try {
 

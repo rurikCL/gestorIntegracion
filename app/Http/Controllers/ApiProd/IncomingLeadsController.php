@@ -254,6 +254,7 @@ class IncomingLeadsController extends Controller
 
         $sucursalNombre = $request->input('data.lead.sucursal', null);
         $sucursalIDExterno = $request->input('data.lead.sucursalExternalID', null);
+        $sucursalHomologada = 1;
         if ($sucursalIDExterno) {
             $sucursalHomologada = $h->getD('sucursal', $sucursalIDExterno);
             $sucursalNombre = MA_Sucursales::find($sucursalHomologada)->Sucursal ?? $sucursalNombre;

@@ -119,7 +119,9 @@ class IncomingLeadsController extends Controller
 
     public function leadHubspot(Request $request)
     {
-        Log::info("Recibiendo Lead Externo");
+        $log = new Logger();
+
+        $log->info("Recibiendo Lead Externo");
 
         $flujoHubspot = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujoHubspot->Opciones);
@@ -141,7 +143,7 @@ class IncomingLeadsController extends Controller
         }
         $idContacto = 0;
 
-        Log::info("Datos Clientes recibidos: Rut: $rutFormateado, Email: $email, Telefono: $telefono, Nombre: $nombre, Apellido: $apellido");
+        $log->info("Datos Clientes recibidos: Rut: $rutFormateado, Email: $email, Telefono: $telefono, Nombre: $nombre, Apellido: $apellido");
 
 // Creacion del CLIENTE (CONTACT)  -------------------------------------------
 
@@ -153,13 +155,13 @@ class IncomingLeadsController extends Controller
             $filter1->setOperator('EQ')
                 ->setPropertyName('rut')
                 ->setValue($rutFormateado);
-            Log::info("Buscando por Rut : " . $rutFormateado);
+            $log->info("Buscando contacto hubspot por Rut : " . $rutFormateado);
         }
         if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $filter2->setOperator('EQ')
                 ->setPropertyName('email')
                 ->setValue($email);
-            Log::info("Buscando por Email : " . $email);
+            $log->info("Buscando contacto hubpspot por Email : " . $email);
         }
 
 
@@ -179,12 +181,12 @@ class IncomingLeadsController extends Controller
             foreach ($contacto as $item) {
                 $data = $item->jsonSerialize();
                 $idContacto = $data->id;
-                Log::info("contacto encontrado : " . $data->id);
+                $log->info("contacto hubspot encontrado : " . $data->id);
                 break;
             }
 
         } else {
-            Log::info("Contacto no encontrado");
+            $log->info("Contacto hubspot no encontrado... creando");
 
             try {
                 $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
@@ -200,7 +202,7 @@ class IncomingLeadsController extends Controller
                 $contactInput->setProperties($dataContacto);
                 $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
                 $idContacto = $contact->getId();
-                Log::info("Contacto creado : " . $idContacto);
+                $log->info("Contacto hubspot creado : " . $idContacto);
 
             } catch (\Exception $e) {
                 $respuesta = $e->getMessage();
@@ -209,13 +211,13 @@ class IncomingLeadsController extends Controller
                 $posibleID = '';
 
                 if (preg_match($regex, $respuesta, $posibleID)) {
-                    Log::error("Contacto existente: " . $posibleID[1]);
+                    $log->error("Contacto hubspot existente: " . $posibleID[1]);
                     $idContacto = $posibleID[1];
                 }
 
                 $regex = "/Property values were not valid/m";
                 if (preg_match($regex, $respuesta)) {
-                    Log::error("Error al crear contacto: " . $respuesta, $request->all());
+                    $log->error("Error al crear contacto hubspot: " . $respuesta, $request->all());
                 }
             }
 
@@ -224,6 +226,7 @@ class IncomingLeadsController extends Controller
 
         // Creacion del NEGOCIO (DEAL)  -------------------------------------------
 
+        $log->info("Creando Lead Hubspot");
         $IDExterno = $request->input('data.lead.externalID', null);
         $IDExternoSecundario = $request->input('data.lead.IdCotizacion', null);
         $idFlujoHomologacion = $request->input('data.lead.idFlujo', null);
@@ -246,7 +249,7 @@ class IncomingLeadsController extends Controller
             'types' => [$associationSpec1],
             'to' => $to1
         ]);
-        Log::info("Asociacion de contacto creada: " . $idContacto);
+        $log->info("Asociacion de contacto creada: " . $idContacto);
 
 
         $sucursalNombre = $request->input('data.lead.sucursal', null);
@@ -269,12 +272,14 @@ class IncomingLeadsController extends Controller
         $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
         if ($modeloIDExterno) {
             $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);
+            $log->info("Homologacion de modelo: ". $modeloIDExterno ." - ". $modeloHomologado);
         }
 
         $versionNombre = $request->input('data.vehiculo.version', null);
         $versionIDExterno = $request->input('data.vehiculo.versionExternalID', null);
         if ($versionIDExterno) {
             $versionHomologado = $h->getD('version', $versionIDExterno, $versionNombre);
+            $log->info("Homologacion de version: ". $versionIDExterno ." - ". $versionHomologado);
         }
 
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
@@ -325,10 +330,13 @@ class IncomingLeadsController extends Controller
 
         // ASIGNACION DE VENDEDOR
         if($rutVendedor){
+            $log->info("Buscando vendedor recibido: " . $rutVendedor);
             $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
             if(!$vendedor) {
-                Log::error("Vendedor no encontrado: " . $rutVendedor);
+                $log->error("Vendedor no encontrado: " . $rutVendedor);
             }else {
+                $log->info("Vendedor encontrado: " . $vendedor->ID . " - " . $vendedor->Nombre . ' ' . $vendedor->Apellido);
+                $log->info("Definiendo reglas : regla de vendedor 0, actualiza estado 0, visible 1, preparado 1");
                 $properties1['idvendedor'] = $vendedor->ID;
                 $properties1['nombrevendedor'] = $vendedor->Nombre . ' ' . $vendedor->Apellido;
                 $properties1['reglavendedor'] = 0; // si es regla de vendedor, asignar 1
@@ -349,7 +357,7 @@ class IncomingLeadsController extends Controller
             $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
             $idNegocio = $apiResponse->getId();
 
-            Log::info('Lead Hubspot creado : ' . $idNegocio);
+            $log->info('Lead Hubspot creado : ' . $idNegocio);
 
             return response()->json([
                 'error' => false,
@@ -361,14 +369,34 @@ class IncomingLeadsController extends Controller
 
 
         } catch (\Exception $e) {
-            echo "Exception when calling basic_api->create: ", $e->getMessage();
-            return response()->json([
-                'message' => 'Error al crear el lead',
-                'error' => $e->getMessage(),
-                'data' => []
-            ], 500);
+            $log->error('Error al crear Lead Hubspot: ' . $e->getMessage(), $request->all());
+
         }
 
+        $solicitud = ApiSolicitudes::create([
+            'FechaCreacion' => date('Y-m-d H:i:s'),
+            'EventoCreacionID' => 1,
+            'UsuarioCreacionID' => 1,
+            'ReferenciaID' => $IDExterno,
+            'ProveedorID' => 9,
+            'ApiID' => 0,
+            'Prioridad' => 1,
+            'Peticion' => json_encode($properties1),
+            'CodigoRespuesta' => 200,
+            'Respuesta' => json_encode($apiResponse),
+            'FechaPeticion' => date('Y-m-d H:i:s'),
+            'FechaResolucion' => date('Y-m-d H:i:s'),
+            'Exito' => 1,
+            'FlujoID' => 2,
+        ]);
+
+        $log->solveArray($solicitud->ID);
+
+        return response()->json([
+            'message' => 'Error al crear el lead',
+            'error' => $e->getMessage(),
+            'data' => []
+        ], 500);
     }
 
     public function cambiarVisibilidad(Request $request)

@@ -126,12 +126,14 @@ class FlujoKiaController extends Controller
                 } else {
                     $req['api_id'] = 46; // api asigna jefe
                     $req['data'] = [
-                        'IdOportunidad' => $lead->IDExterno,
-                        'ValorNuevoEstado' => $estadoHomologado,
-                        'ValorNuevoSubEstado' => $subEstadoHomologado,
-                        'Vendedor' => $rutVendedor, // RUT del vendedor
-                        'RutSession' => '1234567-8',
-                        'concesionario' => $sucursalHomologada
+                        "datosEntrada" => [
+                            'IdOportunidad' => $lead->IDExterno,
+                            'ValorNuevoEstado' => $estadoHomologado,
+                            'ValorNuevoSubEstado' => $subEstadoHomologado,
+                            'Vendedor' => $rutVendedor, // RUT del vendedor
+                            'RutSession' => '1234567-8',
+                            'concesionario' => $sucursalHomologada
+                        ]
                     ];
                 }
                 $resp = $solicitudCon->store($req);
@@ -151,7 +153,7 @@ class FlujoKiaController extends Controller
 
     }
 
-    public function revisaRutVendedor($rut, $sucursalID = 1)
+    public function revisaRutVendedor($rut, $sucursalID = 1, $ref = null)
     {
 
         print("Revisando rut: " . $rut);
@@ -169,6 +171,7 @@ class FlujoKiaController extends Controller
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['OnDemand'] = true;
+            $req['parentRef'] = $ref;
 
             $req['data'] = [
                 'rut' => $rut,

@@ -271,7 +271,7 @@ class FlujoHubspotController extends Controller
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
 //                                            Log::info("Oportunidad KIA creada : " . print_r($res, true));
                                             $res = $res->getData();
-                                            dump($res);
+//                                            dump($res);
 
                                             if ($res->status == 'OK') {
 

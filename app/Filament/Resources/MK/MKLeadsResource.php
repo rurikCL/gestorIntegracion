@@ -154,6 +154,9 @@ class MKLeadsResource extends Resource
                             return MA_Usuarios::sucursalAsignada($get('SucursalID'))->pluck('Nombre', 'ID') ?? ['1', 'Sin Vendedor'];
                         }),
 //                        ->relationship('vendedor', 'Nombre')->searchable(),
+                Forms\Components\Placeholder::make('vendedor.Rut')
+                    ->label('Rut')
+                        ->content(fn(MK_Leads $record): ?string => $record->vendedor->Rut ?? 'Sin Rut'),
                     Forms\Components\Placeholder::make('vendedor.Email')
                         ->label('Email')
                         ->content(fn(MK_Leads $record): ?string => $record->vendedor->Email ?? 'Sin Email'),

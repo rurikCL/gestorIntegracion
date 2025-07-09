@@ -569,7 +569,6 @@ class FlujoHubspotController extends Controller
                         if ($lead->MarcaID == 2) {
                             if ($lead->IDExterno != '0' && $lead->IDExterno != ''
                                 && $lead->IDExternoSecundario != '0' && $lead->IDExternoSecundario != '') {
-                                Log::info("Actualizando Lead KIA : " . $lead->IDExterno . " - " . $lead->IDExternoSecundario);
 
                                 if ($flujoKia->cambiaFase($lead->IDExterno)) {
                                     Log::info("Fase de Lead KIA actualizado : " . $lead->IDExterno);

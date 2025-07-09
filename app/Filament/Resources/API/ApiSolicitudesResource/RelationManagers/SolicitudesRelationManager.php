@@ -56,12 +56,17 @@ class SolicitudesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+//                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\DeleteAction::make(),
+//                Tables\Actions\DeleteAction::make(),
+            Tables\Actions\Action::make('Revisar')
+                ->url(fn($record) => route('filament.resources.api.api-solicitudes.edit',[
+                    'record' => $record->id,
+                ]))
             ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

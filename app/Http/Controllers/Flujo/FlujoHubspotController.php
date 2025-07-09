@@ -537,6 +537,10 @@ class FlujoHubspotController extends Controller
                             'dealstage' => $estadoHomologado,
                             'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID,
                             'id_externo' => $lead->IDExterno,
+                            'idvendedor' => $lead->VendedorID,
+                            'nombrevendedor' => $lead->vendedor->Nombre,
+                            'email_del_vendedor' => $lead->vendedor->Email,
+                            'celular_del_vendedor' => $lead->vendedor->Telefono,
                         ]);
 
                         try {

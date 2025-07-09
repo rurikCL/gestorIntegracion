@@ -76,6 +76,13 @@ class ApiSolicitudesResource extends Resource
                     Forms\Components\TextInput::make('Reintentos')
                         ->disabled(!Auth::user()->isAdmin()),
 
+                    Forms\Components\TextInput::make('idSolicitudPadre')
+                        ->suffixAction(
+                            Forms\Components\Actions\Action::make('verPadre')
+                                ->icon('heroicon-s-eye')
+                                ->url(fn($record) => $record->idSolicitudPadre ? ApiSolicitudesResource::getUrl('view', ['record' => $record->idSolicitudPadre]) : null)
+                                ->visible(fn($record) => $record->idSolicitudPadre)
+                        )->label("ID Solicitud Padre"),
 
                     Forms\Components\Placeholder::make('Notificacion')
                         ->content(fn($record) => ($record->notificacion)  ? "Notificado" : "Sin Notificacion")

@@ -104,7 +104,7 @@ class FlujoHubspotController extends Controller
                             'idvendedor' => $lead->VendedorID,
                             'nombrevendedor' => $lead->vendedor->Nombre,
                             'email_del_vendedor' => $lead->vendedor->Email,
-                            'celular_del_vendedor' => $lead->vendedor->Telefono,
+                            'celular_del_vendedor' => $lead->vendedor->Celular,
                         ]);
                         $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
                         $lead->IntegracionID = 2; // Hubspot
@@ -288,7 +288,7 @@ class FlujoHubspotController extends Controller
                                         'idvendedor' => $lead->VendedorID,
                                         'nombrevendedor' => $lead->vendedor->Nombre,
                                         'email_del_vendedor' => $lead->vendedor->Email,
-                                        'celular_del_vendedor' => $lead->vendedor->Telefono,
+                                        'celular_del_vendedor' => $lead->vendedor->Celular,
                                         'id_externo' => $idExterno,
                                         'id_externo_secundario' => $idExternoSecundario,
                                     ]);
@@ -540,7 +540,7 @@ class FlujoHubspotController extends Controller
                             'idvendedor' => $lead->VendedorID,
                             'nombrevendedor' => $lead->vendedor->Nombre,
                             'email_del_vendedor' => $lead->vendedor->Email,
-                            'celular_del_vendedor' => $lead->vendedor->Telefono,
+                            'celular_del_vendedor' => $lead->vendedor->Celular,
                         ]);
 
                         try {

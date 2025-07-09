@@ -436,6 +436,7 @@ class IncomingLeadsController extends Controller
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
                 $lead->EstadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
                 $lead->LogEstado = $fracasado ? 1 : 0; // si esta fracasado, notificar a hubspot
+                Log::info("Estado : ".  $lead->EstadoID);
                 $lead->save();
             }
         }

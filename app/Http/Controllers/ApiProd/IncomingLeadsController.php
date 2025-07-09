@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use mysql_xdevapi\Exception;
 use function Psl\Str\length;
+use function Symfony\Component\Translation\t;
 
 /**
  * @OA\Info(title="API Pompeyo", version="1.0")
@@ -155,27 +156,38 @@ class IncomingLeadsController extends Controller
             if ($rut != '') {
                 $filter1->setOperator('EQ')
                     ->setPropertyName('rut')
-                    ->setValue($rutFormateado);
+                    ->setValue($rutFormateado ?? '');
                 $log->info("Buscando contacto hubspot por Rut : " . $rutFormateado);
+                $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+                $filterGroup->setFilters([$filter1]);
             }
+
             if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $filter2->setOperator('EQ')
                     ->setPropertyName('email')
-                    ->setValue($email);
+                    ->setValue($email ?? '');
                 $log->info("Buscando contacto hubpspot por Email : " . $email);
+                $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+                $filterGroup2->setFilters([$filter2]);
             }
 
 
-            $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
-            $filterGroup->setFilters([$filter1]);
-            $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
-            $filterGroup2->setFilters([$filter2]);
-
             $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
-            $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
+            if(isset($filterGroup) && isset($filterGroup2)) {
+                $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
+            } else if(isset($filterGroup)) {
+                $searchRequest->setFilterGroups([$filterGroup]);
+            } else if(isset($filterGroup2)) {
+                $searchRequest->setFilterGroups([$filterGroup2]);
+            } else {
+                $log->info("No se proporcionaron filtros para buscar contacto.");
+                return response()->json([
+                    'error' => true,
+                    'message' => 'No se proporcionaron filtros para buscar contacto.'
+                ], 400);
+            }
 
             $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
-
             $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
             if ($contacto) {
@@ -408,7 +420,7 @@ class IncomingLeadsController extends Controller
 
         $visible = $request->input('visible', 0);
         $fracasado = $request->input('fracasado', 0);
-        if($fracasado) Log::info("Fracasado: " . $fracasado);
+        if ($fracasado) Log::info("Fracasado: " . $fracasado);
 
         $rutVendedor = str_replace("-", "", $request->input('rutVendedor', null));
         if ($rutVendedor) {
@@ -425,7 +437,7 @@ class IncomingLeadsController extends Controller
             $leads = MK_Leads::where('IDExterno', $idLead)->get();
             Log::info("Leads encontrados " . $leads->count());
 
-            if($leads->count() == 0){
+            if ($leads->count() == 0) {
                 return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
             }
 
@@ -436,7 +448,7 @@ class IncomingLeadsController extends Controller
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
                 $lead->EstadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
                 $lead->LogEstado = $fracasado ? 1 : 0; // si esta fracasado, notificar a hubspot
-                Log::info("Estado : ".  $lead->EstadoID);
+                Log::info("Estado : " . $lead->EstadoID);
                 $lead->save();
             }
         }

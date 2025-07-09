@@ -265,16 +265,16 @@ class FlujoHubspotController extends Controller
                                     $lead = MK_Leads::where('ID', $res->LeadID)->first();
 
                                     Log::info("revisando lead : " . $lead->ID . " - " . $lead->IDHubspot. " origen: " . $origenProp);
+
+
+                                    // Creacion de oportunidad KIA
                                     if ($marca == "KIA" && $idExterno == '' && $idExternoSecundario == '') {
                                         if ($origenProp == 'RELIF' || $origenProp == 'Landing') {
                                             $flujoKia = new FlujoKiaController();
                                             $res = $flujoKia->crearOportunidad($req['data'], $lead);
-//                                            Log::info("Oportunidad KIA creada : " . print_r($res, true));
                                             $res = $res->getData();
-//                                            dump($res);
 
                                             if ($res->status == 'OK') {
-
                                                 $idExterno = $res->ID;
                                                 $idExternoSecundario = $res->IDQuote;
 

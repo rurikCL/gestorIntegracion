@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\API\ApiSolicitudesResource\RelationManagers;
 
+use App\Filament\Resources\API\ApiSolicitudesResource;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -20,7 +21,7 @@ class SolicitudesRelationManager extends RelationManager
             ->schema([
                     Forms\Components\Section::make("Peticion")->schema([
                         Forms\Components\Textarea::make('Peticion')
-                            ->rows(21),
+                            ->rows(10),
                         Forms\Components\Textarea::make('Respuesta')
                             ->rows(10),
                     ])->columns(),
@@ -62,9 +63,8 @@ class SolicitudesRelationManager extends RelationManager
                 Tables\Actions\ViewAction::make(),
 //                Tables\Actions\DeleteAction::make(),
             Tables\Actions\Action::make('Revisar')
-                ->url(fn($record) => route('filament.resources.api.api-solicitudes.edit',[
-                    'record' => $record->id,
-                ]))
+                ->url(fn($record) => ApiSolicitudesResource::getNavigationUrl() . "/". $record->id)
+                ->icon('heroicon-o-pencil-square')
             ])
 
             ->bulkActions([

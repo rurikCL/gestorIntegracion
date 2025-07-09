@@ -38,7 +38,7 @@ class ApcDmsController extends Controller
             $req['proveedor_id'] = 11;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -93,7 +93,7 @@ class ApcDmsController extends Controller
             $req['proveedor_id'] = 11;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -153,7 +153,7 @@ class ApcDmsController extends Controller
             $req['proveedor_id'] = 11;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             if($request->input('marca_id')){
                 $req['dataHeader'] = "IdMarcaVehiculoDTO:" . $request->input('marca_id');
@@ -213,7 +213,7 @@ class ApcDmsController extends Controller
             $req['proveedor_id'] = 11;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -265,7 +265,7 @@ class ApcDmsController extends Controller
             $req['proveedor_id'] = 11;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -317,7 +317,7 @@ class ApcDmsController extends Controller
             $req['proveedor_id'] = 11;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();

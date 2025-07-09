@@ -55,6 +55,11 @@ class ApiSolicitudController extends Controller
         $solicitud = new ApiSolicitudes();
 
         DB::transaction(function () use ($request, $solicitud) {
+            // Si la solicitud viene con un padre, se asigna el ID del padre
+            if($request->input('parentRef')){
+                $sol = ApiSolicitudes::where('ReferenciaID', $request->input('parentRef'))->first();
+                if($sol) $solicitud->idSolicitudPadre = $sol->id;
+            }
 
             $solicitud->ReferenciaID = $request->input('referencia_id') ?? 0;
             $solicitud->ProveedorID = $request->input('proveedor_id');
@@ -69,7 +74,7 @@ class ApiSolicitudController extends Controller
         });
 
         // SI es OnDemand, ejecuta inmediatamente, sino, crea el JOB para ejecucion de cola
-        if ($request->input('OnDemand')) {
+        if ($request->input('onDemand')) {
             // resuelve inmediatamente la solicitud
             $resp = $this->resolverSolicitud($solicitud);
 

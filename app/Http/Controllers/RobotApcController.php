@@ -1125,7 +1125,7 @@ class RobotApcController extends Controller
             $req['api_id'] = 38;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
             $req['data'] = 'From=' . Carbon::now()->firstOfMonth()->format('Y-m-d');
 
             $resp = $solicitudCon->store($req);

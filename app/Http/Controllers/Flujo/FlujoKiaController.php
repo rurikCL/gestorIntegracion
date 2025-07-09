@@ -78,7 +78,7 @@ class FlujoKiaController extends Controller
                     $rutVendedor = $lead->vendedor->Rut;
                     $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
                     $sucursalVendedor = $lead->vendedor->SucursalID;
-                    $vendedorActivo = $this->revisaRutVendedor($rutVendedor, $sucursalVendedor);
+                    $vendedorActivo = $this->revisaRutVendedor($rutVendedor, $sucursalVendedor, $leadId);
 
                     if ($vendedorActivo['status'] == 'Inactivo') {
                         // buscar Jefe de sucursal y asignar ese rut
@@ -110,7 +110,8 @@ class FlujoKiaController extends Controller
                 $req['proveedor_id'] = 9;
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
-                $req['OnDemand'] = true;
+                $req['onDemand'] = true;
+                $req['parentRef'] = $leadId; // Referencia del lead
 
                 if (!$esJefe) {
                     $req['api_id'] = 41; // api asigna vendedor
@@ -170,7 +171,7 @@ class FlujoKiaController extends Controller
             $req['api_id'] = 42;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
             $req['parentRef'] = $ref;
 
             $req['data'] = [
@@ -269,7 +270,7 @@ class FlujoKiaController extends Controller
                 $req['api_id'] = 44;
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
-                $req['OnDemand'] = true;
+                $req['onDemand'] = true;
 
                 $req['data'] = [
                     "QuoteId" => $idCotizacion,
@@ -317,7 +318,7 @@ class FlujoKiaController extends Controller
             $req['api_id'] = 45; // ID de la API para revisar version
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
             $req['data'] = [
                 'codeSAPModel' => $modelo,
                 'showWeb' => true,
@@ -342,7 +343,7 @@ class FlujoKiaController extends Controller
             $req['api_id'] = 39; // ID de la API para crear oportunidades
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = [
                 'FechaCreacion' => Carbon::now()->format('Y-m-d h:i:s'),

@@ -68,7 +68,7 @@ class FlujoController extends Controller
             $req['api_id'] = 3;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -223,7 +223,7 @@ class FlujoController extends Controller
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
 
-//            $req['OnDemand'] = true;
+//            $req['onDemand'] = true;
                 $IdDealer = 55;
 
                 $rut = explode("-", $orden->ClienteRut);
@@ -766,7 +766,7 @@ class FlujoController extends Controller
                     $req['api_id'] = 1;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
-//            $req['OnDemand'] = true;
+//            $req['onDemand'] = true;
 
                     $rut = $lead->cliente->Rut;
                     $nombreComuna = ucwords(strtolower($lead->cliente->comuna->Comuna));
@@ -936,7 +936,7 @@ class FlujoController extends Controller
                     $req['api_id'] = 1;
                     $req['prioridad'] = 1;
                     $req['flujoID'] = $flujo->ID;
-//            $req['OnDemand'] = true;
+//            $req['onDemand'] = true;
 
                     $rut = $lead->cliente->Rut;
                     $nombreComuna = ucwords(strtolower($lead->cliente->comuna->Comuna));
@@ -1028,7 +1028,7 @@ class FlujoController extends Controller
             $req['api_id'] = 13;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = "fecha_desde=" . date("Y-m-d 00:00:00", strtotime("-1 day"));
 
@@ -1130,7 +1130,7 @@ class FlujoController extends Controller
                 $req['proveedor_id'] = 11;
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
-//                $req['OnDemand'] = true;
+//                $req['onDemand'] = true;
 
 //                $resp = $solicitudCon->store($req);
 //                $resp = $resp->getData();
@@ -1600,7 +1600,7 @@ class FlujoController extends Controller
             $req['proveedor_id'] = 4;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = [
                 "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
@@ -1718,7 +1718,7 @@ class FlujoController extends Controller
             $req['proveedor_id'] = 4;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = [
                 "from" => Carbon::now()->subDays(1)->format('Y-m-d'),
@@ -1826,7 +1826,7 @@ class FlujoController extends Controller
         $req['proveedor_id'] = 13;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = true;
+        $req['onDemand'] = true;
         $req['data'] = [];
         $resp = $solicitudCon->store($req);
         $resp = $resp->getData();
@@ -1867,7 +1867,7 @@ class FlujoController extends Controller
         $req['proveedor_id'] = 13;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = true;
+        $req['onDemand'] = true;
         $req['data'] = [];
         $resp = $solicitudCon->store($req);
         $resp = $resp->getData();
@@ -1909,7 +1909,7 @@ class FlujoController extends Controller
         $req['proveedor_id'] = 13;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = true;
+        $req['onDemand'] = true;
         $req['data'] = [];
         $resp = $solicitudCon->store($req);
         $resp = $resp->getData();

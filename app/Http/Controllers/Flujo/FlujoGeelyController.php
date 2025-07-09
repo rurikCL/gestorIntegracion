@@ -52,7 +52,7 @@ class FlujoGeelyController extends Controller
             $req['api_id'] = 36;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = [
                 "appId" => self::ACCESS_KEY,
@@ -184,7 +184,7 @@ class FlujoGeelyController extends Controller
             $req['api_id'] = 37;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = [
                 "appId" => self::ACCESS_KEY,
@@ -257,7 +257,7 @@ class FlujoGeelyController extends Controller
             $req['api_id'] = 37;
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
-            $req['OnDemand'] = true;
+            $req['onDemand'] = true;
 
             $req['data'] = [
                 "appId" => self::ACCESS_KEY,

@@ -141,7 +141,7 @@ class FinancierasController extends Controller
         $req['api_id'] = 7;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = true;
+        $req['onDemand'] = true;
         $req['data'] = $dataPayload;
 
         $resp = $solicitudCon->store($req);
@@ -192,7 +192,7 @@ class FinancierasController extends Controller
         $req['api_id'] = 6;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = true;
+        $req['onDemand'] = true;
         $req['data'] = ["id_table" => 38];
 
         $resp = $solicitudCon->store($req);
@@ -266,7 +266,7 @@ class FinancierasController extends Controller
         $req['api_id'] = 7;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = true;
+        $req['onDemand'] = true;
         $req['data'] = $dataPayload;
 
         $resp = $solicitudCon->store($req);
@@ -358,7 +358,7 @@ class FinancierasController extends Controller
         $req['api_id'] = 8;
         $req['prioridad'] = 1;
         $req['flujoID'] = $flujo->ID;
-        $req['OnDemand'] = false;
+        $req['onDemand'] = false;
         $req['data'] = $dataPayload;
 
         $resp = $solicitudCon->store($req);

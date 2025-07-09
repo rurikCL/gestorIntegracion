@@ -81,7 +81,7 @@ class ApiSolicitudes extends Model
     }
 
     public function subsolicitudes(){
-        return $this->hasMany(ApiSolicitudes::class, 'id', 'idSolicitudPadre');
+        return $this->hasMany(ApiSolicitudes::class, 'idSolicitudPadre', 'id');
     }
 
     public function scopeSolicitudesPendientes($query)

@@ -431,12 +431,12 @@ class IncomingLeadsController extends Controller
 
             foreach ($leads as $lead) {
 
+                Log::info("Actualizando Lead: " . $lead->ID);
                 $lead->Visible = $visible;
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
                 $lead->EstadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
                 $lead->LogEstado = $fracasado ? 1 : 0; // si esta fracasado, notificar a hubspot
                 $lead->save();
-                Log::info("Lead actualizado: " . $lead->IDExterno);
             }
         }
 

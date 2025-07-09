@@ -65,6 +65,7 @@ class FlujoKiaController extends Controller
         try {
             $lead = MK_Leads::where('IDExterno', $leadId)
                 ->where('MarcaID', 2)
+                ->orderBy('ID', 'desc')
                 ->first();
 
             if ($lead) {
@@ -350,7 +351,8 @@ class FlujoKiaController extends Controller
                 'Marca' => $marca,
                 'FormaPago' => 0,
                 'Origen' => $origen,
-                'RutEjecutivo' => substr($lead->vendedor->Rut, 0, strlen($lead->vendedor->Rut) - 1) . '-' . substr($lead->vendedor->Rut, -1), // RUT del vendedor
+//                'RutEjecutivo' => substr($lead->vendedor->Rut, 0, strlen($lead->vendedor->Rut) - 1) . '-' . substr($lead->vendedor->Rut, -1), // RUT del vendedor
+                'RutEjecutivo' => '', // RUT del vendedor
                 'Rut' => substr($lead->cliente->Rut, 0, strlen($lead->cliente->Rut) - 1) . '-' . substr($lead->cliente->Rut, -1), // Asegurarse de que el RUT tenga el formato correcto
                 'Nombres' => $data['nombre'],
                 'Apellidos' => $data['apellido'],

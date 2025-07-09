@@ -223,7 +223,7 @@ class IncomingLeadsController extends Controller
                 }
 
             }
-        }catch(HubSpot\Client\Crm\Contacts\ApiException $e){
+        } catch (HubSpot\Client\Crm\Contacts\ApiException $e) {
             $log->error("Error al buscar o crear contacto hubspot: " . $e->getMessage(), $request->all());
         }
 
@@ -234,7 +234,7 @@ class IncomingLeadsController extends Controller
         $IDExternoSecundario = $request->input('data.lead.IdCotizacion', null);
         $idFlujoHomologacion = $request->input('data.lead.idFlujo', null);
         $comentario = $request->input('data.lead.comentario', null);
-        $rutVendedor = str_replace("-","",$request->input('data.lead.rutVendedor', null));
+        $rutVendedor = str_replace("-", "", $request->input('data.lead.rutVendedor', null));
         $actualizaEstado = 1;
         $vendedorID = 1; // Vendedor por defecto
 
@@ -276,14 +276,14 @@ class IncomingLeadsController extends Controller
         $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
         if ($modeloIDExterno) {
             $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);
-            $log->info("Homologacion de modelo: ". $modeloIDExterno ." - ". $modeloHomologado);
+            $log->info("Homologacion de modelo: " . $modeloIDExterno . " - " . $modeloHomologado);
         }
 
         $versionNombre = $request->input('data.vehiculo.version', null);
         $versionIDExterno = $request->input('data.vehiculo.versionExternalID', null);
         if ($versionIDExterno) {
             $versionHomologado = $h->getD('version', $versionIDExterno, $versionNombre);
-            $log->info("Homologacion de version: ". $versionIDExterno ." - ". $versionHomologado);
+            $log->info("Homologacion de version: " . $versionIDExterno . " - " . $versionHomologado);
         }
 
         $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
@@ -333,12 +333,12 @@ class IncomingLeadsController extends Controller
         ];
 
         // ASIGNACION DE VENDEDOR
-        if($rutVendedor){
+        if ($rutVendedor) {
             $log->info("Buscando vendedor recibido: " . $rutVendedor);
             $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
-            if(!$vendedor) {
+            if (!$vendedor) {
                 $log->error("Vendedor no encontrado: " . $rutVendedor);
-            }else {
+            } else {
                 $log->info("Vendedor encontrado: " . $vendedor->ID . " - " . $vendedor->Nombre . ' ' . $vendedor->Apellido);
                 $log->info("Definiendo reglas : regla de vendedor 0, actualiza estado 0, visible 1, preparado 1");
                 $properties1['idvendedor'] = $vendedor->ID;
@@ -404,34 +404,37 @@ class IncomingLeadsController extends Controller
     public function cambiarVisibilidad(Request $request)
     {
         $idLead = $request->input('idLead', null);
-//        $idCotizacion = $request->input('idCotizacion', null);
         $visible = $request->input('visible', 0);
         $fracasado = $request->input('fracasado', 0);
-        $rutVendedor = str_replace("-", "",$request->input('rutVendedor', null));
+        $rutVendedor = str_replace("-", "", $request->input('rutVendedor', null));
 
-        if ($rutVendedor) {
-            $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
-            if(!$vendedor) {
-                return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
-            }else {
-                $vendedorID = $vendedor->ID;
+        if ($idLead) {
+            $lead = MK_Leads::where('IDExterno', $idLead)->first();
+            if (!$lead) {
+                return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
+            } else {
+                if ($rutVendedor) {
+                    $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
+                    if (!$vendedor) {
+                        return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
+                    } else {
+                        $vendedorID = $vendedor->ID;
+                    }
+                }
+
+                $upd = MK_Leads::where('IDExterno', $idLead)
+                    ->update([
+                        'Visible' => $visible,
+                        'VendedorID' => $vendedorID ?? 1, // Asigna el ID del vendedor si existe
+                        'EstadoID' => $fracasado ? 8 : 1, // 1: Pendiente, 8: Fracasado
+                        'LogEstado' => $fracasado ? 1 : 0, // si esta fracasado, notificar a hubspot
+                    ]);
             }
         }
 
-        $lead = MK_Leads::where('IDExterno', $idLead)
-            ->update([
-                'Visible' => $visible,
-                'VendedorID' => $vendedorID ?? 1, // Asigna el ID del vendedor si existe
-                'EstadoID' => $fracasado ? 8 : 1, // 1: Pendiente, 8: Fracasado
-                'LogEstado' => $fracasado ? 1 : 0, // si esta fracasado, notificar a hubspot
-            ]);
-
-        if ($lead) {
-            return response()->json(['status' => 'OK', 'message' => 'Visibilidad cambiada correctamente'], 200);
-        } else {
-            return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
-        }
+        return response()->json(['status' => 'OK', 'message' => 'Visibilidad cambiada correctamente'], 200);
     }
+
 }
 
 

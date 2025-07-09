@@ -376,7 +376,7 @@ class IncomingLeadsController extends Controller
                 'Exito' => 1,
                 'FlujoID' => 2,
             ]);
-            $log->solveArray($solicitud->ID);
+            $log->solveArray($solicitud->id);
 
             return response()->json([
                 'error' => false,

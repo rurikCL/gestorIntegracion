@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use function Symfony\Component\Translation\t;
 
 
 class FlujoKiaController extends Controller
@@ -71,6 +72,7 @@ class FlujoKiaController extends Controller
                 $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
                 $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
                 $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
+                $esJefe = false;
 
                 if ($lead->VendedorID) {
                     $rutVendedor = $lead->vendedor->Rut;
@@ -87,36 +89,51 @@ class FlujoKiaController extends Controller
                         if ($jefe) {
                             $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
                             $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
+                            $esJefe = true;
                         } else {
                             Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
                         }
                     } else {
                         if ($vendedorActivo["cargo"] == 'JEFE DE LOCAL' || $vendedorActivo["cargo"] == 'JEFE DE MARCA') {
                             $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
+                            $esJefe = true;
                         } else {
                             $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
                         }
                     }
                 }
 
+
                 // CAMBIO DE FASE
                 $req = new Request();
                 $req['referencia_id'] = $lead->ID;
                 $req['proveedor_id'] = 9;
-                $req['api_id'] = 41;
                 $req['prioridad'] = 1;
                 $req['flujoID'] = $flujo->ID;
                 $req['OnDemand'] = true;
 
-                $req['data'] = [
-                    'IdOportunidad' => $lead->IDExterno,
-                    'ValorNuevoEstado' => $estadoHomologado,
-                    'ValorNuevoSubEstado' => $subEstadoHomologado,
-                    'Vendedor' => $rutVendedor, // RUT del vendedor
-                    'RutSession' => '1234567-8',
-                    'concesionario' => $sucursalHomologada
-                ];
+                if (!$esJefe) {
+                    $req['api_id'] = 41; // api asigna vendedor
+                    $req['data'] = [
+                        'IdOportunidad' => $lead->IDExterno,
+                        'ValorNuevoEstado' => $estadoHomologado,
+                        'ValorNuevoSubEstado' => $subEstadoHomologado,
+                        'Vendedor' => $rutVendedor, // RUT del vendedor
+                        'RutSession' => '1234567-8',
+                        'concesionario' => $sucursalHomologada
+                    ];
 
+                } else {
+                    $req['api_id'] = 46; // api asigna jefe
+                    $req['data'] = [
+                        'IdOportunidad' => $lead->IDExterno,
+                        'ValorNuevoEstado' => $estadoHomologado,
+                        'ValorNuevoSubEstado' => $subEstadoHomologado,
+                        'Vendedor' => $rutVendedor, // RUT del vendedor
+                        'RutSession' => '1234567-8',
+                        'concesionario' => $sucursalHomologada
+                    ];
+                }
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
 //                dump($resp);
@@ -276,7 +293,7 @@ class FlujoKiaController extends Controller
     public function crearOportunidad($data, MK_Leads $lead)
     {
 
-        Log::info("Enviando Oportunidad KIA: " . $lead->ID . " ". $lead->cliente->Nombre. " " . $lead->cliente->Rut);
+        Log::info("Enviando Oportunidad KIA: " . $lead->ID . " " . $lead->cliente->Nombre . " " . $lead->cliente->Rut);
 
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
         $h = new FLU_Homologacion();
@@ -308,7 +325,7 @@ class FlujoKiaController extends Controller
             $resp = $resp->getData();
             $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
             $dataVersion = json_decode($solicitud->Respuesta);
-            if($dataVersion->status !== 'OK') {
+            if ($dataVersion->status !== 'OK') {
                 Log::error('Error obteniendo versión del modelo: ' . $dataVersion->message);
                 $idVersion = 1;
             } else {
@@ -374,7 +391,7 @@ class FlujoKiaController extends Controller
             $idExterno = $dataResponse->oportunidades[0]->opportunityId ?? 1;
             $idExternoSecundario = $dataResponse->oportunidades[0]->quoteId ?? 1;
 
-            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID'=>$idExterno, 'IDQuote' => $idExternoSecundario], 200);
+            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID' => $idExterno, 'IDQuote' => $idExternoSecundario], 200);
 
         } catch (\Exception $e) {
             Log::error('Error creando oportunidad: ' . $e->getMessage());

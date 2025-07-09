@@ -80,7 +80,7 @@ class ApiSolicitudes extends Model
         return $this->hasMany(API_LogSolicitud::class, 'SolicitudID', 'id');
     }
 
-    public function solicitudes(){
+    public function subsolicitudes(){
         return $this->hasMany(ApiSolicitudes::class, 'id', 'idSolicitudPadre');
     }
 

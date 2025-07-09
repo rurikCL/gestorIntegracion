@@ -19,6 +19,7 @@ return new class extends Migration
         Schema::create($this->table, function (Blueprint $table) {
             $table->id();
 
+            $table->bigInteger('idSolicitudPadre')->nullable()->unsigned();
             $table->dateTime('FechaCreacion');
             $table->integer('EventoCreacionID');
             $table->integer('UsuarioCreacionID');

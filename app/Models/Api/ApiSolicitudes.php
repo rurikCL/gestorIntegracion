@@ -34,6 +34,7 @@ class ApiSolicitudes extends Model
         'FlujoID',
         'Reprocesa',
         'Reintentos',
+        'idSolicitudPadre',
     ];
 
     /*protected $dates = [

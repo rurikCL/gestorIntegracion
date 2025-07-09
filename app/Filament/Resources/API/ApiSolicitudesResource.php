@@ -116,6 +116,9 @@ class ApiSolicitudesResource extends Resource
         set_time_limit(0);
         ini_set('memory_limit', '2048M');
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query->where('idSolicitudPadre', null);
+            })
             ->columns([
                 Tables\Columns\IconColumn::make('Exito')
                     ->boolean(),

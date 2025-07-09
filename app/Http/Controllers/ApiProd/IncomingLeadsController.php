@@ -360,6 +360,24 @@ class IncomingLeadsController extends Controller
 
             $log->info('Lead Hubspot creado : ' . $idNegocio);
 
+            $solicitud = ApiSolicitudes::create([
+                'FechaCreacion' => date('Y-m-d H:i:s'),
+                'EventoCreacionID' => 1,
+                'UsuarioCreacionID' => 1,
+                'ReferenciaID' => $IDExterno,
+                'ProveedorID' => 9,
+                'ApiID' => 0,
+                'Prioridad' => 1,
+                'Peticion' => json_encode($properties1),
+                'CodigoRespuesta' => 200,
+                'Respuesta' => json_encode($apiResponse),
+                'FechaPeticion' => date('Y-m-d H:i:s'),
+                'FechaResolucion' => date('Y-m-d H:i:s'),
+                'Exito' => 1,
+                'FlujoID' => 2,
+            ]);
+            $log->solveArray($solicitud->ID);
+
             return response()->json([
                 'error' => false,
                 'message' => 'Lead creado exitosamente',
@@ -371,33 +389,13 @@ class IncomingLeadsController extends Controller
 
         } catch (\Exception $e) {
             $log->error('Error al crear Lead Hubspot: ' . $e->getMessage(), $request->all());
-
+            return response()->json([
+                'message' => 'Error al crear el lead',
+                'error' => $e->getMessage(),
+                'data' => []
+            ], 500);
         }
 
-        $solicitud = ApiSolicitudes::create([
-            'FechaCreacion' => date('Y-m-d H:i:s'),
-            'EventoCreacionID' => 1,
-            'UsuarioCreacionID' => 1,
-            'ReferenciaID' => $IDExterno,
-            'ProveedorID' => 9,
-            'ApiID' => 0,
-            'Prioridad' => 1,
-            'Peticion' => json_encode($properties1),
-            'CodigoRespuesta' => 200,
-            'Respuesta' => json_encode($apiResponse),
-            'FechaPeticion' => date('Y-m-d H:i:s'),
-            'FechaResolucion' => date('Y-m-d H:i:s'),
-            'Exito' => 1,
-            'FlujoID' => 2,
-        ]);
-
-        $log->solveArray($solicitud->ID);
-
-        return response()->json([
-            'message' => 'Error al crear el lead',
-            'error' => $e->getMessage(),
-            'data' => []
-        ], 500);
     }
 
     public function cambiarVisibilidad(Request $request)

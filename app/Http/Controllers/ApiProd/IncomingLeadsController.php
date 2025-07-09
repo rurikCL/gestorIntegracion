@@ -404,12 +404,18 @@ class IncomingLeadsController extends Controller
     public function cambiarVisibilidad(Request $request)
     {
         $idLead = $request->input('idLead', null);
+        Log::info("Cambiando visibilidad de Lead " . $idLead);
+
         $visible = $request->input('visible', 0);
         $fracasado = $request->input('fracasado', 0);
+        if($fracasado) Log::info("Fracasado: " . $fracasado);
+
         $rutVendedor = str_replace("-", "", $request->input('rutVendedor', null));
 
         if ($idLead) {
             $lead = MK_Leads::where('IDExterno', $idLead)->first();
+            Log::info("Leads encontrados " . $lead->count());
+
             if (!$lead) {
                 return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
             } else {

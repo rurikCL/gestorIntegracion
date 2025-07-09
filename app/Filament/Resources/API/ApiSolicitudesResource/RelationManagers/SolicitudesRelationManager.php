@@ -18,14 +18,12 @@ class SolicitudesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Group::make()->schema([
                     Forms\Components\Section::make("Peticion")->schema([
                         Forms\Components\Textarea::make('Peticion')
                             ->rows(21),
-                        Forms\Components\Textarea::make('PeticionHeader')
+                        Forms\Components\Textarea::make('Respuesta')
                             ->rows(10),
-                    ]),
-                ]),
+                    ])->columns(),
             ]);
     }
 

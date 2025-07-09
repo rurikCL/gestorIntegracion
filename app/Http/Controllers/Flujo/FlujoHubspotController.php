@@ -384,7 +384,7 @@ class FlujoHubspotController extends Controller
                             'Comentario' => $comentario,
                         ];
                         $update = MK_Leads::where('ID', $idPompeyo)
-                            ->update($data);
+                            ->update($dataUpdate);
 
                         if ($update) {
                             Log::info("Lead actualizado: " . $idPompeyo . " - Estado: " . $estadoHomologado);

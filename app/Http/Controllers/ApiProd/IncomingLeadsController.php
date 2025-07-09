@@ -411,30 +411,32 @@ class IncomingLeadsController extends Controller
         if($fracasado) Log::info("Fracasado: " . $fracasado);
 
         $rutVendedor = str_replace("-", "", $request->input('rutVendedor', null));
+        if ($rutVendedor) {
+            $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
+            if (!$vendedor) {
+                return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
+            } else {
+                $vendedorID = $vendedor->ID;
+            }
+        }
+
 
         if ($idLead) {
-            $lead = MK_Leads::where('IDExterno', $idLead)->first();
-            Log::info("Leads encontrados " . $lead->count());
+            $leads = MK_Leads::where('IDExterno', $idLead)->get();
+            Log::info("Leads encontrados " . $leads->count());
 
-            if (!$lead) {
+            if($leads->count() == 0){
                 return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
-            } else {
-                if ($rutVendedor) {
-                    $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
-                    if (!$vendedor) {
-                        return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
-                    } else {
-                        $vendedorID = $vendedor->ID;
-                    }
-                }
+            }
 
-                $upd = MK_Leads::where('IDExterno', $idLead)
-                    ->update([
-                        'Visible' => $visible,
-                        'VendedorID' => $vendedorID ?? 1, // Asigna el ID del vendedor si existe
-                        'EstadoID' => $fracasado ? 8 : 1, // 1: Pendiente, 8: Fracasado
-                        'LogEstado' => $fracasado ? 1 : 0, // si esta fracasado, notificar a hubspot
-                    ]);
+            foreach ($leads as $lead) {
+
+                $lead->Visible = $visible;
+                $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
+                $lead->EstadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
+                $lead->LogEstado = $fracasado ? 1 : 0; // si esta fracasado, notificar a hubspot
+                $lead->save();
+                Log::info("Lead actualizado: " . $lead->IDExterno);
             }
         }
 

@@ -121,7 +121,7 @@ class IncomingLeadsController extends Controller
     {
         $log = new Logger();
 
-        $log->info("Recibiendo Lead Externo");
+        $log->info("Recibiendo Lead Externo " . $request->input('data.lead.externalID', null));
 
         $flujoHubspot = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
         $token = json_decode($flujoHubspot->Opciones);

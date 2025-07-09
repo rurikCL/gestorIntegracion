@@ -147,82 +147,85 @@ class IncomingLeadsController extends Controller
 
 // Creacion del CLIENTE (CONTACT)  -------------------------------------------
 
-        // Busca cliente por email
-        $filter1 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
-        $filter2 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+        try {
+            // Busca cliente por email
+            $filter1 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+            $filter2 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
 
-        if ($rut != '') {
-            $filter1->setOperator('EQ')
-                ->setPropertyName('rut')
-                ->setValue($rutFormateado);
-            $log->info("Buscando contacto hubspot por Rut : " . $rutFormateado);
-        }
-        if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $filter2->setOperator('EQ')
-                ->setPropertyName('email')
-                ->setValue($email);
-            $log->info("Buscando contacto hubpspot por Email : " . $email);
-        }
-
-
-        $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
-        $filterGroup->setFilters([$filter1]);
-        $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
-        $filterGroup2->setFilters([$filter2]);
-
-        $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
-        $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
-
-        $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
-
-        $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
-
-        if ($contacto) {
-            foreach ($contacto as $item) {
-                $data = $item->jsonSerialize();
-                $idContacto = $data->id;
-                $log->info("contacto hubspot encontrado : " . $data->id);
-                break;
+            if ($rut != '') {
+                $filter1->setOperator('EQ')
+                    ->setPropertyName('rut')
+                    ->setValue($rutFormateado);
+                $log->info("Buscando contacto hubspot por Rut : " . $rutFormateado);
+            }
+            if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $filter2->setOperator('EQ')
+                    ->setPropertyName('email')
+                    ->setValue($email);
+                $log->info("Buscando contacto hubpspot por Email : " . $email);
             }
 
-        } else {
-            $log->info("Contacto hubspot no encontrado... creando");
 
-            try {
-                $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
-                $dataContacto = [
-                    'email' => filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null,
-                    'firstname' => $nombre,
-                    'lastname' => $apellido,
-                    'phone' => $telefono,
-                    'rut' => $rutFormateado,
-                    'hs_marketable_status' => 2,  // 1: Marketing contact, 2: Non-marketing contact
-                ];
+            $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+            $filterGroup->setFilters([$filter1]);
+            $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+            $filterGroup2->setFilters([$filter2]);
 
-                $contactInput->setProperties($dataContacto);
-                $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
-                $idContacto = $contact->getId();
-                $log->info("Contacto hubspot creado : " . $idContacto);
+            $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
+            $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
 
-            } catch (\Exception $e) {
-                $respuesta = $e->getMessage();
+            $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
 
-                $regex = "/Existing ID: (\d*)\"/m";
-                $posibleID = '';
+            $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
 
-                if (preg_match($regex, $respuesta, $posibleID)) {
-                    $log->error("Contacto hubspot existente: " . $posibleID[1]);
-                    $idContacto = $posibleID[1];
+            if ($contacto) {
+                foreach ($contacto as $item) {
+                    $data = $item->jsonSerialize();
+                    $idContacto = $data->id;
+                    $log->info("contacto hubspot encontrado : " . $data->id);
+                    break;
                 }
 
-                $regex = "/Property values were not valid/m";
-                if (preg_match($regex, $respuesta)) {
-                    $log->error("Error al crear contacto hubspot: " . $respuesta, $request->all());
+            } else {
+                $log->info("Contacto hubspot no encontrado... creando");
+
+                try {
+                    $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
+                    $dataContacto = [
+                        'email' => filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null,
+                        'firstname' => $nombre,
+                        'lastname' => $apellido,
+                        'phone' => $telefono,
+                        'rut' => $rutFormateado,
+                        'hs_marketable_status' => 2,  // 1: Marketing contact, 2: Non-marketing contact
+                    ];
+
+                    $contactInput->setProperties($dataContacto);
+                    $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+                    $idContacto = $contact->getId();
+                    $log->info("Contacto hubspot creado : " . $idContacto);
+
+                } catch (\Exception $e) {
+                    $respuesta = $e->getMessage();
+
+                    $regex = "/Existing ID: (\d*)\"/m";
+                    $posibleID = '';
+
+                    if (preg_match($regex, $respuesta, $posibleID)) {
+                        $log->error("Contacto hubspot existente: " . $posibleID[1]);
+                        $idContacto = $posibleID[1];
+                    }
+
+                    $regex = "/Property values were not valid/m";
+                    if (preg_match($regex, $respuesta)) {
+                        $log->error("Error al crear contacto hubspot: " . $respuesta, $request->all());
+                    }
                 }
+
             }
-
+        }catch(HubSpot\Client\Crm\Contacts\ApiException $e){
+            $log->error("Error al buscar o crear contacto hubspot: " . $e->getMessage(), $request->all());
         }
-
 
         // Creacion del NEGOCIO (DEAL)  -------------------------------------------
 

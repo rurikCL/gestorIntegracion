@@ -363,7 +363,7 @@ class FlujoKiaController extends Controller
                 'CodTelefonoEmpresa' => '',
                 'Telefonoempresa' => '',
                 'CorreoElectronico' => $data['email'],
-                'Comentario' => '',
+                'Comentario' => $data['comentario'] . " Link: " . $data['link'] . " Agenda : ". $data['agenda'],
                 'RecibirCorreos' => 1,
                 'Sexo' => '',
                 'ContactoPreferente' => 'Whatsapp',

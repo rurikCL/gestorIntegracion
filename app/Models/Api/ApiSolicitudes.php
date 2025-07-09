@@ -80,6 +80,10 @@ class ApiSolicitudes extends Model
         return $this->hasMany(API_LogSolicitud::class, 'SolicitudID', 'id');
     }
 
+    public function solicitudes(){
+        return $this->hasMany(ApiSolicitudes::class, 'idSolicitudPadre', 'id');
+    }
+
     public function scopeSolicitudesPendientes($query)
     {
         return $query->where('CodigoRespuesta', '>', 202)

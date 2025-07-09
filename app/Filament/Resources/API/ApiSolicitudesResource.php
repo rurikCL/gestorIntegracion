@@ -251,6 +251,7 @@ class ApiSolicitudesResource extends Resource
     {
         return [
             LogsRelationManager::class,
+            API\ApiSolicitudesResource\RelationManagers\SolicitudesRelationManager::class,
         ];
     }
 

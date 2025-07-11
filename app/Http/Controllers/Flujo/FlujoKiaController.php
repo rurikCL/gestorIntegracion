@@ -401,7 +401,7 @@ class FlujoKiaController extends Controller
             $idExternoSecundario = $dataResponse->oportunidades[0]->quoteId ?? 1;
 
             // Actualiza la referencia de la solicitud con el ID externo
-            $solicitud->IDExterno = $idExterno;
+            $solicitud->ReferenciaID = $idExterno;
             $solicitud->save();
 
             // Asigna la solicitud previa como hija de la nueva solicitud

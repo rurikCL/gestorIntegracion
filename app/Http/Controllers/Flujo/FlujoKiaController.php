@@ -311,6 +311,10 @@ class FlujoKiaController extends Controller
             $sucursal = $h->getR('sucursal', $lead->SucursalID);
             $marca = $h->getR('marca', $lead->MarcaID, 101430);
             $origen = $h->getD('origen', $data['origenNombre'] ?? $lead->origen->Alias, 100000020);
+            $comentario = $data['comentario'] ?? '';
+            $linkInteres = $data['link_interes'] ?? '';
+            $agenda = $data['agenda'] ?? '';
+            $comentarioFinal = $comentario . " Link: " . $linkInteres . " Agenda: " . $agenda;
 
             // busca la versión del modelo activa ----
             $req = new Request();
@@ -365,7 +369,7 @@ class FlujoKiaController extends Controller
                 'CodTelefonoEmpresa' => '',
                 'Telefonoempresa' => '',
                 'CorreoElectronico' => $data['email'],
-                'Comentario' => $data['comentario'] . " Link: " . $data['link'] . " Agenda : ". $data['agenda'],
+                'Comentario' => $comentarioFinal,
                 'RecibirCorreos' => 1,
                 'Sexo' => '',
                 'ContactoPreferente' => 'Whatsapp',

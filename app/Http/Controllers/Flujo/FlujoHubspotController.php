@@ -262,7 +262,7 @@ class FlujoHubspotController extends Controller
                                 print("Nuevo Lead ");
 
                                 if ($res->LeadID > 0) {
-                                    $lead = MK_Leads::where('ID', $res->LeadID)->first();
+                                    $lead = MK_Leads::find($res->LeadID);
 
                                     Log::info("revisando lead : " . $lead->ID . " - " . $lead->IDHubspot. " origen: " . $origenProp);
 

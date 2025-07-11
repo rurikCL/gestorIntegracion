@@ -99,13 +99,16 @@ class FlujoHubspotController extends Controller
                         print("Lead encontrado: " . $lead->ID . "<br>");
                         Log::info("Lead encontrado : " . $lead->ID) . " - " . $lead->IDHubspot;
 
-                        $newProperties->setProperties([
+                        $datosUpdate = [
                             'idpompeyo' => $lead->ID,
-                            'idvendedor' => $lead->VendedorID,
-                            'nombrevendedor' => $lead->vendedor->Nombre,
-                            'email_del_vendedor' => $lead->vendedor->Email,
-                            'celular_del_vendedor' => $lead->vendedor->Celular,
-                        ]);
+                        ];
+                        if($lead->vendedor){
+                            $datosUpdate['idvendedor'] = $lead->VendedorID;
+                            $datosUpdate['nombrevendedor'] = $lead->vendedor->Nombre;
+                            $datosUpdate['email_del_vendedor'] = $lead->vendedor->Email;
+                            $datosUpdate['celular_del_vendedor'] = $lead->vendedor->Celular;
+                        }
+                        $newProperties->setProperties($datosUpdate);
                         $client->crm()->deals()->basicApi()->update($data->id, $newProperties);
                         $lead->IntegracionID = 2; // Hubspot
                         $lead->save();
@@ -298,15 +301,18 @@ class FlujoHubspotController extends Controller
                                         }
                                     }
 
-                                    $newProperties->setProperties([
+                                    $datosUpdate = [
                                         'idpompeyo' => $lead->ID,
-                                        'idvendedor' => $lead->VendedorID,
-                                        'nombrevendedor' => $lead->vendedor->Nombre,
-                                        'email_del_vendedor' => $lead->vendedor->Email,
-                                        'celular_del_vendedor' => $lead->vendedor->Celular,
                                         'id_externo' => $idExterno,
                                         'id_externo_secundario' => $idExternoSecundario,
-                                    ]);
+                                    ];
+                                    if($lead->vendedor){
+                                        $datosUpdate['idvendedor'] = $lead->VendedorID;
+                                        $datosUpdate['nombrevendedor'] = $lead->vendedor->Nombre;
+                                        $datosUpdate['email_del_vendedor'] = $lead->vendedor->Email;
+                                        $datosUpdate['celular_del_vendedor'] = $lead->vendedor->Celular;
+                                    }
+                                    $newProperties->setProperties($datosUpdate);
                                     $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
                                 }
 
@@ -548,15 +554,18 @@ class FlujoHubspotController extends Controller
                     $estadoHomologado = $h->getDato($lead->estadoLead->Estado, $flujo->ID, 'estado', false);
 
                     if ($estadoHomologado) {
-                        $newProperties->setProperties([
+                        $datosUpdate = [
                             'dealstage' => $estadoHomologado,
                             'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID,
                             'id_externo' => $lead->IDExterno,
-                            'idvendedor' => $lead->VendedorID,
-                            'nombrevendedor' => $lead->vendedor->Nombre,
-                            'email_del_vendedor' => $lead->vendedor->Email,
-                            'celular_del_vendedor' => $lead->vendedor->Celular,
-                        ]);
+                        ];
+                        if($lead->vendedor){
+                            $datosUpdate['idvendedor'] = $lead->VendedorID;
+                            $datosUpdate['nombrevendedor'] = $lead->vendedor->Nombre;
+                            $datosUpdate['email_del_vendedor'] = $lead->vendedor->Email;
+                            $datosUpdate['celular_del_vendedor'] = $lead->vendedor->Celular;
+                        }
+                        $newProperties->setProperties($datosUpdate);
 
                         try {
                             $res = $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);

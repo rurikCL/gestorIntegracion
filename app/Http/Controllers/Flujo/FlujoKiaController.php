@@ -332,8 +332,8 @@ class FlujoKiaController extends Controller
             ];
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
-            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
-            $dataVersion = json_decode($solicitud->Respuesta);
+            $solicitudVersion = ApiSolicitudes::find($resp->id);
+            $dataVersion = json_decode($solicitudVersion->Respuesta);
             if ($dataVersion->status !== 'OK') {
                 Log::error('Error obteniendo versión del modelo: ' . $dataVersion->message);
                 $idVersion = 1;
@@ -394,14 +394,21 @@ class FlujoKiaController extends Controller
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
-
-            $solicitud = ApiSolicitudes::where('id', $resp->id)->first();
+            $solicitud = ApiSolicitudes::find($resp->id);
             $dataResponse = json_decode($solicitud->Respuesta);
 
             $idExterno = $dataResponse->oportunidades[0]->opportunityId ?? 1;
             $idExternoSecundario = $dataResponse->oportunidades[0]->quoteId ?? 1;
 
-            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID' => $idExterno, 'IDQuote' => $idExternoSecundario], 200);
+            // Actualiza la referencia de la solicitud con el ID externo
+            $solicitud->IDExterno = $idExterno;
+            $solicitud->save();
+
+            // Asigna la solicitud previa como hija de la nueva solicitud
+            $solicitudVersion->idSolicitudPadre = $solicitud->id;
+            $solicitudVersion->save();
+
+            return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID' => $idExterno, 'IDQuote' => $idExternoSecundario, 'idSolicitud'=>$solicitud->id], 200);
 
         } catch (\Exception $e) {
             Log::error('Error creando oportunidad: ' . $e->getMessage());

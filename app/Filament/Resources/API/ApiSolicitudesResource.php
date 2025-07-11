@@ -151,6 +151,12 @@ class ApiSolicitudesResource extends Resource
                 Tables\Columns\TextColumn::make('CodigoRespuesta'),
 
 
+                Tables\Columns\TextColumn::make('contadorHijos')
+                    ->state(fn($record) => $record->subsolicitudes->count())
+                    ->label('Subsolicitudes')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
 //                Tables\Columns\TextColumn::make('created_at')
 //                    ->dateTime(),
 //                Tables\Columns\TextColumn::make('updated_at')->label('Actualizado a')

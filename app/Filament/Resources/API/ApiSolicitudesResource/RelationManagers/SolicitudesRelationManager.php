@@ -52,11 +52,6 @@ class SolicitudesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('FechaResolucion')->label('Hora resolucion')
                     ->dateTime("H:i:s"),
                 Tables\Columns\TextColumn::make('CodigoRespuesta'),
-                Tables\Columns\TextColumn::make('contadorHijos')
-                ->state(fn($record) => $record->subsolicitudes->count())
-                    ->label('Subsolicitudes')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

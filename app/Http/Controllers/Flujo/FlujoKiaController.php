@@ -338,7 +338,7 @@ class FlujoKiaController extends Controller
                 Log::error('Error obteniendo versión del modelo: ' . $dataVersion->message);
                 $idVersion = 1;
             } else {
-                $idVersion = $dataVersion->data->codeSAP;
+                $idVersion = $dataVersion->data->codeSAP ?? 1; // ID de la versión del modelo
             }
 
             // Crea la oportunidad -------

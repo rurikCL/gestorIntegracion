@@ -381,7 +381,7 @@ class IncomingLeadsController extends Controller
                 'UsuarioCreacionID' => 1,
                 'ReferenciaID' => $IDExterno,
                 'ProveedorID' => 9,
-                'ApiID' => 0,
+                'ApiID' => 9,
                 'Prioridad' => 1,
                 'Peticion' => json_encode($properties1),
                 'CodigoRespuesta' => 200,

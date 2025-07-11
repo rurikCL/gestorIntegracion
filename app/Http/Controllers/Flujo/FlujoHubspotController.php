@@ -278,12 +278,17 @@ class FlujoHubspotController extends Controller
                                                 $idExterno = $res->ID;
                                                 $idExternoSecundario = $res->IDQuote;
 
-                                                $asignacion = $flujoKia->cambiaFase($idExterno);
-                                                $asignacion->getData();
-                                                if ($asignacion->status == 'OK') {
-                                                    Log::info("Fase de Lead KIA actualizado : " . $idExterno);
-                                                } else {
-                                                    Log::error("Error al actualizar fase de Lead KIA " . $idExterno);
+                                                try {
+                                                    $asignacion = $flujoKia->cambiaFase($idExterno);
+                                                    $asignacion->getData();
+
+                                                    if ($asignacion->status == 'OK') {
+                                                        Log::info("Fase de Lead KIA actualizado : " . $idExterno);
+                                                    } else {
+                                                        Log::error("Error al actualizar fase de Lead KIA " . $idExterno);
+                                                    }
+                                                }catch (\Exception $e) {
+                                                    Log::error("Error al cambiar fase de Lead KIA " . $idExterno . " " . $e->getMessage());
                                                 }
 
 

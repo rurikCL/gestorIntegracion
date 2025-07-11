@@ -1489,7 +1489,7 @@ class RobotApcController extends Controller
                         'CalculoMargenTerDedu' => $margenTerDedu,
                         'CalculoMargenTotal' => $margenTotal,
                         'CalculoIngresoInsumos' => $ingresoInsumos,
-                        'SucursalID' => $sucursalID,
+                        'SucursalID' => $sucursalID ?? 1,
                         'TipoMantencionID' => $tipoMantencionID,
 
 //                        'CalculoCostoOtros'=>$costoOtros,

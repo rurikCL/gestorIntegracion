@@ -1126,7 +1126,7 @@ class RobotApcController extends Controller
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['onDemand'] = true;
-            $req['data'] = 'From=' . Carbon::now()->firstOfMonth()->format('Y-m-d');
+            $req['data'] = 'From=' . Carbon::now()->subMonth()->firstOfMonth()->format('Y-m-d');
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -1147,7 +1147,7 @@ class RobotApcController extends Controller
             $registrosErroneos = 0;
 //            Log::info("Datos a procesar : " . count($arrayData));
             if ($arrayData) {
-                APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->subDay()->format('Y-m-d'))->delete();
+                APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->delete();
                 echo "Datos a procesar : " . count($arrayData) . "<br>";
             }
             $conteo = 1;

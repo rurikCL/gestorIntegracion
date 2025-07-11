@@ -109,6 +109,7 @@ class Kernel extends ConsoleKernel
             $robotControl->traeRentabilidadMeson();
             $robotControl->traeRentabilidadSku();
             $robotControl->traeInformeOt();
+            $robotControl->traeRentabilidadOTDMS();
 
         })->name("Control de Robot APC Nocturno")->dailyAt('03:00');
 

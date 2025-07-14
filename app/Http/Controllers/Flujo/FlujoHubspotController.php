@@ -558,6 +558,7 @@ class FlujoHubspotController extends Controller
                             'dealstage' => $estadoHomologado,
                             'link_roma' => 'https://roma.pompeyo.cl/respaldo/htmlv1/Lead.html?' . $lead->ID,
                             'id_externo' => $lead->IDExterno,
+                            'actualiza_estado' => 0,
                         ];
                         if($lead->vendedor){
                             $datosUpdate['idvendedor'] = $lead->VendedorID;
@@ -604,8 +605,12 @@ class FlujoHubspotController extends Controller
 
                                 if ($flujoKia->cambiaFase($lead->IDExterno)) {
                                     Log::info("Fase de Lead KIA actualizado : " . $lead->IDExterno);
+                                    $lead->LogEstado = 0;
+                                    $lead->save();
                                 } else {
                                     Log::error("Error al actualizar fase de Lead KIA " . $lead->IDExterno);
+                                    $lead->LogEstado = 2;
+                                    $lead->save();
                                 }
 
                             }

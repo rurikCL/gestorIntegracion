@@ -416,26 +416,33 @@ class IncomingLeadsController extends Controller
     public function cambiarVisibilidad(Request $request)
     {
         $log = new Logger();
-        $idLead = $request->input('idLead', null);
-        $log->info("Cambiando visibilidad de Lead " . $idLead);
+        $idLeadExterno = $request->input('idLead', null);
+        $solicitud = ApiSolicitudes::where('ReferenciaID', $idLeadExterno)
+            ->where('FlujoID', 2) // Flujo de Leads Externos
+            ->first();
+
+        $log->info("Cambiando visibilidad de Lead " . $idLeadExterno);
 
         $visible = $request->input('visible', 0);
         $fracasado = $request->input('fracasado', 0);
-        if ($fracasado) Log::info("Fracasado: " . $fracasado);
+        if ($fracasado) $log->info("Fracaso recibido");
 
         $rutVendedor = str_replace("-", "", $request->input('rutVendedor', null));
         if ($rutVendedor) {
             $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
             if (!$vendedor) {
+                $log->error("Vendedor no encontrado: " . $rutVendedor);
+                $log->solveArray($solicitud->id);
                 return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
             } else {
+                $log->info("Vendedor asignado encontrado: " . $vendedor->ID . " - " . $vendedor->Nombre . ' ' . $vendedor->Apellido);
                 $vendedorID = $vendedor->ID;
             }
         }
 
 
-        if ($idLead) {
-            $leads = MK_Leads::where('IDExterno', $idLead)->get();
+        if ($idLeadExterno) {
+            $leads = MK_Leads::where('IDExterno', $idLeadExterno)->get();
             Log::info("Leads encontrados " . $leads->count());
 
             if ($leads->count() == 0) {
@@ -447,12 +454,14 @@ class IncomingLeadsController extends Controller
                 $estadoPrevio = $lead->EstadoID;
                 $estadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
                 if($estadoPrevio != $estadoID){
+                    $log->info("Nuevo estado recibido, Flag Actualiza Estado ON");
                     $estadoLog = 1;
                 } else {
+                    $log->info("Estado no cambiado, Flag Actualiza Estado OFF");
                     $estadoLog = 0;
                 }
 
-                Log::info("Actualizando Lead: " . $lead->ID);
+                $log->info("Cambiando visibilidad de Lead " . $lead->ID . " a " . ($visible ? 'Visible' : 'No Visible'));
                 $lead->Visible = $visible;
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
                 $lead->EstadoID = $estadoID; // 1: Pendiente, 8: Fracasado
@@ -461,6 +470,7 @@ class IncomingLeadsController extends Controller
             }
         }
 
+        $log->solveArray($solicitud->id);
         return response()->json(['status' => 'OK', 'message' => 'Visibilidad cambiada correctamente'], 200);
     }
 

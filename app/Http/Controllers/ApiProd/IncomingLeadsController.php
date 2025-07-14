@@ -432,7 +432,7 @@ class IncomingLeadsController extends Controller
             $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
             if (!$vendedor) {
                 $log->error("Vendedor no encontrado: " . $rutVendedor);
-                $log->solveArray($solicitud->id);
+                if($solicitud) $log->solveArray($solicitud->id);
                 return response()->json(['status' => 'ERROR', 'error' => 'Vendedor no encontrado'], 404);
             } else {
                 $log->info("Vendedor asignado encontrado: " . $vendedor->ID . " - " . $vendedor->Nombre . ' ' . $vendedor->Apellido);
@@ -470,7 +470,7 @@ class IncomingLeadsController extends Controller
             }
         }
 
-        $log->solveArray($solicitud->id);
+        if($solicitud) $log->solveArray($solicitud->id);
         return response()->json(['status' => 'OK', 'message' => 'Visibilidad cambiada correctamente'], 200);
     }
 

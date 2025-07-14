@@ -70,79 +70,83 @@ class FlujoKiaController extends Controller
 
             if ($lead) {
 
-                $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
-                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
-                $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
-                $esJefe = false;
+                if ($lead->EstadoID == 8) {
+                    $this->rechazaLead($lead->IDExternoSecundario);
+                } else {
+                    $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
+                    $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
+                    $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
+                    $esJefe = false;
 
-                if ($lead->VendedorID) {
-                    $rutVendedor = $lead->vendedor->Rut;
-                    $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
-                    $sucursalVendedor = $lead->vendedor->SucursalID;
-                    $vendedorActivo = $this->revisaRutVendedor($rutVendedor, $sucursalVendedor, $leadId);
+                    if ($lead->VendedorID) {
+                        $rutVendedor = $lead->vendedor->Rut;
+                        $rutVendedor = substr($rutVendedor, 0, strlen($rutVendedor) - 1) . '-' . substr($rutVendedor, -1); // Asegurarse de que el RUT tenga el formato correcto
+                        $sucursalVendedor = $lead->vendedor->SucursalID;
+                        $vendedorActivo = $this->revisaRutVendedor($rutVendedor, $sucursalVendedor, $leadId);
 
-                    if ($vendedorActivo['status'] == 'Inactivo') {
-                        // buscar Jefe de sucursal y asignar ese rut
-                        $jefe = MA_Usuarios::where('SucursalID', $sucursalVendedor)
-                            ->where('CargoID', 2) // Jefe de sucursal
-                            ->where('PerfilID', 3)
-                            ->first();
-                        if ($jefe) {
-                            $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
-                            $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
-                            $esJefe = true;
+                        if ($vendedorActivo['status'] == 'Inactivo') {
+                            // buscar Jefe de sucursal y asignar ese rut
+                            $jefe = MA_Usuarios::where('SucursalID', $sucursalVendedor)
+                                ->where('CargoID', 2) // Jefe de sucursal
+                                ->where('PerfilID', 3)
+                                ->first();
+                            if ($jefe) {
+                                $rutVendedor = substr($jefe->Rut, 0, strlen($jefe->Rut) - 1) . '-' . substr($jefe->Rut, -1);
+                                $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
+                                $esJefe = true;
+                            } else {
+                                Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
+                            }
                         } else {
-                            Log::error("No se encontró un jefe de sucursal para el vendedor con rut: " . $rutVendedor);
-                        }
-                    } else {
-                        if ($vendedorActivo["cargo"] == 'JEFE DE LOCAL' || $vendedorActivo["cargo"] == 'JEFE DE MARCA') {
-                            $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
-                            $esJefe = true;
-                        } else {
-                            $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
+                            if ($vendedorActivo["cargo"] == 'JEFE DE LOCAL' || $vendedorActivo["cargo"] == 'JEFE DE MARCA') {
+                                $subEstadoHomologado = intval($h->getD('subestadojefe', $lead->EstadoID, 100000008));
+                                $esJefe = true;
+                            } else {
+                                $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
+                            }
                         }
                     }
-                }
 
 
-                // CAMBIO DE FASE
-                $req = new Request();
-                $req['referencia_id'] = $lead->ID;
-                $req['proveedor_id'] = 9;
-                $req['prioridad'] = 1;
-                $req['flujoID'] = $flujo->ID;
-                $req['onDemand'] = true;
-                $req['parentRef'] = $leadId; // Referencia del lead
+                    // CAMBIO DE FASE
+                    $req = new Request();
+                    $req['referencia_id'] = $lead->ID;
+                    $req['proveedor_id'] = 9;
+                    $req['prioridad'] = 1;
+                    $req['flujoID'] = $flujo->ID;
+                    $req['onDemand'] = true;
+                    $req['parentRef'] = $leadId; // Referencia del lead
 
-                if (!$esJefe) {
-                    $req['api_id'] = 41; // api asigna vendedor
-                    $req['data'] = [
-                        'IdOportunidad' => $lead->IDExterno,
-                        'ValorNuevoEstado' => $estadoHomologado,
-                        'ValorNuevoSubEstado' => $subEstadoHomologado,
-                        'Vendedor' => $rutVendedor, // RUT del vendedor
-                        'RutSession' => '1234567-8',
-                        'concesionario' => $sucursalHomologada
-                    ];
-
-                } else {
-                    $req['api_id'] = 46; // api asigna jefe
-                    $req['data'] = [
-                        "datosEntrada" => [
+                    if (!$esJefe) {
+                        $req['api_id'] = 41; // api asigna vendedor
+                        $req['data'] = [
                             'IdOportunidad' => $lead->IDExterno,
                             'ValorNuevoEstado' => $estadoHomologado,
                             'ValorNuevoSubEstado' => $subEstadoHomologado,
                             'Vendedor' => $rutVendedor, // RUT del vendedor
                             'RutSession' => '1234567-8',
                             'concesionario' => $sucursalHomologada
-                        ]
-                    ];
-                }
-                $resp = $solicitudCon->store($req);
-                $resp = $resp->getData();
+                        ];
+
+                    } else {
+                        $req['api_id'] = 46; // api asigna jefe
+                        $req['data'] = [
+                            "datosEntrada" => [
+                                'IdOportunidad' => $lead->IDExterno,
+                                'ValorNuevoEstado' => $estadoHomologado,
+                                'ValorNuevoSubEstado' => $subEstadoHomologado,
+                                'Vendedor' => $rutVendedor, // RUT del vendedor
+                                'RutSession' => '1234567-8',
+                                'concesionario' => $sucursalHomologada
+                            ]
+                        ];
+                    }
+                    $resp = $solicitudCon->store($req);
+                    $resp = $resp->getData();
 //                dump($resp);
 
-                return response()->json(['status' => 'OK', 'message' => 'Fase actualizada correctamente'], 200);
+                    return response()->json(['status' => 'OK', 'message' => 'Fase actualizada correctamente'], 200);
+                }
             }
 
             return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);

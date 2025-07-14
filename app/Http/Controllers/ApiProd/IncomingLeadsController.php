@@ -415,8 +415,9 @@ class IncomingLeadsController extends Controller
 
     public function cambiarVisibilidad(Request $request)
     {
+        $log = new Logger();
         $idLead = $request->input('idLead', null);
-        Log::info("Cambiando visibilidad de Lead " . $idLead);
+        $log->info("Cambiando visibilidad de Lead " . $idLead);
 
         $visible = $request->input('visible', 0);
         $fracasado = $request->input('fracasado', 0);
@@ -443,11 +444,18 @@ class IncomingLeadsController extends Controller
 
             foreach ($leads as $lead) {
 
+                $estadoPrevio = $lead->EstadoID;
+                if($estadoPrevio != ($fracasado ? 8 : 1)){
+                    $estadoLog = 1;
+                } else {
+                    $estadoLog = 0;
+                }
+
                 Log::info("Actualizando Lead: " . $lead->ID);
                 $lead->Visible = $visible;
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
                 $lead->EstadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
-                $lead->LogEstado = $fracasado ? 1 : 0; // si esta fracasado, notificar a hubspot
+                $lead->LogEstado = $estadoLog; // si esta fracasado, notificar a hubspot
                 Log::info("Estado : " . $lead->EstadoID);
                 $lead->save();
             }

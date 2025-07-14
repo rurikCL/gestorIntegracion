@@ -445,7 +445,8 @@ class IncomingLeadsController extends Controller
             foreach ($leads as $lead) {
 
                 $estadoPrevio = $lead->EstadoID;
-                if($estadoPrevio != ($fracasado ? 8 : 1)){
+                $estadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
+                if($estadoPrevio != $estadoID){
                     $estadoLog = 1;
                 } else {
                     $estadoLog = 0;
@@ -454,7 +455,7 @@ class IncomingLeadsController extends Controller
                 Log::info("Actualizando Lead: " . $lead->ID);
                 $lead->Visible = $visible;
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
-                $lead->EstadoID = $fracasado ? 8 : 1; // 1: Pendiente, 8: Fracasado
+                $lead->EstadoID = $estadoID; // 1: Pendiente, 8: Fracasado
                 $lead->LogEstado = $estadoLog; // si esta fracasado, notificar a hubspot
                 Log::info("Estado : " . $lead->EstadoID);
                 $lead->save();

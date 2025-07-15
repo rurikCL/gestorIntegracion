@@ -270,7 +270,9 @@ class FlujoKiaController extends Controller
                 ->first();
 
             if ($lead) {
-                $solicitud =
+                $solicitud = MK_Leads::where('IDExterno', $lead->IDExterno)
+                    ->where('MarcaID', 2)
+                    ->first();
 
                 $req = new Request();
                 $req['referencia_id'] = $lead->ID;
@@ -290,6 +292,7 @@ class FlujoKiaController extends Controller
                 $resp = $resp->getData();
 
                 $log->info("Respuesta de rechazo: " . json_encode($resp));
+                if($solicitud) $log->solveArray($solicitud->id);
                 return response()->json(['status' => 'OK', 'message' => 'Lead rechazado correctamente'], 200);
             }
 

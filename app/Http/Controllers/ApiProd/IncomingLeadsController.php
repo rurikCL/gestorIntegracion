@@ -120,7 +120,7 @@ class IncomingLeadsController extends Controller
 
     public function leadHubspot(Request $request)
     {
-        $log = new Logger();
+        $log = new Logger("KIA");
 
         $log->info("Recibiendo Lead Externo " . $request->input('data.lead.externalID', null));
 
@@ -415,7 +415,7 @@ class IncomingLeadsController extends Controller
 
     public function cambiarVisibilidad(Request $request)
     {
-        $log = new Logger();
+        $log = new Logger("KIA");
         $idLeadExterno = $request->input('idLead', null);
         $solicitud = ApiSolicitudes::where('ReferenciaID', $idLeadExterno)
             ->where('FlujoID', 2) // Flujo de Leads Externos
@@ -464,7 +464,7 @@ class IncomingLeadsController extends Controller
                 $log->info("Cambiando visibilidad de Lead " . $lead->ID . " a " . ($visible ? 'Visible' : 'No Visible'));
                 $lead->Visible = $visible;
                 $lead->VendedorID = $vendedorID ?? 1; // Asigna el ID del vendedor si existe
-                $lead->EstadoID = $estadoID; // 1: Pendiente, 8: Fracasado
+                if($fracasado) $lead->EstadoID = 8; // 8: Fracasado
                 $lead->LogEstado = $estadoLog; // si esta fracasado, notificar a hubspot
                 $lead->save();
             }

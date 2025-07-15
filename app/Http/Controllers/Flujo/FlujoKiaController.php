@@ -256,6 +256,8 @@ class FlujoKiaController extends Controller
 
     public function rechazaLead($idCotizacion)
     {
+        $log = new Logger("KIA");
+        $log->info("Rechazando Lead KIA: " . $idCotizacion);
 
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
         $h = new FLU_Homologacion();
@@ -268,6 +270,7 @@ class FlujoKiaController extends Controller
                 ->first();
 
             if ($lead) {
+                $solicitud =
 
                 $req = new Request();
                 $req['referencia_id'] = $lead->ID;
@@ -285,15 +288,16 @@ class FlujoKiaController extends Controller
 
                 $resp = $solicitudCon->store($req);
                 $resp = $resp->getData();
-//                dump($resp);
 
+                $log->info("Respuesta de rechazo: " . json_encode($resp));
                 return response()->json(['status' => 'OK', 'message' => 'Lead rechazado correctamente'], 200);
             }
 
+            $log->error("Lead no encontrado para ID Cotización: " . $idCotizacion);
             return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
 
         } catch (\Exception $e) {
-            Log::error('Error rechazando lead: ' . $e->getMessage());
+            $log->error('Error rechazando lead: ' . $e->getMessage());
             return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
     }
@@ -301,8 +305,9 @@ class FlujoKiaController extends Controller
 
     public function crearOportunidad($data, MK_Leads $lead)
     {
+        $log = new Logger("KIA");
 
-        Log::info("Enviando Oportunidad KIA: " . $lead->ID . " " . $lead->cliente->Nombre . " " . $lead->cliente->Rut);
+        $log->info("Enviando Oportunidad KIA: " . $lead->ID . " " . $lead->cliente->Nombre . " " . $lead->cliente->Rut);
 
         $flujo = FLU_Flujos::where('Nombre', 'KIA')->first();
         $h = new FLU_Homologacion();
@@ -321,6 +326,8 @@ class FlujoKiaController extends Controller
             $comentarioFinal = $comentario . " Link: " . $linkInteres . " Agenda: " . $agenda;
 
             // busca la versión del modelo activa ----
+            $log->info("Buscando version del modelo: " . $lead->ModeloID . " - " . $modelo);
+
             $req = new Request();
             $req['referencia_id'] = $lead->ID; // ID externo del lead
             $req['proveedor_id'] = 9;
@@ -339,9 +346,10 @@ class FlujoKiaController extends Controller
             $solicitudVersion = ApiSolicitudes::find($resp->id);
             $dataVersion = json_decode($solicitudVersion->Respuesta);
             if ($dataVersion->status !== 'OK') {
-                Log::error('Error obteniendo versión del modelo: ' . $dataVersion->message);
+                $log->error('Error obteniendo versión del modelo: ' . $dataVersion->message);
                 $idVersion = 1;
             } else {
+                $log->info('Versión del modelo obtenida: ' . ($dataVersion->data->codeSAP ?? 1));
                 $idVersion = $dataVersion->data->codeSAP ?? 1; // ID de la versión del modelo
             }
 
@@ -403,7 +411,7 @@ class FlujoKiaController extends Controller
 
             $idExterno = $dataResponse->oportunidades[0]->opportunityId ?? 1;
             $idExternoSecundario = $dataResponse->oportunidades[0]->quoteId ?? 1;
-
+            $log->info("Oportunidad creada con ID Externo: " . $idExterno . " y Quote ID: " . $idExternoSecundario);
             // Actualiza la referencia de la solicitud con el ID externo
             $solicitud->ReferenciaID = $idExterno;
             $solicitud->save();
@@ -412,10 +420,11 @@ class FlujoKiaController extends Controller
             $solicitudVersion->idSolicitudPadre = $solicitud->id;
             $solicitudVersion->save();
 
+            $log->solveArray($solicitud->id);
             return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente', 'ID' => $idExterno, 'IDQuote' => $idExternoSecundario, 'idSolicitud'=>$solicitud->id], 200);
 
         } catch (\Exception $e) {
-            Log::error('Error creando oportunidad: ' . $e->getMessage());
+            $log->error('Error creando oportunidad: ' . $e->getMessage());
             return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
 

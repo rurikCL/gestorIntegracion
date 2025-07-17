@@ -25,6 +25,7 @@
         "laraveles/spanish": "^1.5",
         "livewire/livewire": "^3.1",
         "maatwebsite/excel": "^3.1",
+        "novadaemon/filament-pretty-json": "^2.5",
         "phpmailer/phpmailer": "^6.9",
         "rebing/graphql-laravel": "^9.6",
         "saloonphp/xml-wrangler": "^1.2",

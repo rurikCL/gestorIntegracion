@@ -25,6 +25,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Position;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
+use Novadaemon\FilamentPrettyJson\Form\PrettyJsonField;
 
 class ApiSolicitudesResource extends Resource
 {
@@ -91,29 +92,44 @@ class ApiSolicitudesResource extends Resource
                 ])->columns(4),
             ])->columnSpan(2),
             Forms\Components\Group::make()->schema([
-                Forms\Components\Section::make("Peticion")->schema([
+                Forms\Components\Section::make("PeticionSection")->schema([
+                    Forms\Components\Textarea::make('PeticionHeader'),
+
+                    PrettyJsonField::make("Peticion")
+                        ->visibleOn('view'),
                     Forms\Components\Textarea::make('Peticion')
-                        ->mutateStateForValidation(function ($record) {
-                            if (json_validate($record->Peticion)) {
-                                $array = json_decode($record->Peticion, true);
-                                return json_encode($array, JSON_PRETTY_PRINT);
-                            }
-                            return $record->Peticion;
-                        })
-                        ->rows(21),
-                    Forms\Components\Textarea::make('PeticionHeader')
-                        ->rows(10),
-                ]),
+                        ->rows(21)->visibleOn('edit'),
+                ])->visible(fn($record) => json_validate($record->Peticion ?? '')),
+
+                Forms\Components\Section::make("PeticionSection")->schema([
+                    Forms\Components\Textarea::make('PeticionHeader'),
+                    Forms\Components\Textarea::make('Peticion')
+                        ->rows(21)
+                ])->visible(fn($record) => !json_validate($record->Peticion ?? '')),
+
             ]),
             Forms\Components\Group::make()->schema([
-                Forms\Components\Section::make("Respuesta")->schema([
+                Forms\Components\Section::make("RespuestaSection")->schema([
                     Forms\Components\TextInput::make('CodigoRespuesta')
-//                            ->hint("200 = OK, 0 = Error")
-                        ->disabled(),
+                        ->readOnly(),
+
+                    PrettyJsonField::make("Respuesta")
+                        ->visibleOn('view'),
+
                     Forms\Components\Textarea::make('Respuesta')
                         ->rows(30)
-                        ->disabled(),
-                ]),
+                        ->visibleOn('edit')
+                        ->readOnly(),
+                ])->visible(fn($record) => json_validate($record->Respuesta ?? '')),
+
+                Forms\Components\Section::make("RespuestaSection")->schema([
+                    Forms\Components\TextInput::make('CodigoRespuesta')
+                        ->readOnly(),
+
+                    Forms\Components\Textarea::make('Respuesta')
+                        ->rows(30)
+                        ->readOnly(),
+                ])->visible(fn($record) => !json_validate($record->Respuesta ?? '')),
             ]),
 
         ]);

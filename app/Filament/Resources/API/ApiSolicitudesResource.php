@@ -93,7 +93,7 @@ class ApiSolicitudesResource extends Resource
             Forms\Components\Group::make()->schema([
                 Forms\Components\Section::make("Peticion")->schema([
                     Forms\Components\Textarea::make('Peticion')
-                        ->dehydrateStateUsing(function ($record) {
+                        ->mutateStateForValidation(function ($record) {
                             if (json_validate($record->Peticion)) {
                                 $array = json_decode($record->Peticion, true);
                                 return json_encode($array, JSON_PRETTY_PRINT);

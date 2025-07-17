@@ -85,14 +85,21 @@ class ApiSolicitudesResource extends Resource
                         )->label("ID Solicitud Padre"),
 
                     Forms\Components\Placeholder::make('Notificacion')
-                        ->content(fn($record) => ($record->notificacion)  ? "Notificado" : "Sin Notificacion")
-                    ->label('Notificacion'),
+                        ->content(fn($record) => ($record->notificacion) ? "Notificado" : "Sin Notificacion")
+                        ->label('Notificacion'),
 
                 ])->columns(4),
             ])->columnSpan(2),
             Forms\Components\Group::make()->schema([
                 Forms\Components\Section::make("Peticion")->schema([
                     Forms\Components\Textarea::make('Peticion')
+                        ->state(function ($record) {
+                            if (json_validate($record->Peticion)) {
+                                $array = json_decode($record->Peticion, true);
+                                return json_encode($array, JSON_PRETTY_PRINT);
+                            }
+                            return $record->Peticion;
+                        })
                         ->rows(21),
                     Forms\Components\Textarea::make('PeticionHeader')
                         ->rows(10),
@@ -216,7 +223,6 @@ class ApiSolicitudesResource extends Resource
             ], FiltersLayout::Modal)
             ->persistFiltersInSession()
             ->filtersFormColumns(3)
-
             ->actions([
 //                Tables\Actions\ViewAction::make(),
 //                Tables\Actions\EditAction::make(),

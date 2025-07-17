@@ -228,7 +228,7 @@ class FlujoHubspotController extends Controller
                             "reglaSucursal" => $reglaSucursal,
                             "rut" => $rut,
                             "nombre" => $nombre,
-                            "apellido" => $apellido,
+                            "apellido" => $apellido ?? '',
                             "email" => $email,
                             "telefono" => $telefono,
                             "fuente" => 2, // hubspot
@@ -264,7 +264,7 @@ class FlujoHubspotController extends Controller
 
                                 print("Nuevo Lead ");
 
-                                if ($res->LeadID > 0) {
+                                if (isset($res->LeadID) && $res->LeadID > 0) {
                                     $lead = MK_Leads::find($res->LeadID);
 
                                     Log::info("revisando lead : " . $lead->ID . " - " . $lead->IDHubspot. " origen: " . $origenProp);

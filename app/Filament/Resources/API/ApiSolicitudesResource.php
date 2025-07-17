@@ -156,6 +156,7 @@ class ApiSolicitudesResource extends Resource
                     ->boolean(),*/
                 Tables\Columns\TextColumn::make('ReferenciaID')
                     ->label('ID Referencia')
+                    ->copyable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('integracion.Integracion')
                     ->description(fn($record) => $record->proveedores->Nombre ?? '')

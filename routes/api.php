@@ -52,6 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get/marcas', [GerenciasController::class, 'index']);
     Route::get('/get/modelos', [ModelosController::class, 'index']);
     Route::get('/get/sucursales', [SucursalesController::class, 'index']);
+    Route::post('/set/lead', [LeadController::class, 'nuevoLead']);
     Route::get('/get/infocliente', [ClientesController::class, 'infoClienteVenta']);
     Route::get('/get/inforeclamos', [ClientesController::class, 'infoReclamos']);
     Route::post('/set/ticket', [TicketController::class, 'store']);
@@ -77,6 +78,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/action', [\App\Http\Controllers\Api\RomaController::class, 'index']);
 
 });
-
-Route::post('/set/lead', [LeadController::class, 'nuevoLead']);
-

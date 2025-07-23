@@ -5,6 +5,7 @@ namespace App\Console;
 use App\Http\Controllers\Flujo\FlujoController;
 use App\Http\Controllers\Flujo\FlujoGeelyController;
 use App\Http\Controllers\Flujo\FlujoHubspotController;
+use App\Http\Controllers\Flujo\FlujoInchcapeController;
 use App\Http\Controllers\RobotApcController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -25,6 +26,7 @@ class Kernel extends ConsoleKernel
         // FLUJO CADA 30 Minutos  -----------------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
+            $flujoInchcape = new FlujoInchcapeController();
             $robotControl = new RobotApcController();
 
             // Envio de Leads MG
@@ -39,7 +41,7 @@ class Kernel extends ConsoleKernel
             $res = $flujoControl->sendOtIndumotora();
 
             // Envio de Ventas Inchcape
-            $res = $flujoControl->sendVentasInchcape();
+            $res = $flujoInchcape->sendVentasInchcape();
             // Envio de Ventas Landking
             $res = $flujoControl->sendVentasLandking();
 
@@ -124,12 +126,13 @@ class Kernel extends ConsoleKernel
         // FLUJO DIARIO 2am --------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
+            $flujoInchcape = new FlujoInchcapeController();
 
             $flujoControl->cargaIndicadoresUF();
             $flujoControl->cargaIndicadoresDolar();
 
             $flujoControl->sendOTsSICIndumotora();
-            $flujoControl->sendOTsinchcape();
+            $flujoInchcape->sendOTsinchcape();
             $flujoControl->sendOTsSICLandking();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');

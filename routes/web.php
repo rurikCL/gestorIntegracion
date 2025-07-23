@@ -30,8 +30,8 @@ Route::get('/flujo/apcNV/', [\App\Http\Controllers\Flujo\FlujoController::class,
 Route::get('/flujo/apcHomo/', [\App\Http\Controllers\ApcDmsController::class, 'homologacionAPC']);
 Route::get('/flujo/apcHomoBancos/', [\App\Http\Controllers\ApcDmsController::class, 'getBancos']);
 Route::get('/flujo/cpd/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendCpdVentas']);
-Route::get('/flujo/inchcapeventas/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendVentasInchcape']);
-Route::get('/flujo/inchcapeots/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendOTsinchcape']);
+Route::get('/flujo/inchcapeventas/', [\App\Http\Controllers\Flujo\FlujoInchcapeController::class, 'sendVentasInchcape']);
+Route::get('/flujo/inchcapeots/', [\App\Http\Controllers\Flujo\FlujoInchcapeController::class, 'sendOTsinchcape']);
 Route::get('/flujo/landkingventas/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendVentasLandking']);
 Route::get('/flujo/landkingots/', [\App\Http\Controllers\Flujo\FlujoController::class, 'sendOTsSICLandking']);
 

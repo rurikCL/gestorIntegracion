@@ -25,6 +25,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithUpserts;
 use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Validators\Failure;
 
 class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithStartRow, WithUpserts
 {
@@ -159,5 +160,18 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
     public function getRegistrosFallidos()
     {
         return $this->contErrores;
+    }
+
+    public function onFailure(Failure ...$failures)
+    {
+        foreach ($failures as $failure) {
+            $this->errores[] = [
+                'row' => $failure->row(),
+                'attribute' => $failure->attribute(),
+                'errors' => $failure->errors(),
+                'values' => $failure->values(),
+            ];
+        }
+        Log::error('Errores al importar ApcInformeOt: ', $this->errores);
     }
 }

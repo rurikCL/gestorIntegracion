@@ -103,7 +103,7 @@ class FlujoInchcapeController extends Controller
     }
 
 
-    public function crearOportunidad($data, MK_Leads $lead)
+    /*public function crearOportunidad($data, MK_Leads $lead)
     {
         $log = new Logger("INCHCAPE");
         $log->info("Crear Oportunidad INCHCAPE");
@@ -143,7 +143,7 @@ class FlujoInchcapeController extends Controller
             Log::error('Error creando oportunidad: ' . $e->getMessage());
             return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
-    }
+    }*/
 
 
     public function sendVentasInchcape()

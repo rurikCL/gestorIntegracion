@@ -1,5 +1,4 @@
 <?php
-Method…
 
 namespace App\Http;
 

@@ -112,7 +112,7 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
             "Atributo" => $row[35],
             "Horometro" => $row[36],
             "ObservacionOt" => $row[37],
-            "SucursalID" => $h->getDato($row[0].$row[3], $idFlujo, 'sucursal', 0),
+            "SucursalID" => $h->getDato($row[0].$row[3], $idFlujo, 'sucursal', 1),
 //            "EstadoInterno" => 1,
             "MarcaID" => MA_Marcas::where('Marca', $marca)->first()->ID ?? 1,
             "Tramo" => $tramo,

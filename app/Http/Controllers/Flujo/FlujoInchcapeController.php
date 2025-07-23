@@ -27,6 +27,27 @@ use function Symfony\Component\Translation\t;
 class FlujoInchcapeController extends Controller
 {
 
+    private $h; // homologacion
+    private $flujo;
+    private $log;
+    private $solicitudCon;
+
+    public function __construct()
+    {
+        $this->flujo = FLU_Flujos::where('Nombre', 'INCHCAPE LEADS')->first();
+        if (!$this->flujo) {
+            Log::error("Flujo INCHCAPE LEADS no encontrado");
+            abort(404, "Flujo INCHCAPE LEADS no encontrado");
+        }
+        $this->h = new FLU_Homologacion();
+        $this->h->setFlujo($this->flujo->ID);
+
+        $this->log = new Logger("INCHCAPE");
+
+        $this->solicitudCon = new ApiSolicitudController();
+
+    }
+
     public function sincronizaLeads(Request $request)
     {
         try {
@@ -39,7 +60,7 @@ class FlujoInchcapeController extends Controller
             }
             return response()->json(['message' => 'Leads sincronizados correctamente'], 200);
         } catch (\Exception $e) {
-            Log::error('Error sincronizando leads: ' . $e->getMessage());
+            $this->log::error('Error sincronizando leads: ' . $e->getMessage());
             return response()->json(['error' => 'Internal Server Error'], 500);
         }
     }
@@ -48,14 +69,7 @@ class FlujoInchcapeController extends Controller
     public function cambiaFase($leadId)
     {
 
-        $log = new Logger("INCHCAPE");
-        $log->info("Cambia Fase INCHCAPE: " . $leadId);
-
-        $flujo = FLU_Flujos::where('Nombre', 'INCHCAPE LEADS')->first();
-        $h = new FLU_Homologacion();
-        $h->setFlujo($flujo->ID);
-
-        $solicitudCon = new ApiSolicitudController();
+        $this->log->info("Cambia Fase INCHCAPE: " . $leadId);
 
         try {
             $lead = MK_Leads::where('IDExterno', $leadId)
@@ -66,25 +80,25 @@ class FlujoInchcapeController extends Controller
             if ($lead) {
 
                 if ($lead->EstadoID == 8) {
-                    $log->info("Lead se encuentra rechazado, enviando rechazo");
+                    $this->log->info("Lead se encuentra rechazado, enviando rechazo");
                     //TODO enviar rechazo a Inchcape
                 } else {
                     // Homologación de estados y subestados
-                    $estadoHomologado = intval($h->getD('estado', $lead->EstadoID, 100000001));
-                    $subEstadoHomologado = intval($h->getD('subestado', $lead->EstadoID, 100000007));
-                    $sucursalHomologada = intval($h->getR('sucursal', $lead->SucursalID));
+                    $estadoHomologado = intval($this->h->getD('estado', $lead->EstadoID, 100000001));
+                    $subEstadoHomologado = intval($this->h->getD('subestado', $lead->EstadoID, 100000007));
+                    $sucursalHomologada = intval($this->h->getR('sucursal', $lead->SucursalID));
 
                     // CAMBIO DE FASE (Partial Update)
                     $req = new Request();
                     $req['referencia_id'] = $lead->ID;
                     $req['proveedor_id'] = 49;
                     $req['prioridad'] = 1;
-                    $req['flujoID'] = $flujo->ID;
+                    $req['flujoID'] = $this->flujo->ID;
                     $req['onDemand'] = false; // se envia el cambio a la cola de procesos
 //                    $req['parentRef'] = $leadId; // Referencia del lead
 
 
-                    $resp = $solicitudCon->store($req);
+                    $resp = $this->solicitudCon->store($req);
                     $resp = $resp->getData();
 //                dump($resp);
 
@@ -103,7 +117,7 @@ class FlujoInchcapeController extends Controller
     }
 
 
-    /*public function crearOportunidad($data, MK_Leads $lead)
+    public function crearOportunidad($data, MK_Leads $lead)
     {
         $log = new Logger("INCHCAPE");
         $log->info("Crear Oportunidad INCHCAPE");
@@ -143,7 +157,7 @@ class FlujoInchcapeController extends Controller
             Log::error('Error creando oportunidad: ' . $e->getMessage());
             return response()->json(['status' => 'ERROR', 'error' => 'Internal Server Error'], 500);
         }
-    }*/
+    }
 
 
     public function sendVentasInchcape()

@@ -26,6 +26,34 @@ use SoapHeader;
 
 class ApiSolicitudController extends Controller
 {
+    private $request;
+    private $flujoID;
+
+    public function __construct()
+    {
+        $this->request = new Request();
+    }
+
+    public function setFlujo($flujoID)
+    {
+        $this->flujoID = $flujoID;
+    }
+    public function setApi($idProveedor, $idApi, $ref, $parentRef = null, $flujoID = null)
+    {
+        $this->request['proveedor_id'] = $idProveedor;
+        $this->request['api_id'] = $idApi;
+        $this->request['referencia_id'] = $ref;
+        if($parentRef) $this->request['parentRef'] = $parentRef;
+        $this->request['flujoID'] = $flujoID ?? $this->flujoID;
+
+        return $this->request;
+    }
+
+    public function onDemand($onDemand = true)
+    {
+        $this->request['onDemand'] = $onDemand;
+    }
+
     public function index()
     {
         return new ApiSolicitudCollection(
@@ -56,9 +84,9 @@ class ApiSolicitudController extends Controller
 
         DB::transaction(function () use ($request, $solicitud) {
             // Si la solicitud viene con un padre, se asigna el ID del padre
-            if($request->input('parentRef')){
+            if ($request->input('parentRef')) {
                 $sol = ApiSolicitudes::where('ReferenciaID', $request->input('parentRef'))->first();
-                if($sol) $solicitud->idSolicitudPadre = $sol->id;
+                if ($sol) $solicitud->idSolicitudPadre = $sol->id;
             }
 
             $solicitud->ReferenciaID = $request->input('referencia_id') ?? 0;
@@ -78,7 +106,7 @@ class ApiSolicitudController extends Controller
             // resuelve inmediatamente la solicitud
             $resp = $this->resolverSolicitud($solicitud);
 
-            if($resp['status'] == 'ERROR') {
+            if ($resp['status'] == 'ERROR') {
                 Log::error('Error al resolver solicitud ID: ' . $solicitud->id . ' - ' . $resp['message']);
                 return response()->json([
                     'message' => $resp['message'],
@@ -521,7 +549,7 @@ class ApiSolicitudController extends Controller
                             // Param HEADERS
                             if ($solicitud->PeticionHeader != '') {
                                 $paramsHeader = json_decode($solicitud->PeticionHeader);
-                                foreach ($paramsHeader as $key=>$param) {
+                                foreach ($paramsHeader as $key => $param) {
                                     $header[$key] = $param;
                                 }
                             }
@@ -719,11 +747,12 @@ class ApiSolicitudController extends Controller
 
         OrquestadorApi::dispatch($solicitud);
     }
+
     public static function descargarJob($solicitud)
     {
-        if($solicitud->Respuesta != null && $solicitud->Respuesta != ''){
+        if ($solicitud->Respuesta != null && $solicitud->Respuesta != '') {
             if (substr($solicitud->Respuesta, 0, 4) == 'file') {
-                $nombre = "storage/".substr($solicitud->Respuesta, 12, strlen($solicitud->Respuesta));
+                $nombre = "storage/" . substr($solicitud->Respuesta, 12, strlen($solicitud->Respuesta));
                 return response()->download($nombre);
             } else {
                 return response()->setStatusCode(404, 'No se encontro archivo para descargar');

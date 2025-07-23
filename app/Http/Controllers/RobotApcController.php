@@ -1267,13 +1267,62 @@ class RobotApcController extends Controller
 
                 } else if ($sucursal == 'SERVICIO REDCUBE') {
                     if ($sucursal == 'SERVICIO REDCUBE' && $OTSeccion == 'Carroceria') {
-                        $sucursalCorregida = 'SERVICIO REDCUBE DYP';
+                        $sucursalCorregida = 'DYP MAIPU';
                     } else {
-                        $sucursalCorregida = 'SERVICIO REDCUBE';
+                        $sucursalCorregida = 'SERVICIO MAIPU';
                     }
 
                 } else if ($sucursal == 'OPEL CAMINO MELIPILLA') {
-                    $sucursalCorregida = 'PEUGEOT CAMINO MELIPILLA';
+                    $sucursalCorregida = 'SERVICIO CAM';
+                
+                } else if ($sucursal == 'SERVICIO OESTE') {
+                    $sucursalCorregida = 'SERVICIO PLAZA OESTE';
+                
+                } else if ($sucursal == 'SERVICIO TOBALABA') {
+                    $sucursalCorregida = 'SERVICIO PLAZA TOBALABA';       
+
+                } else if ($sucursal == 'SERVICIO ZURICH') {
+                    $sucursalCorregida = 'SERVICIO ZURICH';   
+                
+                } else if ($sucursal == 'SERVICIO MOVICENTER') {
+                    $sucursalCorregida = 'SERVICIO MOVICENTER'; 
+
+                } else if ($sucursal == 'NISSAN IRARRAZAVAL') {
+                    $sucursalCorregida = 'SERVICIO NISSAN IRARRAZAVAL'; 
+
+                } else if ($sucursal == 'NISSAN BILBAO') {
+                    $sucursalCorregida = 'SERVICIO NISSAN BILBAO';
+
+                } else if ($sucursal == 'NISSAN GRAN AVENIDA') {
+                    $sucursalCorregida = 'SERVICIO NISSAN GRAN AVENIDA'; 
+                
+                } else if ($sucursal == 'NISSAN MALL QUILIN') {
+                    $sucursalCorregida = 'SERVICIO QUILIN'; 
+                
+                } else if ($sucursal == 'OPEL IRARRAZAVAL') {
+                    $sucursalCorregida = 'SERVICIO OPEL IRARRAZAVAL'; 
+                
+                } else if ($sucursal == 'PEUGEOT CAMINO MELIPILLA') {
+                    $sucursalCorregida = 'SERVICIO CAM'; 
+                
+                } else if ($sucursal == 'MG IRARRAZAVAL') {
+                    $sucursalCorregida = 'SERVICIO MG IRARRAZAVAL'; 
+                
+                } else if ($sucursal == 'MAYORISTA VISTA HERMOSA') {
+                    $sucursalCorregida = 'MAYORISTA VISTA HERMOSA';      
+                
+                } else if ($sucursal == 'MG QUILIN') {
+                    $sucursalCorregida = 'SERVICIO MG QUILIN';
+                
+                } else if ($sucursal == 'SERVICIO MELIPILLA') {
+                    $sucursalCorregida = 'SERVICIO MELIPILLA';    
+                    
+                } else if ($sucursal == 'DYP VISTA HERMOSA') {
+                    $sucursalCorregida = 'VISTA HERMOSA';                
+
+                } else if ($sucursal == 'OPEL CAMINO MELIPILLA') {
+                    $sucursalCorregida = 'SERVICIO CAM';                
+                    
                 } else {
                     $sucursalCorregida = $sucursal;
                 }

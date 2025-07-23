@@ -74,10 +74,10 @@ class ApcInformeOtImport implements ToModel, WithBatchInserts, WithEvents, WithS
 //        echo $fechaIngreso. " : ". (Carbon::now()->diffInDays($fechaIngreso) ?? 1) . " = ". (intval((Carbon::now()->diffInDays($fechaIngreso) ?? 1) / 30) + 1) . "<br>";
 
         $idSucursal = $h->getDato($row[0] . $row[3], $idFlujo, 'sucursal', 1);
-        if($idSucursal == 1) Log::error("Sucursal no encontrada: " . " - Linea: " . $this->getRowNumber());
+        if($idSucursal == 1) Log::error("Sucursal no encontrada: " . $row[0]. " - Linea: " . $this->getRowNumber());
 
         $idMarca = MA_Marcas::where('Marca', $marca)->first()->ID ?? 1;
-        if($marca == 1) Log::error("Marca no encontrada: " . $row[10] . " - Linea: " . $this->getRowNumber());
+        if($idMarca == 1) Log::error("Marca no encontrada: " . $row[10] . " - Linea: " . $this->getRowNumber());
 
 
         $result = new APC_InformeOt([

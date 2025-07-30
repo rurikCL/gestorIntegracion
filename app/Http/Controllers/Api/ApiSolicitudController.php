@@ -291,9 +291,16 @@ class ApiSolicitudController extends Controller
 
     public function obtenerLogin($ProveedorID)
     {
+        // Primer paso, obtener en Providers el Endpoint de obtencion de Token -------------------------
+        $tokenOauth = ApiProveedores::where("ProveedorID", $ProveedorID)
+            ->where("Tipo", "auth1")->first();
+        $minutos = 5;
+        if($tokenOauth){
+            $minutos = ($tokenOauth->TiempoExpiracion > 0) ? round($tokenOauth->TiempoExpiracion / 60) : 5;
+        }
 
         // Obtener conexion activa, si existe.
-        $estimado = Carbon::now()->addMinutes(5);
+        $estimado = Carbon::now()->addMinutes($minutos);
         $autenticacion = ApiAutenticaciones::where('ProveedorID', $ProveedorID)
             ->where('FechaExpiracion', '>', $estimado)
             ->first();
@@ -317,10 +324,6 @@ class ApiSolicitudController extends Controller
             $fechaExpiracion1 = '';
             $tiempoExpiracion2 = 0;
             $fechaExpiracion2 = '';
-
-            // Primer paso, obtener en Providers el Endpoint de obtencion de Token -------------------------
-            $tokenOauth = ApiProveedores::where("ProveedorID", $ProveedorID)
-                ->where("Tipo", "auth1")->first();
 
             if ($tokenOauth) {
                 if ($tokenOauth->TipoEntrada == "param") {

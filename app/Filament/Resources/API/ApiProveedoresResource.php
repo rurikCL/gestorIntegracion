@@ -93,7 +93,8 @@ class ApiProveedoresResource extends Resource
                         Forms\Components\TextInput::make('IndiceExito'),
                         Forms\Components\TextInput::make('IndiceRespuesta'),
                         Forms\Components\TextInput::make('IndiceExpiracion'),
-                        Forms\Components\TextInput::make('TiempoExpiracion'),
+                        Forms\Components\TextInput::make('TiempoExpiracion')
+                            ->hint('Segundos'),
                         Forms\Components\TextInput::make('Token'),
 
                         Forms\Components\TextInput::make('Timeout')

@@ -310,7 +310,7 @@ class FlujoHubspotController extends Controller
                                         dump($res);
 
                                         if ($res->status == 'OK') {
-                                            $idExterno = $res->response->results->message_ID ?? 0;
+                                            $idExterno = $res->response->results->message_ID;
                                         } else {
                                             Log::error("Error al crear Oportunidad DFSK");
                                         }

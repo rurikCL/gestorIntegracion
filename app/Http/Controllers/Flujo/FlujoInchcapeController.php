@@ -173,8 +173,9 @@ class FlujoInchcapeController extends Controller
             $this->solicitudCon->setApi('Inchcape Inbound Lead', $lead->ID);
             $res = $this->solicitudCon->executeData($data);
             $response = $this->solicitudCon->getResponseData($res);
+            dump($response);
 
-            if($response->status != 'OK') {
+            if($response->results->status != 'OK') {
                 $this->log->error("Error al crear oportunidad: " . json_encode($response));
                 return response()->json(['status' => 'ERROR', 'error' => $response->message], 500);
             }

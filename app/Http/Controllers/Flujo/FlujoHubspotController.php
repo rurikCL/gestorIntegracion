@@ -331,6 +331,7 @@ class FlujoHubspotController extends Controller
                                             $datosUpdate['celular_del_vendedor'] = $lead->vendedor->Celular;
                                         }
                                         $newProperties->setProperties($datosUpdate);
+                                        Log::info("Actualizando Deal Hubspot " . $lead->IDHubspot . " - datos : " .json_encode($datosUpdate));
                                         $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
                                     } catch (\HubSpot\Client\Crm\Deals\ApiException $e) {
                                         Log::error("Error al actualizar Deal Hubspot " . $e->getMessage());

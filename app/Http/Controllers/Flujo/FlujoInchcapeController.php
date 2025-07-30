@@ -148,7 +148,7 @@ class FlujoInchcapeController extends Controller
                             'LeadStatus' => 'New',
                             'ExternalDealerId' => $sucursalH,
                             'DealerDepartment' => 'New Vehicle Sales',
-                            'LeadDateTime' => $lead->FechaCreacion,
+                            'LeadDateTime' => Carbon::parse($lead->FechaCreacion)->format("c"),
                             'LeadChannel' => 'Web',
                             'OriginalSource' => 'CRM Pompeyo',
                             'OriginalSourcePicklist' => 'Website',

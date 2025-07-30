@@ -318,19 +318,24 @@ class FlujoHubspotController extends Controller
 
 
                                     // ------------------------------------------------------------------------------
-                                    $datosUpdate = [
-                                        'idpompeyo' => $lead->ID,
-                                        'id_externo' => $idExterno,
-                                        'id_externo_secundario' => $idExternoSecundario,
-                                    ];
-                                    if($lead->vendedor){
-                                        $datosUpdate['idvendedor'] = $lead->VendedorID;
-                                        $datosUpdate['nombrevendedor'] = $lead->vendedor->Nombre;
-                                        $datosUpdate['email_del_vendedor'] = $lead->vendedor->Email;
-                                        $datosUpdate['celular_del_vendedor'] = $lead->vendedor->Celular;
+                                    try{
+                                        $datosUpdate = [
+                                            'idpompeyo' => $lead->ID,
+                                            'id_externo' => $idExterno,
+                                            'id_externo_secundario' => $idExternoSecundario,
+                                        ];
+                                        if($lead->vendedor){
+                                            $datosUpdate['idvendedor'] = $lead->VendedorID;
+                                            $datosUpdate['nombrevendedor'] = $lead->vendedor->Nombre;
+                                            $datosUpdate['email_del_vendedor'] = $lead->vendedor->Email;
+                                            $datosUpdate['celular_del_vendedor'] = $lead->vendedor->Celular;
+                                        }
+                                        $newProperties->setProperties($datosUpdate);
+                                        $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
+                                    } catch (\HubSpot\Client\Crm\Deals\ApiException $e) {
+                                        Log::error("Error al actualizar Deal Hubspot " . $e->getMessage());
                                     }
-                                    $newProperties->setProperties($datosUpdate);
-                                    $client->crm()->deals()->basicApi()->update($lead->IDHubspot, $newProperties);
+
                                 }
 
                             } else {

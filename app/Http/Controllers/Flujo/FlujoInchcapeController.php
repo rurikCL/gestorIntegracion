@@ -158,7 +158,7 @@ class FlujoInchcapeController extends Controller
                             'Comments' => $data['lead']['comentario'] ?? '',
                             'leadProducts' => [
                                 [
-                                    'ExternalId' => $lead->ID,
+                                    'ExternalId' => (string) $lead->ID,
                                     'BusinessId' => 'IDM Retail Chile',
                                     'SourceSystem' => 'Website',
                                     'ProductType' => 'Model',

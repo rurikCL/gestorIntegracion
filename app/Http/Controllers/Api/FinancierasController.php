@@ -146,7 +146,7 @@ class FinancierasController extends Controller
 
         $resp = $solicitudCon->store($req);
 
-        $data = $solicitudCon->getData($resp);
+        $data = $solicitudCon->getResponseData($resp);
 
         if ($data != null) {
 
@@ -197,7 +197,7 @@ class FinancierasController extends Controller
 
         $resp = $solicitudCon->store($req);
 
-        $data = $solicitudCon->getData($resp);
+        $data = $solicitudCon->getResponseData($resp);
 
         FLU_Notificaciones::Notificar($referencia, $flujo->ID);
 
@@ -271,7 +271,7 @@ class FinancierasController extends Controller
 
         $resp = $solicitudCon->store($req);
 
-        $data = $solicitudCon->getData($resp);
+        $data = $solicitudCon->getResponseData($resp);
 
         if ($data->errors) {
             Log::error("Error al crear solicitud Santander: " . $data->errors[0]->message);

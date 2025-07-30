@@ -270,7 +270,7 @@ class FlujoHubspotController extends Controller
                                     Log::info("revisando lead : " . $lead->ID . " - " . $lead->IDHubspot. " origen: " . $origenProp);
 
 
-                                    // Creacion de oportunidad KIA
+                                    // Creacion de oportunidad KIA ---------------------------------------------------
                                     if ($marca == "KIA" && $idExterno == '' && $idExternoSecundario == '') {
                                         if ($origenProp == 'RELIF' || $origenProp == 'Landing') {
                                             $flujoKia = new FlujoKiaController();
@@ -301,6 +301,22 @@ class FlujoHubspotController extends Controller
                                         }
                                     }
 
+                                    // Creacion de oportunidad INCHCAPE  ---------------------------------------------
+                                    if ($marca == "DFSK" && $idExterno == '') {
+                                        $inchcape = new FlujoInchcapeController();
+                                        $res = $inchcape->crearOportunidad($req['data'], $lead);
+                                        $res = $res->getData();
+
+                                        if ($res->status == 'OK') {
+                                            $idExterno = $res->response->results->message_ID;
+                                            $idExternoSecundario = null;
+                                        } else {
+                                            Log::error("Error al crear Oportunidad DFSK");
+                                        }
+                                    }
+
+
+                                    // ------------------------------------------------------------------------------
                                     $datosUpdate = [
                                         'idpompeyo' => $lead->ID,
                                         'id_externo' => $idExterno,

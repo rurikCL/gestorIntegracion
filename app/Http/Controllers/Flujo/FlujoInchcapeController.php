@@ -35,6 +35,7 @@ class FlujoInchcapeController extends Controller
     public function __construct()
     {
         $this->flujo = FLU_Flujos::where('Nombre', 'INCHCAPE LEADS')->first();
+
         if (!$this->flujo) {
             Log::error("Flujo INCHCAPE LEADS no encontrado");
             abort(404, "Flujo INCHCAPE LEADS no encontrado");
@@ -45,6 +46,7 @@ class FlujoInchcapeController extends Controller
         $this->log = new Logger("INCHCAPE");
 
         $this->solicitudCon = new ApiSolicitudController();
+        $this->solicitudCon->setFlujo($this->flujo->ID);
 
     }
 
@@ -52,7 +54,7 @@ class FlujoInchcapeController extends Controller
     {
         try {
             $leads = MK_Leads::where('LogEstado', '1')
-                ->whereIn('MarcaID', [5,8])
+                ->whereIn('MarcaID', [5, 8])
                 ->get();
             foreach ($leads as $lead) {
                 // Aquí puedes agregar la lógica para sincronizar cada lead
@@ -73,7 +75,7 @@ class FlujoInchcapeController extends Controller
 
         try {
             $lead = MK_Leads::where('IDExterno', $leadId)
-                ->whereIn('MarcaID', [5,8])
+                ->whereIn('MarcaID', [5, 8])
                 ->orderBy('ID', 'desc')
                 ->first();
 
@@ -97,7 +99,6 @@ class FlujoInchcapeController extends Controller
                     $req['onDemand'] = false; // se envia el cambio a la cola de procesos
 //                    $req['parentRef'] = $leadId; // Referencia del lead
 
-
                     $resp = $this->solicitudCon->store($req);
                     $resp = $resp->getData();
 //                dump($resp);
@@ -119,39 +120,64 @@ class FlujoInchcapeController extends Controller
 
     public function crearOportunidad($data, MK_Leads $lead)
     {
-        $log = new Logger("INCHCAPE");
-        $log->info("Crear Oportunidad INCHCAPE");
-
-        $flujo = FLU_Flujos::where('Nombre', 'INCHCAPE LEADS')->first();
-        $h = new FLU_Homologacion();
-        $h->setFlujo($flujo->ID);
-        $solicitudCon = new ApiSolicitudController();
+        $this->log->info("Crear Oportunidad INCHCAPE");
 
         try {
-            $lead = MK_Leads::where('IDExterno', $request->input('leadId'))
-                ->whereIn('MarcaID', [5,8])
-                ->orderBy('ID', 'desc')
-                ->first();
 
-            if ($lead) {
-                // Lógica para crear la oportunidad
-                // ...
-                $req = new Request();
-                $req['referencia_id'] = $lead->ID;
-                $req['proveedor_id'] = 48;
-                $req['prioridad'] = 1;
-                $req['flujoID'] = $flujo->ID;
-                $req['onDemand'] = false; // se envia el cambio a la cola de procesos
-//                    $req['parentRef'] = $leadId; // Referencia del lead
+            $sucursalH = $this->h->getR('sucursal', $lead->SucursalID);
+            $modeloH = $this->h->getR('modelo', $lead->ModeloID);
 
+            $data =
+                [
+                    'lead-request' => [
+                        'lead' => [
+                            'ExternalId' => $lead->ID,
+                            'BusinessId' => 'IDM Retail Chile',
+                            'SourceSystem' => 'Website',
+                            'CustomerType' => 'Individual',
+                            'FirstName' => $data['nombre'],
+                            'LastName' => $data['apellido'],
+                            'EmailAddress' => $data['email'],
+                            'EmailAddressValid' => true,
+                            'EmailAddressValidatedBy' => 'External Service',
+                            'MobilePhone' => $data['telefono'],
+                            'MobilePhoneValid' => true,
+                            'MobilePhoneValidatedBy' => 'External Service',
+                            'LeadType' => 'Sales',
+                            'LeadForm' => 'Sales Enquiry',
+                            'LeadStatus' => 'New',
+                            'ExternalDealerId' => $sucursalH,
+                            'DealerDepartment' => 'New Vehicle Sales',
+                            'LeadDateTime' => $lead->FechaCreacion,
+                            'LeadChannel' => 'Web',
+                            'OriginalSource' => 'CRM Pompeyo',
+                            'OriginalSourcePicklist' => 'Website',
+                            'LeadCurrency' => 'CLP',
+                            'Make' => $data['marca'],
+                            'LeadTemperature' => 'Hot',
+                            'Comments' => $data['comentario'] ?? '',
+                            'leadProducts' => [
+                                [
+                                    'ExternalId' => $lead->ID,
+                                    'BusinessId' => 'IDM Retail Chile',
+                                    'SourceSystem' => 'Website',
+                                    'ProductType' => 'Model',
+                                    'ProductCode' => $modeloH,
+                                    'Quantity' => 1
+                                ]
+                            ]
+                        ]
+                    ]
+                ];
 
-                $resp = $solicitudCon->store($req);
-                $resp = $resp->getData();
+            $this->solicitudCon->setApi('Inchcape Inbound Lead', $lead->ID);
+            $res = $this->solicitudCon->executeData($data);
+            $response = $this->solicitudCon->getResponseData($res);
 
-                return response()->json(['status' => 'OK', 'message' => 'Oportunidad creada correctamente'], 200);
-            }
+            $this->log->info("Respuesta de Inchcape: " . json_encode($response));
 
-            return response()->json(['status' => 'ERROR', 'error' => 'Lead no encontrado'], 404);
+            return response()->json(['status' => 'OK', 'error' => '', 'msj' => 'Lead enviado correctamente', 'response' => $response], 200);
+
 
         } catch (\Exception $e) {
             Log::error('Error creando oportunidad: ' . $e->getMessage());
@@ -501,7 +527,6 @@ class FlujoInchcapeController extends Controller
 
         return true;
     }
-
 
 
 }

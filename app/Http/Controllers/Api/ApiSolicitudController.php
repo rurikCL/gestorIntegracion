@@ -38,20 +38,33 @@ class ApiSolicitudController extends Controller
     {
         $this->flujoID = $flujoID;
     }
-    public function setApi($idProveedor, $idApi, $ref, $parentRef = null, $flujoID = null)
+    public function setApi($nombreApi, $ref,  $parentRef = null, $flujoID = null)
     {
-        $this->request['proveedor_id'] = $idProveedor;
-        $this->request['api_id'] = $idApi;
-        $this->request['referencia_id'] = $ref;
-        if($parentRef) $this->request['parentRef'] = $parentRef;
-        $this->request['flujoID'] = $flujoID ?? $this->flujoID;
-
-        return $this->request;
+        $api = ApiProveedores::where('Nombre', $nombreApi)->first();
+        if($api){
+            $this->request['proveedor_id'] = $api->ProveedorID;
+            $this->request['api_id'] = $api->id;
+            $this->request['referencia_id'] = $ref;
+            if($parentRef) $this->request['parentRef'] = $parentRef;
+            $this->request['flujoID'] = $flujoID ?? $this->flujoID;
+        } else {
+            Log::error("No se encontro la API: " . $nombreApi);
+            throw new Exception("No se encontro la API: " . $nombreApi);
+        }
     }
 
-    public function onDemand($onDemand = true)
+    public function setData($data)
     {
+        $this->request['data'] = $data;
+    }
+
+    public function executeData($data, $onDemand = true)
+    {
+        $this->request['data'] = $data;
         $this->request['onDemand'] = $onDemand;
+
+        $res = $this->store($this->request);
+        return $res;
     }
 
     public function index()
@@ -763,7 +776,7 @@ class ApiSolicitudController extends Controller
         }
     }
 
-    public function getData($resp)
+    public function getResponseData($resp)
     {
         $resp = $resp->getData();
 

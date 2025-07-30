@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
         // FLUJO CADA 30 Minutos  -----------------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-            $flujoInchcape = new FlujoInchcapeController();
+//            $flujoInchcape = new FlujoInchcapeController();
             $robotControl = new RobotApcController();
 
             // Envio de Leads MG
@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
             $res = $flujoControl->sendOtIndumotora();
 
             // Envio de Ventas Inchcape
-            $res = $flujoInchcape->sendVentasInchcape();
+//            $res = $flujoInchcape->sendVentasInchcape();
             // Envio de Ventas Landking
             $res = $flujoControl->sendVentasLandking();
 
@@ -126,13 +126,13 @@ class Kernel extends ConsoleKernel
         // FLUJO DIARIO 2am --------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-            $flujoInchcape = new FlujoInchcapeController();
+//            $flujoInchcape = new FlujoInchcapeController();
 
             $flujoControl->cargaIndicadoresUF();
             $flujoControl->cargaIndicadoresDolar();
 
             $flujoControl->sendOTsSICIndumotora();
-            $flujoInchcape->sendOTsinchcape();
+//            $flujoInchcape->sendOTsinchcape();
             $flujoControl->sendOTsSICLandking();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');

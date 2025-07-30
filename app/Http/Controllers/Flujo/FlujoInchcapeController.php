@@ -153,9 +153,9 @@ class FlujoInchcapeController extends Controller
                             'OriginalSource' => 'CRM Pompeyo',
                             'OriginalSourcePicklist' => 'Website',
                             'LeadCurrency' => 'CLP',
-                            'Make' => $data['marca'],
+                            'Make' => $data['lead']['marca'],
                             'LeadTemperature' => 'Hot',
-                            'Comments' => $data['comentario'] ?? '',
+                            'Comments' => $data['lead']['comentario'] ?? '',
                             'leadProducts' => [
                                 [
                                     'ExternalId' => $lead->ID,

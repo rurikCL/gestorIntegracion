@@ -131,7 +131,7 @@ class FlujoInchcapeController extends Controller
                 [
                     'lead-request' => [
                         'lead' => [
-                            'ExternalId' => $lead->ID,
+                            'ExternalId' => (string) $lead->ID,
                             'BusinessId' => 'IDM Retail Chile',
                             'SourceSystem' => 'Website',
                             'CustomerType' => 'Individual',

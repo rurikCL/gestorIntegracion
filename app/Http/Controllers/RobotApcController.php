@@ -1249,6 +1249,9 @@ class RobotApcController extends Controller
 
                 } else if ($marca == 'SUBARU') {
                     $marcaPompeyo = 'SUBARU';
+                
+                } else if ($marca == 'LANDKING') {
+                    $marcaPompeyo = 'LANDKING';
 
                 } else {
                     $marcaPompeyo = 'Otras Marcas';

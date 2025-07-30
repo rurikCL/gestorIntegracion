@@ -38,13 +38,14 @@ class ApiSolicitudController extends Controller
     {
         $this->flujoID = $flujoID;
     }
-    public function setApi($nombreApi, $ref,  $parentRef = null, $flujoID = null)
+    public function setApi($nombreApi, $ref,  $parentRef = null, $prioridad = 1, $flujoID = null)
     {
         $api = ApiProveedores::where('Nombre', $nombreApi)->first();
         if($api){
             $this->request['proveedor_id'] = $api->ProveedorID;
             $this->request['api_id'] = $api->id;
             $this->request['referencia_id'] = $ref;
+            $this->request['prioridad'] = $prioridad;
             if($parentRef) $this->request['parentRef'] = $parentRef;
             $this->request['flujoID'] = $flujoID ?? $this->flujoID;
         } else {

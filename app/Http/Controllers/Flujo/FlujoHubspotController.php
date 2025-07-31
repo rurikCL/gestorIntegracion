@@ -305,12 +305,12 @@ class FlujoHubspotController extends Controller
                                     if ($marca == "DFSK" && $idExterno == '') {
                                         $inchcape = new FlujoInchcapeController();
                                         $res = $inchcape->crearOportunidad($req['data'], $lead);
-                                        dump($res);
                                         $res = $res->getData();
-                                        dump($res);
 
                                         if ($res->status == 'OK') {
                                             $idExterno = $res->response->results->message_ID;
+                                            $lead->IDExterno = $idExterno;
+                                            $lead->save();
                                         } else {
                                             Log::error("Error al crear Oportunidad DFSK");
                                         }

@@ -281,6 +281,10 @@ class FlujoHubspotController extends Controller
                                                 $idExterno = $res->ID;
                                                 $idExternoSecundario = $res->IDQuote;
 
+                                                $lead->IDExterno = $idExterno;
+                                                $lead->IDExternoSecundario = $idExternoSecundario;
+                                                $lead->save();
+
                                                 try {
                                                     $asignacion = $flujoKia->cambiaFase($idExterno);
                                                     $asignacion->getData();
@@ -318,6 +322,8 @@ class FlujoHubspotController extends Controller
 
 
                                     // ------------------------------------------------------------------------------
+
+                                    // Actualizacion de datos obtenidos en Lead Hubspot -----------------------------
                                     try{
                                         $datosUpdate = [
                                             'idpompeyo' => $lead->ID,

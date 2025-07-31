@@ -178,9 +178,10 @@ class FlujoInchcapeController extends Controller
                 $this->log->error("Error al crear oportunidad: " . json_encode($response));
                 return response()->json(['status' => 'ERROR', 'error' => $res->message], 500);
             }
+
             $this->log->info("Oportunidad creada correctamente: " . json_encode($response));
 
-            return response()->json(['status' => 'OK', 'error' => '', 'msj' => 'Lead enviado correctamente', 'response' => json_encode($response)], 200);
+            return response()->json(['status' => 'OK', 'error' => '', 'msj' => 'Lead enviado correctamente', 'response' => $response], 200);
 
 
         } catch (\Exception $e) {

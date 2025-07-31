@@ -108,10 +108,11 @@ class Kernel extends ConsoleKernel
 
             // Acumulativos
             $robotControl->traeMovimientosVentas();
+
+            $robotControl->traeRentabilidadOTDMS();
             $robotControl->traeRentabilidadMeson();
             $robotControl->traeRentabilidadSku();
             $robotControl->traeInformeOt();
-            $robotControl->traeRentabilidadOTDMS();
 
         })->name("Control de Robot APC Nocturno")->dailyAt('03:00');
 

@@ -1126,8 +1126,8 @@ class RobotApcController extends Controller
             $req['prioridad'] = 1;
             $req['flujoID'] = $flujo->ID;
             $req['onDemand'] = true;
-//            $req['data'] = 'From=' . Carbon::now()->firstOfMonth()->format('Y-m-d');
-            $req['data'] = 'From=' . Carbon::parse('2025-05-01')->format('Y-m-d');
+            $req['data'] = 'From=' . Carbon::now()->firstOfMonth()->format('Y-m-d');
+//            $req['data'] = 'From=' . Carbon::parse('2025-05-01')->format('Y-m-d');
 
             $resp = $solicitudCon->store($req);
             $resp = $resp->getData();
@@ -1148,8 +1148,8 @@ class RobotApcController extends Controller
             $registrosErroneos = 0;
 //            Log::info("Datos a procesar : " . count($arrayData));
             if ($arrayData) {
-  //              APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->delete();
-                APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::parse('2025-05-01')->format('Y-m-d'))->delete();
+                APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::now()->firstOfMonth()->format('Y-m-d'))->delete();
+//                APC_RentabilidadOt::where('FechaFacturacion', '>=', Carbon::parse('2025-05-01')->format('Y-m-d'))->delete();
                 echo "Datos a procesar : " . count($arrayData) . "<br>";
             }
             $conteo = 1;
@@ -1249,7 +1249,7 @@ class RobotApcController extends Controller
 
                 } else if ($marca == 'SUBARU') {
                     $marcaPompeyo = 'SUBARU';
-                
+
                 } else if ($marca == 'LANDKING') {
                     $marcaPompeyo = 'LANDKING';
 
@@ -1277,54 +1277,54 @@ class RobotApcController extends Controller
 
                 } else if ($sucursal == 'OPEL CAMINO MELIPILLA') {
                     $sucursalCorregida = 'SERVICIO CAM';
-                
+
                 } else if ($sucursal == 'SERVICIO OESTE') {
                     $sucursalCorregida = 'SERVICIO PLAZA OESTE';
-                
+
                 } else if ($sucursal == 'SERVICIO TOBALABA') {
-                    $sucursalCorregida = 'SERVICIO PLAZA TOBALABA';       
+                    $sucursalCorregida = 'SERVICIO PLAZA TOBALABA';
 
                 } else if ($sucursal == 'SERVICIO ZURICH') {
-                    $sucursalCorregida = 'SERVICIO ZURICH';   
-                
+                    $sucursalCorregida = 'SERVICIO ZURICH';
+
                 } else if ($sucursal == 'SERVICIO MOVICENTER') {
-                    $sucursalCorregida = 'SERVICIO MOVICENTER'; 
+                    $sucursalCorregida = 'SERVICIO MOVICENTER';
 
                 } else if ($sucursal == 'NISSAN IRARRAZAVAL') {
-                    $sucursalCorregida = 'SERVICIO NISSAN IRARRAZAVAL'; 
+                    $sucursalCorregida = 'SERVICIO NISSAN IRARRAZAVAL';
 
                 } else if ($sucursal == 'NISSAN BILBAO') {
                     $sucursalCorregida = 'SERVICIO NISSAN BILBAO';
 
                 } else if ($sucursal == 'NISSAN GRAN AVENIDA') {
-                    $sucursalCorregida = 'SERVICIO NISSAN GRAN AVENIDA'; 
-                
+                    $sucursalCorregida = 'SERVICIO NISSAN GRAN AVENIDA';
+
                 } else if ($sucursal == 'NISSAN MALL QUILIN') {
-                    $sucursalCorregida = 'SERVICIO QUILIN'; 
-                
+                    $sucursalCorregida = 'SERVICIO QUILIN';
+
                 } else if ($sucursal == 'OPEL IRARRAZAVAL') {
-                    $sucursalCorregida = 'SERVICIO OPEL IRARRAZAVAL'; 
-                
+                    $sucursalCorregida = 'SERVICIO OPEL IRARRAZAVAL';
+
                 } else if ($sucursal == 'PEUGEOT CAMINO MELIPILLA') {
-                    $sucursalCorregida = 'SERVICIO CAM'; 
-                
+                    $sucursalCorregida = 'SERVICIO CAM';
+
                 } else if ($sucursal == 'MG IRARRAZAVAL') {
-                    $sucursalCorregida = 'SERVICIO MG IRARRAZAVAL'; 
-                
+                    $sucursalCorregida = 'SERVICIO MG IRARRAZAVAL';
+
                 } else if ($sucursal == 'MAYORISTA VISTA HERMOSA') {
-                    $sucursalCorregida = 'MAYORISTA VISTA HERMOSA';      
-                
+                    $sucursalCorregida = 'MAYORISTA VISTA HERMOSA';
+
                 } else if ($sucursal == 'MG QUILIN') {
                     $sucursalCorregida = 'SERVICIO MG QUILIN';
-                
+
                 } else if ($sucursal == 'SERVICIO MELIPILLA') {
-                    $sucursalCorregida = 'SERVICIO MELIPILLA';    
-                    
+                    $sucursalCorregida = 'SERVICIO MELIPILLA';
+
                 } else if ($sucursal == 'DYP VISTA HERMOSA') {
-                    $sucursalCorregida = 'VISTA HERMOSA';                
+                    $sucursalCorregida = 'VISTA HERMOSA';
 
                 } else if ($sucursal == 'OPEL CAMINO MELIPILLA') {
-                    $sucursalCorregida = 'SERVICIO CAM';                
+                    $sucursalCorregida = 'SERVICIO CAM';
 
                 } else {
                     $sucursalCorregida = $sucursal;

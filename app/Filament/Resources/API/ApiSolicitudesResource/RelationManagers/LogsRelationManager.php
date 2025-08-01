@@ -37,7 +37,8 @@ class LogsRelationManager extends RelationManager
                         'success' => 'info',
                         'danger' => 'error',
                     ]),
-                Tables\Columns\TextColumn::make('Mensaje'),
+                Tables\Columns\TextColumn::make('Mensaje')
+                ->size('xs'),
                 Tables\Columns\TextColumn::make('created_at')->label('Fecha'),
 
 

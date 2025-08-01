@@ -306,7 +306,7 @@ class FlujoHubspotController extends Controller
                                     }
 
                                     // Creacion de oportunidad INCHCAPE  ---------------------------------------------
-                                    if ($marca == "DFSK" && $idExterno == '') {
+                                    if ($marca == "DFSK_" && $idExterno == '') {
                                         $inchcape = new FlujoInchcapeController();
                                         $res = $inchcape->crearOportunidad($req['data'], $lead);
                                         $res = $res->getData();

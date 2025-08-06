@@ -752,7 +752,7 @@ class FlujoInchcapeController extends Controller
                     'EventoCreacionID' => 1,
                     'UsuarioCreacionID' => 1,
                     'ReferenciaID' => $IDExterno,
-                    'ProveedorID' => 9,
+                    'ProveedorID' => 14,
                     'ApiID' => 9,
                     'Prioridad' => 1,
                     'Peticion' => json_encode($properties1),
@@ -761,7 +761,7 @@ class FlujoInchcapeController extends Controller
                     'FechaPeticion' => date('Y-m-d H:i:s'),
                     'FechaResolucion' => date('Y-m-d H:i:s'),
                     'Exito' => 1,
-                    'FlujoID' => 2,
+                    'FlujoID' => $this->flujo->ID,
                 ]);
                 $this->log->solveArray($solicitud->id);
 

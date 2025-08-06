@@ -11,6 +11,7 @@ use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\Lead;
 use App\Models\MA\MA_Clientes;
+use App\Models\MA\MA_Marcas;
 use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
@@ -542,113 +543,8 @@ class FlujoInchcapeController extends Controller
     public function newHubspotLead(Request $request){
 
         $data = $request->all();
-        $jsonDataArray=
-            [
-                'lead-request' => [
-                    'lead' => [
-                        'external-ids' => [
-                            [
-                                'ExternalEntityId' => 'CL066|RUT|19135179-7',
-                                'SourceSystem' => 'Website',
-                                'BusinessId' => 'CL066',
-                                'CrmId' => '41423559'
-                            ]
-                        ],
-                        'leadProducts' => [
-                            [
-                                'VehicleWrittenOff' => false,
-                                'VehicleStolen' => false,
-                                'EquityDeposit' => false,
-                                'FinanceOwing' => false,
-                                'PersonalNumberPlate' => false,
-                                'ImportedVehicle' => false,
-                                'RegistrationDocument' => false,
-                                'PrimaryVehicle' => true,
-                                'TradeIn' => false,
-                                'ProductName' => 'GEELY COOLRAY SPORT 1.5 turbo 7DCT',
-                                'VehicleModelYear' => '2022',
-                                'VehicleModelFamily' => 'COOLRAY',
-                                'VehicleBrand' => 'Geely',
-                                'TotalPrice' => 17490000,
-                                'Subtotal' => 17490000,
-                                'Quantity' => 1,
-                                'ProductType' => 'Model',
-                                'ProductCode' => 'CRAY300',
-                                'ListPrice' => 17490000,
-                                'UnitPrice' => 17490000,
-                                'BusinessId' => 'CL066'
-                            ]
-                        ],
-                        'HasPayment' => false,
-                        'WebsiteURL' => 'https://www.geely.cl/',
-                        'LeadSource' => 'Web',
-                        'InteractionDetail' => 'COOLRAY',
-                        'InteractionType' => 'PriceList',
-                        'UtmEventRecordType' => 'Interaction',
-                        'UtmInteractionSubject' => 'UTM',
-                        'Probability' => 10,
-                        'SourceAccountId' => '0018e00000BbA4zAAF',
-                        'SourceLeadId' => '0068e00000GG6i7AAD',
-                        'OpportunityLastModifiedDate' => '2023-04-26T19:50:27Z',
-                        'CommonDealerId' => '39337933',
-                        'TargetBusinessIds' => 'IDM Retail Chile',
-                        'IsSync' => true,
-                        'IsPublish' => true,
-                        'DirectMessageOptIn' => false,
-                        'OriginalSourcePicklist' => 'Website',
-                        'ModelDescription' => '',
-                        'Make' => 'Geely',
-                        'LandlinePhoneOptIn' => false,
-                        'MobilePhoneOptIn' => true,
-                        'InteriorColour' => '',
-                        'ExteriorColour' => '',
-                        'VehicleModelYear' => '',
-                        'TotalPrice' => 17490000,
-                        'CurrencyIsoCode' => 'CLP',
-                        'Tags' => '',
-                        'Comments' => '<b>2023-04-26 10:50:19 PM EEST</b><br>Calcular un pie de 7 millones',
-                        'InterestInPurchase' => false,
-                        'InterestInInsurance' => false,
-                        'InterestInFinance' => false,
-                        'InterestInAccessories' => false,
-                        'LeadStatus' => 'New',
-                        'LeadTemperature' => 'Hot',
-                        'LeadChannel' => 'Web',
-                        'LeadDateTime' => '2023-04-26T22:44:37',
-                        'SalespersonEmail' => 'no@email.com',
-                        'SalespersonName' => 'Q - Unassigned Geely Chile',
-                        'Department' => 'New Vehicle Sales',
-                        'InchcapeDealer' => false,
-                        'ExternalDealerId' => '39337933',//*
-                        'DealerId' => '39337933',
-                        'LeadForm' => 'Sales Enquiry',
-                        'LeadType' => 'Sales',
-                        'ExternalLeadId' => 'B2ECD8E3-F35A-472A-8C62-6832D1E8385E',
-                        'EmailOptIn' => true,
-                        'PhoneOptIn' => false,
-                        'SMSOptIn' => true,
-                        'PostOptIn' => false,
-                        'StandardAddressValid' => false,
-                        'WorkPhoneValid' => false,
-                        'MobilePhoneValidatedBy' => 'External Service',
-                        'MobilePhoneValid' => true,
-                        'MobilePhone' => '+56933722704',
-                        'HomePhoneValid' => false,
-                        'EmailAddressValidatedBy' => 'External Service',
-                        'EmailAddressValid' => true,
-                        'EmailAddress' => 'jp.randolph95@gmail.com',
-                        'LastName' => 'Randolph Fuentes',
-                        'FirstName' => 'Juan Pablo',
-                        'IdentificationType' => 'RUT',
-                        'IdentificationNumber' => '19135179-7',
-                        'CrmId' => '41423559',
-                        'CustomerType' => 'Individual',
-                        'SourceBusinessId' => 'CL066',
-                        'SourceSystem' => 'Website',
-                        'BusinessId' => 'CL066'
-                    ]
-                ]
-            ];
+
+        $leadExternalId = $data['lead-request']['lead']['external-ids'][0]['ExternalLeadId'] ?? null;
 
         $nombre = $data['lead-request']['lead']['FirstName'] ?? '';
         $apellido = $data['lead-request']['lead']['LastName'] ?? '';
@@ -658,7 +554,6 @@ class FlujoInchcapeController extends Controller
         $rutFormateado = str_replace('.', '', str_replace('-', '', $rut));
         $sucursal = $data['lead-request']['lead']['ExternalDealerId'] ?? '';
         $sucursalH = $this->h->getR('sucursal', $sucursal);
-        $leadExternalId = $data['lead-request']['lead']['external-ids'][0]['ExternalLeadId'] ?? null;
         $comentario = $data['lead-request']['lead']['Comments'] ?? '';
 
         // obtiene el listado de productos
@@ -674,48 +569,12 @@ class FlujoInchcapeController extends Controller
             }
         }
 
+        $marcaH = MA_Marcas::where('Marca', $marca)->first()->ID;
         $modelo = $data['lead-request']['lead']['InteractionDetail'] ?? '';
         $modeloH = $this->h->getR('modelo', $codProd);
         $versionH = $this->h->getR('version', $version);
 
         $this->log->info("Recibiendo Lead Externo " . $leadExternalId);
-
-        $dataPreparada =
-            [
-                'data' => [
-                    'datosCliente' => [
-                        'nombre' => $nombre,
-                        'apellido' => $apellido,
-                        'rut' => $rutFormateado,
-                        'email' => $email,
-                        'telefono' => $telefono
-                    ],
-                    'lead' => [
-                        'idFlujo' => $this->flujo->ID, //Flujo Inchcape Leads
-                        'sucursal' => $sucursalH,
-                        'sucursalExternalID' => $sucursal,
-                        'externalID' => $leadExternalId,
-                        'comentario' => $comentario,
-                    ],
-                    'vehiculo' => [
-                        'marca' => $marca,
-                        'marcaExternalID' => $marca,
-                        'modelo' => $modelo,
-                        'modeloExternalID' => $modeloH,
-                        'version' => $version,
-                        'versionExternalID' => $versionH,
-                        'precioVehiculo' => $precioVehiculo,
-                        'bonoMarca' => 0,
-                        'bonoFinanciamiento' => 0
-                    ],
-                    'vpp' => [
-                        'tieneVpp' => false
-                    ],
-                    'financiamiento' => [
-                        'conFinanciamiento' => true
-                    ]
-                ]
-            ];
 
         if ($leadExternalId) {
 
@@ -819,8 +678,7 @@ class FlujoInchcapeController extends Controller
             // Creacion del NEGOCIO (DEAL)  -------------------------------------------
 
             $this->log->info("Creando Lead Hubspot");
-            $IDExterno = $dataPreparada['data']['lead']['externalID'] ?? null;
-            $comentario = $dataPreparada['data']['lead']['comentario'] ?? '';
+            $IDExterno = $leadExternalId;
             $actualizaEstado = 1;
 
             // ASOSIACION DE CONTACTO A NEGOCIO
@@ -838,100 +696,42 @@ class FlujoInchcapeController extends Controller
             $this->log->info("Asociacion de contacto creada: " . $idContacto);
 
 
-            $sucursalIDExterno = $request->input('data.lead.sucursalExternalID', null);
-            $sucursalHomologada = 1;
-            if ($sucursalIDExterno) {
-                $sucursalHomologada = $h->getD('sucursal', $sucursalIDExterno);
-                $sucursalNombre = MA_Sucursales::find($sucursalHomologada)->Sucursal ?? $sucursalNombre;
-            }
-
-            // OBTENCION DE DATOS DEL VEHICULO
-
-            $marcaNombre = $request->input('data.vehiculo.marca', null);
-            $marcaIDExterno = $request->input('data.vehiculo.marcaExternalID', null);
-            if ($marcaIDExterno) {
-                $marcaHomologada = $h->getD('marca', $marcaIDExterno, $marcaNombre);
-            }
-
-            $modeloNombre = $request->input('data.vehiculo.modelo', null);
-            $modeloNombre = str_replace("NUEVO ", "", $modeloNombre);
-            $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
-            if ($modeloIDExterno) {
-                $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);
-                $this->log->info("Homologacion de modelo: " . $modeloIDExterno . " - " . $modeloHomologado);
-            }
-
-            $versionNombre = $request->input('data.vehiculo.version', null);
-            $versionIDExterno = $request->input('data.vehiculo.versionExternalID', null);
-            if ($versionIDExterno) {
-                $versionHomologado = $h->getD('version', $versionIDExterno, $versionNombre);
-                $this->log->info("Homologacion de version: " . $versionIDExterno . " - " . $versionHomologado);
-            }
-
-            $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
-            $bonoMarca = $request->input('data.vehiculo.bonoMarca', null);
-            $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
-            $vpp = ($request->input('data.vpp.tieneVpp', false) == true) ? 'SI' : 'NO';
-            $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 'SI' : 'NO';
-            $testDrive = ($request->input('data.testDrive.tieneTestDrive', false) == true) ? 'SI' : 'NO';
-
-
             //DEFINIENDO PROPIEDADES DEL NEGOCIO
             $properties1 = [
                 'id_externo' => $IDExterno,
-                'id_externo_secundario' => $IDExternoSecundario,
                 'record_id___contacto' => $idContacto,
                 'email' => $email,
                 'phone' => $telefono,
                 'rut' => $rutFormateado,
                 'firstname' => $nombre,
                 'lastname' => $apellido,
-                'dealname' => $nombre . ' ' . $apellido . ' - ' . $marcaNombre . ' ' . $modeloNombre, // + marca + modelo
+                'dealname' => $nombre . ' ' . $apellido . ' - ' . $marca . ' ' . $modelo, // + marca + modelo
                 'sucursal' => $sucursalNombre,
-                'sucursal_roma' => $sucursalHomologada,
+                'sucursal_roma' => $sucursalH,
                 'reglasucursal' => 0,
                 'origen_roma' => 2, //origen Marca
                 'suborigen_roma' => 63, //suborigen Marca
                 'canal_roma' => 2, //canal Digital
-                'modelo' => $modeloNombre,
-                'modelo_roma' => $modeloHomologado,
-                "marca" => $marcaNombre,
-                'marca_roma' => $marcaHomologada,
-                'version' => $versionNombre,
-                'version_roma' => $versionHomologado,
+                'modelo' => $modelo,
+                'modelo_roma' => $modeloH,
+                "marca" => $marca,
+                'marca_roma' => $marcaH,
+                'version' => $version,
+                'version_roma' => $versionH,
                 'dealstage' => 'appointmentscheduled',
                 'createdate' => Carbon::now()->format('Y-m-d'),
                 'tipo_vehiculo' => 'Nuevo',
                 'precio_vehiculo' => $precioVehiculo,
-                'bono_marca' => $bonoMarca,
-                'bono_financiamiento' => $bonoFinanciamiento,
-                'vpp' => $vpp,
-                'financiamiento' => $financiamiento,
-                'test_drive' => $testDrive,
+                'bono_marca' => 0,
+                'bono_financiamiento' => 0,
+                'vpp' => 'NO',
+                'financiamiento' => 'NO',
+                'test_drive' => 'NO',
                 'preparado' => 0,
-                'visible' => 0,
+//                'visible' => 0,
                 'actualiza_estado' => $actualizaEstado,
                 'comentario' => $comentario,
             ];
-
-            // ASIGNACION DE VENDEDOR
-            if ($rutVendedor) {
-                $this->log->info("Buscando vendedor recibido: " . $rutVendedor);
-                $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
-                if (!$vendedor) {
-                    $this->log->error("Vendedor no encontrado: " . $rutVendedor);
-                } else {
-                    $this->log->info("Vendedor encontrado: " . $vendedor->ID . " - " . $vendedor->Nombre . ' ' . $vendedor->Apellido);
-                    $this->log->info("Definiendo reglas : regla de vendedor 0, actualiza estado 0, visible 1, preparado 1");
-                    $properties1['idvendedor'] = $vendedor->ID;
-                    $properties1['nombrevendedor'] = $vendedor->Nombre . ' ' . $vendedor->Apellido;
-                    $properties1['reglavendedor'] = 0; // si es regla de vendedor, asignar 1
-                    $properties1['actualiza_estado'] = 0;
-                    $properties1['visible'] = 1;
-                    $properties1['preparado'] = 1;
-                }
-            }
-
 
             try {
                 $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([

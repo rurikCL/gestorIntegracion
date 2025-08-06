@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Saloon\XmlWrangler\XmlWriter;
 use function Psl\Str\Byte\length;
+use function Psl\Str\uppercase;
 use function Symfony\Component\Translation\t;
 
 
@@ -565,6 +566,7 @@ class FlujoInchcapeController extends Controller
                 $codProd = $producto['ProductCode'] ?? '';
                 $version = $producto['VehicleModelFamily'] ?? '';
                 $marca = $producto['VehicleBrand']?? '';
+                $marca = uppercase($marca);
                 $precioVehiculo = $producto['TotalPrice'] ?? 0;
                 break;
             }

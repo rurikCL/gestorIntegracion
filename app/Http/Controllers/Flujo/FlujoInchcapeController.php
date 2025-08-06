@@ -544,7 +544,6 @@ class FlujoInchcapeController extends Controller
     public function newHubspotLead(Request $request){
 
         $data = $request->all();
-        dump($data);
 
         $leadExternalId = $data['lead-request']['lead']['ExternalLeadId'] ?? null;
 

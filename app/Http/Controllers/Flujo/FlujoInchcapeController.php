@@ -545,7 +545,7 @@ class FlujoInchcapeController extends Controller
         $data = $request->all();
         dump($data);
 
-        $leadExternalId = $data['lead-request']['lead']['external-ids'][0]['ExternalLeadId'] ?? null;
+        $leadExternalId = $data['lead-request']['lead']['ExternalLeadId'] ?? null;
 
         $nombre = $data['lead-request']['lead']['FirstName'] ?? '';
         $apellido = $data['lead-request']['lead']['LastName'] ?? '';

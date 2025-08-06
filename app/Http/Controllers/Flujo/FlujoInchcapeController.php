@@ -11,11 +11,17 @@ use App\Models\FLU\FLU_Flujos;
 use App\Models\FLU\FLU_Homologacion;
 use App\Models\Lead;
 use App\Models\MA\MA_Clientes;
+use App\Models\MA\MA_Sucursales;
 use App\Models\MA\MA_Usuarios;
 use App\Models\MK\MK_Leads;
 use App\Models\PV\PV_PostVenta;
 use App\Models\VT\VT_EstadoResultado;
 use Carbon\Carbon;
+use HubSpot\Client\Crm\Deals\Model\AssociationSpec;
+use HubSpot\Client\Crm\Deals\Model\PublicAssociationsForObject;
+use HubSpot\Client\Crm\Deals\Model\PublicObjectId;
+use HubSpot\Client\Crm\Deals\Model\SimplePublicObjectInputForCreate;
+use HubSpot\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -328,7 +334,7 @@ class FlujoInchcapeController extends Controller
         echo "Ejecutando Flujo KIA OT SIC<br>";
         Log::info("Inicio flujo OTs Indumotora");
 
-        $flujo = FLU_Flujos::where('Nombre', 'Inchcape')->first();
+        $flujo = FLU_Flujos::where('Nombre', 'Inchcape SIC')->first();
 
         if ($flujo->Activo) {
             Log::info("Flujo activo");
@@ -531,6 +537,452 @@ class FlujoInchcapeController extends Controller
         }
 
         return true;
+    }
+
+    public function newHubspotLead(Request $request){
+
+        $data = $request->all();
+        $jsonDataArray=
+            [
+                'lead-request' => [
+                    'lead' => [
+                        'external-ids' => [
+                            [
+                                'ExternalEntityId' => 'CL066|RUT|19135179-7',
+                                'SourceSystem' => 'Website',
+                                'BusinessId' => 'CL066',
+                                'CrmId' => '41423559'
+                            ]
+                        ],
+                        'leadProducts' => [
+                            [
+                                'VehicleWrittenOff' => false,
+                                'VehicleStolen' => false,
+                                'EquityDeposit' => false,
+                                'FinanceOwing' => false,
+                                'PersonalNumberPlate' => false,
+                                'ImportedVehicle' => false,
+                                'RegistrationDocument' => false,
+                                'PrimaryVehicle' => true,
+                                'TradeIn' => false,
+                                'ProductName' => 'GEELY COOLRAY SPORT 1.5 turbo 7DCT',
+                                'VehicleModelYear' => '2022',
+                                'VehicleModelFamily' => 'COOLRAY',
+                                'VehicleBrand' => 'Geely',
+                                'TotalPrice' => 17490000,
+                                'Subtotal' => 17490000,
+                                'Quantity' => 1,
+                                'ProductType' => 'Model',
+                                'ProductCode' => 'CRAY300',
+                                'ListPrice' => 17490000,
+                                'UnitPrice' => 17490000,
+                                'BusinessId' => 'CL066'
+                            ]
+                        ],
+                        'HasPayment' => false,
+                        'WebsiteURL' => 'https://www.geely.cl/',
+                        'LeadSource' => 'Web',
+                        'InteractionDetail' => 'COOLRAY',
+                        'InteractionType' => 'PriceList',
+                        'UtmEventRecordType' => 'Interaction',
+                        'UtmInteractionSubject' => 'UTM',
+                        'Probability' => 10,
+                        'SourceAccountId' => '0018e00000BbA4zAAF',
+                        'SourceLeadId' => '0068e00000GG6i7AAD',
+                        'OpportunityLastModifiedDate' => '2023-04-26T19:50:27Z',
+                        'CommonDealerId' => '39337933',
+                        'TargetBusinessIds' => 'IDM Retail Chile',
+                        'IsSync' => true,
+                        'IsPublish' => true,
+                        'DirectMessageOptIn' => false,
+                        'OriginalSourcePicklist' => 'Website',
+                        'ModelDescription' => '',
+                        'Make' => 'Geely',
+                        'LandlinePhoneOptIn' => false,
+                        'MobilePhoneOptIn' => true,
+                        'InteriorColour' => '',
+                        'ExteriorColour' => '',
+                        'VehicleModelYear' => '',
+                        'TotalPrice' => 17490000,
+                        'CurrencyIsoCode' => 'CLP',
+                        'Tags' => '',
+                        'Comments' => '<b>2023-04-26 10:50:19 PM EEST</b><br>Calcular un pie de 7 millones',
+                        'InterestInPurchase' => false,
+                        'InterestInInsurance' => false,
+                        'InterestInFinance' => false,
+                        'InterestInAccessories' => false,
+                        'LeadStatus' => 'New',
+                        'LeadTemperature' => 'Hot',
+                        'LeadChannel' => 'Web',
+                        'LeadDateTime' => '2023-04-26T22:44:37',
+                        'SalespersonEmail' => 'no@email.com',
+                        'SalespersonName' => 'Q - Unassigned Geely Chile',
+                        'Department' => 'New Vehicle Sales',
+                        'InchcapeDealer' => false,
+                        'ExternalDealerId' => '39337933',//*
+                        'DealerId' => '39337933',
+                        'LeadForm' => 'Sales Enquiry',
+                        'LeadType' => 'Sales',
+                        'ExternalLeadId' => 'B2ECD8E3-F35A-472A-8C62-6832D1E8385E',
+                        'EmailOptIn' => true,
+                        'PhoneOptIn' => false,
+                        'SMSOptIn' => true,
+                        'PostOptIn' => false,
+                        'StandardAddressValid' => false,
+                        'WorkPhoneValid' => false,
+                        'MobilePhoneValidatedBy' => 'External Service',
+                        'MobilePhoneValid' => true,
+                        'MobilePhone' => '+56933722704',
+                        'HomePhoneValid' => false,
+                        'EmailAddressValidatedBy' => 'External Service',
+                        'EmailAddressValid' => true,
+                        'EmailAddress' => 'jp.randolph95@gmail.com',
+                        'LastName' => 'Randolph Fuentes',
+                        'FirstName' => 'Juan Pablo',
+                        'IdentificationType' => 'RUT',
+                        'IdentificationNumber' => '19135179-7',
+                        'CrmId' => '41423559',
+                        'CustomerType' => 'Individual',
+                        'SourceBusinessId' => 'CL066',
+                        'SourceSystem' => 'Website',
+                        'BusinessId' => 'CL066'
+                    ]
+                ]
+            ];
+
+        $nombre = $data['lead-request']['lead']['FirstName'] ?? '';
+        $apellido = $data['lead-request']['lead']['LastName'] ?? '';
+        $telefono = $data['lead-request']['lead']['MobilePhone'] ?? '';
+        $email = $data['lead-request']['lead']['EmailAddress'] ?? '';
+        $rut = $data['lead-request']['lead']['Rut'] ?? '';
+        $rutFormateado = str_replace('.', '', str_replace('-', '', $rut));
+        $sucursal = $data['lead-request']['lead']['ExternalDealerId'] ?? '';
+        $sucursalH = $this->h->getR('sucursal', $sucursal);
+        $leadExternalId = $data['lead-request']['lead']['external-ids'][0]['ExternalLeadId'] ?? null;
+        $comentario = $data['lead-request']['lead']['Comments'] ?? '';
+
+        // obtiene el listado de productos
+        $productos = $data['lead-request']['lead']['leadProducts'] ?? [];
+        foreach ($productos as $producto) {
+            // busca el producto de tipo Model
+            if (isset($producto['ProductType']) && $producto['ProductType'] == 'Model') {
+                $codProd = $producto['ProductCode'] ?? '';
+                $version = $producto['VehicleModelFamily'] ?? '';
+                $marca = $producto['VehicleBrand']?? '';
+                $precioVehiculo = $producto['TotalPrice'] ?? 0;
+                break;
+            }
+        }
+
+        $modelo = $data['lead-request']['lead']['InteractionDetail'] ?? '';
+        $modeloH = $this->h->getR('modelo', $codProd);
+        $versionH = $this->h->getR('version', $version);
+
+        $this->log->info("Recibiendo Lead Externo " . $leadExternalId);
+
+        $dataPreparada =
+            [
+                'data' => [
+                    'datosCliente' => [
+                        'nombre' => $nombre,
+                        'apellido' => $apellido,
+                        'rut' => $rutFormateado,
+                        'email' => $email,
+                        'telefono' => $telefono
+                    ],
+                    'lead' => [
+                        'idFlujo' => $this->flujo->ID, //Flujo Inchcape Leads
+                        'sucursal' => $sucursalH,
+                        'sucursalExternalID' => $sucursal,
+                        'externalID' => $leadExternalId,
+                        'comentario' => $comentario,
+                    ],
+                    'vehiculo' => [
+                        'marca' => $marca,
+                        'marcaExternalID' => $marca,
+                        'modelo' => $modelo,
+                        'modeloExternalID' => $modeloH,
+                        'version' => $version,
+                        'versionExternalID' => $versionH,
+                        'precioVehiculo' => $precioVehiculo,
+                        'bonoMarca' => 0,
+                        'bonoFinanciamiento' => 0
+                    ],
+                    'vpp' => [
+                        'tieneVpp' => false
+                    ],
+                    'financiamiento' => [
+                        'conFinanciamiento' => true
+                    ]
+                ]
+            ];
+
+        if ($leadExternalId) {
+
+            $flujoHubspot = FLU_Flujos::where('Nombre', 'Leads Hubspot')->first();
+            $token = json_decode($flujoHubspot->Opciones);
+            $client = Factory::createWithAccessToken($token->token);
+
+            $sucursalNombre = MA_Sucursales::find($dataPreparada['data']['lead']['sucursal'])->Sucursal ?? '';
+
+            try {
+                // Busca cliente por email
+                $filter1 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+                $filter2 = new \HubSpot\Client\Crm\Contacts\Model\Filter();
+
+                if ($rut != '') {
+                    $filter1->setOperator('EQ')
+                        ->setPropertyName('rut')
+                        ->setValue($rutFormateado ?? '');
+                    $this->log->info("Buscando contacto hubspot por Rut : " . $rutFormateado);
+                    $filterGroup = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+                    $filterGroup->setFilters([$filter1]);
+                }
+
+                if ($email != '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $filter2->setOperator('EQ')
+                        ->setPropertyName('email')
+                        ->setValue($email ?? '');
+                    $this->log->info("Buscando contacto hubpspot por Email : " . $email);
+                    $filterGroup2 = new \HubSpot\Client\Crm\Contacts\Model\FilterGroup();
+                    $filterGroup2->setFilters([$filter2]);
+                }
+
+
+                $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
+                if(isset($filterGroup) && isset($filterGroup2)) {
+                    $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
+                } else if(isset($filterGroup)) {
+                    $searchRequest->setFilterGroups([$filterGroup]);
+                } else if(isset($filterGroup2)) {
+                    $searchRequest->setFilterGroups([$filterGroup2]);
+                } else {
+                    $this->log->info("No se proporcionaron filtros para buscar contacto.");
+                    return response()->json([
+                        'error' => true,
+                        'message' => 'No se proporcionaron filtros para buscar contacto.'
+                    ], 400);
+                }
+
+                $searchRequest->setProperties(['hs_object_id', 'firstname', 'lastname', 'email', 'rut']);
+                $contacto = $client->crm()->contacts()->searchApi()->doSearch($searchRequest)->getResults();
+
+                if ($contacto) {
+                    foreach ($contacto as $item) {
+                        $data = $item->jsonSerialize();
+                        $idContacto = $data->id;
+                        $this->log->info("contacto hubspot encontrado : " . $data->id);
+                        break;
+                    }
+
+                } else {
+                    $this->log->info("Contacto hubspot no encontrado... creando");
+
+                    try {
+                        $contactInput = new \HubSpot\Client\Crm\Contacts\Model\SimplePublicObjectInputForCreate();
+                        $dataContacto = [
+                            'email' => filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null,
+                            'firstname' => $nombre,
+                            'lastname' => $apellido,
+                            'phone' => $telefono,
+                            'rut' => $rutFormateado,
+                            'hs_marketable_status' => 2,  // 1: Marketing contact, 2: Non-marketing contact
+                        ];
+
+                        $contactInput->setProperties($dataContacto);
+                        $contact = $client->crm()->contacts()->basicApi()->create($contactInput);
+                        $idContacto = $contact->getId();
+                        $this->log->info("Contacto hubspot creado : " . $idContacto);
+
+                    } catch (\Exception $e) {
+                        $respuesta = $e->getMessage();
+
+                        $regex = "/Existing ID: (\d*)\"/m";
+                        $posibleID = '';
+
+                        if (preg_match($regex, $respuesta, $posibleID)) {
+                            $this->log->error("Contacto hubspot existente: " . $posibleID[1]);
+                            $idContacto = $posibleID[1];
+                        }
+
+                        $regex = "/Property values were not valid/m";
+                        if (preg_match($regex, $respuesta)) {
+                            $this->log->error("Error al crear contacto hubspot: " . $respuesta, $request->all());
+                        }
+                    }
+
+                }
+            } catch (HubSpot\Client\Crm\Contacts\ApiException $e) {
+                $this->log->error("Error al buscar o crear contacto hubspot: " . $e->getMessage(), $request->all());
+            }
+
+            // Creacion del NEGOCIO (DEAL)  -------------------------------------------
+
+            $this->log->info("Creando Lead Hubspot");
+            $IDExterno = $dataPreparada['data']['lead']['externalID'] ?? null;
+            $comentario = $dataPreparada['data']['lead']['comentario'] ?? '';
+            $actualizaEstado = 1;
+
+            // ASOSIACION DE CONTACTO A NEGOCIO
+            $associationSpec1 = new AssociationSpec([
+                'association_category' => 'HUBSPOT_DEFINED',
+                'association_type_id' => 3
+            ]);
+            $to1 = new PublicObjectId([
+                'id' => $idContacto
+            ]);
+            $publicAssociationsForObject1 = new PublicAssociationsForObject([
+                'types' => [$associationSpec1],
+                'to' => $to1
+            ]);
+            $this->log->info("Asociacion de contacto creada: " . $idContacto);
+
+
+            $sucursalIDExterno = $request->input('data.lead.sucursalExternalID', null);
+            $sucursalHomologada = 1;
+            if ($sucursalIDExterno) {
+                $sucursalHomologada = $h->getD('sucursal', $sucursalIDExterno);
+                $sucursalNombre = MA_Sucursales::find($sucursalHomologada)->Sucursal ?? $sucursalNombre;
+            }
+
+            // OBTENCION DE DATOS DEL VEHICULO
+
+            $marcaNombre = $request->input('data.vehiculo.marca', null);
+            $marcaIDExterno = $request->input('data.vehiculo.marcaExternalID', null);
+            if ($marcaIDExterno) {
+                $marcaHomologada = $h->getD('marca', $marcaIDExterno, $marcaNombre);
+            }
+
+            $modeloNombre = $request->input('data.vehiculo.modelo', null);
+            $modeloNombre = str_replace("NUEVO ", "", $modeloNombre);
+            $modeloIDExterno = $request->input('data.vehiculo.modeloExternalID', null);
+            if ($modeloIDExterno) {
+                $modeloHomologado = $h->getD('modelo', $modeloIDExterno, $modeloNombre);
+                $this->log->info("Homologacion de modelo: " . $modeloIDExterno . " - " . $modeloHomologado);
+            }
+
+            $versionNombre = $request->input('data.vehiculo.version', null);
+            $versionIDExterno = $request->input('data.vehiculo.versionExternalID', null);
+            if ($versionIDExterno) {
+                $versionHomologado = $h->getD('version', $versionIDExterno, $versionNombre);
+                $this->log->info("Homologacion de version: " . $versionIDExterno . " - " . $versionHomologado);
+            }
+
+            $precioVehiculo = $request->input('data.vehiculo.precioVehiculo', null);
+            $bonoMarca = $request->input('data.vehiculo.bonoMarca', null);
+            $bonoFinanciamiento = $request->input('data.vehiculo.bonoFinanciamiento', null);
+            $vpp = ($request->input('data.vpp.tieneVpp', false) == true) ? 'SI' : 'NO';
+            $financiamiento = ($request->input('data.financiamiento.conFinanciamiento', false) == true) ? 'SI' : 'NO';
+            $testDrive = ($request->input('data.testDrive.tieneTestDrive', false) == true) ? 'SI' : 'NO';
+
+
+            //DEFINIENDO PROPIEDADES DEL NEGOCIO
+            $properties1 = [
+                'id_externo' => $IDExterno,
+                'id_externo_secundario' => $IDExternoSecundario,
+                'record_id___contacto' => $idContacto,
+                'email' => $email,
+                'phone' => $telefono,
+                'rut' => $rutFormateado,
+                'firstname' => $nombre,
+                'lastname' => $apellido,
+                'dealname' => $nombre . ' ' . $apellido . ' - ' . $marcaNombre . ' ' . $modeloNombre, // + marca + modelo
+                'sucursal' => $sucursalNombre,
+                'sucursal_roma' => $sucursalHomologada,
+                'reglasucursal' => 0,
+                'origen_roma' => 2, //origen Marca
+                'suborigen_roma' => 63, //suborigen Marca
+                'canal_roma' => 2, //canal Digital
+                'modelo' => $modeloNombre,
+                'modelo_roma' => $modeloHomologado,
+                "marca" => $marcaNombre,
+                'marca_roma' => $marcaHomologada,
+                'version' => $versionNombre,
+                'version_roma' => $versionHomologado,
+                'dealstage' => 'appointmentscheduled',
+                'createdate' => Carbon::now()->format('Y-m-d'),
+                'tipo_vehiculo' => 'Nuevo',
+                'precio_vehiculo' => $precioVehiculo,
+                'bono_marca' => $bonoMarca,
+                'bono_financiamiento' => $bonoFinanciamiento,
+                'vpp' => $vpp,
+                'financiamiento' => $financiamiento,
+                'test_drive' => $testDrive,
+                'preparado' => 0,
+                'visible' => 0,
+                'actualiza_estado' => $actualizaEstado,
+                'comentario' => $comentario,
+            ];
+
+            // ASIGNACION DE VENDEDOR
+            if ($rutVendedor) {
+                $this->log->info("Buscando vendedor recibido: " . $rutVendedor);
+                $vendedor = MA_Usuarios::where('Rut', $rutVendedor)->first();
+                if (!$vendedor) {
+                    $this->log->error("Vendedor no encontrado: " . $rutVendedor);
+                } else {
+                    $this->log->info("Vendedor encontrado: " . $vendedor->ID . " - " . $vendedor->Nombre . ' ' . $vendedor->Apellido);
+                    $this->log->info("Definiendo reglas : regla de vendedor 0, actualiza estado 0, visible 1, preparado 1");
+                    $properties1['idvendedor'] = $vendedor->ID;
+                    $properties1['nombrevendedor'] = $vendedor->Nombre . ' ' . $vendedor->Apellido;
+                    $properties1['reglavendedor'] = 0; // si es regla de vendedor, asignar 1
+                    $properties1['actualiza_estado'] = 0;
+                    $properties1['visible'] = 1;
+                    $properties1['preparado'] = 1;
+                }
+            }
+
+
+            try {
+                $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
+                    'associations' => [$publicAssociationsForObject1],
+                    'object_write_trace_id' => 'string',
+                    'properties' => $properties1,
+                ]);
+
+                $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
+                $idNegocio = $apiResponse->getId();
+
+                $this->log->info('Lead Hubspot creado : ' . $idNegocio);
+
+                $solicitud = ApiSolicitudes::create([
+                    'FechaCreacion' => date('Y-m-d H:i:s'),
+                    'EventoCreacionID' => 1,
+                    'UsuarioCreacionID' => 1,
+                    'ReferenciaID' => $IDExterno,
+                    'ProveedorID' => 9,
+                    'ApiID' => 9,
+                    'Prioridad' => 1,
+                    'Peticion' => json_encode($properties1),
+                    'CodigoRespuesta' => 200,
+                    'Respuesta' => json_encode($apiResponse),
+                    'FechaPeticion' => date('Y-m-d H:i:s'),
+                    'FechaResolucion' => date('Y-m-d H:i:s'),
+                    'Exito' => 1,
+                    'FlujoID' => 2,
+                ]);
+                $this->log->solveArray($solicitud->id);
+
+                return response()->json([
+                    'error' => false,
+                    'message' => 'Lead creado exitosamente',
+                    'data' => [
+                        'idNegocio' => $idNegocio
+                    ]
+                ], 201);
+
+
+            } catch (\Exception $e) {
+                $this->log->error('Error al crear Lead Hubspot: ' . $e->getMessage(), $request->all());
+                return response()->json([
+                    'message' => 'Error al crear el lead',
+                    'error' => $e->getMessage(),
+                    'data' => []
+                ], 500);
+            }
+
+        }
+
     }
 
 

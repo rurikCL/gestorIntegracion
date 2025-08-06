@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
         // FLUJO CADA 30 Minutos  -----------------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-//            $flujoInchcape = new FlujoInchcapeController();
+            $flujoInchcape = new FlujoInchcapeController();
             $robotControl = new RobotApcController();
 
             // Envio de Leads MG
@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
             $res = $flujoControl->sendOtIndumotora();
 
             // Envio de Ventas Inchcape
-//            $res = $flujoInchcape->sendVentasInchcape();
+            $res = $flujoInchcape->sendVentasInchcape();
             // Envio de Ventas Landking
             $res = $flujoControl->sendVentasLandking();
 
@@ -87,13 +87,26 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $flujoControl = new FlujoController();
 
-            $flujoControl->actualizaStockAPC();
-
             // Extraccion datos Autored --------
             $flujoControl->autoredTransactions();
             $flujoControl->autoredInspections();
 
         })->name("Control de Flujos : 2 veces al dia")->twiceDaily(7, 14);
+
+
+        // Flujo para logistica, agenda y stock
+        $schedule->call(function () {
+            $flujoControl = new FlujoController();
+            $flujoControl->actualizaStockAPC();
+
+        })->name("Control de Flujos : varias veces al dia")
+            ->dailyAt('10:00')
+            ->dailyAt('11:00')
+            ->dailyAt('12:00')
+            ->dailyAt('16:00')
+            ->dailyAt('17:00')
+            ->dailyAt('18:00'); // 10, 11, 12 , 16, 17, 18
+
 
 
         // ROBOT APC STOCK --------
@@ -127,13 +140,13 @@ class Kernel extends ConsoleKernel
         // FLUJO DIARIO 2am --------------
         $schedule->call(function () {
             $flujoControl = new FlujoController();
-//            $flujoInchcape = new FlujoInchcapeController();
+            $flujoInchcape = new FlujoInchcapeController();
 
             $flujoControl->cargaIndicadoresUF();
             $flujoControl->cargaIndicadoresDolar();
 
             $flujoControl->sendOTsSICIndumotora();
-//            $flujoInchcape->sendOTsinchcape();
+            $flujoInchcape->sendOTsinchcape();
             $flujoControl->sendOTsSICLandking();
 
         })->name("Control de Flujos : 1 vez al dia (madrugada)")->dailyAt('02:00');

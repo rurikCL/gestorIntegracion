@@ -58,6 +58,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/set/ticket', [TicketController::class, 'store']);
     Route::post('/set/optiman', [SisAgendamientosController::class, 'store']);
 
+    Route::post('/inchcape/set/lead', [\App\Http\Controllers\Flujo\FlujoInchcapeController::class, 'newHubspotLead']);
+
+
 
     Route::post('/financieras/enviar', [FinancierasController::class, 'enviarFinancieras']);
     Route::post('/santander/calculadora', [FinancierasController::class, 'calculadoraSantander']);

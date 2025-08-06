@@ -139,7 +139,7 @@ class FlujoInchcapeController extends Controller
                 [
                     'lead-request' => [
                         'lead' => [
-                            'ExternalId' => (string) $lead->ID,
+                            'ExternalId' => (string)$lead->ID,
                             'BusinessId' => 'IDM Retail Chile',
                             'SourceSystem' => 'Website',
                             'CustomerType' => 'Individual',
@@ -166,7 +166,7 @@ class FlujoInchcapeController extends Controller
                             'Comments' => $data['lead']['comentario'] ?? '',
                             'leadProducts' => [
                                 [
-                                    'ExternalId' => (string) $lead->ID,
+                                    'ExternalId' => (string)$lead->ID,
                                     'BusinessId' => 'IDM Retail Chile',
                                     'SourceSystem' => 'Website',
                                     'ProductType' => 'Model',
@@ -182,7 +182,7 @@ class FlujoInchcapeController extends Controller
             $res = $this->solicitudCon->executeData($data);
             $response = $this->solicitudCon->getResponseData($res);
 
-            if($response->results->status != 'success') {
+            if ($response->results->status != 'success') {
                 $this->log->error("Error al crear oportunidad: " . json_encode($response));
                 return response()->json(['status' => 'ERROR', 'error' => $res->message], 500);
             }
@@ -541,7 +541,8 @@ class FlujoInchcapeController extends Controller
         return true;
     }
 
-    public function newHubspotLead(Request $request){
+    public function newHubspotLead(Request $request)
+    {
 
         $data = $request->all();
 
@@ -564,7 +565,7 @@ class FlujoInchcapeController extends Controller
             if (isset($producto['ProductType']) && $producto['ProductType'] == 'Model') {
                 $codProd = $producto['ProductCode'] ?? '';
                 $version = $producto['VehicleModelFamily'] ?? '';
-                $marca = $producto['VehicleBrand']?? '';
+                $marca = $producto['VehicleBrand'] ?? '';
                 $marca = uppercase($marca);
                 $precioVehiculo = $producto['TotalPrice'] ?? 0;
                 break;
@@ -611,11 +612,11 @@ class FlujoInchcapeController extends Controller
 
 
                 $searchRequest = new \HubSpot\Client\Crm\Contacts\Model\PublicObjectSearchRequest();
-                if(isset($filterGroup) && isset($filterGroup2)) {
+                if (isset($filterGroup) && isset($filterGroup2)) {
                     $searchRequest->setFilterGroups([$filterGroup, $filterGroup2]);
-                } else if(isset($filterGroup)) {
+                } else if (isset($filterGroup)) {
                     $searchRequest->setFilterGroups([$filterGroup]);
-                } else if(isset($filterGroup2)) {
+                } else if (isset($filterGroup2)) {
                     $searchRequest->setFilterGroups([$filterGroup2]);
                 } else {
                     $this->log->info("No se proporcionaron filtros para buscar contacto.");
@@ -679,108 +680,124 @@ class FlujoInchcapeController extends Controller
 
             // Creacion del NEGOCIO (DEAL)  -------------------------------------------
 
-            $this->log->info("Creando Lead Hubspot");
-            $IDExterno = $leadExternalId;
-            $actualizaEstado = 1;
-
-            // ASOSIACION DE CONTACTO A NEGOCIO
-            $associationSpec1 = new AssociationSpec([
-                'association_category' => 'HUBSPOT_DEFINED',
-                'association_type_id' => 3
-            ]);
-            $to1 = new PublicObjectId([
-                'id' => $idContacto
-            ]);
-            $publicAssociationsForObject1 = new PublicAssociationsForObject([
-                'types' => [$associationSpec1],
-                'to' => $to1
-            ]);
-            $this->log->info("Asociacion de contacto creada: " . $idContacto);
-
-
-            //DEFINIENDO PROPIEDADES DEL NEGOCIO
-            $properties1 = [
-                'id_externo' => $IDExterno,
-                'record_id___contacto' => $idContacto,
-                'email' => $email,
-                'phone' => $telefono,
-                'rut' => $rutFormateado,
-                'firstname' => $nombre,
-                'lastname' => $apellido,
-                'dealname' => $nombre . ' ' . $apellido . ' - ' . $marca . ' ' . $modelo, // + marca + modelo
-                'sucursal' => $sucursalNombre,
-                'sucursal_roma' => $sucursalH,
-                'reglasucursal' => 0,
-                'origen_roma' => 2, //origen Marca
-                'suborigen_roma' => 63, //suborigen Marca
-                'canal_roma' => 2, //canal Digital
-                'modelo' => $modelo,
-                'modelo_roma' => $modeloH,
-                "marca" => $marca,
-                'marca_roma' => $marcaH,
-                'version' => $version,
-                'version_roma' => $versionH,
-                'dealstage' => 'appointmentscheduled',
-                'createdate' => Carbon::now()->format('Y-m-d'),
-                'tipo_vehiculo' => 'Nuevo',
-                'precio_vehiculo' => $precioVehiculo,
-                'bono_marca' => 0,
-                'bono_financiamiento' => 0,
-                'vpp' => 'NO',
-                'financiamiento' => 'NO',
-                'test_drive' => 'NO',
-                'preparado' => 0,
-//                'visible' => 0,
-                'actualiza_estado' => $actualizaEstado,
-                'comentario' => $comentario,
-            ];
-
             try {
-                $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
-                    'associations' => [$publicAssociationsForObject1],
-                    'object_write_trace_id' => 'string',
-                    'properties' => $properties1,
+                $this->log->info("Creando Lead Hubspot");
+                $IDExterno = $leadExternalId;
+                $actualizaEstado = 1;
+
+                // ASOSIACION DE CONTACTO A NEGOCIO
+                $associationSpec1 = new AssociationSpec([
+                    'association_category' => 'HUBSPOT_DEFINED',
+                    'association_type_id' => 3
                 ]);
-
-                $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
-                $idNegocio = $apiResponse->getId();
-
-                $this->log->info('Lead Hubspot creado : ' . $idNegocio);
-
-                $solicitud = ApiSolicitudes::create([
-                    'FechaCreacion' => date('Y-m-d H:i:s'),
-                    'EventoCreacionID' => 1,
-                    'UsuarioCreacionID' => 1,
-                    'ReferenciaID' => $IDExterno,
-                    'ProveedorID' => 14,
-                    'ApiID' => 9,
-                    'Prioridad' => 1,
-                    'Peticion' => json_encode($properties1),
-                    'CodigoRespuesta' => 200,
-                    'Respuesta' => json_encode($apiResponse),
-                    'FechaPeticion' => date('Y-m-d H:i:s'),
-                    'FechaResolucion' => date('Y-m-d H:i:s'),
-                    'Exito' => 1,
-                    'FlujoID' => $this->flujo->ID,
+                $to1 = new PublicObjectId([
+                    'id' => $idContacto
                 ]);
-                $this->log->solveArray($solicitud->id);
+                $publicAssociationsForObject1 = new PublicAssociationsForObject([
+                    'types' => [$associationSpec1],
+                    'to' => $to1
+                ]);
+                $this->log->info("Asociacion de contacto creada: " . $idContacto);
 
-                return response()->json([
-                    'error' => false,
-                    'message' => 'Lead creado exitosamente',
-                    'data' => [
-                        'idNegocio' => $idNegocio
-                    ]
-                ], 201);
+
+                //DEFINIENDO PROPIEDADES DEL NEGOCIO
+                $properties1 = [
+                    'id_externo' => $IDExterno,
+                    'record_id___contacto' => $idContacto,
+                    'email' => $email,
+                    'phone' => $telefono,
+                    'rut' => $rutFormateado,
+                    'firstname' => $nombre,
+                    'lastname' => $apellido,
+                    'dealname' => $nombre . ' ' . $apellido . ' - ' . $marca . ' ' . $modelo, // + marca + modelo
+                    'sucursal' => $sucursalNombre,
+                    'sucursal_roma' => $sucursalH,
+                    'reglasucursal' => 0,
+                    'origen_roma' => 2, //origen Marca
+                    'suborigen_roma' => 63, //suborigen Marca
+                    'canal_roma' => 2, //canal Digital
+                    'modelo' => $modelo,
+                    'modelo_roma' => $modeloH,
+                    "marca" => $marca,
+                    'marca_roma' => $marcaH,
+                    'version' => $version,
+                    'version_roma' => $versionH,
+                    'dealstage' => 'appointmentscheduled',
+                    'createdate' => Carbon::now()->format('Y-m-d'),
+                    'tipo_vehiculo' => 'Nuevo',
+                    'precio_vehiculo' => $precioVehiculo,
+                    'bono_marca' => 0,
+                    'bono_financiamiento' => 0,
+                    'vpp' => 'NO',
+                    'financiamiento' => 'NO',
+                    'test_drive' => 'NO',
+                    'preparado' => 0,
+//                'visible' => 0,
+                    'actualiza_estado' => $actualizaEstado,
+                    'comentario' => $comentario,
+                ];
+
+                try {
+                    $simplePublicObjectInputForCreate = new SimplePublicObjectInputForCreate([
+                        'associations' => [$publicAssociationsForObject1],
+                        'object_write_trace_id' => 'string',
+                        'properties' => $properties1,
+                    ]);
+
+                    $apiResponse = $client->crm()->deals()->basicApi()->create($simplePublicObjectInputForCreate);
+                    $idNegocio = $apiResponse->getId();
+
+                    $this->log->info('Lead Hubspot creado : ' . $idNegocio);
+
+                    $solicitud = ApiSolicitudes::create([
+                        'FechaCreacion' => date('Y-m-d H:i:s'),
+                        'EventoCreacionID' => 1,
+                        'UsuarioCreacionID' => 1,
+                        'ReferenciaID' => $IDExterno,
+                        'ProveedorID' => 14,
+                        'ApiID' => 9,
+                        'Prioridad' => 1,
+                        'Peticion' => json_encode($properties1),
+                        'CodigoRespuesta' => 200,
+                        'Respuesta' => json_encode($apiResponse),
+                        'FechaPeticion' => date('Y-m-d H:i:s'),
+                        'FechaResolucion' => date('Y-m-d H:i:s'),
+                        'Exito' => 1,
+                        'FlujoID' => $this->flujo->ID,
+                    ]);
+                    $this->log->solveArray($solicitud->id);
+
+                    return response()->json([
+                        'status' => 'ok',
+                        'message' => 'Lead creado exitosamente',
+                        'data' => [
+                            'idNegocio' => $idNegocio
+                        ]
+                    ], 201);
+
+                } catch (HubSpot\Client\Crm\Deals\ApiException $e) {
+                    $this->log->error("Error al crear el lead: " . $e->getMessage(), $request->all());
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'Error al crear el lead',
+                        'data' => [
+                            'idNegocio' => null,
+                            'error' => $e->getMessage()
+                        ]
+                    ], 400);
+                }
 
 
             } catch (\Exception $e) {
                 $this->log->error('Error al crear Lead Hubspot: ' . $e->getMessage(), $request->all());
                 return response()->json([
+                    'status' => 'error',
                     'message' => 'Error al crear el lead',
-                    'error' => $e->getMessage(),
-                    'data' => []
-                ], 500);
+                    'data' => [
+                        'idNegocio' => null,
+                        'error' => $e->getMessage()
+                    ]
+                ], 400);
             }
 
         }

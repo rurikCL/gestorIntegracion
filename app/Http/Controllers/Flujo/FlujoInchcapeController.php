@@ -583,7 +583,7 @@ class FlujoInchcapeController extends Controller
             $token = json_decode($flujoHubspot->Opciones);
             $client = Factory::createWithAccessToken($token->token);
 
-            $sucursalNombre = MA_Sucursales::find($dataPreparada['data']['lead']['sucursal'])->Sucursal ?? '';
+            $sucursalNombre = MA_Sucursales::find($sucursal)->Sucursal ?? '';
 
             try {
                 // Busca cliente por email
